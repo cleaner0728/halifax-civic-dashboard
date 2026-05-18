@@ -411,7 +411,7 @@ export default async function Home() {
   return (
     <main className="bg-background text-foreground">
       <ScrollSnapContainer 
-        labels={["News & Weather", "HRM News", "HRFE Incidents", "Transit Disruption"]}
+        labels={["News & Weather", "HRM News", "HRFE Incidents", "Transit Disruption", "Events Calendar"]}
         topBar={
           <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-3">
             <h1 className="text-xl font-bold tracking-tight">📰 Halifax Dashboard</h1>
@@ -754,6 +754,37 @@ export default async function Home() {
                   </article>
                 ))
               )}
+            </div>
+          </div>
+        </div>
+        {/* ========== SCREEN 5: Events Calendar ========== */}
+        <div className="pt-[140px] pb-8 h-screen overflow-y-auto bg-gradient-to-b from-background to-background">
+          <div className="max-w-5xl mx-auto px-2 mt-4">
+            {/* Header */}
+            <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-violet-500 via-purple-600 to-indigo-700 dark:from-violet-900 dark:via-purple-900 dark:to-slate-900 text-white shadow-xl mb-6 px-6 py-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-white/70 uppercase tracking-widest">
+                    Halifax Regional Municipality
+                  </p>
+                  <h2 className="text-3xl font-bold tracking-tight mt-1">Events Calendar</h2>
+                  <p className="text-base text-white/70 mt-1">
+                    Upcoming civic events · Halifax, NS
+                  </p>
+                </div>
+                <div className="text-5xl">📅</div>
+              </div>
+            </div>
+
+            {/* Google Calendar Embed */}
+            <div className="rounded-xl overflow-hidden border border-border shadow-sm">
+              <iframe
+                src="https://calendar.google.com/calendar/embed?showTitle=0&mode=AGENDA&height=600&wkst=1&bgcolor=%23FFFFFF&src=dd2f3gg1q7g2sodi34c479jqmk%40group.calendar.google.com&color=%232952A3&src=ipkj749g67h89epofrv9p0u6d0%40group.calendar.google.com&color=%23691426&src=p5ej79pes2tvh726nm9nq9hq18%40group.calendar.google.com&color=%23B1440E&src=rl70382c737j9hs58vpba93gh8%40group.calendar.google.com&color=%235F6B02&src=hrmevents%40gmail.com&color=%238D6F47&src=app6upa4ffc9pb8abkachap288%40group.calendar.google.com&color=%23182C57&src=7lkspm0u8ku7oe5htfdi71sklg%40group.calendar.google.com&color=%2323164E&src=1vqddsm57v05s6t0s14vbugjqc%40group.calendar.google.com&color=%238D6F47&src=37870qc8aqd9mavck2b84rc7a4%40group.calendar.google.com&color=%23865A5A&src=recvanproject%40gmail.com&color=%231B887A&src=dajspdtgg3uhbo6hdjl1ekjbeg%40group.calendar.google.com&color=%2328754E&src=g3bfd4h4ngthv403cn2i0lktdc%40group.calendar.google.com&color=%232952A3&src=tatije54pe1od7h44434muu06s%40group.calendar.google.com&color=%23875509&src=78k92dn8i5h4hkghv11bsmlqgo%40group.calendar.google.com&color=%23AB8B00&src=qd2crcgvujt5jcock6aivr7he4%40group.calendar.google.com&color=%23853104&src=2568t0odfpavvip1tnqq4mhvpo%40group.calendar.google.com&color=%23691426&ctz=America%2FHalifax"
+                style={{ border: 0 }}
+                width="100%"
+                height="700"
+                title="Halifax Events Calendar"
+              />
             </div>
           </div>
         </div>
