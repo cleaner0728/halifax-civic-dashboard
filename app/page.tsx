@@ -157,14 +157,12 @@ function getWeatherInfo(code: number, isNight: boolean = false): { emoji: string
 }
 
 function getDayName(dateStr: string): string {
-  const d = new Date(dateStr + 'T00:00:00');
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  if (d.getTime() === today.getTime()) return 'Today';
-  if (d.getTime() === tomorrow.getTime()) return 'TMR';
-  return d.toLocaleDateString('en-US', { weekday: 'short' });
+  const now = new Date();
+  const todayStr = toHfxDateStr(now);
+  const tomorrowStr = toHfxDateStr(new Date(now.getTime() + 24 * 60 * 60 * 1000));
+  if (dateStr === todayStr) return 'Today';
+  if (dateStr === tomorrowStr) return 'TMR';
+  return new Date(dateStr + 'T12:00:00Z').toLocaleDateString('en-US', { weekday: 'short', timeZone: HFX_TZ });
 }
 
 function formatTime(iso: string): string {
@@ -193,13 +191,15 @@ function getImageUrl(item: CustomItem & { enclosure?: { url: string; type?: stri
 
 // ============ Date helpers ============
 
+const HFX_TZ = 'America/Halifax';
+
+function toHfxDateStr(date: Date | string): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  return new Intl.DateTimeFormat('en-CA', { timeZone: HFX_TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+}
+
 function isSameDay(dateStr: string, target: Date): boolean {
-  const itemDate = new Date(dateStr);
-  return (
-    itemDate.getFullYear() === target.getFullYear() &&
-    itemDate.getMonth() === target.getMonth() &&
-    itemDate.getDate() === target.getDate()
-  );
+  return toHfxDateStr(dateStr) === toHfxDateStr(target);
 }
 
 function stripHtml(html: string): string {
@@ -300,9 +300,7 @@ async function fetchHrmNews(): Promise<{ items: HrmItem[]; dateLabel: string }> 
       });
 
       if (matchingItems.length > 0) {
-        const dateLabel = daysBack === 0
-          ? targetDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
-          : targetDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+        const dateLabel = targetDate.toLocaleDateString('en-US', { timeZone: HFX_TZ, weekday: 'long', month: 'long', day: 'numeric' });
 
         return {
           dateLabel,
