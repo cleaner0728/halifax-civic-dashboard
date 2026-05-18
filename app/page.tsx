@@ -369,25 +369,25 @@ async function fetchTransitDetours(): Promise<TransitDetour[]> {
     const section = stopStart !== -1 ? html.slice(detourStart, stopStart) : html.slice(detourStart);
 
     const root = parseHtml(section);
-    return root.querySelectorAll('.paragraph--type--accordion')
-      .map(accordion => {
-        const contentDiv = accordion.querySelector('.u-text-lighter');
-        if (!contentDiv) return null;
-        const inner = contentDiv.innerHTML;
-        const title = contentDiv.querySelector('h3')?.text.trim() ?? '';
-        if (!title) return null;
-        return {
-          title,
-          routes: extractStrongField(inner, 'Route(?:\\(s\\)|s)?:'),
-          date: extractStrongField(inner, 'Date:') || undefined,
-          startDate: extractStrongField(inner, 'Start Date:') || undefined,
-          endDate: extractStrongField(inner, 'End Date:') || undefined,
-          time: extractStrongField(inner, 'Time:') || undefined,
-          location: extractStrongField(inner, 'Location:') || undefined,
-          summary: extractDetourSummary(inner) || undefined,
-        };
-      })
-      .filter((d): d is TransitDetour => d !== null && d.title !== '');
+    const results: TransitDetour[] = [];
+    for (const accordion of root.querySelectorAll('.paragraph--type--accordion')) {
+      const contentDiv = accordion.querySelector('.u-text-lighter');
+      if (!contentDiv) continue;
+      const inner = contentDiv.innerHTML;
+      const title = contentDiv.querySelector('h3')?.text.trim() ?? '';
+      if (!title) continue;
+      results.push({
+        title,
+        routes: extractStrongField(inner, 'Route(?:\\(s\\)|s)?:'),
+        date: extractStrongField(inner, 'Date:') || undefined,
+        startDate: extractStrongField(inner, 'Start Date:') || undefined,
+        endDate: extractStrongField(inner, 'End Date:') || undefined,
+        time: extractStrongField(inner, 'Time:') || undefined,
+        location: extractStrongField(inner, 'Location:') || undefined,
+        summary: extractDetourSummary(inner) || undefined,
+      });
+    }
+    return results;
   } catch (e) {
     console.error('Failed to fetch transit disruptions:', e);
     return [];
