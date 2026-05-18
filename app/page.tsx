@@ -514,7 +514,7 @@ export default async function Home() {
                         {item.title}
                       </a>
                       <p className="text-xs text-foreground/40 mt-1 font-mono">
-                        {item.pubDate ? new Date(item.pubDate).toLocaleString() : 'Unknown'}
+                        {item.pubDate ? new Date(item.pubDate).toLocaleString('en-US', { timeZone: 'America/Halifax' }) : 'Unknown'}
                       </p>
                       <p className="text-foreground/60 mt-1 text-base leading-relaxed">
                         {item.contentSnippet}
@@ -570,7 +570,7 @@ export default async function Home() {
                         {item.title}
                       </a>
                       <p className="text-xs text-foreground/40 mt-1 font-mono">
-                        {item.pubDate ? new Date(item.pubDate).toLocaleString() : 'Unknown'}
+                        {item.pubDate ? new Date(item.pubDate).toLocaleString('en-US', { timeZone: 'America/Halifax' }) : 'Unknown'}
                       </p>
                       {item.description && (
                         <p className="text-foreground/60 mt-1 text-base leading-relaxed">
@@ -628,7 +628,7 @@ export default async function Home() {
                         {item.title}
                       </a>
                       <p className="text-xs text-foreground/40 mt-1 font-mono">
-                        {item.pubDate ? new Date(item.pubDate).toLocaleString() : 'Unknown'}
+                        {item.pubDate ? new Date(item.pubDate).toLocaleString('en-US', { timeZone: 'America/Halifax' }) : 'Unknown'}
                       </p>
                       {item.description && (
                         <p className="text-foreground/60 mt-1 text-base leading-relaxed">
