@@ -30,6 +30,21 @@ type HrmItem = {
   description?: string;
 };
 
+type TidePoint = { time: string; value: number };
+
+type TideGraphData = {
+  fillPoints: string;
+  linePoints: string;
+  nowX: number;
+  currentLevel: number;
+  nextHigh: TidePoint | null;
+  nextLow: TidePoint | null;
+  nextHighX: number;
+  nextHighY: number;
+  nextLowX: number;
+  nextLowY: number;
+};
+
 type TransitDetour = {
   title: string;
   routes: string;
@@ -427,21 +442,84 @@ async function fetchTransitDetours(): Promise<TransitDetour[]> {
   }
 }
 
+async function fetchTides(): Promise<TidePoint[]> {
+  try {
+    const now = new Date();
+    const from = new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString().slice(0, 19) + 'Z';
+    const to = new Date(now.getTime() + 21 * 60 * 60 * 1000).toISOString().slice(0, 19) + 'Z';
+    const url = `https://api.iwls.dfo-mpo.gc.ca/api/v1/stations/5cebf1e23d0f4a073c4bb8ab/data?time-series-code=wlp&from=${from}&to=${to}`;
+    const res = await fetch(url, { next: { revalidate: 900 } });
+    if (!res.ok) return [];
+    const data = await res.json() as Array<{ eventDate: string; value: number }>;
+    return data.map(d => ({ time: d.eventDate, value: d.value }));
+  } catch {
+    return [];
+  }
+}
+
+function computeTideGraph(tides: TidePoint[]): TideGraphData | null {
+  if (tides.length < 2) return null;
+  const W = 800, H = 72, PAD = 4;
+  const values = tides.map(t => t.value);
+  const times = tides.map(t => new Date(t.time).getTime());
+  const minVal = Math.min(...values);
+  const maxVal = Math.max(...values);
+  const range = maxVal - minVal || 1;
+  const minTime = times[0];
+  const maxTime = times[times.length - 1];
+  const timeRange = maxTime - minTime || 1;
+  const now = Date.now();
+
+  const tx = (t: number) => PAD + ((t - minTime) / timeRange) * (W - 2 * PAD);
+  const vy = (v: number) => H - PAD - ((v - minVal) / range) * (H - 2 * PAD);
+
+  const pts = tides.map((t, i) => `${tx(times[i]).toFixed(1)},${vy(t.value).toFixed(1)}`).join(' ');
+
+  let closestIdx = 0;
+  let closestDiff = Infinity;
+  times.forEach((t, i) => { const d = Math.abs(t - now); if (d < closestDiff) { closestDiff = d; closestIdx = i; } });
+
+  let nextHigh: TidePoint | null = null;
+  let nextLow: TidePoint | null = null;
+  let nextHighX = 0, nextHighY = 0, nextLowX = 0, nextLowY = 0;
+  for (let i = 1; i < tides.length - 1; i++) {
+    if (times[i] <= now) continue;
+    if (!nextHigh && tides[i].value > tides[i - 1].value && tides[i].value > tides[i + 1].value) {
+      nextHigh = tides[i]; nextHighX = tx(times[i]); nextHighY = vy(tides[i].value);
+    }
+    if (!nextLow && tides[i].value < tides[i - 1].value && tides[i].value < tides[i + 1].value) {
+      nextLow = tides[i]; nextLowX = tx(times[i]); nextLowY = vy(tides[i].value);
+    }
+    if (nextHigh && nextLow) break;
+  }
+
+  return {
+    fillPoints: `${PAD},${H} ${pts} ${W - PAD},${H}`,
+    linePoints: pts,
+    nowX: Math.max(PAD, Math.min(W - PAD, tx(now))),
+    currentLevel: tides[closestIdx]?.value ?? 0,
+    nextHigh, nextLow,
+    nextHighX, nextHighY, nextLowX, nextLowY,
+  };
+}
+
 // ============ Page Component ============
 
 export default async function Home() {
-  const [weather, news, hrmResult, hrfeIncidents, transitDetours, transitHasRecent] = await Promise.all([
+  const [weather, news, hrmResult, hrfeIncidents, transitDetours, transitHasRecent, tides] = await Promise.all([
     fetchWeather(),
     fetchNews(),
     fetchHrmNews(),
     fetchHrfeIncidents(),
     fetchTransitDetours(),
     fetchTransitRss(),
+    fetchTides(),
   ]);
 
   const currentWeather = weather ? getWeatherInfo(weather.weatherCode, !weather.isDay) : null;
   const hrmNews = hrmResult.items;
   const hrmDateLabel = hrmResult.dateLabel;
+  const tideGraph = computeTideGraph(tides);
 
   return (
     <main className="bg-background text-foreground">
@@ -480,9 +558,9 @@ export default async function Home() {
                         {currentWeather.label}
                       </p>
                     </div>
-                    <div className="text-6xl">{currentWeather.emoji}</div>
+                    <div className="text-4xl">{currentWeather.emoji}</div>
                   </div>
-                  <div className={`flex gap-6 mt-4 text-sm ${currentWeather.theme.textSecondary}`}>
+                  <div className={`flex flex-wrap gap-x-6 gap-y-1 mt-4 text-sm ${currentWeather.theme.textSecondary}`}>
                     <span>💨 {weather.windSpeed} km/h</span>
                     <span>💧 {weather.humidity}%</span>
                     {weather.daily[0] && (
@@ -492,6 +570,33 @@ export default async function Home() {
                       </>
                     )}
                   </div>
+                  {/* Tide Graph */}
+                  {tideGraph && (
+                    <div className="mt-4">
+                      <div className={`flex flex-wrap gap-x-5 gap-y-1 text-sm mb-2 ${currentWeather.theme.textSecondary}`}>
+                        <span>🌊 <span className="font-semibold">{tideGraph.currentLevel.toFixed(2)} m</span></span>
+                        {tideGraph.nextHigh && (
+                          <span>↑ High <span className="font-semibold">{tideGraph.nextHigh.value.toFixed(2)} m</span> · {new Date(tideGraph.nextHigh.time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: HFX_TZ })}</span>
+                        )}
+                        {tideGraph.nextLow && (
+                          <span>↓ Low <span className="font-semibold">{tideGraph.nextLow.value.toFixed(2)} m</span> · {new Date(tideGraph.nextLow.time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: HFX_TZ })}</span>
+                        )}
+                      </div>
+                      <div className="rounded-md overflow-hidden" style={{ height: 52 }}>
+                        <svg viewBox="0 0 800 72" width="100%" height="100%" preserveAspectRatio="none">
+                          <polygon points={tideGraph.fillPoints} fill="rgba(255,255,255,0.15)" />
+                          <polyline points={tideGraph.linePoints} fill="none" stroke="rgba(255,255,255,0.75)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+                          <line x1={tideGraph.nowX} y1="0" x2={tideGraph.nowX} y2="72" stroke="rgba(255,255,255,0.9)" strokeWidth="2" strokeDasharray="4,3" />
+                          {tideGraph.nextHigh && (
+                            <circle cx={tideGraph.nextHighX} cy={tideGraph.nextHighY} r="4" fill="white" fillOpacity="0.9" />
+                          )}
+                          {tideGraph.nextLow && (
+                            <circle cx={tideGraph.nextLowX} cy={tideGraph.nextLowY} r="4" fill="white" fillOpacity="0.9" />
+                          )}
+                        </svg>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className={`${currentWeather.theme.bottomBar} px-6 py-4`}>
                   <div className="grid grid-cols-5 gap-1">
