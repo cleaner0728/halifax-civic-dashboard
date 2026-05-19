@@ -11,6 +11,7 @@ type CustomItem = {
   'media:thumbnail'?: { $: { url: string } };
   'media:content'?: { $: { url: string; medium?: string } } | Array<{ $: { url: string; medium?: string } }>;
   enclosure?: { url: string; type?: string };
+  content?: string;
 };
 
 type NewsItem = {
@@ -19,6 +20,7 @@ type NewsItem = {
   pubDate?: string;
   contentSnippet?: string;
   imageUrl?: string;
+  source?: string;
 };
 
 type HrmItem = {
@@ -173,18 +175,22 @@ function formatTime(iso: string): string {
 // ============ Image Helpers ============
 
 function getImageUrl(item: CustomItem & { enclosure?: { url: string; type?: string } }): string | undefined {
-  if (item.enclosure?.url && item.enclosure.type?.startsWith('image')) {
-    return item.enclosure.url;
-  }
   if (item['media:thumbnail']?.$?.url) {
     return item['media:thumbnail'].$.url;
   }
   const mediaContent = item['media:content'];
   if (Array.isArray(mediaContent)) {
-    const imageMedia = mediaContent.find(m => m.$?.medium === 'image');
+    const imageMedia = mediaContent.find(m => m.$?.url && (!m.$?.medium || m.$?.medium === 'image'));
     if (imageMedia?.$?.url) return imageMedia.$.url;
   } else if (mediaContent?.$?.url) {
     return mediaContent.$.url;
+  }
+  if (item.enclosure?.url) {
+    return item.enclosure.url;
+  }
+  if (item.content) {
+    const match = item.content.match(/<img[^>]+src=["']([^"']+)["']/i);
+    if (match?.[1]) return match[1];
   }
   return undefined;
 }
@@ -258,7 +264,7 @@ async function fetchWeather(): Promise<WeatherData | null> {
   }
 }
 
-async function fetchNews(): Promise<{ title: string; items: NewsItem[] }> {
+async function fetchNews(): Promise<{ items: NewsItem[] }> {
   const parser = new Parser<CustomFeed, CustomItem>({
     customFields: {
       item: [
@@ -267,18 +273,42 @@ async function fetchNews(): Promise<{ title: string; items: NewsItem[] }> {
       ],
     },
   });
-  console.log(`[Fetch] Global News RSS at ${new Date().toLocaleTimeString()}`);
-  const feed = await parser.parseURL('https://globalnews.ca/feed/');
-  return {
-    title: feed.title || 'Global News Live Feed',
-    items: (feed.items || []).map(item => ({
-      title: item.title,
-      link: item.link,
-      pubDate: item.pubDate,
-      contentSnippet: item.contentSnippet,
-      imageUrl: getImageUrl(item),
-    })),
-  };
+
+  const sources = [
+    { url: 'https://www.cbc.ca/webfeed/rss/rss-canada-novascotia', name: 'CBC Nova Scotia' },
+    { url: 'https://www.cbc.ca/webfeed/rss/rss-sports', name: 'CBC Sports' },
+    { url: 'https://halifaxexaminer.ca/feed/', name: 'Halifax Examiner' },
+    { url: 'https://globalnews.ca/halifax/feed/', name: 'Global News Halifax' },
+  ];
+
+  const cutoff = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+
+  const allItems: NewsItem[] = [];
+  await Promise.allSettled(
+    sources.map(async ({ url, name }) => {
+      const feed = await parser.parseURL(url);
+      for (const item of feed.items || []) {
+        const d = item.pubDate || item.isoDate;
+        if (!d || new Date(d) <= cutoff) continue;
+        allItems.push({
+          title: item.title,
+          link: item.link,
+          pubDate: d,
+          contentSnippet: item.contentSnippet,
+          imageUrl: getImageUrl(item),
+          source: name,
+        });
+      }
+    })
+  );
+
+  allItems.sort((a, b) => {
+    const da = a.pubDate ? new Date(a.pubDate).getTime() : 0;
+    const db = b.pubDate ? new Date(b.pubDate).getTime() : 0;
+    return db - da;
+  });
+
+  return { items: allItems };
 }
 
 async function fetchHrmNews(): Promise<{ items: HrmItem[]; dateLabel: string }> {
@@ -481,9 +511,14 @@ export default async function Home() {
             )}
 
             {/* News Feed */}
-            <h2 className="text-lg font-bold mb-4">Latest News</h2>
+            <h2 className="text-lg font-bold mb-4">Latest News <span className="text-sm font-normal text-foreground/40">· past 3 days</span></h2>
             <div className="space-y-5 pb-16">
-              {news.items.map((item, index) => (
+              {news.items.length === 0 ? (
+                <div className="text-center py-16 text-foreground/40">
+                  <p className="text-4xl mb-4">📭</p>
+                  <p className="text-lg font-medium">No news in the past 12 hours.</p>
+                </div>
+              ) : news.items.map((item, index) => (
                 <article
                   key={index}
                   className="bg-card rounded-xl border border-border hover:border-foreground/15 shadow-sm hover:shadow-md transition-all overflow-hidden"
@@ -498,6 +533,7 @@ export default async function Home() {
                             alt={item.title || 'News image'}
                             className="w-full h-52 sm:h-full object-cover"
                             loading="lazy"
+                            referrerPolicy="no-referrer"
                           />
                         </a>
                       </div>
@@ -512,6 +548,7 @@ export default async function Home() {
                         {item.title}
                       </a>
                       <p className="text-xs text-foreground/40 mt-1 font-mono">
+                        {item.source && <span className="text-blue-400 mr-2">{item.source}</span>}
                         {item.pubDate ? new Date(item.pubDate).toLocaleString('en-US', { timeZone: 'America/Halifax' }) : 'Unknown'}
                       </p>
                       <p className="text-foreground/60 mt-1 text-base leading-relaxed">
@@ -760,32 +797,29 @@ export default async function Home() {
         {/* ========== SCREEN 5: Events Calendar ========== */}
         <div className="pt-[140px] pb-8 h-screen overflow-y-auto bg-gradient-to-b from-background to-background">
           <div className="max-w-5xl mx-auto px-2 mt-4">
-            {/* Header */}
-            <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-violet-500 via-purple-600 to-indigo-700 dark:from-violet-900 dark:via-purple-900 dark:to-slate-900 text-white shadow-xl mb-6 px-6 py-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-white/70 uppercase tracking-widest">
-                    Halifax Regional Municipality
-                  </p>
-                  <h2 className="text-3xl font-bold tracking-tight mt-1">Events Calendar</h2>
-                  <p className="text-base text-white/70 mt-1">
-                    Upcoming civic events · Halifax, NS
-                  </p>
-                </div>
-                <div className="text-5xl">📅</div>
-              </div>
-            </div>
+            <p className="text-xl font-semibold text-center text-foreground mb-3">📅 Upcoming civic events · Halifax, NS</p>
 
             {/* Google Calendar Embed */}
-            <div className="rounded-xl overflow-hidden border border-border shadow-sm">
+            <div className="rounded-xl overflow-hidden border border-border shadow-sm bg-white p-2 mb-4">
               <iframe
                 src="https://calendar.google.com/calendar/embed?showTitle=0&mode=AGENDA&height=600&wkst=1&bgcolor=%23FFFFFF&src=dd2f3gg1q7g2sodi34c479jqmk%40group.calendar.google.com&color=%232952A3&src=ipkj749g67h89epofrv9p0u6d0%40group.calendar.google.com&color=%23691426&src=p5ej79pes2tvh726nm9nq9hq18%40group.calendar.google.com&color=%23B1440E&src=rl70382c737j9hs58vpba93gh8%40group.calendar.google.com&color=%235F6B02&src=hrmevents%40gmail.com&color=%238D6F47&src=app6upa4ffc9pb8abkachap288%40group.calendar.google.com&color=%23182C57&src=7lkspm0u8ku7oe5htfdi71sklg%40group.calendar.google.com&color=%2323164E&src=1vqddsm57v05s6t0s14vbugjqc%40group.calendar.google.com&color=%238D6F47&src=37870qc8aqd9mavck2b84rc7a4%40group.calendar.google.com&color=%23865A5A&src=recvanproject%40gmail.com&color=%231B887A&src=dajspdtgg3uhbo6hdjl1ekjbeg%40group.calendar.google.com&color=%2328754E&src=g3bfd4h4ngthv403cn2i0lktdc%40group.calendar.google.com&color=%232952A3&src=tatije54pe1od7h44434muu06s%40group.calendar.google.com&color=%23875509&src=78k92dn8i5h4hkghv11bsmlqgo%40group.calendar.google.com&color=%23AB8B00&src=qd2crcgvujt5jcock6aivr7he4%40group.calendar.google.com&color=%23853104&src=2568t0odfpavvip1tnqq4mhvpo%40group.calendar.google.com&color=%23691426&ctz=America%2FHalifax"
                 style={{ border: 0 }}
                 width="100%"
-                height="700"
+                height="467"
                 title="Halifax Events Calendar"
               />
             </div>
+            <p className="text-sm text-foreground/50 text-center">
+              Data sourced from{' '}
+              <a
+                href="https://www.halifax.ca/home/events-calendar"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-violet-500 hover:underline"
+              >
+                HRM Events Calendar
+              </a>
+            </p>
           </div>
         </div>
       </ScrollSnapContainer>
