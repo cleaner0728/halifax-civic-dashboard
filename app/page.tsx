@@ -1,6 +1,7 @@
 import Parser from 'rss-parser';
 import { parse as parseHtml } from 'node-html-parser';
 import ThemeToggle from '@/components/ThemeToggle';
+import InstallButton from '@/components/InstallButton';
 import ScrollSnapContainer from '@/components/ScrollSnapContainer';
 import LiveClock from '@/components/LiveClock';
 
@@ -531,7 +532,10 @@ export default async function Home() {
         topBar={
           <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-3">
             <h1 className="text-xl font-bold tracking-tight">📰 Halifax Dashboard</h1>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <InstallButton />
+              <ThemeToggle />
+            </div>
           </div>
         }
       >
