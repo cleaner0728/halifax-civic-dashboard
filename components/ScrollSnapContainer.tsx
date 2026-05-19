@@ -79,38 +79,34 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
 
   return (
     <div className="relative h-screen">
-      {/* Top Bar wrapper */}
-      {topBar && (
-        <div
-          className={`fixed top-0 left-0 right-0 z-[60] bg-card/90 backdrop-blur-md border-b border-border transition-transform duration-300 ease-in-out ${
-            isHeaderHidden ? "-translate-y-full" : "translate-y-0"
-          }`}
-        >
-          {topBar}
-        </div>
-      )}
-
-      {/* Top Tabs */}
+      {/* Header + Tabs — slide out together as one unit */}
       <div
-        className={`fixed top-[66px] left-0 right-0 z-[55] bg-card/95 backdrop-blur-md border-b border-border shadow-sm transition-transform duration-300 ease-in-out ${
-          isHeaderHidden ? "-translate-y-[66px]" : "translate-y-0"
+        className={`fixed top-0 left-0 right-0 z-[60] transition-transform duration-300 ease-in-out ${
+          isHeaderHidden ? "-translate-y-full" : "translate-y-0"
         }`}
       >
-        <div className="max-w-5xl mx-auto flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {labels.map((label, i) => (
-            <button
-              key={i}
-              ref={(el) => { tabRefs.current[i] = el; }}
-              onClick={() => scrollTo(i)}
-              className={`shrink-0 px-5 py-3 text-center text-lg font-medium whitespace-nowrap transition-all duration-200 border-b-[3px] ${
-                activeIndex === i
-                  ? "border-blue-500 text-blue-500 bg-blue-500/5 dark:bg-blue-500/10"
-                  : "border-transparent text-foreground/60 hover:text-foreground hover:bg-foreground/5"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
+        {topBar && (
+          <div className="bg-card/90 backdrop-blur-md border-b border-border">
+            {topBar}
+          </div>
+        )}
+        <div className="bg-card/95 backdrop-blur-md border-b border-border shadow-sm">
+          <div className="max-w-5xl mx-auto flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            {labels.map((label, i) => (
+              <button
+                key={i}
+                ref={(el) => { tabRefs.current[i] = el; }}
+                onClick={() => scrollTo(i)}
+                className={`shrink-0 px-5 py-3 text-center text-lg font-medium whitespace-nowrap transition-all duration-200 border-b-[3px] ${
+                  activeIndex === i
+                    ? "border-blue-500 text-blue-500 bg-blue-500/5 dark:bg-blue-500/10"
+                    : "border-transparent text-foreground/60 hover:text-foreground hover:bg-foreground/5"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
