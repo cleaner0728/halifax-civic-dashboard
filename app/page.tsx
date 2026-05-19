@@ -450,7 +450,11 @@ async function fetchRedditPosts(): Promise<RedditPost[]> {
       headers: { 'User-Agent': 'halifax-dashboard/1.0' },
       next: { revalidate: 900 },
     });
-    if (!res.ok) return [];
+    console.log(`[Reddit] status: ${res.status}`);
+    if (!res.ok) {
+      console.error(`[Reddit] failed: ${res.status} ${res.statusText}`);
+      return [];
+    }
     const data = await res.json() as { data: { children: { data: Record<string, unknown> }[] } };
     const cutoff = Date.now() / 1000 - 24 * 60 * 60;
     return data.data.children
