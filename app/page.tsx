@@ -30,6 +30,16 @@ type HrmItem = {
   description?: string;
 };
 
+type RedditPost = {
+  title: string;
+  score: number;
+  numComments: number;
+  author: string;
+  url: string;
+  flair?: string;
+  createdUtc: number;
+};
+
 type TransitDetour = {
   title: string;
   routes: string;
@@ -355,12 +365,18 @@ async function fetchHrfeIncidents(): Promise<HrmItem[]> {
   console.log(`[Fetch] HRFE Incidents RSS at ${new Date().toLocaleTimeString()}`);
   try {
     const feed = await parser.parseURL('https://www.halifax.ca/safety-security/fire-emergency/hrfe-incident-feed/rss.xml');
-    return (feed.items || []).map(item => ({
-      title: item.title?.trim(),
-      link: item.link,
-      pubDate: item.pubDate || item.isoDate,
-      description: item.contentSnippet || (item.content ? stripHtml(item.content) : ''),
-    }));
+    const cutoff = new Date(Date.now() - 6 * 60 * 60 * 1000);
+    return (feed.items || [])
+      .filter(item => {
+        const d = item.pubDate || item.isoDate;
+        return d ? new Date(d) > cutoff : false;
+      })
+      .map(item => ({
+        title: item.title?.trim(),
+        link: item.link,
+        pubDate: item.pubDate || item.isoDate,
+        description: item.contentSnippet || (item.content ? stripHtml(item.content) : ''),
+      }));
   } catch (e) {
     console.error('Failed to fetch HRFE incidents:', e);
     return [];
@@ -421,16 +437,51 @@ async function fetchTransitDetours(): Promise<TransitDetour[]> {
   }
 }
 
+function timeAgo(utcSeconds: number): string {
+  const diff = Math.floor(Date.now() / 1000 - utcSeconds);
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
+}
+
+async function fetchRedditPosts(): Promise<RedditPost[]> {
+  try {
+    const res = await fetch('https://www.reddit.com/r/halifax/hot.json?limit=50', {
+      headers: { 'User-Agent': 'halifax-dashboard/1.0' },
+      next: { revalidate: 900 },
+    });
+    if (!res.ok) return [];
+    const data = await res.json() as { data: { children: { data: Record<string, unknown> }[] } };
+    const cutoff = Date.now() / 1000 - 24 * 60 * 60;
+    return data.data.children
+      .map(c => c.data)
+      .filter(p => (p.created_utc as number) > cutoff && (p.score as number) > 3)
+      .map(p => ({
+        title: p.title as string,
+        score: p.score as number,
+        numComments: p.num_comments as number,
+        author: p.author as string,
+        url: `https://www.reddit.com${p.permalink as string}`,
+        flair: (p.link_flair_text as string)?.replace(/&amp;/g, '&') || undefined,
+        createdUtc: p.created_utc as number,
+      }));
+  } catch (e) {
+    console.error('Failed to fetch Reddit posts:', e);
+    return [];
+  }
+}
+
 // ============ Page Component ============
 
 export default async function Home() {
-  const [weather, news, hrmResult, hrfeIncidents, transitDetours, transitHasRecent] = await Promise.all([
+  const [weather, news, hrmResult, hrfeIncidents, transitDetours, transitHasRecent, redditPosts] = await Promise.all([
     fetchWeather(),
     fetchNews(),
     fetchHrmNews(),
     fetchHrfeIncidents(),
     fetchTransitDetours(),
     fetchTransitRss(),
+    fetchRedditPosts(),
   ]);
 
   const currentWeather = weather ? getWeatherInfo(weather.weatherCode, !weather.isDay) : null;
@@ -440,7 +491,7 @@ export default async function Home() {
   return (
     <main className="bg-background text-foreground">
       <ScrollSnapContainer 
-        labels={["News & Weather", "HRM News", "HRFE Incidents", "Transit Disruption", "Events Calendar"]}
+        labels={["News & Weather", "HRM News", "HRFE Incidents", "Transit Disruption", "Events Calendar", "Community"]}
         topBar={
           <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-3">
             <h1 className="text-xl font-bold tracking-tight">📰 Halifax Dashboard</h1>
@@ -631,7 +682,15 @@ export default async function Home() {
                   </p>
                   <h2 className="text-3xl font-bold tracking-tight mt-1">HRFE Incidents</h2>
                   <p className="text-base text-white/70 mt-1">
-                    Live incident feed · {hrfeIncidents.length} recent calls
+                    Past 6 hours · {hrfeIncidents.length} incident{hrfeIncidents.length !== 1 ? 's' : ''} ·{' '}
+                    <a
+                      href="https://www.halifax.ca/safety-security/fire-emergency/hrfe-incident-feed"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-white"
+                    >
+                      HRFE Incident Feed
+                    </a>
                   </p>
                 </div>
                 <div className="text-5xl">🚒</div>
@@ -819,6 +878,72 @@ export default async function Home() {
                 HRM Events Calendar
               </a>
             </p>
+          </div>
+        </div>
+
+        {/* ========== SCREEN 6: Reddit r/halifax ========== */}
+        <div className="pt-[140px] pb-8 h-screen overflow-y-auto bg-gradient-to-b from-background to-background">
+          <div className="max-w-5xl mx-auto px-2 mt-4">
+            {/* Header */}
+            <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-orange-500 via-red-500 to-rose-600 dark:from-orange-900 dark:via-red-900 dark:to-slate-900 text-white shadow-xl mb-6 px-6 py-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-white/70 uppercase tracking-widest">Reddit</p>
+                  <h2 className="text-3xl font-bold tracking-tight mt-1">r/halifax</h2>
+                  <p className="text-base text-white/70 mt-1">
+                    Hot posts · past 24h · {redditPosts.length} post{redditPosts.length !== 1 ? 's' : ''} ·{' '}
+                    <a href="https://www.reddit.com/r/halifax" target="_blank" rel="noopener noreferrer" className="underline hover:text-white">
+                      reddit.com/r/halifax
+                    </a>
+                  </p>
+                </div>
+                <div className="text-5xl">🗣️</div>
+              </div>
+            </div>
+
+            {/* Reddit Posts */}
+            <div className="space-y-3 pb-16">
+              {redditPosts.length === 0 ? (
+                <div className="text-center py-16 text-foreground/40">
+                  <p className="text-4xl mb-4">💬</p>
+                  <p className="text-lg font-medium">No recent posts.</p>
+                </div>
+              ) : (
+                redditPosts.map((post, index) => (
+                  <a
+                    key={index}
+                    href={post.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block bg-card rounded-xl border border-border hover:border-orange-400/40 shadow-sm hover:shadow-md transition-all overflow-hidden"
+                  >
+                    <div className="p-4">
+                      <div className="flex items-start gap-3">
+                        {/* Score */}
+                        <div className="flex flex-col items-center min-w-[40px] text-center">
+                          <span className="text-lg font-bold text-orange-500">▲</span>
+                          <span className="text-sm font-bold text-foreground">{post.score}</span>
+                        </div>
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          {post.flair && (
+                            <span className="inline-block bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 rounded px-2 py-0.5 text-xs font-medium mb-1.5">
+                              {post.flair}
+                            </span>
+                          )}
+                          <p className="text-base font-semibold text-foreground leading-snug">{post.title}</p>
+                          <div className="flex items-center gap-3 mt-1.5 text-xs text-foreground/40">
+                            <span>💬 {post.numComments}</span>
+                            <span>u/{post.author}</span>
+                            <span>{timeAgo(post.createdUtc)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </ScrollSnapContainer>
