@@ -451,9 +451,9 @@ async function fetchTides(): Promise<TidePoint[]> {
     const res = await fetch(url, { next: { revalidate: 900 } });
     if (!res.ok) return [];
     const data = await res.json() as Array<{ eventDate: string; value: number }>;
-    // API returns 1-minute resolution; downsample to ~10-minute steps to keep the SVG light.
+    // API returns 1-minute resolution; downsample to 15-minute steps for a lighter SVG.
     return data
-      .filter((_, i) => i % 10 === 0)
+      .filter((_, i) => i % 15 === 0)
       .map(d => ({ time: d.eventDate, value: d.value }));
   } catch {
     return [];
@@ -487,10 +487,10 @@ function computeTideGraph(tides: TidePoint[]): TideGraphData | null {
   let nextHighX = 0, nextHighY = 0, nextLowX = 0, nextLowY = 0;
   for (let i = 1; i < tides.length - 1; i++) {
     if (times[i] <= now) continue;
-    if (!nextHigh && tides[i].value > tides[i - 1].value && tides[i].value > tides[i + 1].value) {
+    if (!nextHigh && tides[i].value > tides[i - 1].value && tides[i].value >= tides[i + 1].value) {
       nextHigh = tides[i]; nextHighX = tx(times[i]); nextHighY = vy(tides[i].value);
     }
-    if (!nextLow && tides[i].value < tides[i - 1].value && tides[i].value < tides[i + 1].value) {
+    if (!nextLow && tides[i].value < tides[i - 1].value && tides[i].value <= tides[i + 1].value) {
       nextLow = tides[i]; nextLowX = tx(times[i]); nextLowY = vy(tides[i].value);
     }
     if (nextHigh && nextLow) break;
