@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Halifax Civic Dashboard
 
-## Getting Started
+A read-only public dashboard for Halifax, Nova Scotia residents.  
+Live at: [https://global-news-mvp.vercel.app](https://halifax-civic-dashboard.vercel.app/)
 
-First, run the development server:
+## What it does
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Aggregates real-time local information into a single view:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Local News** — RSS feeds from CBC Nova Scotia and Halifax Examiner (past 24 hours)
+- **HRM News** — Municipal announcements from Halifax Regional Municipality
+- **HRFE Incidents** — Halifax Regional Fire & Emergency live incident feed (past 6 hours)
+- **Transit Disruptions** — Active Halifax Transit detours and service alerts
+- **Events Calendar** — Upcoming civic events from HRM Events Calendar
+- **Weather** — Current conditions and 5-day forecast for Halifax, NS
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Reddit integration (pending API approval)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This app has applied for Reddit Data API access to display posts from r/halifax alongside the above civic data. The integration will:
 
-## Learn More
+- Fetch the top hot posts from r/halifax once every 15 minutes
+- Display post title, flair, upvote count, comment count, and link back to Reddit
+- Use Application-Only OAuth (client_credentials) — no user accounts accessed
+- Make approximately 96 GET requests per day
+- Cache results server-side for 15 minutes — no persistent storage of Reddit data
 
-To learn more about Next.js, take a look at the following resources:
+The goal is to surface community discussion alongside official civic information, driving traffic back to r/halifax for Halifax residents who may not regularly browse Reddit.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Data sources
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Source | Type | Refresh |
+|--------|------|---------|
+| CBC Nova Scotia RSS | Public RSS | On demand |
+| Halifax Examiner RSS | Public RSS | On demand |
+| HRM News | Public RSS | On demand |
+| HRFE Incident Feed | Public HTML scrape | On demand |
+| Halifax Transit Disruptions | Public HTML scrape | On demand |
+| HRM Events Calendar | Google Calendar embed | On demand |
+| Open-Meteo | Public weather API | On demand |
 
-## Deploy on Vercel
+## Tech stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Next.js 15 (App Router)
+- TypeScript
+- Deployed on Vercel
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Non-commercial
+
+This project is non-commercial, open-source, and serves Halifax residents only. No user data is collected. No Reddit data is stored beyond a 15-minute server cache.
