@@ -1,7 +1,7 @@
 # Halifax Civic Dashboard
 
 A read-only public dashboard for Halifax, Nova Scotia residents.  
-Live at: [https://global-news-mvp.vercel.app](https://halifax-civic-dashboard.vercel.app/)
+Live at: https://halifax-civic-dashboard.vercel.app/
 
 ## What it does
 
