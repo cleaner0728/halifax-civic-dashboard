@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -9,9 +10,11 @@ interface BeforeInstallPromptEvent extends Event {
 
 export default function InstallButton() {
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const [env, setEnv] = useState({ installed: false, isIOS: false });
   const [canPrompt, setCanPrompt] = useState(false);
-  const [showIOSHelp, setShowIOSHelp] = useState(false);
+  // Anchor coords for the iOS popover, or null when closed.
+  const [iosHelp, setIosHelp] = useState<{ top: number; right: number } | null>(null);
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
@@ -69,12 +72,24 @@ export default function InstallButton() {
       }
       return;
     }
-    if (env.isIOS) setShowIOSHelp((v) => !v);
+    if (!env.isIOS) return;
+    if (iosHelp) {
+      setIosHelp(null);
+      return;
+    }
+    const rect = buttonRef.current?.getBoundingClientRect();
+    if (rect) {
+      setIosHelp({
+        top: rect.bottom + 8,
+        right: Math.max(8, window.innerWidth - rect.right),
+      });
+    }
   };
 
   return (
-    <div className="relative">
+    <>
       <button
+        ref={buttonRef}
         onClick={handleClick}
         className="relative w-12 h-12 rounded-full flex items-center justify-center
           bg-card border-2 border-border hover:border-foreground/30
@@ -97,43 +112,47 @@ export default function InstallButton() {
         </svg>
       </button>
 
-      {showIOSHelp && (
-        <>
-          <div
-            className="fixed inset-0 z-[70]"
-            onClick={() => setShowIOSHelp(false)}
-          />
-          <div
-            className="absolute right-0 top-full mt-2 z-[80] w-64 p-4 rounded-2xl
-              bg-card border-2 border-border shadow-lg text-sm text-foreground"
-          >
-            <p className="font-semibold mb-1">Install this app</p>
-            <p className="text-foreground/70 leading-snug">
-              Tap the{" "}
-              <span className="inline-flex items-center align-middle">
-                <svg
-                  className="w-4 h-4 inline text-blue-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 16V4m0 0L8 8m4-4l4 4M5 14v4a2 2 0 002 2h10a2 2 0 002-2v-4"
-                  />
-                </svg>
-              </span>{" "}
-              Share button in Safari, then choose{" "}
-              <span className="font-medium text-foreground">
-                &ldquo;Add to Home Screen&rdquo;
-              </span>
-              .
-            </p>
-          </div>
-        </>
-      )}
-    </div>
+      {iosHelp &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <>
+            <div
+              className="fixed inset-0 z-[90]"
+              onClick={() => setIosHelp(null)}
+            />
+            <div
+              className="fixed z-[100] w-64 p-4 rounded-2xl bg-card border-2 border-border
+                shadow-xl text-sm text-foreground"
+              style={{ top: iosHelp.top, right: iosHelp.right }}
+            >
+              <p className="font-semibold mb-1">Install this app</p>
+              <p className="text-foreground/70 leading-snug">
+                Tap the{" "}
+                <span className="inline-flex items-center align-middle">
+                  <svg
+                    className="w-4 h-4 inline text-blue-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 16V4m0 0L8 8m4-4l4 4M5 14v4a2 2 0 002 2h10a2 2 0 002-2v-4"
+                    />
+                  </svg>
+                </span>{" "}
+                Share button in Safari, then choose{" "}
+                <span className="font-medium text-foreground">
+                  &ldquo;Add to Home Screen&rdquo;
+                </span>
+                .
+              </p>
+            </div>
+          </>,
+          document.body
+        )}
+    </>
   );
 }
