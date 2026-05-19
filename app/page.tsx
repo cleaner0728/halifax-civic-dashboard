@@ -276,12 +276,11 @@ async function fetchNews(): Promise<{ items: NewsItem[] }> {
 
   const sources = [
     { url: 'https://www.cbc.ca/webfeed/rss/rss-canada-novascotia', name: 'CBC Nova Scotia' },
-    { url: 'https://www.cbc.ca/webfeed/rss/rss-sports', name: 'CBC Sports' },
     { url: 'https://halifaxexaminer.ca/feed/', name: 'Halifax Examiner' },
     { url: 'https://globalnews.ca/halifax/feed/', name: 'Global News Halifax' },
   ];
 
-  const cutoff = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+  const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
   const allItems: NewsItem[] = [];
   await Promise.allSettled(
@@ -511,7 +510,7 @@ export default async function Home() {
             )}
 
             {/* News Feed */}
-            <h2 className="text-lg font-bold mb-4">Latest News <span className="text-sm font-normal text-foreground/40">· past 3 days</span></h2>
+            <h2 className="text-lg font-bold mb-4">Latest News <span className="text-sm font-normal text-foreground/40">· past 24 hours</span></h2>
             <div className="space-y-5 pb-16">
               {news.items.length === 0 ? (
                 <div className="text-center py-16 text-foreground/40">
