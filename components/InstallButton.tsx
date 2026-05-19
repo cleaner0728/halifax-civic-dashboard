@@ -64,12 +64,12 @@ export default function InstallButton() {
 
   const handleClick = async () => {
     if (deferredPrompt.current) {
-      await deferredPrompt.current.prompt();
-      const { outcome } = await deferredPrompt.current.userChoice;
-      if (outcome === "accepted") {
-        deferredPrompt.current = null;
-        setCanPrompt(false);
-      }
+      const promptEvent = deferredPrompt.current;
+      // prompt() is single-use — discard the event and hide the button
+      // before awaiting so a second click can't call prompt() again.
+      deferredPrompt.current = null;
+      setCanPrompt(false);
+      await promptEvent.prompt();
       return;
     }
     if (!env.isIOS) return;
