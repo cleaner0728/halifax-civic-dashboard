@@ -542,6 +542,33 @@ export default async function Home() {
             {weather && currentWeather && (
               <section className={`rounded-2xl overflow-hidden shadow-xl mb-6 ${currentWeather.theme.container} ${currentWeather.theme.textPrimary}`}>
                 <div className="px-6 pt-6 pb-4">
+                  {/* Tide Graph — above temperature */}
+                  {tideGraph && (
+                    <div className="mb-4">
+                      <div className={`flex flex-wrap gap-x-5 gap-y-1 text-sm mb-2 ${currentWeather.theme.textSecondary}`}>
+                        <span>🌊 <span className="font-semibold">{tideGraph.currentLevel.toFixed(2)} m</span></span>
+                        {tideGraph.nextHigh && (
+                          <span>↑ High <span className="font-semibold">{tideGraph.nextHigh.value.toFixed(2)} m</span> · {new Date(tideGraph.nextHigh.time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: HFX_TZ })}</span>
+                        )}
+                        {tideGraph.nextLow && (
+                          <span>↓ Low <span className="font-semibold">{tideGraph.nextLow.value.toFixed(2)} m</span> · {new Date(tideGraph.nextLow.time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: HFX_TZ })}</span>
+                        )}
+                      </div>
+                      <div className="rounded-md overflow-hidden" style={{ height: 52 }}>
+                        <svg viewBox="0 0 800 72" width="100%" height="100%" preserveAspectRatio="none">
+                          <polygon points={tideGraph.fillPoints} fill="rgba(255,255,255,0.15)" />
+                          <polyline points={tideGraph.linePoints} fill="none" stroke="rgba(255,255,255,0.75)" strokeWidth="7.5" strokeLinejoin="round" strokeLinecap="round" />
+                          <line x1={tideGraph.nowX} y1="0" x2={tideGraph.nowX} y2="72" stroke="rgba(255,255,255,0.9)" strokeWidth="2" strokeDasharray="4,3" />
+                          {tideGraph.nextHigh && (
+                            <circle cx={tideGraph.nextHighX} cy={tideGraph.nextHighY} r="6" fill="white" fillOpacity="0.9" />
+                          )}
+                          {tideGraph.nextLow && (
+                            <circle cx={tideGraph.nextLowX} cy={tideGraph.nextLowY} r="6" fill="white" fillOpacity="0.9" />
+                          )}
+                        </svg>
+                      </div>
+                    </div>
+                  )}
                   <div className="flex items-center justify-between">
                     <div>
                       <div className={`flex items-center gap-2 text-sm font-medium uppercase tracking-widest ${currentWeather.theme.textSecondary}`}>
@@ -573,33 +600,6 @@ export default async function Home() {
                       </>
                     )}
                   </div>
-                  {/* Tide Graph */}
-                  {tideGraph && (
-                    <div className="mt-4">
-                      <div className={`flex flex-wrap gap-x-5 gap-y-1 text-sm mb-2 ${currentWeather.theme.textSecondary}`}>
-                        <span>🌊 <span className="font-semibold">{tideGraph.currentLevel.toFixed(2)} m</span></span>
-                        {tideGraph.nextHigh && (
-                          <span>↑ High <span className="font-semibold">{tideGraph.nextHigh.value.toFixed(2)} m</span> · {new Date(tideGraph.nextHigh.time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: HFX_TZ })}</span>
-                        )}
-                        {tideGraph.nextLow && (
-                          <span>↓ Low <span className="font-semibold">{tideGraph.nextLow.value.toFixed(2)} m</span> · {new Date(tideGraph.nextLow.time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: HFX_TZ })}</span>
-                        )}
-                      </div>
-                      <div className="rounded-md overflow-hidden" style={{ height: 52 }}>
-                        <svg viewBox="0 0 800 72" width="100%" height="100%" preserveAspectRatio="none">
-                          <polygon points={tideGraph.fillPoints} fill="rgba(255,255,255,0.15)" />
-                          <polyline points={tideGraph.linePoints} fill="none" stroke="rgba(255,255,255,0.75)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-                          <line x1={tideGraph.nowX} y1="0" x2={tideGraph.nowX} y2="72" stroke="rgba(255,255,255,0.9)" strokeWidth="2" strokeDasharray="4,3" />
-                          {tideGraph.nextHigh && (
-                            <circle cx={tideGraph.nextHighX} cy={tideGraph.nextHighY} r="4" fill="white" fillOpacity="0.9" />
-                          )}
-                          {tideGraph.nextLow && (
-                            <circle cx={tideGraph.nextLowX} cy={tideGraph.nextLowY} r="4" fill="white" fillOpacity="0.9" />
-                          )}
-                        </svg>
-                      </div>
-                    </div>
-                  )}
                 </div>
                 <div className={`${currentWeather.theme.bottomBar} px-6 py-4`}>
                   <div className="grid grid-cols-5 gap-1">
