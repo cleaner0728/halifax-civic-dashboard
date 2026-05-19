@@ -447,11 +447,14 @@ async function fetchTides(): Promise<TidePoint[]> {
     const now = new Date();
     const from = new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString().slice(0, 19) + 'Z';
     const to = new Date(now.getTime() + 21 * 60 * 60 * 1000).toISOString().slice(0, 19) + 'Z';
-    const url = `https://api.iwls.dfo-mpo.gc.ca/api/v1/stations/5cebf1e23d0f4a073c4bb8ab/data?time-series-code=wlp&from=${from}&to=${to}`;
+    const url = `https://api-iwls.dfo-mpo.gc.ca/api/v1/stations/5cebf1df3d0f4a073c4bbcbb/data?time-series-code=wlp&from=${from}&to=${to}`;
     const res = await fetch(url, { next: { revalidate: 900 } });
     if (!res.ok) return [];
     const data = await res.json() as Array<{ eventDate: string; value: number }>;
-    return data.map(d => ({ time: d.eventDate, value: d.value }));
+    // API returns 1-minute resolution; downsample to ~10-minute steps to keep the SVG light.
+    return data
+      .filter((_, i) => i % 10 === 0)
+      .map(d => ({ time: d.eventDate, value: d.value }));
   } catch {
     return [];
   }
