@@ -6,17 +6,18 @@
 import type { AirQuality } from '@/lib/fetchers/air-quality';
 import type { BurnStatus } from '@/lib/fetchers/burn-status';
 
-type Bucket = { label: string; bg: string; text: string };
+type Bucket = { label: string; text: string };
 
-// Solid colors with explicit text contrast — works on any weather banner.
-// Amber gets dark text because the swatch is too light for white.
+// Text-only severity colors — no background. Light tints so they're legible
+// on dark banners (clearNight / cloudyNight / rain) while still visible on
+// the lighter day gradients.
 const SEVERITY = {
-  low: { bg: 'bg-emerald-600', text: 'text-white' },
-  moderate: { bg: 'bg-amber-400', text: 'text-amber-950' },
-  high: { bg: 'bg-orange-500', text: 'text-white' },
-  veryHigh: { bg: 'bg-red-600', text: 'text-white' },
-  extreme: { bg: 'bg-fuchsia-600', text: 'text-white' },
-  hazardous: { bg: 'bg-rose-800', text: 'text-white' },
+  low: { text: 'text-emerald-200' },
+  moderate: { text: 'text-amber-200' },
+  high: { text: 'text-orange-200' },
+  veryHigh: { text: 'text-red-200' },
+  extreme: { text: 'text-fuchsia-200' },
+  hazardous: { text: 'text-rose-200' },
 } as const;
 
 // WHO UV scale: 0-2 low, 3-5 moderate, 6-7 high, 8-10 very high, 11+ extreme.
@@ -65,14 +66,13 @@ export default function WeatherPills({ uvIndex, uvIndexMaxToday, airQuality, bur
 
   // Mobile: predictable 2-col grid (UV + AQI side-by-side, burn full-width below).
   // Desktop: flex-wrap so all three sit inline.
-  const pillClass =
-    'place-self-start inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold shadow-sm';
+  const itemClass = 'place-self-start inline-flex items-center gap-1 text-xs sm:text-sm font-semibold';
 
   return (
-    <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 px-4 sm:px-6 py-3">
+    <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-x-4 gap-y-1 px-4 sm:px-6 py-3">
       {uv && uvIndex !== null && (
         <span
-          className={`${pillClass} ${uv.bg} ${uv.text}`}
+          className={`${itemClass} ${uv.text}`}
           title={
             uvIndexMaxToday !== null && uvIndexMaxToday > uvIndex
               ? `Peak today ${uvIndexMaxToday.toFixed(0)}`
@@ -83,13 +83,13 @@ export default function WeatherPills({ uvIndex, uvIndexMaxToday, airQuality, bur
         </span>
       )}
       {aqi && airQuality && (
-        <span className={`${pillClass} ${aqi.bg} ${aqi.text}`} title={`PM2.5 ${airQuality.pm25} µg/m³`}>
+        <span className={`${itemClass} ${aqi.text}`} title={`PM2.5 ${airQuality.pm25} µg/m³`}>
           🌫️ AQI {airQuality.aqi} · {aqi.label}
         </span>
       )}
       {burn && burnStatus && (
         <span
-          className={`${pillClass} col-span-2 sm:col-auto ${burn.bg} ${burn.text}`}
+          className={`${itemClass} col-span-2 sm:col-auto ${burn.text}`}
           title={burnStatus.text}
         >
           🔥 {burn.label}
