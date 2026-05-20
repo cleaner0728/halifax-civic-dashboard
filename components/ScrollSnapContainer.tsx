@@ -51,22 +51,34 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     const container = containerRef.current;
     if (!container) return;
 
+    // Hide once we've scrolled this far past the top.
+    const HIDE_AFTER = 60;
+    // Require a deliberate upward swipe to bring the header back — filters
+    // out 1-px jitter from scroll-snap and iOS rubber-band at the bottom.
+    const SHOW_DELTA = 8;
+    // When the content is within this many pixels of the bottom, ignore
+    // upward deltas entirely (rubber-band bounce reads as upward scroll).
+    const BOTTOM_GUARD = 24;
+
     let lastScrollY = 0;
     const handleScroll = (e: Event) => {
       const target = e.target as HTMLElement;
-      // Track scroll on the inner content containers
       // Each screen's outer wrapper carries `data-screen-scroll`; only those
-      // contribute to the header hide/show heuristic. Matching by className was
-      // fragile — anything tagged `overflow-y-auto` would trigger.
-      if (target.hasAttribute('data-screen-scroll') && target !== container) {
-        const currentScrollY = target.scrollTop;
-        if (currentScrollY > lastScrollY && currentScrollY > 60) {
-          setIsHeaderHidden(true); // Scrolling down -> hide header
-        } else if (currentScrollY < lastScrollY) {
-          setIsHeaderHidden(false); // Scrolling up -> show header
-        }
-        lastScrollY = currentScrollY <= 0 ? 0 : currentScrollY;
+      // contribute to the header hide/show heuristic. Matching by className
+      // was fragile — anything tagged `overflow-y-auto` would trigger.
+      if (!target.hasAttribute('data-screen-scroll') || target === container) return;
+
+      const currentScrollY = target.scrollTop;
+      const delta = currentScrollY - lastScrollY;
+      const maxScroll = target.scrollHeight - target.clientHeight;
+      const nearBottom = currentScrollY >= maxScroll - BOTTOM_GUARD;
+
+      if (delta > 0 && currentScrollY > HIDE_AFTER) {
+        setIsHeaderHidden(true); // Scrolling down -> hide header
+      } else if (delta < -SHOW_DELTA && !nearBottom) {
+        setIsHeaderHidden(false); // Deliberate upward swipe -> show header
       }
+      lastScrollY = currentScrollY <= 0 ? 0 : currentScrollY;
     };
 
     container.addEventListener("scroll", handleScroll, { capture: true, passive: true });
