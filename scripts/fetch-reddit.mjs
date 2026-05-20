@@ -7,7 +7,9 @@ import { writeFile, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const SUB = 'halifax';
-const LIMIT = 10;
+const KEEP = 10;            // posts to display
+const FETCH = 30;           // over-fetch so we can drop stickied/old before slicing
+const STICKY_AGE_DAYS = 5;  // a post older than this is almost certainly a pinned megathread
 const OUT_PATH = resolve('public/reddit.json');
 
 const UAS = [
@@ -43,17 +45,18 @@ function parseJson(body) {
   if (!body.trimStart().startsWith('{')) return null;
   const data = JSON.parse(body);
   if (!data?.data?.children) return null;
+  // JSON path has the authoritative `stickied` flag — use it before falling back to heuristics.
   return data.data.children
     .map((c) => c.data)
-    .slice(0, LIMIT)
+    .filter((p) => !p.stickied)
     .map((p) => ({
-      title: decodeEntities(p.title),
-      score: p.score,
-      numComments: p.num_comments,
-      author: p.author,
-      url: `https://www.reddit.com${p.permalink}`,
+      title: decodeEntities(p.title ?? ''),
+      score: p.score ?? 0,
+      numComments: p.num_comments ?? 0,
+      author: p.author ?? 'unknown',
+      url: `https://www.reddit.com${p.permalink ?? ''}`,
       flair: p.link_flair_text ? decodeEntities(p.link_flair_text) : null,
-      createdUtc: p.created_utc,
+      createdUtc: p.created_utc ?? 0,
     }));
 }
 
@@ -63,15 +66,15 @@ function parseOldRedditHtml(html) {
   if (!things) return null;
   const posts = [];
   for (const thing of things) {
-    if (posts.length >= LIMIT) break;
     const attr = (name) => {
       const m = thing.match(new RegExp(`\\bdata-${name}="([^"]*)"`));
       return m ? m[1] : '';
     };
     if (attr('promoted') === 'true') continue;
+    // old.reddit marks stickied posts with `stickied` class on the wrapper div
+    if (/\bstickied\b/.test(thing)) continue;
     const permalink = attr('permalink');
     if (!permalink) continue;
-    // Find title text — locate this thing's full block in the HTML then extract <a class="title">
     const idMatch = thing.match(/id="(thing_t3_[^"]+)"/);
     if (!idMatch) continue;
     const blockStart = html.indexOf(idMatch[0]);
@@ -94,12 +97,13 @@ function parseOldRedditHtml(html) {
 
 function parseRss(xml) {
   if (!xml.includes('<entry>') && !xml.includes('<item>')) return null;
-  // Reddit RSS uses Atom <entry> not RSS <item>
+  // Reddit RSS uses Atom <entry> not RSS <item>; no `stickied` field, so we
+  // filter by age in dropStickied() — pinned megathreads are typically weeks old.
   const isAtom = xml.includes('<entry>');
   const blockRegex = isAtom ? /<entry>([\s\S]*?)<\/entry>/g : /<item>([\s\S]*?)<\/item>/g;
   const posts = [];
   let m;
-  while ((m = blockRegex.exec(xml)) !== null && posts.length < LIMIT) {
+  while ((m = blockRegex.exec(xml)) !== null) {
     const block = m[1];
     const get = (tag) => {
       const r = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`);
@@ -120,15 +124,26 @@ function parseRss(xml) {
   return posts.length > 0 ? posts : null;
 }
 
+// Drop posts that look like pinned megathreads. JSON path already filters by the
+// authoritative `stickied` flag in parseJson; this catches stragglers from RSS/HTML.
+function dropStickied(posts) {
+  const ageCutoff = Math.floor(Date.now() / 1000) - STICKY_AGE_DAYS * 86400;
+  return posts.filter((p) => {
+    if (p.author === 'AutoModerator') return false;
+    if (p.createdUtc && p.createdUtc < ageCutoff) return false;
+    return true;
+  });
+}
+
 const STRATEGIES = [
-  { name: 'www json (chrome)', url: `https://www.reddit.com/r/${SUB}/hot.json?limit=${LIMIT}&raw_json=1`, ua: UAS[0], accept: 'application/json', parse: parseJson },
-  { name: 'www json (safari)', url: `https://www.reddit.com/r/${SUB}/hot.json?limit=${LIMIT}&raw_json=1`, ua: UAS[1], accept: 'application/json', parse: parseJson },
-  { name: 'old json (chrome)', url: `https://old.reddit.com/r/${SUB}/hot.json?limit=${LIMIT}&raw_json=1`, ua: UAS[0], accept: 'application/json', parse: parseJson },
+  { name: 'www json (chrome)', url: `https://www.reddit.com/r/${SUB}/hot.json?limit=${FETCH}&raw_json=1`, ua: UAS[0], accept: 'application/json', parse: parseJson },
+  { name: 'www json (safari)', url: `https://www.reddit.com/r/${SUB}/hot.json?limit=${FETCH}&raw_json=1`, ua: UAS[1], accept: 'application/json', parse: parseJson },
+  { name: 'old json (chrome)', url: `https://old.reddit.com/r/${SUB}/hot.json?limit=${FETCH}&raw_json=1`, ua: UAS[0], accept: 'application/json', parse: parseJson },
   { name: 'old html (chrome)', url: `https://old.reddit.com/r/${SUB}/`, ua: UAS[0], accept: 'text/html', parse: parseOldRedditHtml },
   { name: 'old html (safari)', url: `https://old.reddit.com/r/${SUB}/`, ua: UAS[1], accept: 'text/html', parse: parseOldRedditHtml },
-  { name: 'www rss (chrome)', url: `https://www.reddit.com/r/${SUB}/hot.rss?limit=${LIMIT}`, ua: UAS[0], accept: 'application/rss+xml, application/xml', parse: parseRss },
-  { name: 'old rss (chrome)', url: `https://old.reddit.com/r/${SUB}/hot.rss?limit=${LIMIT}`, ua: UAS[0], accept: 'application/rss+xml, application/xml', parse: parseRss },
-  { name: 'www rss (curl)', url: `https://www.reddit.com/r/${SUB}/hot.rss?limit=${LIMIT}`, ua: UAS[2], accept: '*/*', parse: parseRss },
+  { name: 'www rss (chrome)', url: `https://www.reddit.com/r/${SUB}/hot.rss?limit=${FETCH}`, ua: UAS[0], accept: 'application/rss+xml, application/xml', parse: parseRss },
+  { name: 'old rss (chrome)', url: `https://old.reddit.com/r/${SUB}/hot.rss?limit=${FETCH}`, ua: UAS[0], accept: 'application/rss+xml, application/xml', parse: parseRss },
+  { name: 'www rss (curl)', url: `https://www.reddit.com/r/${SUB}/hot.rss?limit=${FETCH}`, ua: UAS[2], accept: '*/*', parse: parseRss },
 ];
 
 async function main() {
@@ -149,8 +164,9 @@ async function main() {
       console.log(`✗ ${strat.name}: parsed 0 posts (likely blocked HTML page returned with 200)`);
       continue;
     }
-    console.log(`✓ ${strat.name}: ${posts.length} posts`);
-    await writeOutput(posts);
+    const filtered = dropStickied(posts).slice(0, KEEP);
+    console.log(`✓ ${strat.name}: ${posts.length} raw → ${filtered.length} after stickied filter`);
+    await writeOutput(filtered);
     return;
   }
   console.error('All strategies failed');
