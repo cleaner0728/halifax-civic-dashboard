@@ -10,7 +10,7 @@ import RedditScreen from '@/components/screens/RedditScreen';
 import { fetchWeather } from '@/lib/fetchers/weather';
 import { fetchNews } from '@/lib/fetchers/news';
 import { fetchHrmNews, fetchHrfeIncidents } from '@/lib/fetchers/hrm';
-import { fetchTransitRss, fetchTransitDetours } from '@/lib/fetchers/transit';
+import { fetchTransitRss, fetchTransitDetours, fetchFerryAlerts } from '@/lib/fetchers/transit';
 import { fetchTides, computeTideGraph } from '@/lib/fetchers/tides';
 import { fetchRedditPosts } from '@/lib/fetchers/reddit';
 import { safe } from '@/lib/safe';
@@ -27,13 +27,14 @@ const TAB_LABELS = [
 export default async function Home() {
   // Each fetcher already returns an "empty" sentinel on failure; safe() catches
   // anything that still escapes so one bad source can't 500 the whole dashboard.
-  const [weather, news, hrmResult, hrfeIncidents, transitDetours, transitHasRecent, tides, redditData] =
+  const [weather, news, hrmResult, hrfeIncidents, transitDetours, ferryAlerts, transitHasRecent, tides, redditData] =
     await Promise.all([
       safe(fetchWeather(), null, 'weather'),
       safe(fetchNews(), { items: [] }, 'news'),
       safe(fetchHrmNews(), { items: [], dateLabel: 'Error loading' }, 'hrm-news'),
       safe(fetchHrfeIncidents(), [], 'hrfe'),
       safe(fetchTransitDetours(), [], 'transit-detours'),
+      safe(fetchFerryAlerts(), [], 'ferry-alerts'),
       safe(fetchTransitRss(), false, 'transit-rss'),
       safe(fetchTides(), [], 'tides'),
       safe(fetchRedditPosts(), { posts: [], fetchedAt: null }, 'reddit'),
@@ -58,7 +59,7 @@ export default async function Home() {
         <NewsAndWeatherScreen weather={weather} news={news} tideGraph={tideGraph} />
         <HrmNewsScreen items={hrmResult.items} dateLabel={hrmResult.dateLabel} />
         <HrfeIncidentsScreen incidents={hrfeIncidents} />
-        <TransitDisruptionScreen detours={transitDetours} hasRecent={transitHasRecent} />
+        <TransitDisruptionScreen detours={transitDetours} ferryAlerts={ferryAlerts} hasRecent={transitHasRecent} />
         <EventsCalendarScreen />
         <RedditScreen posts={redditData.posts} fetchedAt={redditData.fetchedAt} />
       </ScrollSnapContainer>

@@ -1,11 +1,12 @@
-import type { TransitDetour } from '@/lib/fetchers/transit';
+import type { TransitDetour, FerryAlert } from '@/lib/fetchers/transit';
 
 type Props = {
   detours: TransitDetour[];
+  ferryAlerts: FerryAlert[];
   hasRecent: boolean;
 };
 
-export default function TransitDisruptionScreen({ detours, hasRecent }: Props) {
+export default function TransitDisruptionScreen({ detours, ferryAlerts, hasRecent }: Props) {
   return (
     <div data-screen-scroll className="pt-[140px] pb-8 h-screen overflow-y-auto bg-gradient-to-b from-background to-background">
       <div className="max-w-5xl mx-auto px-2 mt-4">
@@ -15,12 +16,44 @@ export default function TransitDisruptionScreen({ detours, hasRecent }: Props) {
               <p className="text-sm font-medium text-white/70 uppercase tracking-widest">Halifax Transit</p>
               <h2 className="text-3xl font-bold tracking-tight mt-1">Transit Disruption</h2>
               <p className="text-base text-white/70 mt-1">
-                Active detours · {detours.length} disruption{detours.length !== 1 ? 's' : ''}
+                {detours.length} detour{detours.length !== 1 ? 's' : ''}
+                {ferryAlerts.length > 0 && ` · ${ferryAlerts.length} ferry alert${ferryAlerts.length !== 1 ? 's' : ''}`}
               </p>
             </div>
             <div className="text-5xl">🚌</div>
           </div>
         </div>
+
+        {ferryAlerts.length > 0 && (
+          <div className="space-y-3 mb-6">
+            {ferryAlerts.map((alert, i) => (
+              <article
+                key={i}
+                className="bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-all overflow-hidden"
+              >
+                <div className="px-4 py-3 bg-sky-500/10 border-b border-sky-500/20 flex items-center gap-2">
+                  <span className="text-xl">⛴️</span>
+                  <h3 className="font-bold text-foreground leading-snug">{alert.title}</h3>
+                </div>
+                <div className="p-4 space-y-3">
+                  {alert.body && (
+                    <p className="text-sm text-foreground/70 leading-relaxed whitespace-pre-line">{alert.body}</p>
+                  )}
+                  {alert.moreDetailsUrl && (
+                    <a
+                      href={alert.moreDetailsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block text-sm text-sky-600 dark:text-sky-400 hover:underline"
+                    >
+                      → More details on halifax.ca
+                    </a>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
 
         <div className="space-y-4 pb-16">
           {detours.length === 0 ? (

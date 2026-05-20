@@ -16,6 +16,14 @@ export type TransitDetour = {
   summary?: string;
 };
 
+export type FerryAlert = {
+  title: string;
+  body: string;            // plain-text summary, paragraphs joined with blank lines
+  moreDetailsUrl?: string; // halifax.ca news link if the alert provides one
+};
+
+const DISRUPTIONS_URL = 'https://www.halifax.ca/transportation/halifax-transit/service-disruptions';
+
 function extractStrongField(html: string, labelPattern: string): string {
   const regex = new RegExp(`<strong>\\s*${labelPattern}\\s*<\\/strong>([^<]*)`, 'i');
   const m = html.match(regex);
@@ -51,42 +59,95 @@ export async function fetchTransitRss(): Promise<boolean> {
   }
 }
 
-export async function fetchTransitDetours(): Promise<TransitDetour[]> {
+// Both Detours and Ferry alerts live on the same page — fetching once and
+// slicing into sections keeps us at one network call per build.
+async function fetchDisruptionsHtml(): Promise<string | null> {
   try {
-    const res = await fetch(
-      'https://www.halifax.ca/transportation/halifax-transit/service-disruptions',
-      { next: { revalidate: 900 } },
-    );
-    if (!res.ok) return [];
-    const html = await res.text();
-
-    const detourStart = html.indexOf('<h2>Detours</h2>');
-    if (detourStart === -1) return [];
-    const stopStart = html.indexOf('<h2>Stop Closures</h2>');
-    const section = stopStart !== -1 ? html.slice(detourStart, stopStart) : html.slice(detourStart);
-
-    const root = parseHtml(section);
-    const results: TransitDetour[] = [];
-    for (const accordion of root.querySelectorAll('.paragraph--type--accordion')) {
-      const contentDiv = accordion.querySelector('.u-text-lighter');
-      if (!contentDiv) continue;
-      const inner = contentDiv.innerHTML;
-      const title = contentDiv.querySelector('h3')?.text.trim() ?? '';
-      if (!title) continue;
-      results.push({
-        title,
-        routes: extractStrongField(inner, 'Route(?:\\(s\\)|s)?:'),
-        date: extractStrongField(inner, 'Date:') || undefined,
-        startDate: extractStrongField(inner, 'Start Date:') || undefined,
-        endDate: extractStrongField(inner, 'End Date:') || undefined,
-        time: extractStrongField(inner, 'Time:') || undefined,
-        location: extractStrongField(inner, 'Location:') || undefined,
-        summary: extractDetourSummary(inner) || undefined,
-      });
-    }
-    return results;
+    const res = await fetch(DISRUPTIONS_URL, { next: { revalidate: 900 } });
+    if (!res.ok) return null;
+    return await res.text();
   } catch (e) {
-    console.error('Failed to fetch transit disruptions:', e);
-    return [];
+    console.error('Failed to fetch transit disruptions page:', e);
+    return null;
   }
+}
+
+export async function fetchTransitDetours(): Promise<TransitDetour[]> {
+  const html = await fetchDisruptionsHtml();
+  if (!html) return [];
+
+  const detourStart = html.indexOf('<h2>Detours</h2>');
+  if (detourStart === -1) return [];
+  const stopStart = html.indexOf('<h2>Stop Closures</h2>');
+  const section = stopStart !== -1 ? html.slice(detourStart, stopStart) : html.slice(detourStart);
+
+  const root = parseHtml(section);
+  const results: TransitDetour[] = [];
+  for (const accordion of root.querySelectorAll('.paragraph--type--accordion')) {
+    const contentDiv = accordion.querySelector('.u-text-lighter');
+    if (!contentDiv) continue;
+    const inner = contentDiv.innerHTML;
+    const title = contentDiv.querySelector('h3')?.text.trim() ?? '';
+    if (!title) continue;
+    results.push({
+      title,
+      routes: extractStrongField(inner, 'Route(?:\\(s\\)|s)?:'),
+      date: extractStrongField(inner, 'Date:') || undefined,
+      startDate: extractStrongField(inner, 'Start Date:') || undefined,
+      endDate: extractStrongField(inner, 'End Date:') || undefined,
+      time: extractStrongField(inner, 'Time:') || undefined,
+      location: extractStrongField(inner, 'Location:') || undefined,
+      summary: extractDetourSummary(inner) || undefined,
+    });
+  }
+  return results;
+}
+
+export async function fetchFerryAlerts(): Promise<FerryAlert[]> {
+  const html = await fetchDisruptionsHtml();
+  if (!html) return [];
+
+  const ferryStart = html.indexOf('<h2>Ferry</h2>');
+  if (ferryStart === -1) return [];
+  const detourStart = html.indexOf('<h2>Detours</h2>', ferryStart);
+  const section = detourStart !== -1 ? html.slice(ferryStart, detourStart) : html.slice(ferryStart);
+
+  const root = parseHtml(section);
+  const results: FerryAlert[] = [];
+  for (const accordion of root.querySelectorAll('.paragraph--type--accordion')) {
+    // Title sits in the accordion button, body in .u-text-lighter
+    const title = accordion.querySelector('.field--name-field-title')?.text.trim() ?? '';
+    if (!title) continue;
+
+    const contentDiv = accordion.querySelector('.u-text-lighter');
+    if (!contentDiv) {
+      results.push({ title, body: '' });
+      continue;
+    }
+
+    // The "More details" link is duplicated across multiple <a> tags due to
+    // halifax.ca's broken editor — collapse to the first valid news URL.
+    let moreDetailsUrl: string | undefined;
+    for (const a of contentDiv.querySelectorAll('a[href]')) {
+      const href = a.getAttribute('href') ?? '';
+      if (href.startsWith('/home/news/')) {
+        moreDetailsUrl = `https://www.halifax.ca${href}`;
+        break;
+      }
+      if (href.startsWith('https://www.halifax.ca/home/news/')) {
+        moreDetailsUrl = href;
+        break;
+      }
+    }
+
+    // Strip tags, collapse the "More details: [link text]" trailer.
+    const body = contentDiv
+      .text
+      .replace(/\s+/g, ' ')
+      .replace(/More details:.*$/i, '')
+      .trim();
+
+    results.push({ title, body, moreDetailsUrl });
+  }
+  return results;
 }
