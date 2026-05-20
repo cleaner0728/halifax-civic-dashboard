@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(curl -s -o /dev/null -w \"/: HTTP %{http_code} \\(%{time_total}s\\)\\\\n\" http://localhost:3000/)",
+      "Bash(curl -s http://localhost:3000/)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} \\(%{time_total}s\\)\\\\n\" http://localhost:3000/)",
+      "Bash(curl -s -A \"web:halifax-civic-dashboard:1.0.0 \\(by /u/cleaner0728\\)\" -o /dev/null -w \"JSON old.reddit: %{http_code}\\\\n\" \"https://old.reddit.com/r/halifax/hot.json?limit=10&raw_json=1\")",
+      "Bash(curl -s -A \"web:halifax-civic-dashboard:1.0.0 \\(by /u/cleaner0728\\)\" -o /dev/null -w \"RSS: %{http_code}\\\\n\" \"https://www.reddit.com/r/halifax/hot.rss?limit=10\")",
+      "Bash(curl -s -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0 Safari/537.36\" \"https://old.reddit.com/r/halifax/\" -o /tmp/rh.html -w \"HTTP %{http_code}, size %{size_download}\\\\n\")",
+      "Read(//tmp/**)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(curl -sI -H \"Origin: https://example.com\" \"https://www.reddit.com/r/halifax/hot.json?limit=10\")",
+      "Bash(curl -sI -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" -H \"Origin: https://example.com\" \"https://www.reddit.com/r/halifax/hot.json?limit=10\")",
+      "Bash(curl -s -o /tmp/jina.txt -w \"HTTP %{http_code}, size %{size_download}\\\\n\" \"https://r.jina.ai/https://old.reddit.com/r/halifax/\")",
+      "Bash(curl -s -o /dev/null -w 'HTTP %{http_code}\\\\n' --max-time 6 https://__TRACKED_VAR__/r/halifax.json?limit=10)",
+      "Bash(curl -sL -o /tmp/safe.html -w \"HTTP %{http_code}, size %{size_download}\\\\n\" \"https://safereddit.com/r/halifax\")",
+      "Bash(curl -sIL --max-time 6 \"https://safereddit.com/r/halifax\")",
+      "Bash(curl -s -o /tmp/ao.txt -w \"HTTP %{http_code} size=%{size_download}\\\\n\" --max-time 10 \"https://api.allorigins.win/raw?url=https%3A%2F%2Fwww.reddit.com%2Fr%2Fhalifax%2Fhot.json%3Flimit%3D10\")",
+      "Bash(curl -s -o /tmp/cp.txt -w \"HTTP %{http_code} size=%{size_download}\\\\n\" --max-time 10 \"https://corsproxy.io/?url=https%3A%2F%2Fwww.reddit.com%2Fr%2Fhalifax%2Fhot.json%3Flimit%3D10\")",
+      "Bash(curl -s -H \"Origin: https://example.com\" -o /tmp/cp2.txt -w \"HTTP %{http_code} size=%{size_download}\\\\n\" --max-time 10 \"https://corsproxy.io/?url=https%3A%2F%2Fwww.reddit.com%2Fr%2Fhalifax%2Fhot.json%3Flimit%3D10\")",
+      "Bash(curl -s -o /tmp/ao2.txt -w \"HTTP %{http_code} size=%{size_download}\\\\n\" --max-time 15 \"https://api.allorigins.win/raw?url=https%3A%2F%2Fold.reddit.com%2Fr%2Fhalifax%2F\")",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:3000/)"
+    ]
+  }
+}

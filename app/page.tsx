@@ -37,7 +37,7 @@ type RedditPost = {
   numComments: number;
   author: string;
   url: string;
-  flair?: string;
+  flair?: string | null;
   createdUtc: number;
 };
 
@@ -524,96 +524,26 @@ function timeAgo(utcSeconds: number): string {
   return `${Math.floor(diff / 86400)}d ago`;
 }
 
-// Browser-like UA — Reddit's JSON/RSS endpoints block "bot-like" UAs, but the public
-// HTML pages on old.reddit.com are reachable as long as we look like a normal browser.
-const BROWSER_UA =
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
-
-function decodeEntities(s: string): string {
-  return s
-    .replace(/&amp;/g, '&')
-    .replace(/&#39;/g, "'")
-    .replace(/&quot;/g, '"')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&#32;/g, ' ')
-    .replace(/&nbsp;/g, ' ');
-}
-
-async function fetchRedditViaHtml(): Promise<RedditPost[]> {
-  // Scrape old.reddit.com — markup is stable and every post is a <div class="thing">
-  // with score/author/comments/timestamp/permalink in data- attributes.
-  const res = await fetch('https://old.reddit.com/r/halifax/', {
-    headers: {
-      'User-Agent': BROWSER_UA,
-      'Accept': 'text/html,application/xhtml+xml',
-      'Accept-Language': 'en-CA,en;q=0.9',
-    },
-    next: { revalidate: 900 },
-  });
-  if (!res.ok) {
-    console.warn(`[Reddit] HTML scrape returned ${res.status}`);
-    return [];
-  }
-  const html = await res.text();
-  const root = parseHtml(html);
-  const things = root.querySelectorAll('div.thing[data-fullname^="t3_"]');
-  const posts: RedditPost[] = [];
-  for (const thing of things) {
-    if (thing.getAttribute('data-promoted') === 'true') continue;
-    const permalink = thing.getAttribute('data-permalink');
-    if (!permalink) continue;
-    const titleEl = thing.querySelector('a.title');
-    const flairEl = thing.querySelector('span.linkflairlabel');
-    posts.push({
-      title: decodeEntities(titleEl?.text.trim() ?? ''),
-      score: Number(thing.getAttribute('data-score') ?? '0'),
-      numComments: Number(thing.getAttribute('data-comments-count') ?? '0'),
-      author: thing.getAttribute('data-author') ?? 'unknown',
-      url: `https://www.reddit.com${permalink}`,
-      flair: flairEl ? decodeEntities(flairEl.getAttribute('title') ?? flairEl.text.trim()) || undefined : undefined,
-      createdUtc: Math.floor(Number(thing.getAttribute('data-timestamp') ?? '0') / 1000),
-    });
-    if (posts.length >= 10) break;
-  }
-  return posts;
-}
-
-async function fetchRedditViaRss(): Promise<RedditPost[]> {
-  // RSS fallback if HTML scrape gets blocked. No score/comment counts available.
+async function fetchRedditPosts(): Promise<{ posts: RedditPost[]; fetchedAt: string | null }> {
+  // Reddit blocks all major cloud IPs (Vercel/Cloudflare/etc), so we read from a
+  // static JSON file refreshed by .github/workflows/fetch-reddit.yml every 30 min.
+  // GitHub Actions runners (Azure) still get through.
   try {
-    const parser = new Parser();
-    const feed = await parser.parseURL('https://www.reddit.com/r/halifax/hot.rss?limit=10');
-    return (feed.items || []).slice(0, 10).map(item => ({
-      title: decodeEntities(item.title || ''),
-      score: 0,
-      numComments: 0,
-      author: item.creator?.replace(/^\/u\//, '') || 'unknown',
-      url: item.link || 'https://www.reddit.com/r/halifax',
-      flair: undefined,
-      createdUtc: item.isoDate ? Math.floor(new Date(item.isoDate).getTime() / 1000) : Math.floor(Date.now() / 1000),
-    }));
+    const { readFile } = await import('node:fs/promises');
+    const { resolve } = await import('node:path');
+    const raw = await readFile(resolve('public/reddit.json'), 'utf-8');
+    const data = JSON.parse(raw) as { fetchedAt?: string; posts?: RedditPost[] };
+    return { posts: data.posts ?? [], fetchedAt: data.fetchedAt ?? null };
   } catch (e) {
-    console.error('[Reddit] RSS fallback failed:', e);
-    return [];
+    console.warn('[Reddit] failed to read public/reddit.json:', e);
+    return { posts: [], fetchedAt: null };
   }
-}
-
-async function fetchRedditPosts(): Promise<RedditPost[]> {
-  try {
-    const html = await fetchRedditViaHtml();
-    if (html.length > 0) return html;
-  } catch (e) {
-    console.warn('[Reddit] HTML scrape threw', e);
-  }
-  console.log('[Reddit] Falling back to RSS');
-  return fetchRedditViaRss();
 }
 
 // ============ Page Component ============
 
 export default async function Home() {
-  const [weather, news, hrmResult, hrfeIncidents, transitDetours, transitHasRecent, tides, redditPosts] = await Promise.all([
+  const [weather, news, hrmResult, hrfeIncidents, transitDetours, transitHasRecent, tides, redditData] = await Promise.all([
     fetchWeather(),
     fetchNews(),
     fetchHrmNews(),
@@ -623,6 +553,8 @@ export default async function Home() {
     fetchTides(),
     fetchRedditPosts(),
   ]);
+  const redditPosts = redditData.posts;
+  const redditFetchedAt = redditData.fetchedAt;
 
   const currentWeather = weather ? getWeatherInfo(weather.weatherCode, !weather.isDay) : null;
   const hrmNews = hrmResult.items;
@@ -1061,7 +993,7 @@ export default async function Home() {
                   <p className="text-sm font-medium text-white/70 uppercase tracking-widest">Reddit</p>
                   <h2 className="text-3xl font-bold tracking-tight mt-1">r/halifax</h2>
                   <p className="text-base text-white/70 mt-1">
-                    Top 10 hot posts ·{' '}
+                    Top 10 hot posts{redditFetchedAt ? ` · updated ${timeAgo(Math.floor(new Date(redditFetchedAt).getTime() / 1000))}` : ''} ·{' '}
                     <a href="https://www.reddit.com/r/halifax" target="_blank" rel="noopener noreferrer" className="underline hover:text-white">
                       reddit.com/r/halifax
                     </a>
