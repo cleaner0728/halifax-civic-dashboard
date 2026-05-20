@@ -64,12 +64,11 @@ export default function WeatherPills({ uvIndex, uvIndexMaxToday, airQuality, bur
   const aqi = airQuality ? aqiBucket(airQuality.aqi) : null;
   const burn = burnStatus ? burnBucket(burnStatus.level) : null;
 
-  // Mobile: predictable 2-col grid (UV + AQI side-by-side, burn full-width below).
-  // Desktop: flex-wrap so all three sit inline.
-  const itemClass = 'place-self-start inline-flex items-center gap-1 text-xs sm:text-sm font-semibold';
+  // Mobile: stack vertically. Desktop: flex-wrap so all three sit inline.
+  const itemClass = 'inline-flex items-center gap-1 text-xs sm:text-sm font-semibold';
 
   return (
-    <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-x-4 gap-y-1 px-4 sm:px-6 py-3">
+    <div className="flex flex-col sm:flex-row sm:flex-wrap gap-y-1 sm:gap-x-4 px-4 sm:px-6 py-3">
       {uv && uvIndex !== null && (
         <span
           className={`${itemClass} ${uv.text}`}
@@ -88,10 +87,7 @@ export default function WeatherPills({ uvIndex, uvIndexMaxToday, airQuality, bur
         </span>
       )}
       {burn && burnStatus && (
-        <span
-          className={`${itemClass} col-span-2 sm:col-auto ${burn.text}`}
-          title={burnStatus.text}
-        >
+        <span className={`${itemClass} ${burn.text}`} title={burnStatus.text}>
           🔥 {burn.label}
         </span>
       )}
