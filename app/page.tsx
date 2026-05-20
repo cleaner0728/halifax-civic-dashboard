@@ -1020,10 +1020,12 @@ export default async function Home() {
                   >
                     <div className="p-4">
                       <div className="flex items-start gap-3">
-                        <div className="flex flex-col items-center min-w-[40px] text-center">
-                          <span className="text-lg font-bold text-orange-500">▲</span>
-                          <span className="text-sm font-bold text-foreground">{post.score}</span>
-                        </div>
+                        {post.score > 0 && (
+                          <div className="flex flex-col items-center min-w-[40px] text-center">
+                            <span className="text-lg font-bold text-orange-500">▲</span>
+                            <span className="text-sm font-bold text-foreground">{post.score}</span>
+                          </div>
+                        )}
                         <div className="flex-1 min-w-0">
                           {post.flair && (
                             <span className="inline-block bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 rounded px-2 py-0.5 text-xs font-medium mb-1.5">
@@ -1032,7 +1034,7 @@ export default async function Home() {
                           )}
                           <p className="text-base font-semibold text-foreground leading-snug">{post.title}</p>
                           <div className="flex items-center gap-3 mt-1.5 text-xs text-foreground/40">
-                            <span>💬 {post.numComments}</span>
+                            {post.numComments > 0 && <span>💬 {post.numComments}</span>}
                             <span>u/{post.author}</span>
                             <span>{timeAgo(post.createdUtc)}</span>
                           </div>

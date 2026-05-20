@@ -57,6 +57,41 @@ function parseJson(body) {
     }));
 }
 
+function parseOldRedditHtml(html) {
+  // Match each post container; data-* attrs hold score/comments/author/timestamp/permalink.
+  const things = html.match(/<div[^>]*class="[^"]*\bthing\b[^"]*"[^>]*data-fullname="t3_[^"]+"[^>]*>/g);
+  if (!things) return null;
+  const posts = [];
+  for (const thing of things) {
+    if (posts.length >= LIMIT) break;
+    const attr = (name) => {
+      const m = thing.match(new RegExp(`\\bdata-${name}="([^"]*)"`));
+      return m ? m[1] : '';
+    };
+    if (attr('promoted') === 'true') continue;
+    const permalink = attr('permalink');
+    if (!permalink) continue;
+    // Find title text — locate this thing's full block in the HTML then extract <a class="title">
+    const idMatch = thing.match(/id="(thing_t3_[^"]+)"/);
+    if (!idMatch) continue;
+    const blockStart = html.indexOf(idMatch[0]);
+    const blockEnd = html.indexOf('id="thing_t3_', blockStart + idMatch[0].length);
+    const block = blockEnd === -1 ? html.slice(blockStart) : html.slice(blockStart, blockEnd);
+    const titleMatch = block.match(/<a[^>]*class="title[^"]*"[^>]*>([^<]+)<\/a>/);
+    const flairMatch = block.match(/class="linkflairlabel[^"]*"[^>]*title="([^"]*)"/);
+    posts.push({
+      title: decodeEntities(titleMatch?.[1]?.trim() ?? ''),
+      score: Number(attr('score') || '0'),
+      numComments: Number(attr('comments-count') || '0'),
+      author: attr('author') || 'unknown',
+      url: `https://www.reddit.com${permalink}`,
+      flair: flairMatch ? decodeEntities(flairMatch[1]) : null,
+      createdUtc: Math.floor(Number(attr('timestamp') || '0') / 1000),
+    });
+  }
+  return posts.length > 0 ? posts : null;
+}
+
 function parseRss(xml) {
   if (!xml.includes('<entry>') && !xml.includes('<item>')) return null;
   // Reddit RSS uses Atom <entry> not RSS <item>
@@ -89,6 +124,8 @@ const STRATEGIES = [
   { name: 'www json (chrome)', url: `https://www.reddit.com/r/${SUB}/hot.json?limit=${LIMIT}&raw_json=1`, ua: UAS[0], accept: 'application/json', parse: parseJson },
   { name: 'www json (safari)', url: `https://www.reddit.com/r/${SUB}/hot.json?limit=${LIMIT}&raw_json=1`, ua: UAS[1], accept: 'application/json', parse: parseJson },
   { name: 'old json (chrome)', url: `https://old.reddit.com/r/${SUB}/hot.json?limit=${LIMIT}&raw_json=1`, ua: UAS[0], accept: 'application/json', parse: parseJson },
+  { name: 'old html (chrome)', url: `https://old.reddit.com/r/${SUB}/`, ua: UAS[0], accept: 'text/html', parse: parseOldRedditHtml },
+  { name: 'old html (safari)', url: `https://old.reddit.com/r/${SUB}/`, ua: UAS[1], accept: 'text/html', parse: parseOldRedditHtml },
   { name: 'www rss (chrome)', url: `https://www.reddit.com/r/${SUB}/hot.rss?limit=${LIMIT}`, ua: UAS[0], accept: 'application/rss+xml, application/xml', parse: parseRss },
   { name: 'old rss (chrome)', url: `https://old.reddit.com/r/${SUB}/hot.rss?limit=${LIMIT}`, ua: UAS[0], accept: 'application/rss+xml, application/xml', parse: parseRss },
   { name: 'www rss (curl)', url: `https://www.reddit.com/r/${SUB}/hot.rss?limit=${LIMIT}`, ua: UAS[2], accept: '*/*', parse: parseRss },
