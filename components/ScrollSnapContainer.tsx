@@ -108,7 +108,10 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
         }`}
       >
         {topBar && (
-          <div className="bg-card/90 backdrop-blur-md border-b border-border">
+          // relative + z-10 keeps absolutely-positioned children (e.g. the
+          // LanguageToggle dropdown) above the sibling tab bar's stacking
+          // context, which backdrop-blur otherwise pins under.
+          <div className="relative z-10 bg-card/90 backdrop-blur-md border-b border-border">
             {topBar}
           </div>
         )}

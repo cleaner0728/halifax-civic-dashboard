@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import ThemeToggle from '@/components/ThemeToggle';
 import InstallButton from '@/components/InstallButton';
+import LanguageToggle from '@/components/LanguageToggle';
 import ScrollSnapContainer from '@/components/ScrollSnapContainer';
 import WeatherScreen from '@/components/screens/WeatherScreen';
 import NewsScreen from '@/components/screens/NewsScreen';
@@ -63,6 +64,7 @@ export default async function Home() {
               Halifax Dashboard
             </h1>
             <div className="flex items-center gap-2">
+              <LanguageToggle />
               <InstallButton />
               <ThemeToggle />
             </div>
