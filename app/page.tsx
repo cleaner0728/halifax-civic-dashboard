@@ -20,7 +20,7 @@ import { fetchTides, computeTideGraph } from '@/lib/fetchers/tides';
 import { fetchRedditPosts } from '@/lib/fetchers/reddit';
 import { safe } from '@/lib/safe';
 
-const TAB_LABELS = ['City Live', 'News', 'Reddit', 'HRM', 'HRF', 'Transit', 'Events'];
+const TAB_LABELS = ['City Live', 'News', 'Reddit', 'HRM', 'HRFE', 'Transit', 'Events'];
 
 export default async function Home() {
   // Each fetcher already returns an "empty" sentinel on failure; safe() catches

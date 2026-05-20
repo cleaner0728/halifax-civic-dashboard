@@ -36,7 +36,7 @@ export default function EventsCalendarScreen() {
             src={CALENDAR_SRC}
             style={{ border: 0 }}
             width="100%"
-            height="467"
+            height="311"
             title="Halifax Events Calendar"
           />
         </div>

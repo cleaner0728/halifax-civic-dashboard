@@ -8,54 +8,65 @@ export type WeatherTheme = {
   bottomBar: string;
 };
 
+// Each theme defines both a light- and dark-mode gradient so the card never
+// sits too far from the page background. Day/Night variants still pick the
+// hue (warm blue vs deep indigo etc.), but the LIGHTNESS adapts to UI mode.
 const weatherThemes = {
   clearDay: {
-    container: 'bg-gradient-to-br from-sky-200 via-blue-300 to-blue-400',
+    container:
+      'bg-gradient-to-br from-sky-200 via-blue-300 to-blue-400 dark:from-sky-800 dark:via-blue-900 dark:to-slate-900',
     textPrimary: 'text-white',
     textSecondary: 'text-white/80',
-    bottomBar: 'bg-black/10',
+    bottomBar: 'bg-black/10 dark:bg-white/5',
   },
   clearNight: {
-    container: 'bg-gradient-to-br from-indigo-900 via-slate-800 to-slate-900',
+    container:
+      'bg-gradient-to-br from-indigo-400 via-slate-500 to-slate-600 dark:from-indigo-900 dark:via-slate-800 dark:to-slate-900',
     textPrimary: 'text-white',
-    textSecondary: 'text-white/70',
-    bottomBar: 'bg-white/8',
+    textSecondary: 'text-white/80 dark:text-white/70',
+    bottomBar: 'bg-black/10 dark:bg-white/5',
   },
   cloudyDay: {
-    container: 'bg-gradient-to-br from-slate-300 via-slate-400 to-slate-500',
+    container:
+      'bg-gradient-to-br from-slate-300 via-slate-400 to-slate-500 dark:from-slate-700 dark:via-slate-800 dark:to-slate-900',
     textPrimary: 'text-white',
-    textSecondary: 'text-white/80',
-    bottomBar: 'bg-black/10',
+    textSecondary: 'text-white/80 dark:text-white/70',
+    bottomBar: 'bg-black/10 dark:bg-white/5',
   },
   cloudyNight: {
-    container: 'bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900',
+    container:
+      'bg-gradient-to-br from-slate-400 via-slate-500 to-slate-600 dark:from-slate-700 dark:via-slate-800 dark:to-slate-900',
     textPrimary: 'text-white',
-    textSecondary: 'text-white/70',
-    bottomBar: 'bg-white/8',
+    textSecondary: 'text-white/80 dark:text-white/70',
+    bottomBar: 'bg-black/10 dark:bg-white/5',
   },
   rainDay: {
-    container: 'bg-gradient-to-br from-slate-400 via-blue-500 to-slate-600',
+    container:
+      'bg-gradient-to-br from-slate-400 via-blue-500 to-slate-600 dark:from-slate-700 dark:via-blue-800 dark:to-slate-900',
     textPrimary: 'text-white',
-    textSecondary: 'text-white/80',
-    bottomBar: 'bg-black/15',
+    textSecondary: 'text-white/80 dark:text-white/70',
+    bottomBar: 'bg-black/15 dark:bg-white/5',
   },
   rainNight: {
-    container: 'bg-gradient-to-br from-slate-700 via-slate-800 to-blue-900',
+    container:
+      'bg-gradient-to-br from-slate-400 via-blue-500 to-slate-700 dark:from-slate-700 dark:via-slate-800 dark:to-blue-900',
     textPrimary: 'text-white',
-    textSecondary: 'text-white/70',
-    bottomBar: 'bg-white/8',
+    textSecondary: 'text-white/80 dark:text-white/70',
+    bottomBar: 'bg-black/15 dark:bg-white/5',
   },
   snowDay: {
-    container: 'bg-gradient-to-br from-sky-50 via-slate-100 to-slate-200',
-    textPrimary: 'text-slate-800',
-    textSecondary: 'text-slate-600',
-    bottomBar: 'bg-white/40',
+    container:
+      'bg-gradient-to-br from-sky-100 via-slate-200 to-slate-300 dark:from-sky-900 dark:via-slate-800 dark:to-slate-900',
+    textPrimary: 'text-slate-800 dark:text-white',
+    textSecondary: 'text-slate-600 dark:text-white/70',
+    bottomBar: 'bg-white/40 dark:bg-white/5',
   },
   snowNight: {
-    container: 'bg-gradient-to-br from-slate-700 via-indigo-900 to-slate-800',
+    container:
+      'bg-gradient-to-br from-slate-300 via-indigo-400 to-slate-500 dark:from-slate-700 dark:via-indigo-900 dark:to-slate-800',
     textPrimary: 'text-white',
-    textSecondary: 'text-white/70',
-    bottomBar: 'bg-white/8',
+    textSecondary: 'text-white/80 dark:text-white/70',
+    bottomBar: 'bg-black/10 dark:bg-white/5',
   },
 } satisfies Record<string, WeatherTheme>;
 
