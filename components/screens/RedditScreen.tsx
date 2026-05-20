@@ -8,7 +8,7 @@ type Props = {
 
 export default function RedditScreen({ posts, fetchedAt }: Props) {
   return (
-    <div className="pt-[140px] pb-8 h-screen overflow-y-auto bg-gradient-to-b from-background to-background">
+    <div data-screen-scroll className="pt-[140px] pb-8 h-screen overflow-y-auto bg-gradient-to-b from-background to-background">
       <div className="max-w-5xl mx-auto px-2 mt-4">
         <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-orange-500 via-red-500 to-rose-600 dark:from-orange-900 dark:via-red-900 dark:to-slate-900 text-white shadow-xl mb-6 px-6 py-6">
           <div className="flex items-center justify-between">

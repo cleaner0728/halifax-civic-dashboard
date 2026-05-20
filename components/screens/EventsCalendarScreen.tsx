@@ -22,7 +22,7 @@ const CALENDAR_SRC =
 
 export default function EventsCalendarScreen() {
   return (
-    <div className="pt-[140px] pb-8 h-screen overflow-y-auto bg-gradient-to-b from-background to-background">
+    <div data-screen-scroll className="pt-[140px] pb-8 h-screen overflow-y-auto bg-gradient-to-b from-background to-background">
       <div className="max-w-5xl mx-auto px-2 mt-4">
         <p className="text-xl font-semibold text-center text-foreground mb-3">
           📅 Upcoming civic events · Halifax, NS

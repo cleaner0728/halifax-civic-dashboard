@@ -17,6 +17,29 @@ const UAS = [
   'curl/8.4.0',
 ];
 
+// Trust nothing from Reddit. Permalinks must look like /r/<sub>/comments/...
+// and links must point to reddit.com — anything else gets dropped so we can't
+// be tricked into rendering attacker-controlled `href`s on the dashboard.
+function safePermalink(permalink) {
+  if (typeof permalink !== 'string') return null;
+  if (!/^\/r\/[A-Za-z0-9_]+\/comments\/[A-Za-z0-9_]+/.test(permalink)) return null;
+  return `https://www.reddit.com${permalink}`;
+}
+
+function safeRedditUrl(url) {
+  if (typeof url !== 'string') return null;
+  try {
+    const u = new URL(url);
+    if (u.hostname !== 'www.reddit.com' && u.hostname !== 'old.reddit.com') return null;
+    if (!u.pathname.startsWith('/r/')) return null;
+    // Normalize host so consumers don't see mixed hostnames.
+    u.hostname = 'www.reddit.com';
+    return u.toString();
+  } catch {
+    return null;
+  }
+}
+
 function decodeEntities(s) {
   return s
     .replace(/&amp;/g, '&')
@@ -46,15 +69,20 @@ function parseJson(body) {
   if (!data?.data?.children) return null;
   return data.data.children
     .map((c) => c.data)
-    .map((p) => ({
-      title: decodeEntities(p.title ?? ''),
-      score: p.score ?? 0,
-      numComments: p.num_comments ?? 0,
-      author: p.author ?? 'unknown',
-      url: `https://www.reddit.com${p.permalink ?? ''}`,
-      flair: p.link_flair_text ? decodeEntities(p.link_flair_text) : null,
-      createdUtc: p.created_utc ?? 0,
-    }));
+    .map((p) => {
+      const url = safePermalink(p.permalink);
+      if (!url) return null;
+      return {
+        title: decodeEntities(p.title ?? ''),
+        score: p.score ?? 0,
+        numComments: p.num_comments ?? 0,
+        author: p.author ?? 'unknown',
+        url,
+        flair: p.link_flair_text ? decodeEntities(p.link_flair_text) : null,
+        createdUtc: p.created_utc ?? 0,
+      };
+    })
+    .filter((p) => p !== null);
 }
 
 function parseOldRedditHtml(html) {
@@ -68,8 +96,8 @@ function parseOldRedditHtml(html) {
       return m ? m[1] : '';
     };
     if (attr('promoted') === 'true') continue;
-    const permalink = attr('permalink');
-    if (!permalink) continue;
+    const url = safePermalink(attr('permalink'));
+    if (!url) continue;
     const idMatch = thing.match(/id="(thing_t3_[^"]+)"/);
     if (!idMatch) continue;
     const blockStart = html.indexOf(idMatch[0]);
@@ -82,7 +110,7 @@ function parseOldRedditHtml(html) {
       score: Number(attr('score') || '0'),
       numComments: Number(attr('comments-count') || '0'),
       author: attr('author') || 'unknown',
-      url: `https://www.reddit.com${permalink}`,
+      url,
       flair: flairMatch ? decodeEntities(flairMatch[1]) : null,
       createdUtc: Math.floor(Number(attr('timestamp') || '0') / 1000),
     });
@@ -108,7 +136,8 @@ function parseRss(xml) {
     };
     const title = decodeEntities(get('title'));
     const linkMatch = block.match(/<link[^>]*href="([^"]+)"|<link[^>]*>([^<]+)<\/link>/);
-    const url = linkMatch ? (linkMatch[1] || linkMatch[2]) : '';
+    const rawUrl = linkMatch ? (linkMatch[1] || linkMatch[2]) : '';
+    const url = safeRedditUrl(rawUrl);
     const author = get('name') || get('dc:creator') || get('author');
     const published = get('published') || get('updated') || get('pubDate');
     const createdUtc = published ? Math.floor(new Date(published).getTime() / 1000) : Math.floor(Date.now() / 1000);

@@ -55,7 +55,10 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     const handleScroll = (e: Event) => {
       const target = e.target as HTMLElement;
       // Track scroll on the inner content containers
-      if (target.classList.contains("overflow-y-auto") && target !== container) {
+      // Each screen's outer wrapper carries `data-screen-scroll`; only those
+      // contribute to the header hide/show heuristic. Matching by className was
+      // fragile — anything tagged `overflow-y-auto` would trigger.
+      if (target.hasAttribute('data-screen-scroll') && target !== container) {
         const currentScrollY = target.scrollTop;
         if (currentScrollY > lastScrollY && currentScrollY > 60) {
           setIsHeaderHidden(true); // Scrolling down -> hide header
