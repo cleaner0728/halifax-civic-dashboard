@@ -7,6 +7,8 @@ export interface WeatherData {
   windSpeed: number;
   humidity: number;
   isDay: boolean;
+  uvIndex: number;        // current
+  uvIndexMaxToday: number; // peak forecast for today
   daily: {
     date: string;
     weatherCode: number;
@@ -20,7 +22,10 @@ export interface WeatherData {
 export async function fetchWeather(): Promise<WeatherData | null> {
   try {
     const res = await fetch(
-      'https://api.open-meteo.com/v1/forecast?latitude=44.65&longitude=-63.57&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=America/Halifax&forecast_days=5',
+      'https://api.open-meteo.com/v1/forecast?latitude=44.65&longitude=-63.57' +
+        '&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m,is_day,uv_index' +
+        '&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max' +
+        '&timezone=America/Halifax&forecast_days=5',
       { next: { revalidate: 900 } },
     );
     const data = await res.json();
@@ -31,6 +36,8 @@ export async function fetchWeather(): Promise<WeatherData | null> {
       windSpeed: data.current.wind_speed_10m,
       humidity: data.current.relative_humidity_2m,
       isDay: data.current.is_day === 1,
+      uvIndex: data.current.uv_index ?? 0,
+      uvIndexMaxToday: data.daily.uv_index_max?.[0] ?? 0,
       daily: data.daily.time.map((t: string, i: number) => ({
         date: t,
         weatherCode: data.daily.weather_code[i],

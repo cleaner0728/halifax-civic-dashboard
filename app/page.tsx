@@ -8,6 +8,8 @@ import TransitDisruptionScreen from '@/components/screens/TransitDisruptionScree
 import EventsCalendarScreen from '@/components/screens/EventsCalendarScreen';
 import RedditScreen from '@/components/screens/RedditScreen';
 import { fetchWeather } from '@/lib/fetchers/weather';
+import { fetchAirQuality } from '@/lib/fetchers/air-quality';
+import { fetchBurnStatus } from '@/lib/fetchers/burn-status';
 import { fetchNews } from '@/lib/fetchers/news';
 import { fetchHrmNews, fetchHrfeIncidents } from '@/lib/fetchers/hrm';
 import { fetchTransitRss, fetchTransitDetours, fetchFerryAlerts } from '@/lib/fetchers/transit';
@@ -27,18 +29,31 @@ const TAB_LABELS = [
 export default async function Home() {
   // Each fetcher already returns an "empty" sentinel on failure; safe() catches
   // anything that still escapes so one bad source can't 500 the whole dashboard.
-  const [weather, news, hrmResult, hrfeIncidents, transitDetours, ferryAlerts, transitHasRecent, tides, redditData] =
-    await Promise.all([
-      safe(fetchWeather(), null, 'weather'),
-      safe(fetchNews(), { items: [] }, 'news'),
-      safe(fetchHrmNews(), { items: [], dateLabel: 'Error loading' }, 'hrm-news'),
-      safe(fetchHrfeIncidents(), [], 'hrfe'),
-      safe(fetchTransitDetours(), [], 'transit-detours'),
-      safe(fetchFerryAlerts(), [], 'ferry-alerts'),
-      safe(fetchTransitRss(), false, 'transit-rss'),
-      safe(fetchTides(), [], 'tides'),
-      safe(fetchRedditPosts(), { posts: [], fetchedAt: null }, 'reddit'),
-    ]);
+  const [
+    weather,
+    news,
+    hrmResult,
+    hrfeIncidents,
+    transitDetours,
+    ferryAlerts,
+    transitHasRecent,
+    tides,
+    redditData,
+    airQuality,
+    burnStatus,
+  ] = await Promise.all([
+    safe(fetchWeather(), null, 'weather'),
+    safe(fetchNews(), { items: [] }, 'news'),
+    safe(fetchHrmNews(), { items: [], dateLabel: 'Error loading' }, 'hrm-news'),
+    safe(fetchHrfeIncidents(), [], 'hrfe'),
+    safe(fetchTransitDetours(), [], 'transit-detours'),
+    safe(fetchFerryAlerts(), [], 'ferry-alerts'),
+    safe(fetchTransitRss(), false, 'transit-rss'),
+    safe(fetchTides(), [], 'tides'),
+    safe(fetchRedditPosts(), { posts: [], fetchedAt: null }, 'reddit'),
+    safe(fetchAirQuality(), null, 'air-quality'),
+    safe(fetchBurnStatus(), null, 'burn-status'),
+  ]);
 
   const tideGraph = computeTideGraph(tides);
 
@@ -56,7 +71,13 @@ export default async function Home() {
           </div>
         }
       >
-        <NewsAndWeatherScreen weather={weather} news={news} tideGraph={tideGraph} />
+        <NewsAndWeatherScreen
+          weather={weather}
+          news={news}
+          tideGraph={tideGraph}
+          airQuality={airQuality}
+          burnStatus={burnStatus}
+        />
         <HrmNewsScreen items={hrmResult.items} dateLabel={hrmResult.dateLabel} />
         <HrfeIncidentsScreen incidents={hrfeIncidents} />
         <TransitDisruptionScreen detours={transitDetours} ferryAlerts={ferryAlerts} hasRecent={transitHasRecent} />

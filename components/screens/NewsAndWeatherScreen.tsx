@@ -1,18 +1,23 @@
 import Image from 'next/image';
 import LiveClock from '@/components/LiveClock';
+import WeatherPills from '@/components/WeatherPills';
 import { HFX_TZ, getDayName, formatTime } from '@/lib/date';
 import { getWeatherInfo } from '@/lib/weather-theme';
 import type { WeatherData } from '@/lib/fetchers/weather';
 import type { NewsItem } from '@/lib/fetchers/news';
 import type { TideGraphData } from '@/lib/fetchers/tides';
+import type { AirQuality } from '@/lib/fetchers/air-quality';
+import type { BurnStatus } from '@/lib/fetchers/burn-status';
 
 type Props = {
   weather: WeatherData | null;
   news: { items: NewsItem[] };
   tideGraph: TideGraphData | null;
+  airQuality: AirQuality | null;
+  burnStatus: BurnStatus | null;
 };
 
-export default function NewsAndWeatherScreen({ weather, news, tideGraph }: Props) {
+export default function NewsAndWeatherScreen({ weather, news, tideGraph, airQuality, burnStatus }: Props) {
   const currentWeather = weather ? getWeatherInfo(weather.weatherCode, !weather.isDay) : null;
 
   return (
@@ -131,6 +136,12 @@ export default function NewsAndWeatherScreen({ weather, news, tideGraph }: Props
                 })}
               </div>
             </div>
+            <WeatherPills
+              uvIndex={weather.uvIndex}
+              uvIndexMaxToday={weather.uvIndexMaxToday}
+              airQuality={airQuality}
+              burnStatus={burnStatus}
+            />
           </section>
         )}
 
