@@ -1,7 +1,8 @@
 import ThemeToggle from '@/components/ThemeToggle';
 import InstallButton from '@/components/InstallButton';
 import ScrollSnapContainer from '@/components/ScrollSnapContainer';
-import NewsAndWeatherScreen from '@/components/screens/NewsAndWeatherScreen';
+import WeatherScreen from '@/components/screens/WeatherScreen';
+import NewsScreen from '@/components/screens/NewsScreen';
 import HrmNewsScreen from '@/components/screens/HrmNewsScreen';
 import HrfeIncidentsScreen from '@/components/screens/HrfeIncidentsScreen';
 import TransitDisruptionScreen from '@/components/screens/TransitDisruptionScreen';
@@ -17,14 +18,7 @@ import { fetchTides, computeTideGraph } from '@/lib/fetchers/tides';
 import { fetchRedditPosts } from '@/lib/fetchers/reddit';
 import { safe } from '@/lib/safe';
 
-const TAB_LABELS = [
-  'News & Weather',
-  'HRM News',
-  'HRFE Incidents',
-  'Transit Disruption',
-  'Events Calendar',
-  'r/halifax',
-];
+const TAB_LABELS = ['City Live', 'News', 'HRM', 'Fire', 'Transit', 'Events', 'Reddit'];
 
 export default async function Home() {
   // Each fetcher already returns an "empty" sentinel on failure; safe() catches
@@ -71,13 +65,13 @@ export default async function Home() {
           </div>
         }
       >
-        <NewsAndWeatherScreen
+        <WeatherScreen
           weather={weather}
-          news={news}
           tideGraph={tideGraph}
           airQuality={airQuality}
           burnStatus={burnStatus}
         />
+        <NewsScreen items={news.items} />
         <HrmNewsScreen items={hrmResult.items} dateLabel={hrmResult.dateLabel} />
         <HrfeIncidentsScreen incidents={hrfeIncidents} />
         <TransitDisruptionScreen detours={transitDetours} ferryAlerts={ferryAlerts} hasRecent={transitHasRecent} />

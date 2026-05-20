@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**.halifaxexaminer.ca" },
       { protocol: "https", hostname: "i.redd.it" },
       { protocol: "https", hostname: "cdn.halifax.ca" },
+      { protocol: "https", hostname: "images.novascotiawebcams.com" },
     ],
   },
 };
