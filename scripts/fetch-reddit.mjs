@@ -7,9 +7,8 @@ import { writeFile, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const SUB = 'halifax';
-const KEEP = 10;            // posts to display
-const FETCH = 30;           // over-fetch so we can drop stickied/old before slicing
-const STICKY_AGE_DAYS = 5;  // a post older than this is almost certainly a pinned megathread
+const KEEP = 30;            // max posts to display (stickied included)
+const FETCH = 30;
 const OUT_PATH = resolve('public/reddit.json');
 
 const UAS = [
@@ -45,10 +44,8 @@ function parseJson(body) {
   if (!body.trimStart().startsWith('{')) return null;
   const data = JSON.parse(body);
   if (!data?.data?.children) return null;
-  // JSON path has the authoritative `stickied` flag — use it before falling back to heuristics.
   return data.data.children
     .map((c) => c.data)
-    .filter((p) => !p.stickied)
     .map((p) => ({
       title: decodeEntities(p.title ?? ''),
       score: p.score ?? 0,
@@ -71,8 +68,6 @@ function parseOldRedditHtml(html) {
       return m ? m[1] : '';
     };
     if (attr('promoted') === 'true') continue;
-    // old.reddit marks stickied posts with `stickied` class on the wrapper div
-    if (/\bstickied\b/.test(thing)) continue;
     const permalink = attr('permalink');
     if (!permalink) continue;
     const idMatch = thing.match(/id="(thing_t3_[^"]+)"/);
@@ -124,17 +119,6 @@ function parseRss(xml) {
   return posts.length > 0 ? posts : null;
 }
 
-// Drop posts that look like pinned megathreads. JSON path already filters by the
-// authoritative `stickied` flag in parseJson; this catches stragglers from RSS/HTML.
-function dropStickied(posts) {
-  const ageCutoff = Math.floor(Date.now() / 1000) - STICKY_AGE_DAYS * 86400;
-  return posts.filter((p) => {
-    if (p.author === 'AutoModerator') return false;
-    if (p.createdUtc && p.createdUtc < ageCutoff) return false;
-    return true;
-  });
-}
-
 const STRATEGIES = [
   { name: 'www json (chrome)', url: `https://www.reddit.com/r/${SUB}/hot.json?limit=${FETCH}&raw_json=1`, ua: UAS[0], accept: 'application/json', parse: parseJson },
   { name: 'www json (safari)', url: `https://www.reddit.com/r/${SUB}/hot.json?limit=${FETCH}&raw_json=1`, ua: UAS[1], accept: 'application/json', parse: parseJson },
@@ -164,9 +148,9 @@ async function main() {
       console.log(`✗ ${strat.name}: parsed 0 posts (likely blocked HTML page returned with 200)`);
       continue;
     }
-    const filtered = dropStickied(posts).slice(0, KEEP);
-    console.log(`✓ ${strat.name}: ${posts.length} raw → ${filtered.length} after stickied filter`);
-    await writeOutput(filtered);
+    const kept = posts.slice(0, KEEP);
+    console.log(`✓ ${strat.name}: ${kept.length} posts`);
+    await writeOutput(kept);
     return;
   }
   console.error('All strategies failed');

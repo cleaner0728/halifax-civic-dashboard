@@ -993,7 +993,7 @@ export default async function Home() {
                   <p className="text-sm font-medium text-white/70 uppercase tracking-widest">Reddit</p>
                   <h2 className="text-3xl font-bold tracking-tight mt-1">r/halifax</h2>
                   <p className="text-base text-white/70 mt-1">
-                    Top 10 hot posts{redditFetchedAt ? ` · updated ${timeAgo(Math.floor(new Date(redditFetchedAt).getTime() / 1000))}` : ''} ·{' '}
+                    Top {redditPosts.length} hot posts{redditFetchedAt ? ` · updated ${timeAgo(Math.floor(new Date(redditFetchedAt).getTime() / 1000))}` : ''} ·{' '}
                     <a href="https://www.reddit.com/r/halifax" target="_blank" rel="noopener noreferrer" className="underline hover:text-white">
                       reddit.com/r/halifax
                     </a>
