@@ -1,4 +1,7 @@
-// Static screen — just embeds the HRM Google Calendar aggregator iframe.
+// Static screen — embeds the HRM Google Calendar aggregator iframe, with the
+// Emera Oval live webcam below it.
+
+import EmeraOvalWebcam from '@/components/EmeraOvalWebcam';
 
 const CALENDAR_SRC =
   'https://calendar.google.com/calendar/embed?showTitle=0&mode=AGENDA&height=600&wkst=1&bgcolor=%23FFFFFF' +
@@ -48,6 +51,8 @@ export default function EventsCalendarScreen() {
             HRM Events Calendar
           </a>
         </p>
+
+        <EmeraOvalWebcam />
       </div>
     </div>
   );
