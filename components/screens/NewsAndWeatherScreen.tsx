@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import LiveClock from '@/components/LiveClock';
 import { HFX_TZ, getDayName, formatTime } from '@/lib/date';
 import { getWeatherInfo } from '@/lib/weather-theme';
@@ -150,15 +151,23 @@ export default function NewsAndWeatherScreen({ weather, news, tideGraph }: Props
               >
                 <div className={`flex ${item.imageUrl ? 'flex-col sm:flex-row' : ''}`}>
                   {item.imageUrl && (
-                    <div className="sm:w-72 sm:shrink-0">
-                      <a href={item.link} target="_blank" rel="noopener noreferrer">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                    <div className="relative h-52 sm:h-auto sm:min-h-[160px] sm:w-72 sm:shrink-0">
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block absolute inset-0"
+                      >
+                        <Image
                           src={item.imageUrl}
                           alt={item.title || 'News image'}
-                          className="w-full h-52 sm:h-full object-cover"
-                          loading="lazy"
-                          referrerPolicy="no-referrer"
+                          fill
+                          sizes="(min-width: 640px) 18rem, 100vw"
+                          className="object-cover"
+                          // RSS images come from arbitrary CDNs — let Next proxy them
+                          // (this also sidesteps Chrome ORB blocking cross-origin
+                          // image responses with mismatched MIME).
+                          unoptimized={false}
                         />
                       </a>
                     </div>
