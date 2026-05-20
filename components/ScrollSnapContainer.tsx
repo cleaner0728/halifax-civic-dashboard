@@ -22,6 +22,13 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     }
   }, [activeIndex]);
 
+  // Whenever the active screen changes (tab click or scroll-snap), bring the
+  // header back. Otherwise its hidden state from the previous screen carries
+  // over and the user has to manually scroll up to re-summon it.
+  useEffect(() => {
+    setIsHeaderHidden(false);
+  }, [activeIndex]);
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
