@@ -1,33 +1,45 @@
-// Generates PWA icons from an inline SVG. Run: node scripts/generate-icons.mjs
+// Generates favicon + PWA icons + header logo from seagull.png in repo root.
+// Source should be a PNG with transparent background.
+// Run: node scripts/generate-icons.mjs
+
 import sharp from "sharp";
 
-const svg = (rounded) => `<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0.45" y2="1">
-      <stop offset="0" stop-color="#3b82f6"/>
-      <stop offset="1" stop-color="#1d4ed8"/>
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="${rounded ? 115 : 0}" fill="url(#bg)"/>
-  <rect x="168" y="156" width="200" height="216" rx="16" fill="#1e3a8a" opacity="0.5"/>
-  <rect x="140" y="136" width="232" height="240" rx="22" fill="#ffffff"/>
-  <rect x="166" y="164" width="180" height="34" rx="9" fill="#1d4ed8"/>
-  <rect x="166" y="218" width="74" height="62" rx="9" fill="#93c5fd"/>
-  <rect x="254" y="222" width="92" height="13" rx="6.5" fill="#cbd5e1"/>
-  <rect x="254" y="245" width="92" height="13" rx="6.5" fill="#cbd5e1"/>
-  <rect x="254" y="268" width="64" height="13" rx="6.5" fill="#cbd5e1"/>
-  <rect x="166" y="300" width="180" height="13" rx="6.5" fill="#cbd5e1"/>
-  <rect x="166" y="323" width="180" height="13" rx="6.5" fill="#cbd5e1"/>
-  <rect x="166" y="346" width="116" height="13" rx="6.5" fill="#cbd5e1"/>
-</svg>`;
+const SRC = "seagull.png";
+const TRANSPARENT = { r: 0, g: 0, b: 0, alpha: 0 };
+const SLATE_50 = { r: 248, g: 250, b: 252, alpha: 1 };
 
-const targets = [
-  { file: "public/icon-192.png", size: 192, rounded: true },
-  { file: "public/icon-512.png", size: 512, rounded: true },
-  { file: "app/apple-icon.png", size: 180, rounded: false },
-];
-
-for (const t of targets) {
-  await sharp(Buffer.from(svg(t.rounded))).resize(t.size, t.size).png().toFile(t.file);
-  console.log("wrote", t.file);
+// `pad`: 0.0 = bird touches the frame edge, 0.08 = 8% safe-zone padding
+// around the bird (needed for maskable-style Android adaptive icons).
+async function makeIcon({ file, size, pad, bg }) {
+  const content = Math.round(size * (1 - pad * 2));
+  const bird = await sharp(SRC)
+    .trim({ background: TRANSPARENT, threshold: 1 })
+    .resize(content, content, { fit: "contain", background: TRANSPARENT })
+    .toBuffer();
+  const offset = Math.floor((size - content) / 2);
+  await sharp({ create: { width: size, height: size, channels: 4, background: bg } })
+    .composite([{ input: bird, top: offset, left: offset }])
+    .png()
+    .toFile(file);
+  console.log("wrote", file, `${size}×${size}`);
 }
+
+// Header logo: trimmed transparent, no background, no padding.
+async function makeLogo({ file, height }) {
+  await sharp(SRC)
+    .trim({ background: TRANSPARENT, threshold: 1 })
+    .resize({ height, fit: "contain", background: TRANSPARENT })
+    .png()
+    .toFile(file);
+  console.log("wrote", file, `(height ${height})`);
+}
+
+await Promise.all([
+  makeLogo({ file: "public/logo.png", height: 128 }),
+  makeIcon({ file: "app/icon.png", size: 64, pad: 0, bg: TRANSPARENT }),
+  // iOS home-screen — Apple paints transparent areas black, so use slate-50 bg.
+  makeIcon({ file: "app/apple-icon.png", size: 180, pad: 0.08, bg: SLATE_50 }),
+  // PWA install icons — slate-50 bg so the bird shows on dark launcher themes.
+  makeIcon({ file: "public/icon-192.png", size: 192, pad: 0.08, bg: SLATE_50 }),
+  makeIcon({ file: "public/icon-512.png", size: 512, pad: 0.08, bg: SLATE_50 }),
+]);

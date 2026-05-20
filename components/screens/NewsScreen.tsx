@@ -7,7 +7,7 @@ type Props = {
 
 export default function NewsScreen({ items }: Props) {
   return (
-    <div data-screen-scroll className="pt-[140px] pb-8 h-screen overflow-y-auto">
+    <div data-screen-scroll className="pt-[88px] pb-8 h-screen overflow-y-auto">
       <div className="max-w-5xl mx-auto px-2 mt-4">
         <h2 className="text-lg font-bold mb-4">
           Latest News <span className="text-sm font-normal text-foreground/40">· past 24 hours</span>

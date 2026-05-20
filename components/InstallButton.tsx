@@ -91,14 +91,14 @@ export default function InstallButton() {
       <button
         ref={buttonRef}
         onClick={handleClick}
-        className="relative w-12 h-12 rounded-full flex items-center justify-center
+        className="relative w-9 h-9 rounded-full flex items-center justify-center
           bg-card border-2 border-border hover:border-foreground/30
           transition-all duration-300 shadow-sm hover:shadow-md"
         aria-label="Install app"
         title="Install app"
       >
         <svg
-          className="w-6 h-6 text-blue-500"
+          className="w-5 h-5 text-blue-500"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

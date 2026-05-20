@@ -119,7 +119,7 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
                 key={i}
                 ref={(el) => { tabRefs.current[i] = el; }}
                 onClick={() => scrollTo(i)}
-                className={`shrink-0 px-5 py-3 text-center text-lg font-medium whitespace-nowrap transition-all duration-200 border-b-[3px] ${
+                className={`shrink-0 px-3.5 py-1.5 text-center text-sm font-medium whitespace-nowrap transition-all duration-200 border-b-2 ${
                   activeIndex === i
                     ? "border-blue-500 text-blue-500 bg-blue-500/5 dark:bg-blue-500/10"
                     : "border-transparent text-foreground/60 hover:text-foreground hover:bg-foreground/5"

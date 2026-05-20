@@ -19,7 +19,7 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
   const currentWeather = weather ? getWeatherInfo(weather.weatherCode, !weather.isDay) : null;
 
   return (
-    <div data-screen-scroll className="pt-[140px] pb-8 h-screen overflow-y-auto">
+    <div data-screen-scroll className="pt-[88px] pb-8 h-screen overflow-y-auto">
       <div className="max-w-5xl mx-auto px-2 mt-4">
         {weather && currentWeather && (
           <section

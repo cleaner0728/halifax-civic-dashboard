@@ -4,21 +4,24 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  // `resolvedTheme` is the theme actually being applied (light/dark) — `theme`
+  // can be "system" before the user picks one, which made the icon show the
+  // wrong state when the OS preference was dark.
+  const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return <div className="w-12 h-12" />; // Placeholder for hydration
+  if (!mounted) return <div className="w-9 h-9" />; // Placeholder for hydration
 
-  const isDark = theme === "dark";
+  const isDark = resolvedTheme === "dark";
 
   return (
     <button
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative w-12 h-12 rounded-full flex items-center justify-center
+      className="relative w-9 h-9 rounded-full flex items-center justify-center
         bg-card border-2 border-border hover:border-foreground/30
         transition-all duration-300 shadow-sm hover:shadow-md"
       aria-label="Toggle dark mode"
@@ -26,7 +29,7 @@ export default function ThemeToggle() {
     >
       {/* Sun icon */}
       <svg
-        className={`absolute w-6 h-6 transition-all duration-300 ${
+        className={`absolute w-5 h-5 transition-all duration-300 ${
           isDark ? "opacity-0 rotate-90 scale-50" : "opacity-100 rotate-0 scale-100 text-amber-500"
         }`}
         fill="none"
@@ -42,7 +45,7 @@ export default function ThemeToggle() {
       </svg>
       {/* Moon icon */}
       <svg
-        className={`absolute w-6 h-6 transition-all duration-300 ${
+        className={`absolute w-5 h-5 transition-all duration-300 ${
           isDark ? "opacity-100 rotate-0 scale-100 text-blue-400" : "opacity-0 -rotate-90 scale-50"
         }`}
         fill="none"

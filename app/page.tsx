@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import ThemeToggle from '@/components/ThemeToggle';
 import InstallButton from '@/components/InstallButton';
 import ScrollSnapContainer from '@/components/ScrollSnapContainer';
@@ -56,8 +57,11 @@ export default async function Home() {
       <ScrollSnapContainer
         labels={TAB_LABELS}
         topBar={
-          <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-3">
-            <h1 className="text-xl font-bold tracking-tight">📰 Halifax Dashboard</h1>
+          <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-2">
+            <h1 className="flex items-center gap-2 text-base font-bold tracking-tight">
+              <Image src="/logo.png" alt="" width={32} height={32} className="shrink-0" priority />
+              Halifax Dashboard
+            </h1>
             <div className="flex items-center gap-2">
               <InstallButton />
               <ThemeToggle />
