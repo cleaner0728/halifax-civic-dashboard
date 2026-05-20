@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect } from "react";
 
 interface ScrollSnapContainerProps {
   children: React.ReactNode[];
@@ -13,6 +13,10 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
+  // Suppress IO-driven activeIndex updates during programmatic tab navigation
+  // so we don't flicker through every screen we pass over.
+  const isNavigatingRef = useRef(false);
+  const navTimeoutRef = useRef<number | null>(null);
 
   // Auto-scroll the tab bar so the active tab is centered
   useEffect(() => {
@@ -33,8 +37,13 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     const container = containerRef.current;
     if (!container) return;
 
+    // rootMargin trick: shrink the viewport to a 1px-tall band at the center.
+    // The single screen whose middle crosses that band is the active one — no
+    // ambiguity during rubber-band, no fighting between two ≥60%-visible
+    // sections at the same time.
     const observer = new IntersectionObserver(
       (entries) => {
+        if (isNavigatingRef.current) return;
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const index = Number(entry.target.getAttribute("data-index"));
@@ -44,7 +53,8 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       },
       {
         root: container,
-        threshold: 0.6,
+        rootMargin: "-50% 0px -50% 0px",
+        threshold: 0,
       }
     );
 
@@ -54,49 +64,67 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     return () => observer.disconnect();
   }, []);
 
+  // Header hide/show driven by the OUTER container's scrollTop. We compute
+  // distance past the nearest snap point so the header re-appears when the
+  // user lands on a new screen.
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    // Hide once we've scrolled this far past the top.
     const HIDE_AFTER = 60;
-    // Require a deliberate upward swipe to bring the header back — filters
-    // out 1-px jitter from scroll-snap and iOS rubber-band at the bottom.
     const SHOW_DELTA = 8;
-    // When the content is within this many pixels of the bottom, ignore
-    // upward deltas entirely (rubber-band bounce reads as upward scroll).
     const BOTTOM_GUARD = 24;
 
-    let lastScrollY = 0;
-    const handleScroll = (e: Event) => {
-      const target = e.target as HTMLElement;
-      // Each screen's outer wrapper carries `data-screen-scroll`; only those
-      // contribute to the header hide/show heuristic. Matching by className
-      // was fragile — anything tagged `overflow-y-auto` would trigger.
-      if (!target.hasAttribute('data-screen-scroll') || target === container) return;
+    let lastScrollY = container.scrollTop;
+    let raf = 0;
 
-      const currentScrollY = target.scrollTop;
-      const delta = currentScrollY - lastScrollY;
-      const maxScroll = target.scrollHeight - target.clientHeight;
-      const nearBottom = currentScrollY >= maxScroll - BOTTOM_GUARD;
+    const update = () => {
+      raf = 0;
+      const scrollTop = container.scrollTop;
+      const delta = scrollTop - lastScrollY;
+      const screenH = container.clientHeight;
+      const snapPos = Math.round(scrollTop / screenH) * screenH;
+      const withinScreen = scrollTop - snapPos;
+      const maxScroll = container.scrollHeight - container.clientHeight;
+      const nearBottom = scrollTop >= maxScroll - BOTTOM_GUARD;
 
-      if (delta > 0 && currentScrollY > HIDE_AFTER) {
-        setIsHeaderHidden(true); // Scrolling down -> hide header
+      if (delta > 0 && withinScreen > HIDE_AFTER) {
+        setIsHeaderHidden(true);
       } else if (delta < -SHOW_DELTA && !nearBottom) {
-        setIsHeaderHidden(false); // Deliberate upward swipe -> show header
+        setIsHeaderHidden(false);
       }
-      lastScrollY = currentScrollY <= 0 ? 0 : currentScrollY;
+      lastScrollY = scrollTop <= 0 ? 0 : scrollTop;
     };
 
-    container.addEventListener("scroll", handleScroll, { capture: true, passive: true });
-    return () => container.removeEventListener("scroll", handleScroll, { capture: true });
+    const onScroll = () => {
+      // rAF-throttle: 60+ scroll events/sec → at most 1 React state update
+      // per frame. Cuts down the re-render storm during fast swipes.
+      if (raf) return;
+      raf = requestAnimationFrame(update);
+    };
+
+    container.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      container.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   const scrollTo = (index: number) => {
     const container = containerRef.current;
     if (!container) return;
-    const target = container.querySelector(`[data-index="${index}"]`);
-    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const target = container.querySelector(`[data-index="${index}"]`) as HTMLElement | null;
+    if (!target) return;
+    // Instant jump (not smooth) avoids a ~1s animated scroll across many
+    // screens, during which the IntersectionObserver would otherwise fire
+    // for every intermediate screen and the tab bar would visibly cycle.
+    isNavigatingRef.current = true;
+    setActiveIndex(index);
+    container.scrollTo({ top: target.offsetTop, behavior: "instant" as ScrollBehavior });
+    if (navTimeoutRef.current) window.clearTimeout(navTimeoutRef.current);
+    navTimeoutRef.current = window.setTimeout(() => {
+      isNavigatingRef.current = false;
+    }, 150);
   };
 
   return (
@@ -135,12 +163,15 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
         </div>
       </div>
 
-      {/* Scroll snap container */}
+      {/* Single scroll container. Children are min-h-screen sections that
+          snap on settle. `proximity` (not `mandatory`) so users can freely
+          scroll through long content inside one screen without being yanked
+          back to the snap point. */}
       <div
         ref={containerRef}
         className="h-full overflow-y-auto"
         style={{
-          scrollSnapType: "y mandatory",
+          scrollSnapType: "y proximity",
           WebkitOverflowScrolling: "touch",
         }}
       >
