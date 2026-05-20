@@ -25,34 +25,47 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
           <section
             className={`rounded-2xl overflow-hidden shadow-xl mb-6 ${currentWeather.theme.container} ${currentWeather.theme.textPrimary}`}
           >
-            <div className="px-6 pt-6 pb-4">
+            <div className="px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
               {tideGraph && (
                 <div className="mb-4">
-                  <div className={`flex flex-wrap gap-x-5 gap-y-1 text-sm mb-2 ${currentWeather.theme.textSecondary}`}>
-                    <span>
-                      🌊 <span className="font-semibold">{tideGraph.currentLevel.toFixed(2)} m</span>
-                    </span>
+                  <div className={`grid grid-cols-3 gap-x-3 text-xs sm:text-sm mb-2 ${currentWeather.theme.textSecondary}`}>
+                    <div>
+                      <div className="opacity-80">🌊 Now</div>
+                      <div className="font-semibold text-sm sm:text-base">
+                        {tideGraph.currentLevel.toFixed(2)} m
+                      </div>
+                    </div>
                     {tideGraph.nextHigh && (
-                      <span>
-                        ↑ High <span className="font-semibold">{tideGraph.nextHigh.value.toFixed(2)} m</span> ·{' '}
-                        {new Date(tideGraph.nextHigh.time).toLocaleTimeString('en-US', {
-                          hour: 'numeric',
-                          minute: '2-digit',
-                          hour12: true,
-                          timeZone: HFX_TZ,
-                        })}
-                      </span>
+                      <div>
+                        <div className="opacity-80">↑ High</div>
+                        <div className="font-semibold text-sm sm:text-base leading-tight">
+                          {tideGraph.nextHigh.value.toFixed(2)} m
+                        </div>
+                        <div className="opacity-80 text-[11px] sm:text-xs">
+                          {new Date(tideGraph.nextHigh.time).toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true,
+                            timeZone: HFX_TZ,
+                          })}
+                        </div>
+                      </div>
                     )}
                     {tideGraph.nextLow && (
-                      <span>
-                        ↓ Low <span className="font-semibold">{tideGraph.nextLow.value.toFixed(2)} m</span> ·{' '}
-                        {new Date(tideGraph.nextLow.time).toLocaleTimeString('en-US', {
-                          hour: 'numeric',
-                          minute: '2-digit',
-                          hour12: true,
-                          timeZone: HFX_TZ,
-                        })}
-                      </span>
+                      <div>
+                        <div className="opacity-80">↓ Low</div>
+                        <div className="font-semibold text-sm sm:text-base leading-tight">
+                          {tideGraph.nextLow.value.toFixed(2)} m
+                        </div>
+                        <div className="opacity-80 text-[11px] sm:text-xs">
+                          {new Date(tideGraph.nextLow.time).toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true,
+                            timeZone: HFX_TZ,
+                          })}
+                        </div>
+                      </div>
                     )}
                   </div>
                   <div className="rounded-md overflow-hidden" style={{ height: 52 }}>
@@ -88,7 +101,7 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
               <div className="flex items-center justify-between">
                 <div>
                   <div
-                    className={`flex items-center gap-2 text-sm font-medium uppercase tracking-widest ${currentWeather.theme.textSecondary}`}
+                    className={`flex items-center gap-2 text-xs sm:text-sm font-medium uppercase tracking-wide sm:tracking-widest ${currentWeather.theme.textSecondary}`}
                   >
                     <p>Halifax, NS</p>
                     <span>•</span>
@@ -104,30 +117,30 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
                 </div>
                 <div className="text-4xl">{currentWeather.emoji}</div>
               </div>
-              <div className={`flex flex-wrap gap-x-6 gap-y-1 mt-4 text-sm ${currentWeather.theme.textSecondary}`}>
+              <div className={`grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1 mt-4 text-sm ${currentWeather.theme.textSecondary}`}>
                 <span>💨 {weather.windSpeed} km/h</span>
                 <span>💧 {weather.humidity}%</span>
                 {weather.daily[0] && (
                   <>
-                    <span>🌅 Sunrise {formatTime(weather.daily[0].sunrise)}</span>
-                    <span>🌇 Sunset {formatTime(weather.daily[0].sunset)}</span>
+                    <span>🌅 {formatTime(weather.daily[0].sunrise)}</span>
+                    <span>🌇 {formatTime(weather.daily[0].sunset)}</span>
                   </>
                 )}
               </div>
             </div>
-            <div className={`${currentWeather.theme.bottomBar} px-6 py-4`}>
+            <div className={`${currentWeather.theme.bottomBar} px-3 sm:px-6 py-4`}>
               <div className="grid grid-cols-5 gap-1">
                 {weather.daily.map((day) => {
                   const info = getWeatherInfo(day.weatherCode);
                   return (
-                    <div key={day.date} className="flex flex-col items-center gap-1 text-center">
-                      <span className={`text-xs font-medium uppercase ${currentWeather.theme.textSecondary}`}>
+                    <div key={day.date} className="flex flex-col items-center gap-0.5 text-center">
+                      <span className={`text-[11px] sm:text-xs font-medium uppercase ${currentWeather.theme.textSecondary}`}>
                         {getDayName(day.date)}
                       </span>
                       <span className="text-2xl">{info.emoji}</span>
-                      <div className="text-xs">
-                        <span className="font-semibold">{Math.round(day.maxTemp)}°</span>
-                        <span className={`ml-1 ${currentWeather.theme.textSecondary}`}>{Math.round(day.minTemp)}°</span>
+                      <div className="flex flex-col items-center leading-tight">
+                        <span className="text-xs sm:text-sm font-semibold">{Math.round(day.maxTemp)}°</span>
+                        <span className={`text-[11px] sm:text-xs ${currentWeather.theme.textSecondary}`}>{Math.round(day.minTemp)}°</span>
                       </div>
                     </div>
                   );
