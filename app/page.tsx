@@ -31,6 +31,16 @@ type HrmItem = {
   description?: string;
 };
 
+type RedditPost = {
+  title: string;
+  score: number;
+  numComments: number;
+  author: string;
+  url: string;
+  flair?: string;
+  createdUtc: number;
+};
+
 type TidePoint = { time: string; value: number };
 
 type TideGraphData = {
@@ -507,10 +517,103 @@ function computeTideGraph(tides: TidePoint[]): TideGraphData | null {
   };
 }
 
+function timeAgo(utcSeconds: number): string {
+  const diff = Math.floor(Date.now() / 1000 - utcSeconds);
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
+}
+
+// Browser-like UA — Reddit's JSON/RSS endpoints block "bot-like" UAs, but the public
+// HTML pages on old.reddit.com are reachable as long as we look like a normal browser.
+const BROWSER_UA =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&amp;/g, '&')
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&#32;/g, ' ')
+    .replace(/&nbsp;/g, ' ');
+}
+
+async function fetchRedditViaHtml(): Promise<RedditPost[]> {
+  // Scrape old.reddit.com — markup is stable and every post is a <div class="thing">
+  // with score/author/comments/timestamp/permalink in data- attributes.
+  const res = await fetch('https://old.reddit.com/r/halifax/', {
+    headers: {
+      'User-Agent': BROWSER_UA,
+      'Accept': 'text/html,application/xhtml+xml',
+      'Accept-Language': 'en-CA,en;q=0.9',
+    },
+    next: { revalidate: 900 },
+  });
+  if (!res.ok) {
+    console.warn(`[Reddit] HTML scrape returned ${res.status}`);
+    return [];
+  }
+  const html = await res.text();
+  const root = parseHtml(html);
+  const things = root.querySelectorAll('div.thing[data-fullname^="t3_"]');
+  const posts: RedditPost[] = [];
+  for (const thing of things) {
+    if (thing.getAttribute('data-promoted') === 'true') continue;
+    const permalink = thing.getAttribute('data-permalink');
+    if (!permalink) continue;
+    const titleEl = thing.querySelector('a.title');
+    const flairEl = thing.querySelector('span.linkflairlabel');
+    posts.push({
+      title: decodeEntities(titleEl?.text.trim() ?? ''),
+      score: Number(thing.getAttribute('data-score') ?? '0'),
+      numComments: Number(thing.getAttribute('data-comments-count') ?? '0'),
+      author: thing.getAttribute('data-author') ?? 'unknown',
+      url: `https://www.reddit.com${permalink}`,
+      flair: flairEl ? decodeEntities(flairEl.getAttribute('title') ?? flairEl.text.trim()) || undefined : undefined,
+      createdUtc: Math.floor(Number(thing.getAttribute('data-timestamp') ?? '0') / 1000),
+    });
+    if (posts.length >= 10) break;
+  }
+  return posts;
+}
+
+async function fetchRedditViaRss(): Promise<RedditPost[]> {
+  // RSS fallback if HTML scrape gets blocked. No score/comment counts available.
+  try {
+    const parser = new Parser();
+    const feed = await parser.parseURL('https://www.reddit.com/r/halifax/hot.rss?limit=10');
+    return (feed.items || []).slice(0, 10).map(item => ({
+      title: decodeEntities(item.title || ''),
+      score: 0,
+      numComments: 0,
+      author: item.creator?.replace(/^\/u\//, '') || 'unknown',
+      url: item.link || 'https://www.reddit.com/r/halifax',
+      flair: undefined,
+      createdUtc: item.isoDate ? Math.floor(new Date(item.isoDate).getTime() / 1000) : Math.floor(Date.now() / 1000),
+    }));
+  } catch (e) {
+    console.error('[Reddit] RSS fallback failed:', e);
+    return [];
+  }
+}
+
+async function fetchRedditPosts(): Promise<RedditPost[]> {
+  try {
+    const html = await fetchRedditViaHtml();
+    if (html.length > 0) return html;
+  } catch (e) {
+    console.warn('[Reddit] HTML scrape threw', e);
+  }
+  console.log('[Reddit] Falling back to RSS');
+  return fetchRedditViaRss();
+}
+
 // ============ Page Component ============
 
 export default async function Home() {
-  const [weather, news, hrmResult, hrfeIncidents, transitDetours, transitHasRecent, tides] = await Promise.all([
+  const [weather, news, hrmResult, hrfeIncidents, transitDetours, transitHasRecent, tides, redditPosts] = await Promise.all([
     fetchWeather(),
     fetchNews(),
     fetchHrmNews(),
@@ -518,6 +621,7 @@ export default async function Home() {
     fetchTransitDetours(),
     fetchTransitRss(),
     fetchTides(),
+    fetchRedditPosts(),
   ]);
 
   const currentWeather = weather ? getWeatherInfo(weather.weatherCode, !weather.isDay) : null;
@@ -528,7 +632,7 @@ export default async function Home() {
   return (
     <main className="bg-background text-foreground">
       <ScrollSnapContainer 
-        labels={["News & Weather", "HRM News", "HRFE Incidents", "Transit Disruption", "Events Calendar"]}
+        labels={["News & Weather", "HRM News", "HRFE Incidents", "Transit Disruption", "Events Calendar", "r/halifax"]}
         topBar={
           <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-3">
             <h1 className="text-xl font-bold tracking-tight">📰 Halifax Dashboard</h1>
@@ -948,7 +1052,67 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* SCREEN 6: Reddit r/halifax — pending API approval, restore when OAuth is approved */}
+        {/* ========== SCREEN 6: Reddit r/halifax ========== */}
+        <div className="pt-[140px] pb-8 h-screen overflow-y-auto bg-gradient-to-b from-background to-background">
+          <div className="max-w-5xl mx-auto px-2 mt-4">
+            <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-orange-500 via-red-500 to-rose-600 dark:from-orange-900 dark:via-red-900 dark:to-slate-900 text-white shadow-xl mb-6 px-6 py-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-white/70 uppercase tracking-widest">Reddit</p>
+                  <h2 className="text-3xl font-bold tracking-tight mt-1">r/halifax</h2>
+                  <p className="text-base text-white/70 mt-1">
+                    Top 10 hot posts ·{' '}
+                    <a href="https://www.reddit.com/r/halifax" target="_blank" rel="noopener noreferrer" className="underline hover:text-white">
+                      reddit.com/r/halifax
+                    </a>
+                  </p>
+                </div>
+                <div className="text-5xl">🗣️</div>
+              </div>
+            </div>
+
+            <div className="space-y-3 pb-16">
+              {redditPosts.length === 0 ? (
+                <div className="text-center py-16 text-foreground/40">
+                  <p className="text-4xl mb-4">💬</p>
+                  <p className="text-lg font-medium">Unable to load posts.</p>
+                </div>
+              ) : (
+                redditPosts.map((post, index) => (
+                  <a
+                    key={index}
+                    href={post.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block bg-card rounded-xl border border-border hover:border-orange-400/40 shadow-sm hover:shadow-md transition-all overflow-hidden"
+                  >
+                    <div className="p-4">
+                      <div className="flex items-start gap-3">
+                        <div className="flex flex-col items-center min-w-[40px] text-center">
+                          <span className="text-lg font-bold text-orange-500">▲</span>
+                          <span className="text-sm font-bold text-foreground">{post.score}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          {post.flair && (
+                            <span className="inline-block bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 rounded px-2 py-0.5 text-xs font-medium mb-1.5">
+                              {post.flair}
+                            </span>
+                          )}
+                          <p className="text-base font-semibold text-foreground leading-snug">{post.title}</p>
+                          <div className="flex items-center gap-3 mt-1.5 text-xs text-foreground/40">
+                            <span>💬 {post.numComments}</span>
+                            <span>u/{post.author}</span>
+                            <span>{timeAgo(post.createdUtc)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
       </ScrollSnapContainer>
     </main>
   );
