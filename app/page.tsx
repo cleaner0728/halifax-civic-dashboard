@@ -20,7 +20,7 @@ import { fetchTides, computeTideGraph } from '@/lib/fetchers/tides';
 import { fetchRedditPosts } from '@/lib/fetchers/reddit';
 import { safe } from '@/lib/safe';
 
-const TAB_LABELS = ['City Live', 'News', 'HRM', 'Fire', 'Transit', 'Events', 'Reddit'];
+const TAB_LABELS = ['City Live', 'News', 'Reddit', 'HRM', 'HRF', 'Transit', 'Events'];
 
 export default async function Home() {
   // Each fetcher already returns an "empty" sentinel on failure; safe() catches
@@ -78,11 +78,11 @@ export default async function Home() {
           burnStatus={burnStatus}
         />
         <NewsScreen items={news.items} />
+        <RedditScreen posts={redditData.posts} fetchedAt={redditData.fetchedAt} />
         <HrmNewsScreen items={hrmResult.items} dateLabel={hrmResult.dateLabel} />
         <HrfeIncidentsScreen incidents={hrfeIncidents} />
         <TransitDisruptionScreen detours={transitDetours} ferryAlerts={ferryAlerts} hasRecent={transitHasRecent} />
         <EventsCalendarScreen />
-        <RedditScreen posts={redditData.posts} fetchedAt={redditData.fetchedAt} />
       </ScrollSnapContainer>
     </main>
   );

@@ -10,52 +10,52 @@ export type WeatherTheme = {
 
 const weatherThemes = {
   clearDay: {
-    container: 'bg-gradient-to-br from-sky-300 via-blue-400 to-blue-500',
+    container: 'bg-gradient-to-br from-sky-200 via-blue-300 to-blue-400',
     textPrimary: 'text-white',
     textSecondary: 'text-white/80',
     bottomBar: 'bg-black/10',
   },
   clearNight: {
-    container: 'bg-gradient-to-br from-indigo-950 via-slate-900 to-black',
+    container: 'bg-gradient-to-br from-indigo-900 via-slate-800 to-slate-900',
     textPrimary: 'text-white',
     textSecondary: 'text-white/70',
-    bottomBar: 'bg-white/10',
+    bottomBar: 'bg-white/8',
   },
   cloudyDay: {
-    container: 'bg-gradient-to-br from-slate-400 via-slate-500 to-slate-600',
+    container: 'bg-gradient-to-br from-slate-300 via-slate-400 to-slate-500',
+    textPrimary: 'text-white',
+    textSecondary: 'text-white/80',
+    bottomBar: 'bg-black/10',
+  },
+  cloudyNight: {
+    container: 'bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900',
+    textPrimary: 'text-white',
+    textSecondary: 'text-white/70',
+    bottomBar: 'bg-white/8',
+  },
+  rainDay: {
+    container: 'bg-gradient-to-br from-slate-400 via-blue-500 to-slate-600',
     textPrimary: 'text-white',
     textSecondary: 'text-white/80',
     bottomBar: 'bg-black/15',
   },
-  cloudyNight: {
-    container: 'bg-gradient-to-br from-slate-800 via-slate-900 to-black',
-    textPrimary: 'text-white',
-    textSecondary: 'text-white/70',
-    bottomBar: 'bg-white/10',
-  },
-  rainDay: {
-    container: 'bg-gradient-to-br from-slate-500 via-blue-600 to-slate-700',
-    textPrimary: 'text-white',
-    textSecondary: 'text-white/80',
-    bottomBar: 'bg-black/20',
-  },
   rainNight: {
-    container: 'bg-gradient-to-br from-slate-800 via-slate-900 to-blue-950',
+    container: 'bg-gradient-to-br from-slate-700 via-slate-800 to-blue-900',
     textPrimary: 'text-white',
     textSecondary: 'text-white/70',
-    bottomBar: 'bg-white/10',
+    bottomBar: 'bg-white/8',
   },
   snowDay: {
-    container: 'bg-gradient-to-br from-sky-100 via-slate-200 to-slate-300',
+    container: 'bg-gradient-to-br from-sky-50 via-slate-100 to-slate-200',
     textPrimary: 'text-slate-800',
     textSecondary: 'text-slate-600',
     bottomBar: 'bg-white/40',
   },
   snowNight: {
-    container: 'bg-gradient-to-br from-slate-800 via-indigo-950 to-slate-900',
+    container: 'bg-gradient-to-br from-slate-700 via-indigo-900 to-slate-800',
     textPrimary: 'text-white',
     textSecondary: 'text-white/70',
-    bottomBar: 'bg-white/10',
+    bottomBar: 'bg-white/8',
   },
 } satisfies Record<string, WeatherTheme>;
 
