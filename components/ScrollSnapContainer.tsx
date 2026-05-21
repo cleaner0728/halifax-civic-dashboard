@@ -96,6 +96,23 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     };
   }, []);
 
+  // iOS "tap the status bar" classic — double-click anywhere on the fixed
+  // header (that isn't a button/link) and we'll smooth-scroll back to the
+  // first tab's top. Filter out double-clicks on interactive children so
+  // a quick double-tap on a tab pill doesn't also trigger this.
+  const onHeaderDoubleClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement | null;
+    if (target?.closest("button, a, input, select")) return;
+    sectionOffsetsRef.current[0] = 0; // honour "I want the top", not "where I last was in Weather"
+    isNavigatingRef.current = true;
+    setActiveIndex(0);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (navTimeoutRef.current) window.clearTimeout(navTimeoutRef.current);
+    navTimeoutRef.current = window.setTimeout(() => {
+      isNavigatingRef.current = false;
+    }, 600); // smooth scroll runs ~500ms; pad a touch so IO doesn't race
+  };
+
   // Programmatic tab navigation, used by pill clicks AND horizontal swipes.
   // Persists scroll-within-section per tab so switching away and back keeps
   // the user's reading position instead of dumping them at the top.
@@ -262,6 +279,7 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
 
       {/* Header + Tabs — slide out together as one unit */}
       <div
+        onDoubleClick={onHeaderDoubleClick}
         className={`fixed top-0 left-0 right-0 z-[60] transition-transform duration-300 ease-in-out ${
           isHeaderHidden ? "-translate-y-full" : "translate-y-0"
         }`}
