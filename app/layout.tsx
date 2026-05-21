@@ -36,12 +36,16 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      // No scroll-snap on the document. We deliberately give iOS Safari's
-      // native UIScrollView full control of momentum — any snap config
-      // (even `proximity`) makes the OS soft-brake toward snap points,
-      // which dampens the inertia "fling" feel. Tab clicks still jump
-      // to the right section programmatically via window.scrollTo.
-      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      // Restore scroll-snap on the document, but with `proximity` +
+      // (implicit) `scroll-snap-stop: normal`. That combination gives us
+      // both behaviors:
+      //   - Fast flicks pass through multiple snap points freely, so iOS
+      //     Safari's UIScrollView momentum runs at full speed.
+      //   - Slow scrolls that settle near a section boundary get a soft
+      //     snap to align the section with the viewport top.
+      // Earlier we'd removed snap entirely chasing maximum momentum;
+      // `proximity` turns out to be the right middle ground.
+      className={`${geistSans.variable} ${geistMono.variable} snap-y snap-proximity antialiased`}
     >
       <body className="min-h-dvh bg-background text-foreground">
         {/* Dark by default — the dashboard is designed for at-a-glance

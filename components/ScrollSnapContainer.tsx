@@ -279,6 +279,16 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
             // The tab bar scrolls horizontally on narrow screens; tag it so
             // dragging inside the bar pans the tabs instead of swapping tab.
             data-no-tab-swipe
+            // Edge fade hint: the leftmost/rightmost ~12px softly fade out,
+            // so on a narrow viewport where some tabs are cut off the bar
+            // visibly hints "there's more — scroll horizontally." On wide
+            // screens with no overflow the fade is barely visible.
+            style={{
+              maskImage:
+                "linear-gradient(to right, transparent 0, black 14px, black calc(100% - 14px), transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to right, transparent 0, black 14px, black calc(100% - 14px), transparent 100%)",
+            }}
             className="max-w-5xl mx-auto flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
           >
             {labels.map((label, i) => (
@@ -286,10 +296,13 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
                 key={i}
                 ref={(el) => { tabRefs.current[i] = el; }}
                 onClick={() => switchTo(i)}
-                className={`shrink-0 px-3.5 py-1.5 text-center text-sm font-medium whitespace-nowrap transition-all duration-200 border-b-2 ${
+                // Active tab gets bolder weight + slightly larger pill
+                // padding so the current location reads at a glance even
+                // when you're scrolled deep inside a long section.
+                className={`shrink-0 px-3.5 py-1.5 text-center text-sm whitespace-nowrap transition-all duration-200 border-b-2 ${
                   activeIndex === i
-                    ? "border-blue-500 text-blue-500 bg-blue-500/5 dark:bg-blue-500/10"
-                    : "border-transparent text-foreground/60 hover:text-foreground hover:bg-foreground/5"
+                    ? "border-blue-500 text-blue-500 bg-blue-500/5 dark:bg-blue-500/10 font-semibold"
+                    : "border-transparent text-foreground/60 hover:text-foreground hover:bg-foreground/5 font-medium"
                 }`}
               >
                 {label}
@@ -300,14 +313,17 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       </div>
 
       {/* Sections render directly in document flow — iOS hands body scroll
-          to its native UIScrollView, the smoothest path. No scroll-snap:
-          even `proximity` made the OS soft-brake toward snap points and
-          dampen the inertia "fling." */}
+          to its native UIScrollView for full momentum. `snap-start` pairs
+          with the `snap-y snap-proximity` set on <html> in layout.tsx:
+          fast flicks pass through unimpeded, slow settles soft-snap to
+          the section top. `scroll-snap-stop: normal` (the default) is
+          what allows momentum-through; we deliberately do NOT set it to
+          `always`. */}
       {children.map((child, i) => (
         <div
           key={i}
           data-snap-section={i}
-          className="min-h-dvh"
+          className="min-h-dvh snap-start"
         >
           {child}
         </div>
