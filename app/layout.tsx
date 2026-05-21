@@ -36,16 +36,14 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      // Restore scroll-snap on the document, but with `proximity` +
-      // (implicit) `scroll-snap-stop: normal`. That combination gives us
-      // both behaviors:
-      //   - Fast flicks pass through multiple snap points freely, so iOS
-      //     Safari's UIScrollView momentum runs at full speed.
-      //   - Slow scrolls that settle near a section boundary get a soft
-      //     snap to align the section with the viewport top.
-      // Earlier we'd removed snap entirely chasing maximum momentum;
-      // `proximity` turns out to be the right middle ground.
-      className={`${geistSans.variable} ${geistMono.variable} snap-y snap-proximity antialiased`}
+      // No scroll-snap on the document. We've tried `proximity` twice
+      // hoping the OS would only soft-snap on slow settles, but in
+      // practice (verified on iOS Safari) any snap config makes the
+      // momentum engine soft-brake toward snap points — momentum-fling
+      // gets clipped, scrolling feels heavy. Section alignment is the
+      // sacrifice; first-class iOS momentum is the priority. Tab clicks
+      // land on the right section via window.scrollTo regardless.
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
       <body className="min-h-dvh bg-background text-foreground">
         {/* Dark by default — the dashboard is designed for at-a-glance

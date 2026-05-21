@@ -313,17 +313,16 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       </div>
 
       {/* Sections render directly in document flow — iOS hands body scroll
-          to its native UIScrollView for full momentum. `snap-start` pairs
-          with the `snap-y snap-proximity` set on <html> in layout.tsx:
-          fast flicks pass through unimpeded, slow settles soft-snap to
-          the section top. `scroll-snap-stop: normal` (the default) is
-          what allows momentum-through; we deliberately do NOT set it to
-          `always`. */}
+          to its native UIScrollView, the smoothest path. We deliberately
+          do NOT use scroll-snap (not even `proximity`): on real iOS
+          devices any snap config makes the OS soft-brake toward snap
+          points and the inertia "fling" feels clipped. Sections won't
+          perfectly align to the viewport top, but momentum wins. */}
       {children.map((child, i) => (
         <div
           key={i}
           data-snap-section={i}
-          className="min-h-dvh snap-start"
+          className="min-h-dvh"
         >
           {child}
         </div>
