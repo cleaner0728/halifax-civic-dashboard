@@ -40,13 +40,6 @@ type Cam =
 const hhbUrl = (slug: string) => (t: number) =>
   `https://halifaxharbourbridges.ca/wp-content/traffic_cam_images/${slug}.png?time=${t}`;
 
-// The Maritime Museum cam has no HHB equivalent — its only feed is via
-// novascotiawebcams.com, where the canonical og_image.jpg is broken. Our
-// route handler scrapes the freshest /previews/<slug>/<uuid>.jpg URL out
-// of the upstream page's gallery JSON and proxies the bytes through.
-const nswRouteUrl = (slug: string) => (t: number) =>
-  `/api/webcam-frame/${slug}?t=${t}`;
-
 const CAMS: Cam[] = [
   {
     kind: "video",
@@ -108,14 +101,6 @@ const CAMS: Cam[] = [
     name: "MacKay (Dartmouth)",
     emoji: "🌉",
   },
-  {
-    kind: "image",
-    imageUrl: nswRouteUrl("maritimemuseum"),
-    refreshMs: 60_000,
-    source: "https://www.novascotiawebcams.com/webcams/maritime-museum",
-    name: "Maritime Museum",
-    emoji: "🚢",
-  },
 ];
 
 function ImageCam({
@@ -160,23 +145,23 @@ function ImageCam({
   }, [imageUrl, refreshMs]);
 
   if (t === 0) return null;
-  const src = imageUrl(t);
-  // Same-origin URLs (our own /api/... route) skip the next/image optimizer:
-  // it rejects relative URLs with a 400, and we don't need it anyway —
-  // ORB protection only matters for cross-origin fetches.
-  const isSameOrigin = src.startsWith("/");
   return (
     <Image
       key={camId}
-      src={src}
+      src={imageUrl(t)}
       alt="live webcam"
       fill
       sizes="(min-width: 1024px) 64rem, 100vw"
       className="object-cover"
-      // Cross-origin cams (HHB) MUST go through next/image so the browser
-      // sees a same-origin response and Chrome's ORB doesn't silently drop
-      // it. Same-origin cams (our own route) go direct.
-      unoptimized={isSameOrigin}
+      // Always bypass Vercel's image optimizer. Verified the upstream
+      // CDNs (halifaxharbourbridges.ca, our own /api/webcam-frame proxy)
+      // return Content-Type: image/* — Chrome's ORB never blocks images,
+      // regardless of CORS, so going through next/image to "stay
+      // same-origin" was solving a non-problem. The actual cost was real:
+      // every cache-busted `?time=…` poll was a billable Image
+      // Optimization transformation on Vercel, burning ~360 per hour per
+      // active viewer.
+      unoptimized
     />
   );
 }

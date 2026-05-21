@@ -8,10 +8,15 @@ const SOURCE_URL = "https://www.halifax.ca/parks-recreation/programs-activities/
 const REFRESH_MS = 10_000; // halifax.ca refreshes the file every few seconds; 10s keeps us fresh without hammering
 
 export default function EmeraOvalWebcam() {
-  // Route through next/image proxy — Chrome's ORB blocks the cross-origin
-  // halifax.ca CDN response on a plain <img>. The proxy makes it same-origin.
-  // The cache-busting `?t=` query is part of the source URL so next/image
-  // treats each refresh as a distinct image and re-fetches.
+  // History: an earlier version of this file routed the cam through
+  // next/image, citing Chrome's ORB. Verified on cdn.halifax.ca: the
+  // response is `Content-Type: image/jpeg`, which ORB *never* blocks
+  // regardless of CORS — that was a misdiagnosis. Plain <img> works.
+  //
+  // Going through next/image was costing real money: every cache-busted
+  // ?t=... URL counted as a new Vercel Image Optimization transformation,
+  // ~360 per active hour of viewing. We now use Image with `unoptimized`
+  // so the browser fetches the CDN directly and Vercel charges nothing.
   const [t, setT] = useState(0);
 
   useEffect(() => {
@@ -33,6 +38,9 @@ export default function EmeraOvalWebcam() {
           fill
           sizes="(min-width: 1024px) 64rem, 100vw"
           className="object-cover"
+          // Skip Vercel's image optimizer — see header comment. Every
+          // cache-busted URL would otherwise be a billable transformation.
+          unoptimized
         />
       </div>
       <p className="text-sm text-foreground/50 text-center mt-2">
