@@ -238,7 +238,14 @@ export default function HalifaxWebcams() {
       <p className="text-xl font-semibold text-center text-foreground mb-3">
         {active.emoji} {active.name}
       </p>
-      <div className="rounded-xl overflow-hidden border border-border shadow-sm bg-black aspect-video relative">
+      <div
+        // Re-key on cam switch so the player fully unmounts/remounts. Without
+        // this the <video> element keeps the previous cam's frame visible
+        // while the new HLS connects, which makes the up-top title look
+        // "stuck on the old cam" even though it changed immediately.
+        key={active.name}
+        className="rounded-xl overflow-hidden border border-border shadow-sm bg-black aspect-video relative"
+      >
         {active.kind === "image" ? (
           <ImageCam camId={active.name} imageUrl={active.imageUrl} refreshMs={active.refreshMs} />
         ) : (
@@ -247,12 +254,12 @@ export default function HalifaxWebcams() {
       </div>
       {/* Pill switcher lives BELOW the player so 9+ cams can wrap to multiple
           rows on narrow screens without covering the frame. */}
-      <div className="flex flex-wrap gap-2 justify-center mt-3">
+      <div className="flex flex-wrap gap-1.5 justify-center mt-3">
         {CAMS.map((c, i) => (
           <button
             key={c.name}
             onClick={() => setActiveIndex(i)}
-            className={`px-3.5 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition border ${
+            className={`px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap transition border ${
               activeIndex === i
                 ? "bg-foreground text-background border-foreground shadow"
                 : "bg-card text-foreground/70 border-border hover:bg-foreground/5"
