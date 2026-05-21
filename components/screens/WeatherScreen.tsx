@@ -1,6 +1,6 @@
 import LiveClock from '@/components/LiveClock';
 import WeatherPills from '@/components/WeatherPills';
-import MacDonaldBridgeWebcam from '@/components/MacDonaldBridgeWebcam';
+import HalifaxWebcams from '@/components/HalifaxWebcams';
 import { HFX_TZ, getDayName, formatTime } from '@/lib/date';
 import { getWeatherInfo } from '@/lib/weather-theme';
 import type { WeatherData } from '@/lib/fetchers/weather';
@@ -156,7 +156,7 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
           </section>
         )}
 
-        <MacDonaldBridgeWebcam />
+        <HalifaxWebcams />
       </div>
     </div>
   );

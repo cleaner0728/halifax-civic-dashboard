@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "i.redd.it" },
       { protocol: "https", hostname: "cdn.halifax.ca" },
       { protocol: "https", hostname: "images.novascotiawebcams.com" },
+      // Halifax Harbour Bridges traffic cams. Proxied through next/image to
+      // avoid Chrome's ORB silently dropping the cross-origin response (the
+      // same problem the Emera Oval cam hit on cdn.halifax.ca).
+      { protocol: "https", hostname: "halifaxharbourbridges.ca" },
     ],
   },
 };

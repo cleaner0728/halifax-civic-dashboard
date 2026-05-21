@@ -9,9 +9,19 @@ export default function NewsScreen({ items }: Props) {
   return (
     <div className="pt-[88px] pb-8 min-h-screen">
       <div className="max-w-5xl mx-auto px-2 mt-4">
-        <h2 className="text-lg font-bold mb-4">
-          Latest News <span className="text-sm font-normal text-foreground/40">· past 24 hours</span>
-        </h2>
+        <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-700 dark:from-sky-900 dark:via-blue-900 dark:to-slate-900 text-white shadow-xl mb-6 px-6 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-white/70 uppercase tracking-widest">News</p>
+              <h2 className="text-3xl font-bold tracking-tight mt-1">Latest Headlines</h2>
+              <p className="text-base text-white/70 mt-1">
+                {items.length} {items.length === 1 ? 'story' : 'stories'} · past 24 hours · CBC · Examiner · Global
+              </p>
+            </div>
+            <div className="text-5xl">📰</div>
+          </div>
+        </div>
+
         <div className="space-y-5 pb-16">
           {items.length === 0 ? (
             <div className="text-center py-16 text-foreground/40">

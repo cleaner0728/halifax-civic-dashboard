@@ -1,5 +1,34 @@
 import type { HrmItem } from '@/lib/fetchers/hrm';
 
+// HRFE incident titles are short, all-caps category labels like
+// "MEDICAL ASSISTANCE", "VEHICLE FIRE", "MOTOR VEHICLE COLLISION".
+// Match most-specific patterns FIRST so e.g. "VEHICLE FIRE" doesn't get
+// swallowed by a generic /vehicle/ rule before /vehicle\s*fire/ runs.
+type IconSpec = { icon: string; bg: string };
+
+const ICON_RULES: Array<[RegExp, IconSpec]> = [
+  [/structure\s*fire|fire\s*structure/i, { icon: '🏚️', bg: 'bg-red-500/15' }],
+  [/vehicle\s*fire/i, { icon: '🚗', bg: 'bg-red-500/15' }],
+  [/outside\s*fire|grass|brush|wild\s*fire/i, { icon: '🌲', bg: 'bg-orange-500/15' }],
+  [/motor\s*vehicle|collision|mvc/i, { icon: '💥', bg: 'bg-amber-500/15' }],
+  [/medical|ems|cardiac/i, { icon: '🚑', bg: 'bg-blue-500/15' }],
+  [/hazmat|hazardous/i, { icon: '☣️', bg: 'bg-emerald-500/15' }],
+  [/rescue/i, { icon: '🆘', bg: 'bg-red-500/15' }],
+  [/alarm/i, { icon: '🚨', bg: 'bg-yellow-500/15' }],
+  [/smoke/i, { icon: '💨', bg: 'bg-slate-500/15' }],
+  [/fire/i, { icon: '🔥', bg: 'bg-red-500/15' }],
+];
+
+const DEFAULT_ICON: IconSpec = { icon: '🚒', bg: 'bg-red-500/15' };
+
+function getIncidentIcon(title?: string): IconSpec {
+  if (!title) return DEFAULT_ICON;
+  for (const [re, spec] of ICON_RULES) {
+    if (re.test(title)) return spec;
+  }
+  return DEFAULT_ICON;
+}
+
 export default function HrfeIncidentsScreen({ incidents }: { incidents: HrmItem[] }) {
   return (
     <div className="pt-[88px] pb-8 min-h-screen">
@@ -35,31 +64,42 @@ export default function HrfeIncidentsScreen({ incidents }: { incidents: HrmItem[
               <p className="text-sm mt-1">All clear in the Halifax region.</p>
             </div>
           ) : (
-            incidents.map((item, index) => (
-              <article
-                key={index}
-                className="bg-card rounded-xl border border-border hover:border-red-500/30 shadow-sm hover:shadow-md transition-all overflow-hidden"
-              >
-                <div className="p-2">
-                  <a
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-lg font-semibold text-foreground hover:text-red-600 dark:hover:text-red-400 transition-colors leading-snug"
-                  >
-                    {item.title}
-                  </a>
-                  <p className="text-xs text-foreground/40 mt-1 font-mono">
-                    {item.pubDate
-                      ? new Date(item.pubDate).toLocaleString('en-US', { timeZone: 'America/Halifax' })
-                      : 'Unknown'}
-                  </p>
-                  {item.description && (
-                    <p className="text-foreground/60 mt-1 text-base leading-relaxed">{item.description}</p>
-                  )}
-                </div>
-              </article>
-            ))
+            incidents.map((item, index) => {
+              const { icon, bg } = getIncidentIcon(item.title);
+              return (
+                <article
+                  key={index}
+                  className="bg-card rounded-xl border border-border hover:border-red-500/30 shadow-sm hover:shadow-md transition-all overflow-hidden"
+                >
+                  <div className="p-3 flex items-start gap-3">
+                    <div
+                      className={`w-12 h-12 rounded-full ${bg} flex items-center justify-center text-2xl shrink-0`}
+                      aria-hidden
+                    >
+                      {icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-lg font-semibold text-foreground hover:text-red-600 dark:hover:text-red-400 transition-colors leading-snug"
+                      >
+                        {item.title}
+                      </a>
+                      <p className="text-xs text-foreground/40 mt-1 font-mono">
+                        {item.pubDate
+                          ? new Date(item.pubDate).toLocaleString('en-US', { timeZone: 'America/Halifax' })
+                          : 'Unknown'}
+                      </p>
+                      {item.description && (
+                        <p className="text-foreground/60 mt-1 text-base leading-relaxed">{item.description}</p>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              );
+            })
           )}
         </div>
       </div>
