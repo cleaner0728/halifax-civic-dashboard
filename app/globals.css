@@ -45,3 +45,33 @@ body {
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* Suppress the Google Translate widget's chrome — we drive translation
+   through our own LanguageToggle UI, so the banner, balloon, and tooltip
+   overlays Google injects are visual noise. Without `body { top: 0 }` the
+   widget shifts the entire page down by 40px to make room for its banner. */
+.goog-te-banner-frame,
+.goog-te-balloon-frame,
+.skiptranslate {
+  display: none !important;
+}
+body {
+  top: 0 !important;
+}
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+}
+.goog-text-highlight {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+/* The hidden widget root must exist in the DOM for Google's script to
+   mount into, but should never be visible. */
+#google_translate_element {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
