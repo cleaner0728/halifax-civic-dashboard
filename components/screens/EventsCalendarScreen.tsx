@@ -27,9 +27,26 @@ export default function EventsCalendarScreen() {
   return (
     <div className="pt-[88px] pb-8 min-h-dvh">
       <div className="max-w-5xl mx-auto px-2 mt-4">
-        <p className="text-xl font-semibold text-center text-foreground mb-3">
-          📅 Upcoming civic events · Halifax, NS
-        </p>
+        <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-violet-500 via-purple-600 to-fuchsia-700 dark:from-violet-900 dark:via-purple-900 dark:to-slate-900 text-white shadow-xl mb-6 px-6 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-white/70 uppercase tracking-widest">Events</p>
+              <h2 className="text-3xl font-bold tracking-tight mt-1">Civic Calendar</h2>
+              <p className="text-base text-white/70 mt-1">
+                Upcoming events · Halifax, NS ·{' '}
+                <a
+                  href="https://www.halifax.ca/home/events-calendar"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-white"
+                >
+                  halifax.ca/events
+                </a>
+              </p>
+            </div>
+            <div className="text-5xl">🎟️</div>
+          </div>
+        </div>
 
         <div className="rounded-xl overflow-hidden border border-border shadow-sm bg-white p-2 mb-4">
           <iframe
@@ -40,17 +57,6 @@ export default function EventsCalendarScreen() {
             title="Halifax Events Calendar"
           />
         </div>
-        <p className="text-sm text-foreground/50 text-center">
-          Data sourced from{' '}
-          <a
-            href="https://www.halifax.ca/home/events-calendar"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-violet-500 hover:underline"
-          >
-            HRM Events Calendar
-          </a>
-        </p>
 
         <EmeraOvalWebcam />
       </div>

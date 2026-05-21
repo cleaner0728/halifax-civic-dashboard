@@ -16,7 +16,17 @@ export default function HrmNewsScreen({ items, dateLabel }: Props) {
                 Halifax Regional Municipality
               </p>
               <h2 className="text-3xl font-bold tracking-tight mt-1">HRM News</h2>
-              <p className="text-base text-white/70 mt-1">Municipal updates · {dateLabel}</p>
+              <p className="text-base text-white/70 mt-1">
+                Municipal updates · {dateLabel} ·{' '}
+                <a
+                  href="https://www.halifax.ca/home/news"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-white"
+                >
+                  halifax.ca/news
+                </a>
+              </p>
             </div>
             <div className="text-5xl">🏛️</div>
           </div>

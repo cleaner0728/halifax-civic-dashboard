@@ -4,15 +4,42 @@ import { useEffect, useRef, useState } from "react";
 
 // Languages exposed in the dropdown. `code` is the ISO code Google Translate
 // expects in tl=. Add/reorder as you wish — UI auto-adapts.
+// French is pinned to the top — Canada's other official language and the
+// most likely "second look" target for any visitor. After that, grouped
+// by region for predictability when the list is long. `code` is the
+// value Google Translate expects in tl=.
 const LANGUAGES = [
+  // Canada's other official language — top spot.
+  { code: "fr", label: "Français" },
+  // East Asian
   { code: "zh-CN", label: "中文 (简体)" },
   { code: "zh-TW", label: "中文 (繁體)" },
   { code: "ja", label: "日本語" },
   { code: "ko", label: "한국어" },
-  { code: "fr", label: "Français" },
-  { code: "es", label: "Español" },
-  { code: "de", label: "Deutsch" },
+  // South / Southeast Asian
+  { code: "hi", label: "हिन्दी" },
+  { code: "bn", label: "বাংলা" },
+  { code: "pa", label: "ਪੰਜਾਬੀ" },
+  { code: "gu", label: "ગુજરાતી" },
+  { code: "ta", label: "தமிழ்" },
+  { code: "ur", label: "اردو" },
+  { code: "vi", label: "Tiếng Việt" },
+  { code: "tl", label: "Tagalog" },
+  // Middle Eastern
+  { code: "fa", label: "فارسی" },
   { code: "ar", label: "العربية" },
+  { code: "he", label: "עברית" },
+  // Slavic / Eastern European
+  { code: "ru", label: "Русский" },
+  { code: "uk", label: "Українська" },
+  { code: "pl", label: "Polski" },
+  { code: "ro", label: "Română" },
+  { code: "el", label: "Ελληνικά" },
+  // Western European
+  { code: "es", label: "Español" },
+  { code: "pt", label: "Português" },
+  { code: "it", label: "Italiano" },
+  { code: "de", label: "Deutsch" },
 ];
 
 export default function LanguageToggle() {
@@ -29,11 +56,17 @@ export default function LanguageToggle() {
   }, [open]);
 
   const translate = (target: string) => {
-    // Older Google Translate proxy URL — still works in 2026 and redirects to
-    // the *.translate.goog subdomain. Same-tab navigation so iOS standalone
-    // PWAs keep the user inside the app (instead of bouncing to Safari).
-    const here = window.location.origin + window.location.pathname;
-    const url = `https://translate.google.com/translate?sl=auto&tl=${encodeURIComponent(target)}&u=${encodeURIComponent(here)}`;
+    // Use Google's modern `*.translate.goog` subdomain proxy directly. The
+    // legacy `translate.google.com/translate?u=…` form has been quietly
+    // pulled back for less-common targets — pages render but Google shows
+    // "Can't translate this page" for languages like Tamil, Persian,
+    // Gujarati, etc. The .goog form supports the full Translate catalog.
+    //
+    // Hostname-to-subdomain transform: dots and colons in the host become
+    // dashes, e.g. `news.halifax.ca` → `news-halifax-ca.translate.goog`.
+    // Same-tab navigation keeps iOS-standalone PWAs inside the app shell.
+    const proxiedHost = window.location.host.replace(/[.:]/g, '-');
+    const url = `https://${proxiedHost}.translate.goog${window.location.pathname}?_x_tr_sl=auto&_x_tr_tl=${encodeURIComponent(target)}&_x_tr_hl=en`;
     window.location.href = url;
   };
 
@@ -59,7 +92,10 @@ export default function LanguageToggle() {
       {open && (
         <ul
           role="menu"
-          className="absolute right-0 top-11 z-[80] w-44 rounded-xl border border-border bg-card shadow-xl py-1 overflow-hidden"
+          // max-h caps the dropdown to ~75% viewport height so 26 entries
+          // don't run off-screen on shorter displays; vertical scroll
+          // appears automatically when the content exceeds the cap.
+          className="absolute right-0 top-11 z-[80] w-44 max-h-[75vh] overflow-y-auto rounded-xl border border-border bg-card shadow-xl py-1"
         >
           {LANGUAGES.map((lang) => (
             <li key={lang.code}>
