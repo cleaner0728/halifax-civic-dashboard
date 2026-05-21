@@ -17,7 +17,16 @@ export default function RedditScreen({ posts, fetchedAt }: Props) {
               <h2 className="text-3xl font-bold tracking-tight mt-1">r/halifax</h2>
               <p className="text-base text-white/70 mt-1">
                 Top {posts.length} hot posts
-                {fetchedAt ? ` · updated ${timeAgo(Math.floor(new Date(fetchedAt).getTime() / 1000))}` : ''} ·{' '}
+                {/* `fetchedAt` reflects the last time the post list actually
+                    changed (score/comments/order/new post), not the last
+                    poll — the GitHub Action runs every 30 min but only
+                    rewrites public/reddit.json when something differs.
+                    Phrasing this as "last change" + a steady "checked every
+                    30 min" hint keeps the UI honest on quiet nights. */}
+                {fetchedAt
+                  ? ` · last change ${timeAgo(Math.floor(new Date(fetchedAt).getTime() / 1000))} · checked every 30 min`
+                  : ' · checked every 30 min'}{' '}
+                ·{' '}
                 <a
                   href="https://www.reddit.com/r/halifax"
                   target="_blank"

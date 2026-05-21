@@ -22,7 +22,17 @@ export type FerryAlert = {
   moreDetailsUrl?: string; // halifax.ca news link if the alert provides one
 };
 
+export type TransitAdjustment = {
+  dateLabel: string;       // "May 18, 2026" lifted from the heading
+  intro: string;           // first paragraph beneath the heading
+  bullets: string[];       // summary bullet list, each <li> as plain text
+  sourceUrl: string;
+};
+
 const DISRUPTIONS_URL = 'https://www.halifax.ca/transportation/halifax-transit/service-disruptions';
+const ADJUSTMENTS_URL = 'https://www.halifax.ca/transportation/halifax-transit/service-adjustments';
+const ADJUSTMENTS_FEED_URL = 'https://www.halifax.ca/page-published-feed/838035';
+const ADJUSTMENTS_RECENT_DAYS = 30;
 
 function extractStrongField(html: string, labelPattern: string): string {
   const regex = new RegExp(`<strong>\\s*${labelPattern}\\s*<\\/strong>([^<]*)`, 'i');
@@ -150,4 +160,72 @@ export async function fetchFerryAlerts(): Promise<FerryAlert[]> {
     results.push({ title, body, moreDetailsUrl });
   }
   return results;
+}
+
+// Service Adjustments — a structured "what's changing on Date X" block that
+// halifax.ca publishes ahead of major route/schedule shake-ups. We surface
+// it only when the page has been touched recently (per its RSS feed) so an
+// 18-month-old change doesn't loiter on the dashboard forever.
+export async function fetchTransitAdjustments(): Promise<TransitAdjustment | null> {
+  // Cheap gate: skip the page scrape entirely if the RSS shows nothing recent.
+  let hasRecent = false;
+  try {
+    const parser = new Parser();
+    const feed = await parser.parseURL(ADJUSTMENTS_FEED_URL);
+    const cutoff = new Date(Date.now() - ADJUSTMENTS_RECENT_DAYS * 24 * 60 * 60 * 1000);
+    hasRecent = (feed.items || []).some((item) => {
+      const d = item.pubDate || item.isoDate;
+      return d ? new Date(d) > cutoff : false;
+    });
+  } catch (e) {
+    console.error('Failed to fetch transit adjustments RSS:', e);
+    return null;
+  }
+  if (!hasRecent) return null;
+
+  let html: string;
+  try {
+    const res = await fetch(ADJUSTMENTS_URL, { next: { revalidate: 3600 } });
+    if (!res.ok) return null;
+    html = await res.text();
+  } catch (e) {
+    console.error('Failed to fetch transit adjustments page:', e);
+    return null;
+  }
+
+  const root = parseHtml(html);
+  // The page wraps each content block in a `.u-text-lighter` div. The one
+  // we want has an `<h2>` whose text reads "<Date> Service Changes"
+  // (literally — the upstream heading contains a <br> separator between
+  // the date and "Service Changes", which collapses to a space on .text).
+  for (const block of root.querySelectorAll('.u-text-lighter')) {
+    const h2 = block.querySelector('h2');
+    if (!h2) continue;
+    const headingText = h2.text.replace(/\s+/g, ' ').trim();
+    const m = headingText.match(/^(.+?)\s*Service Changes\s*$/i);
+    if (!m) continue;
+    const dateLabel = m[1].trim();
+
+    // First <p> in the block is the intro sentence.
+    const intro = block.querySelector('p')?.text.replace(/\s+/g, ' ').trim() ?? '';
+
+    // First <ul> is the bullet summary of changes. Deeper headings
+    // (Routing/Schedule/Bus stop changes) get their own sublists which
+    // we deliberately skip — those route-by-route details live on the
+    // source page; the dashboard just shows the highlight reel.
+    const ul = block.querySelector('ul');
+    const bullets: string[] = [];
+    if (ul) {
+      for (const li of ul.querySelectorAll('li')) {
+        const t = li.text.replace(/\s+/g, ' ').trim();
+        if (t) bullets.push(t);
+      }
+    }
+
+    if (!intro && bullets.length === 0) continue; // empty block, keep looking
+
+    return { dateLabel, intro, bullets, sourceUrl: ADJUSTMENTS_URL };
+  }
+
+  return null;
 }

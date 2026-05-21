@@ -15,7 +15,12 @@ import { fetchAirQuality } from '@/lib/fetchers/air-quality';
 import { fetchBurnStatus } from '@/lib/fetchers/burn-status';
 import { fetchNews } from '@/lib/fetchers/news';
 import { fetchHrmNews, fetchHrfeIncidents } from '@/lib/fetchers/hrm';
-import { fetchTransitRss, fetchTransitDetours, fetchFerryAlerts } from '@/lib/fetchers/transit';
+import {
+  fetchTransitRss,
+  fetchTransitDetours,
+  fetchFerryAlerts,
+  fetchTransitAdjustments,
+} from '@/lib/fetchers/transit';
 import { fetchTides, computeTideGraph } from '@/lib/fetchers/tides';
 import { fetchRedditPosts } from '@/lib/fetchers/reddit';
 import { safe } from '@/lib/safe';
@@ -33,6 +38,7 @@ export default async function Home() {
     transitDetours,
     ferryAlerts,
     transitHasRecent,
+    transitAdjustments,
     tides,
     redditData,
     airQuality,
@@ -45,6 +51,7 @@ export default async function Home() {
     safe(fetchTransitDetours(), [], 'transit-detours'),
     safe(fetchFerryAlerts(), [], 'ferry-alerts'),
     safe(fetchTransitRss(), false, 'transit-rss'),
+    safe(fetchTransitAdjustments(), null, 'transit-adjustments'),
     safe(fetchTides(), [], 'tides'),
     safe(fetchRedditPosts(), { posts: [], fetchedAt: null }, 'reddit'),
     safe(fetchAirQuality(), null, 'air-quality'),
@@ -81,7 +88,12 @@ export default async function Home() {
         <RedditScreen posts={redditData.posts} fetchedAt={redditData.fetchedAt} />
         <HrmNewsScreen items={hrmResult.items} dateLabel={hrmResult.dateLabel} />
         <HrfeIncidentsScreen incidents={hrfeIncidents} />
-        <TransitDisruptionScreen detours={transitDetours} ferryAlerts={ferryAlerts} hasRecent={transitHasRecent} />
+        <TransitDisruptionScreen
+          detours={transitDetours}
+          ferryAlerts={ferryAlerts}
+          hasRecent={transitHasRecent}
+          adjustments={transitAdjustments}
+        />
         <EventsCalendarScreen />
       </ScrollSnapContainer>
     </main>
