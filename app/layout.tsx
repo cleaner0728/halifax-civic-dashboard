@@ -36,9 +36,15 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      // `snap-y snap-proximity` configures the document scroller for snap
+      // behavior — scroll-snap-type must live on the actual scrolling
+      // element, which (now that ScrollSnapContainer no longer uses a
+      // nested overflow:auto div) is <html>/<body>.
+      // We drop the old `h-full` so the document grows with content
+      // instead of being constrained to viewport height.
+      className={`${geistSans.variable} ${geistMono.variable} snap-y snap-proximity antialiased`}
     >
-      <body className="min-h-full bg-background text-foreground">
+      <body className="min-h-dvh bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
         </ThemeProvider>

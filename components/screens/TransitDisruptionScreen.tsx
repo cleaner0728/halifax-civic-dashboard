@@ -8,7 +8,7 @@ type Props = {
 
 export default function TransitDisruptionScreen({ detours, ferryAlerts, hasRecent }: Props) {
   return (
-    <div className="pt-[88px] pb-8 min-h-screen">
+    <div className="pt-[88px] pb-8 min-h-dvh">
       <div className="max-w-5xl mx-auto px-2 mt-4">
         <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 dark:from-amber-900 dark:via-orange-900 dark:to-slate-900 text-white shadow-xl mb-6 px-6 py-6">
           <div className="flex items-center justify-between">
