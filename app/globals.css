@@ -35,6 +35,10 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
+  /* Suppress iOS Safari's built-in pull-to-refresh (which reloads the
+     whole page). ScrollSnapContainer ships its own PTR that just calls
+     router.refresh() — keeps client state, refetches server data. */
+  overscroll-behavior-y: contain;
 }
 
 /* Hide scrollbar for horizontally scrollable elements but keep functionality */
