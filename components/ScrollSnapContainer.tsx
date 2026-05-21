@@ -14,7 +14,7 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
   const router = useRouter();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isHeaderHidden, setIsHeaderHidden] = useState(false);
+  const [headerOpacity, setHeaderOpacity] = useState(1);
   const [pullProgress, setPullProgress] = useState(0); // 0..1, drives the indicator
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -49,13 +49,6 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     }
   }, [activeIndex]);
 
-  // Whenever the active screen changes (tab click, swipe, or scroll-snap),
-  // bring the header back. Otherwise its hidden state carries over to the
-  // new screen and the user has to manually scroll up to re-summon it.
-  useEffect(() => {
-    setIsHeaderHidden(false);
-  }, [activeIndex]);
-
   useEffect(() => {
     // root: null observes against the viewport (the document is the scroll
     // container now). rootMargin shrinks observation to a 1px band at the
@@ -78,27 +71,77 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     return () => observer.disconnect();
   }, []);
 
-  // Header hide/show driven by document scroll. window scroll (not a custom
-  // div) so iOS Safari hands the scroll to its native UIScrollView for
-  // best-in-class momentum.
+  // After a fling settles, if the user landed within EDGE_BAND of a section
+  // boundary, smooth-scroll the rest of the way so the card tops align to
+  // the viewport. Mid-section is a dead zone — we don't yank users away
+  // from content they may be reading. Done in JS rather than CSS
+  // scroll-snap because every CSS snap-type kills iOS WebKit's inertia.
   useEffect(() => {
-    const HIDE_AFTER = 60;
-    const SHOW_DELTA = 8;
-    const BOTTOM_GUARD = 24;
-    let lastScrollY = window.scrollY;
+    const EDGE_BAND = 80;
+    let timer = 0;
+    let touching = false;
+
+    const snapIfNeeded = () => {
+      if (touching) return;
+      if (isNavigatingRef.current) return;
+      const scrollTop = window.scrollY;
+      const screenH = window.innerHeight;
+      const snapPos = Math.round(scrollTop / screenH) * screenH;
+      const withinScreen = scrollTop - snapPos;
+
+      let target: number | null = null;
+      if (withinScreen > 0 && withinScreen < EDGE_BAND) {
+        target = snapPos;
+      } else if (withinScreen > screenH - EDGE_BAND) {
+        target = snapPos + screenH;
+      }
+      if (target == null) return;
+
+      const maxScroll = document.documentElement.scrollHeight - screenH;
+      target = Math.max(0, Math.min(maxScroll, target));
+      if (Math.abs(target - scrollTop) < 1) return;
+
+      window.scrollTo({ top: target, behavior: "smooth" });
+    };
+
+    const onScroll = () => {
+      if (timer) window.clearTimeout(timer);
+      timer = window.setTimeout(snapIfNeeded, 150);
+    };
+    const onTouchStart = () => { touching = true; };
+    const onTouchEnd = () => {
+      touching = false;
+      // After release, give the momentum fling a beat to start, then re-arm.
+      if (timer) window.clearTimeout(timer);
+      timer = window.setTimeout(snapIfNeeded, 250);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("touchcancel", onTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("touchcancel", onTouchEnd);
+      if (timer) window.clearTimeout(timer);
+    };
+  }, []);
+
+  // Header opacity tied directly to scroll position within the current
+  // snap section — no direction detection. Scrolling down fades it out
+  // gradually; scrolling back toward the top fades it back in.
+  useEffect(() => {
+    const FADE_RANGE = 160;
     let raf = 0;
     const update = () => {
       raf = 0;
       const scrollTop = window.scrollY;
-      const delta = scrollTop - lastScrollY;
       const screenH = window.innerHeight;
       const snapPos = Math.round(scrollTop / screenH) * screenH;
-      const withinScreen = scrollTop - snapPos;
-      const maxScroll = document.documentElement.scrollHeight - screenH;
-      const nearBottom = scrollTop >= maxScroll - BOTTOM_GUARD;
-      if (delta > 0 && withinScreen > HIDE_AFTER) setIsHeaderHidden(true);
-      else if (delta < -SHOW_DELTA && !nearBottom) setIsHeaderHidden(false);
-      lastScrollY = scrollTop <= 0 ? 0 : scrollTop;
+      const withinScreen = Math.max(0, scrollTop - snapPos);
+      setHeaderOpacity(Math.max(0, Math.min(1, 1 - withinScreen / FADE_RANGE)));
     };
     const onScroll = () => {
       // rAF-throttle so we don't fire setState 60+ times/sec during a flick.
@@ -294,12 +337,14 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
         </div>
       </div>
 
-      {/* Header + Tabs — slide out together as one unit */}
+      {/* Header + Tabs — fade in/out together based on scroll position */}
       <div
         onDoubleClick={onHeaderDoubleClick}
-        className={`fixed top-0 left-0 right-0 z-[60] transition-transform duration-300 ease-in-out ${
-          isHeaderHidden ? "-translate-y-full" : "translate-y-0"
-        }`}
+        className="fixed top-0 left-0 right-0 z-[60]"
+        style={{
+          opacity: headerOpacity,
+          pointerEvents: headerOpacity < 0.05 ? "none" : "auto",
+        }}
       >
         {topBar && (
           <div
@@ -334,10 +379,10 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
                 // Active tab gets bolder weight + slightly larger pill
                 // padding so the current location reads at a glance even
                 // when you're scrolled deep inside a long section.
-                className={`shrink-0 px-3.5 py-1.5 text-center text-sm whitespace-nowrap transition-all duration-200 border-b-2 ${
+                className={`shrink-0 my-1.5 mx-0.5 px-3.5 py-1.5 rounded-full text-center text-sm whitespace-nowrap transition-all duration-200 ${
                   activeIndex === i
-                    ? "border-blue-500 text-blue-500 bg-blue-500/5 dark:bg-blue-500/10 font-semibold"
-                    : "border-transparent text-foreground/60 hover:text-foreground hover:bg-foreground/5 font-medium"
+                    ? "bg-blue-500/15 dark:bg-blue-500/20 text-blue-500 font-semibold"
+                    : "text-foreground/60 hover:text-foreground hover:bg-foreground/5 font-medium"
                 }`}
               >
                 {label}

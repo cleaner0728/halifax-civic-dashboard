@@ -221,7 +221,12 @@ export default function HalifaxWebcams() {
 
   return (
     <section className="mt-6">
-      <p className="text-xl font-semibold text-center text-foreground mb-3">
+      {/* Key on cam name so React fully remounts this node when switching
+          cams. Without the key, React mutates the text inside Google
+          Translate's injected <font> wrapper, leaving the old translation
+          stuck on screen. Remounting lets Google's MutationObserver
+          translate the new title fresh. */}
+      <p key={`title-${active.name}`} className="text-xl font-semibold text-center text-foreground mb-3">
         {active.emoji} {active.name}
       </p>
       <div

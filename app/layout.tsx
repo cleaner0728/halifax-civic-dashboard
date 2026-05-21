@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Global News – Halifax Dashboard",
+  title: "Halifax Dashboard",
   description: "Live news feed and weather for Halifax, Nova Scotia",
   appleWebApp: {
     capable: true,
