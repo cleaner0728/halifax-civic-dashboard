@@ -12,8 +12,7 @@ import { track } from "@vercel/analytics";
 //   - video: HLS live stream via hls.js (or Safari's native HLS).
 //
 // Storing the URL builder per-cam keeps the component agnostic of where the
-// frame comes from. Some cams hit upstream directly; others go through
-// /api/webcam-frame which works around a broken og_image endpoint.
+// frame comes from.
 type Cam =
   | {
       kind: "image";
@@ -154,9 +153,8 @@ function ImageCam({
       fill
       sizes="(min-width: 1024px) 64rem, 100vw"
       className="object-cover"
-      // Always bypass Vercel's image optimizer. Verified the upstream
-      // CDNs (halifaxharbourbridges.ca, our own /api/webcam-frame proxy)
-      // return Content-Type: image/* — Chrome's ORB never blocks images,
+      // Always bypass Vercel's image optimizer. Verified halifaxharbourbridges.ca
+      // returns Content-Type: image/* — Chrome's ORB never blocks images,
       // regardless of CORS, so going through next/image to "stay
       // same-origin" was solving a non-problem. The actual cost was real:
       // every cache-busted `?time=…` poll was a billable Image

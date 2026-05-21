@@ -5,6 +5,23 @@ type Props = {
   items: NewsItem[];
 };
 
+// Wordpress/Jetpack CDNs (wp.com) and Global's WP install serve images with
+// clean Content-Type headers — the browser can fetch them directly. Any
+// other host (notably i.cbc.ca) gets Chrome's Opaque Response Blocking
+// treatment when fetched cross-origin, so we route those through our
+// own /api/img endpoint which fetches server-side and re-emits same-origin.
+// Either way the result is plain `<img>`-style display, with no Vercel
+// Image Optimization transformations getting billed.
+const DIRECT_OK = /(?:^|\.)wp\.com$|^globalnews\.ca$/i;
+function newsImageSrc(url: string): string {
+  try {
+    if (DIRECT_OK.test(new URL(url).hostname)) return url;
+  } catch {
+    return url;
+  }
+  return `/api/img?url=${encodeURIComponent(url)}`;
+}
+
 export default function NewsScreen({ items }: Props) {
   return (
     <div className="pt-[88px] pb-8 min-h-dvh">
@@ -44,11 +61,12 @@ export default function NewsScreen({ items }: Props) {
                         className="block absolute inset-0"
                       >
                         <Image
-                          src={item.imageUrl}
+                          src={newsImageSrc(item.imageUrl)}
                           alt={item.title || 'News image'}
                           fill
                           sizes="(min-width: 640px) 18rem, 100vw"
                           className="object-cover"
+                          unoptimized
                         />
                       </a>
                     </div>

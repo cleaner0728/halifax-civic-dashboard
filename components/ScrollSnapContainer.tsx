@@ -129,30 +129,49 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     };
   }, []);
 
-  // Header opacity tied directly to scroll position within the current
-  // snap section — no direction detection. Scrolling down fades it out
-  // gradually; scrolling back toward the top fades it back in.
+  // Header visibility follows the classic "scroll-up to summon nav" mobile
+  // pattern. Two inputs:
+  //   - Direction: any backward scroll (finger swipes down, scrollY
+  //     decreasing) snaps the tab bar fully visible — that's how users
+  //     reach for navigation mid-read without having to scroll all the way
+  //     to a section top.
+  //   - Distance: forward scrolling (scrollY increasing) fades the bar out
+  //     across FADE_RANGE px measured from the ACTIVE section's real
+  //     offsetTop. Anchoring on the section (not a rounded half-screen)
+  //     means the bar stays hidden the whole way through a long article.
   useEffect(() => {
     const FADE_RANGE = 160;
     let raf = 0;
+    let prevY = window.scrollY;
     const update = () => {
       raf = 0;
-      const scrollTop = window.scrollY;
-      const screenH = window.innerHeight;
-      const snapPos = Math.round(scrollTop / screenH) * screenH;
-      const withinScreen = Math.max(0, scrollTop - snapPos);
-      setHeaderOpacity(Math.max(0, Math.min(1, 1 - withinScreen / FADE_RANGE)));
+      const y = window.scrollY;
+      const dy = y - prevY;
+      prevY = y;
+      const section = document.querySelector(
+        `[data-snap-section="${activeIndexRef.current}"]`,
+      ) as HTMLElement | null;
+      const sectionTop = section?.offsetTop ?? 0;
+      const withinSection = Math.max(0, y - sectionTop);
+      const distanceOpacity = Math.max(0, Math.min(1, 1 - withinSection / FADE_RANGE));
+      // dy < 0 → user is scrolling back toward the top of the document;
+      // reveal the tab bar regardless of how far in we are.
+      setHeaderOpacity(dy < 0 ? 1 : distanceOpacity);
     };
     const onScroll = () => {
       // rAF-throttle so we don't fire setState 60+ times/sec during a flick.
       if (!raf) raf = requestAnimationFrame(update);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
+    // Re-evaluate when the active section changes (tab switch or IO update)
+    // so the header lands in the right state on arrival, not after the next
+    // scroll tick.
+    update();
     return () => {
       window.removeEventListener("scroll", onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [activeIndex]);
 
   // iOS "tap the status bar" classic — double-click anywhere on the fixed
   // header (that isn't a button/link) and we'll smooth-scroll back to the
