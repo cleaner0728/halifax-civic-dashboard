@@ -161,15 +161,16 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       </div>
 
       {/* Sections render directly in document flow. The body scrolls, not a
-          nested div — which is the whole point of this layout: iOS hands
-          body scroll to its native UIScrollView, giving real momentum,
-          inertia, and bounce. Snap is configured on <html> in layout.tsx
-          (it has to live on the actual scrolling element). */}
+          nested div — iOS hands body scroll to its native UIScrollView for
+          the smoothest momentum. We intentionally do NOT use scroll-snap
+          here: even `proximity` snap makes the OS soft-brake toward snap
+          points, dampening the inertia "fling" feel. Tab clicks still
+          land on the right section via window.scrollTo. */}
       {children.map((child, i) => (
         <div
           key={i}
           data-snap-section={i}
-          className="min-h-dvh snap-start"
+          className="min-h-dvh"
         >
           {child}
         </div>

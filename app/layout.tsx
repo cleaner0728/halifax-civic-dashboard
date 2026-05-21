@@ -36,13 +36,12 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      // `snap-y snap-proximity` configures the document scroller for snap
-      // behavior — scroll-snap-type must live on the actual scrolling
-      // element, which (now that ScrollSnapContainer no longer uses a
-      // nested overflow:auto div) is <html>/<body>.
-      // We drop the old `h-full` so the document grows with content
-      // instead of being constrained to viewport height.
-      className={`${geistSans.variable} ${geistMono.variable} snap-y snap-proximity antialiased`}
+      // No scroll-snap on the document. We deliberately give iOS Safari's
+      // native UIScrollView full control of momentum — any snap config
+      // (even `proximity`) makes the OS soft-brake toward snap points,
+      // which dampens the inertia "fling" feel. Tab clicks still jump
+      // to the right section programmatically via window.scrollTo.
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
       <body className="min-h-dvh bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
