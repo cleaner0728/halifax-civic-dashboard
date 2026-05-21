@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
@@ -54,6 +55,11 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           {children}
         </ThemeProvider>
+        {/* Vercel Web Analytics. Auto-tracks pageviews + receives
+            track() calls fired from interactive components (tab switch,
+            cam pick, PTR, translate). Cookie-less, no consent banner
+            needed. View at vercel.com/<team>/<project>/analytics. */}
+        <Analytics />
       </body>
     </html>
   );

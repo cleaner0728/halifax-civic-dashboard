@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { track } from "@vercel/analytics";
 
 // French is pinned to the top — Canada's other official language and the
 // most likely "second look" target for any visitor. After that, grouped
@@ -129,6 +130,7 @@ export default function LanguageToggle() {
   const translate = (target: string | null) => {
     // Persist across reloads via cookie; Google's script reads this on init.
     setGoogTransCookie(target);
+    track("translate", { lang: target ?? "en-reset" });
 
     if (target === null) {
       // "Reset to English" → clearing the cookie alone doesn't revert the

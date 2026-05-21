@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { track } from "@vercel/analytics";
 
 // Two render shapes:
 //   - image: poll a still-frame URL on a fixed cadence. Each upstream sets
@@ -243,7 +244,10 @@ export default function HalifaxWebcams() {
         {CAMS.map((c, i) => (
           <button
             key={c.name}
-            onClick={() => setActiveIndex(i)}
+            onClick={() => {
+              setActiveIndex(i);
+              track("cam_select", { cam: c.name, kind: c.kind });
+            }}
             className={`px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap transition border ${
               activeIndex === i
                 ? "bg-foreground text-background border-foreground shadow"

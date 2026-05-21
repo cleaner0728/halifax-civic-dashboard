@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { track } from "@vercel/analytics";
 
 interface ScrollSnapContainerProps {
   children: React.ReactNode[];
@@ -25,6 +26,20 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
   const navTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => { activeIndexRef.current = activeIndex; }, [activeIndex]);
+
+  // Tab dwell-time analytics. When activeIndex changes, emit a `tab_view`
+  // event for the OUTGOING tab with how long the user spent on it.
+  // Threshold of 1.5s filters out drive-by passes during snap-scrolling
+  // or fast horizontal swipes so the data reflects actual reading time.
+  const tabEnterRef = useRef<{ tab: string; at: number }>({ tab: labels[0], at: Date.now() });
+  useEffect(() => {
+    const prev = tabEnterRef.current;
+    const elapsedMs = Date.now() - prev.at;
+    if (elapsedMs >= 1500 && prev.tab !== labels[activeIndex]) {
+      track("tab_view", { tab: prev.tab, seconds: Math.round(elapsedMs / 1000) });
+    }
+    tabEnterRef.current = { tab: labels[activeIndex], at: Date.now() };
+  }, [activeIndex, labels]);
 
   // Auto-center the active tab pill in the (horizontally scrollable) tab bar.
   useEffect(() => {
@@ -141,6 +156,7 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     // the IO for every intermediate section and visibly cycle the active tab.
     isNavigatingRef.current = true;
     setActiveIndex(index);
+    track("tab_click", { from: labels[oldIdx], to: labels[index] });
     const savedOffset = sectionOffsetsRef.current[index] ?? 0;
     window.scrollTo({
       top: target.offsetTop + savedOffset,
@@ -150,7 +166,7 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     navTimeoutRef.current = window.setTimeout(() => {
       isNavigatingRef.current = false;
     }, 200);
-  }, [children.length]);
+  }, [children.length, labels]);
 
   // Horizontal-swipe gesture → previous/next tab.
   //
@@ -237,6 +253,7 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       setPullProgress(0);
       if (triggered) {
         setIsRefreshing(true);
+        track("pull_to_refresh", { tab: labels[activeIndexRef.current] });
         router.refresh();
         // router.refresh() is fire-and-forget for client code — we can't
         // await the RSC fetch. 800ms is enough for the spinner to register
@@ -252,7 +269,7 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       window.removeEventListener("touchmove", onMove);
       window.removeEventListener("touchend", onEnd);
     };
-  }, [router]);
+  }, [router, labels]);
 
   return (
     <>
