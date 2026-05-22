@@ -425,7 +425,15 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
           the page-dot row pinned to the bottom of the viewport. Double-
           click handling lives on document (see scrollToTop) so it fires
           anywhere, not just the header. */}
-      <div className="fixed top-0 left-0 right-0 z-[60]">
+      <div
+        className="fixed top-0 left-0 right-0 z-[60]"
+        // Pulled out of the View Transition's "root" snapshot so the
+        // header doesn't slide along with content during a tab switch.
+        // Browser instead cross-fades old↔new for this layer alone,
+        // which is invisible since the header structure is identical
+        // between snapshots and only the active pill's colour shifts.
+        style={{ viewTransitionName: "tab-header" }}
+      >
         {topBar && (
           <div
             className="relative z-10 bg-card/90 backdrop-blur-md border-b border-border"
@@ -481,7 +489,13 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       <div
         data-no-tab-swipe
         className="fixed left-1/2 -translate-x-1/2 z-50 flex justify-center items-center gap-1.5 px-3 py-1.5 pointer-events-none"
-        style={{ bottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+        // Same opt-out as the header: dots stay in place during the
+        // tab-switch slide and only cross-fade between active-dot
+        // positions.
+        style={{
+          bottom: "max(0.75rem, env(safe-area-inset-bottom))",
+          viewTransitionName: "tab-dots",
+        }}
         aria-hidden
       >
         {labels.map((label, i) => (
