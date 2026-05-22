@@ -29,6 +29,14 @@ function getIncidentIcon(title?: string): IconSpec {
   return DEFAULT_ICON;
 }
 
+// Pull the location line out of the RSS description, which looks like:
+//   "Location: 123 Main St, Halifax\nCall Type: Medical\nResponse: 2 Units"
+function parseLocation(description?: string): string | null {
+  if (!description) return null;
+  const match = description.match(/Location:\s*(.+?)(?:\n|$)/i);
+  return match ? match[1].trim() : null;
+}
+
 export default function HrfeIncidentsScreen({ incidents }: { incidents: HrmItem[] }) {
   return (
     <div className="pt-20 pb-4 min-h-dvh">
@@ -66,12 +74,16 @@ export default function HrfeIncidentsScreen({ incidents }: { incidents: HrmItem[
           ) : (
             incidents.map((item, index) => {
               const { icon, bg } = getIncidentIcon(item.title);
+              const location = parseLocation(item.description);
               return (
-                <article
+                <a
                   key={index}
-                  className="bg-card rounded-xl border border-border hover:border-red-500/30 shadow-sm hover:shadow-md transition-all overflow-hidden"
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block bg-card rounded-xl border border-border hover:border-red-500/30 shadow-sm hover:shadow-md transition-all overflow-hidden"
                 >
-                  <div className="p-3 flex items-start gap-3">
+                  <div className="p-3 flex items-center gap-3">
                     <div
                       className={`w-12 h-12 rounded-full ${bg} flex items-center justify-center text-2xl shrink-0`}
                       aria-hidden
@@ -79,25 +91,23 @@ export default function HrfeIncidentsScreen({ incidents }: { incidents: HrmItem[
                       {icon}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-lg font-semibold text-foreground hover:text-red-600 dark:hover:text-red-400 transition-colors leading-snug"
-                      >
+                      <p className="text-base font-semibold text-foreground leading-snug">
                         {item.title}
-                      </a>
-                      <p className="text-xs text-foreground/40 mt-1 font-mono">
+                        {location && (
+                          <>
+                            <br />
+                            <span className="text-foreground/50 font-normal">{location}</span>
+                          </>
+                        )}
+                      </p>
+                      <p className="text-xs text-foreground/40 mt-0.5 font-mono">
                         {item.pubDate
                           ? new Date(item.pubDate).toLocaleString('en-US', { timeZone: 'America/Halifax' })
                           : 'Unknown'}
                       </p>
-                      {item.description && (
-                        <p className="text-foreground/60 mt-1 text-base leading-relaxed">{item.description}</p>
-                      )}
                     </div>
                   </div>
-                </article>
+                </a>
               );
             })
           )}
