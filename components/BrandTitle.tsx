@@ -83,17 +83,17 @@ export default function BrandTitle() {
         data-brand-popover
         role="dialog"
         aria-label="About this project"
-        className={`absolute left-0 top-full mt-2 z-[80] flex items-start gap-2 rounded-xl bg-card/95 backdrop-blur border border-border shadow-lg px-3 py-2 text-sm text-foreground/80 transition-all duration-200 ${
+        className={`absolute left-0 top-full mt-2 z-[80] flex items-start gap-2 max-w-[calc(100vw-2rem)] rounded-xl bg-card/95 backdrop-blur border border-border shadow-lg px-3 py-2 text-sm text-foreground/80 transition-all duration-200 ${
           open
             ? "opacity-100 translate-y-0"
             : "opacity-0 -translate-y-1 pointer-events-none"
         }`}
       >
-        <span className="text-base leading-none mt-0.5" aria-hidden>🌱</span>
-        <span className="leading-snug whitespace-nowrap">
+        <span className="text-base leading-none mt-0.5 shrink-0" aria-hidden>🌱</span>
+        <span className="leading-snug sm:whitespace-nowrap">
           Produced by a Saint Mary&apos;s University MBA Student
           <br />
-          <span className="text-foreground/55 whitespace-nowrap">ENTR 6677 Social and Sustainable Entrepreneurship</span>
+          <span className="text-foreground/55 sm:whitespace-nowrap">ENTR 6677 Social and Sustainable Entrepreneurship</span>
         </span>
       </div>
     </div>
