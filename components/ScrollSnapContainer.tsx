@@ -128,13 +128,20 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     };
   }, []);
 
-// iOS "tap the status bar" classic — double-click anywhere on the fixed
-  // header (that isn't a button/link) and we'll smooth-scroll back to the
-  // first tab's top. Filter out double-clicks on interactive children so
-  // a quick double-tap on a tab pill doesn't also trigger this.
-  const onHeaderDoubleClick = (e: React.MouseEvent) => {
-    const target = e.target as HTMLElement | null;
-    if (target?.closest("button, a, input, select")) return;
+  // iOS "tap the status bar" classic — double-click any blank surface
+  // (the title, a card background, the page void) to jump back to the
+  // top of the Weather tab. The handler is document-wide rather than
+  // attached to the header so the gesture works from anywhere on screen.
+  // Filters:
+  //   - Interactive elements (button, link, input, video, etc.) keep
+  //     their own double-click semantics — e.g. a video doesn't lose
+  //     fullscreen-on-doubleclick because we hijacked the event.
+  //   - When the user double-clicked to SELECT a word (browser's default
+  //     for dblclick on text), we don't yank them to the top.
+  //   - But: any element opted-in with `data-scroll-top` (the dashboard
+  //     title) ALWAYS triggers, even if a word selection was made — that
+  //     element is explicitly a "tap me to go home" target.
+  const scrollToTop = useCallback(() => {
     sectionOffsetsRef.current[0] = 0; // honour "I want the top", not "where I last was in Weather"
     isNavigatingRef.current = true;
     setActiveIndex(0);
@@ -143,7 +150,28 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     navTimeoutRef.current = window.setTimeout(() => {
       isNavigatingRef.current = false;
     }, 600); // smooth scroll runs ~500ms; pad a touch so IO doesn't race
-  };
+  }, []);
+
+  useEffect(() => {
+    const onDblClick = (e: MouseEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (!t) return;
+      // Explicit opt-in element (the dashboard title) — fire regardless.
+      if (t.closest("[data-scroll-top]")) {
+        scrollToTop();
+        return;
+      }
+      // Don't steal double-clicks meant for interactive widgets.
+      if (t.closest("button, a, input, select, textarea, label, video, canvas, iframe, [contenteditable='true']")) {
+        return;
+      }
+      // Preserve native "double-click selects a word" on text.
+      if ((window.getSelection()?.toString() ?? "").trim().length > 0) return;
+      scrollToTop();
+    };
+    document.addEventListener("dblclick", onDblClick);
+    return () => document.removeEventListener("dblclick", onDblClick);
+  }, [scrollToTop]);
 
   // Programmatic tab navigation, used by pill clicks AND horizontal swipes.
   // Persists scroll-within-section per tab so switching away and back keeps
@@ -342,11 +370,10 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
           scroll-direction reveal made the swipe-between-tabs gesture even
           harder to discover. We now teach that gesture two other ways:
           the slide-in animation on tab switch (see switchTo above) and
-          the page-dot row below the pills. */}
-      <div
-        onDoubleClick={onHeaderDoubleClick}
-        className="fixed top-0 left-0 right-0 z-[60]"
-      >
+          the page-dot row pinned to the bottom of the viewport. Double-
+          click handling lives on document (see scrollToTop) so it fires
+          anywhere, not just the header. */}
+      <div className="fixed top-0 left-0 right-0 z-[60]">
         {topBar && (
           <div
             className="relative z-10 bg-card/90 backdrop-blur-md border-b border-border"
@@ -390,32 +417,37 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
               </button>
             ))}
           </div>
-          {/* Page-dot row. Same idiom as iOS home-screen and Instagram
-              stories: a single row of dots saying "this is a swipeable
-              carousel". Redundant with the pills as a navigation control,
-              but that's the point — pills say "these are choices", dots
-              say "and you can swipe between them". Active dot is wider
-              (pill-shaped) so position-in-set reads at a glance. */}
-          <div
-            data-no-tab-swipe
-            className="flex justify-center items-center gap-1.5 pb-1.5 pt-0.5"
-            aria-hidden
-          >
-            {labels.map((label, i) => (
-              <button
-                key={i}
-                onClick={() => switchTo(i)}
-                tabIndex={-1}
-                aria-label={`Switch to ${label}`}
-                className={`rounded-full transition-all duration-200 ${
-                  activeIndex === i
-                    ? "w-5 h-1.5 bg-blue-500"
-                    : "w-1.5 h-1.5 bg-foreground/25 hover:bg-foreground/45"
-                }`}
-              />
-            ))}
-          </div>
         </div>
+      </div>
+
+      {/* Page-dot row, pinned to the bottom of the viewport. Same idiom as
+          iOS home-screen and Instagram stories — a row of dots saying
+          "this is a swipeable carousel". The container has no background
+          and no blur: dots float over whatever content is behind, so on
+          a long article the page void at the bottom keeps reading clean.
+          safe-area-inset-bottom keeps them clear of the iOS home indicator. */}
+      <div
+        data-no-tab-swipe
+        className="fixed left-1/2 -translate-x-1/2 z-50 flex justify-center items-center gap-1.5 px-3 py-1.5 pointer-events-none"
+        style={{ bottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+        aria-hidden
+      >
+        {labels.map((label, i) => (
+          <button
+            key={i}
+            onClick={() => switchTo(i)}
+            tabIndex={-1}
+            aria-label={`Switch to ${label}`}
+            // pointer-events:auto on each dot only, so the *gaps* between
+            // them stay transparent for clicks (don't block content
+            // behind them).
+            className={`pointer-events-auto rounded-full transition-all duration-200 ${
+              activeIndex === i
+                ? "w-5 h-1.5 bg-blue-500"
+                : "w-1.5 h-1.5 bg-foreground/25 hover:bg-foreground/45"
+            }`}
+          />
+        ))}
       </div>
 
       {/* Sections render directly in document flow — iOS hands body scroll

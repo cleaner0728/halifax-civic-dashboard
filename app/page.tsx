@@ -69,7 +69,11 @@ export default async function Home() {
         labels={TAB_LABELS}
         topBar={
           <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-2">
-            <h1 className="flex items-center gap-2 text-base font-bold tracking-tight">
+            <h1
+              data-scroll-top
+              className="flex items-center gap-2 text-base font-bold tracking-tight cursor-pointer select-none"
+              title="Double-click to return to the top"
+            >
               <Image src="/logo.png" alt="" width={32} height={32} className="shrink-0" priority unoptimized />
               Halifax Dashboard
             </h1>

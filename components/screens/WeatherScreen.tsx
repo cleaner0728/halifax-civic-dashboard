@@ -53,7 +53,7 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
   const currentWeather = weather ? getWeatherInfo(weather.weatherCode, !weather.isDay) : null;
 
   return (
-    <div className="pt-[104px] pb-8 min-h-dvh">
+    <div className="pt-[88px] pb-8 min-h-dvh">
       <div className="max-w-5xl mx-auto px-2 mt-4">
         {alerts.length > 0 && (
           // Stack alerts above the weather card so they're the first thing
