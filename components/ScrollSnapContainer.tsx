@@ -21,7 +21,6 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
   // Refs that mirror state so touch/scroll handlers see live values without
   // having to re-attach their listeners on every render.
   const activeIndexRef = useRef(0);
-  const sectionOffsetsRef = useRef<Record<number, number>>({});
   const isNavigatingRef = useRef(false);
   const navTimeoutRef = useRef<number | null>(null);
 
@@ -163,7 +162,6 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
   //     title) ALWAYS triggers, even if a word selection was made — that
   //     element is explicitly a "tap me to go home" target.
   const scrollToTop = useCallback(() => {
-    sectionOffsetsRef.current[0] = 0; // honour "I want the top", not "where I last was in Weather"
     isNavigatingRef.current = true;
     setActiveIndex(0);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -195,23 +193,15 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
   }, [scrollToTop]);
 
   // Programmatic tab navigation, used by pill clicks AND horizontal swipes.
-  // Persists scroll-within-section per tab so switching away and back keeps
-  // the user's reading position instead of dumping them at the top.
+  // Every switch lands at the top of the target section — we deliberately
+  // do NOT remember scroll-within-section across tab switches. The dashboard
+  // surfaces are short, time-sensitive, and bouncing back to wherever the
+  // user last lingered confused testers more than it helped (they expected
+  // "tab = a fresh page", iOS-style).
   const switchTo = useCallback((index: number) => {
     if (index < 0 || index >= children.length) return;
     const oldIdx = activeIndexRef.current;
     if (index === oldIdx) return;
-
-    // Save where the user was inside the tab we're leaving, as an offset
-    // from that tab's top. Storing relative-to-section (not absolute scrollY)
-    // makes the saved position survive content height changes between
-    // visits — e.g. the news list growing.
-    const oldSection = document.querySelector(
-      `[data-snap-section="${oldIdx}"]`,
-    ) as HTMLElement | null;
-    if (oldSection) {
-      sectionOffsetsRef.current[oldIdx] = window.scrollY - oldSection.offsetTop;
-    }
 
     const target = document.querySelector(
       `[data-snap-section="${index}"]`,
@@ -226,13 +216,12 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       isNavigatingRef.current = true;
       setActiveIndex(index);
       track("tab_click", { from: labels[oldIdx], to: labels[index] });
-      const savedOffset = sectionOffsetsRef.current[index] ?? 0;
       // Instant jump (not smooth): a smooth scroll across 6 screens would
       // fire the IO for every intermediate section and visibly cycle the
       // active tab. With View Transitions on, the slide animation happens
       // on a snapshot — the real scroll position lands instantly.
       window.scrollTo({
-        top: target.offsetTop + savedOffset,
+        top: target.offsetTop,
         behavior: "instant" as ScrollBehavior,
       });
       // Centre the active pill in the tab bar synchronously, so the new
