@@ -13,6 +13,7 @@ import RedditScreen from '@/components/screens/RedditScreen';
 import { fetchWeather } from '@/lib/fetchers/weather';
 import { fetchAirQuality } from '@/lib/fetchers/air-quality';
 import { fetchBurnStatus } from '@/lib/fetchers/burn-status';
+import { fetchAlerts } from '@/lib/fetchers/alerts';
 import { fetchNews } from '@/lib/fetchers/news';
 import { fetchHrmNews, fetchHrfeIncidents } from '@/lib/fetchers/hrm';
 import {
@@ -43,6 +44,7 @@ export default async function Home() {
     redditData,
     airQuality,
     burnStatus,
+    alerts,
   ] = await Promise.all([
     safe(fetchWeather(), null, 'weather'),
     safe(fetchNews(), { items: [] }, 'news'),
@@ -56,6 +58,7 @@ export default async function Home() {
     safe(fetchRedditPosts(), { posts: [], fetchedAt: null }, 'reddit'),
     safe(fetchAirQuality(), null, 'air-quality'),
     safe(fetchBurnStatus(), null, 'burn-status'),
+    safe(fetchAlerts(), [], 'alerts'),
   ]);
 
   const tideGraph = computeTideGraph(tides);
@@ -83,6 +86,7 @@ export default async function Home() {
           tideGraph={tideGraph}
           airQuality={airQuality}
           burnStatus={burnStatus}
+          alerts={alerts}
         />
         <NewsScreen items={news.items} />
         <RedditScreen posts={redditData.posts} fetchedAt={redditData.fetchedAt} />
