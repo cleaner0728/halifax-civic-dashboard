@@ -40,13 +40,33 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     tabEnterRef.current = { tab: labels[activeIndex], at: Date.now() };
   }, [activeIndex, labels]);
 
-  // Auto-center the active tab pill in the (horizontally scrollable) tab bar.
+  // Auto-center the active tab pill in the (horizontally scrollable) tab
+  // bar. We use getBoundingClientRect (not offsetLeft) because the bar's
+  // offsetParent isn't the bar itself — it's the bg-card wrapper above —
+  // so offsetLeft would be measured against the wrong origin and the math
+  // would silently miss when the active tab is far right on mobile. The
+  // older `scrollIntoView({ behavior: "smooth", inline: "center" })` had
+  // its own bug too: the smooth scroll was still mid-flight when the next
+  // swipe fired, and `block: "nearest"` could propagate to body scroll.
+  // Direct scrollLeft assignment is instant and contained.
+  const centerActivePill = useCallback((index: number) => {
+    const tab = tabRefs.current[index];
+    if (!tab) return;
+    const bar = tab.parentElement;
+    if (!bar) return;
+    const tabRect = tab.getBoundingClientRect();
+    const barRect = bar.getBoundingClientRect();
+    const pillCenter = tabRect.left + tabRect.width / 2;
+    const barCenter = barRect.left + barRect.width / 2;
+    bar.scrollLeft = Math.max(0, bar.scrollLeft + (pillCenter - barCenter));
+  }, []);
+
   useEffect(() => {
-    const activeTab = tabRefs.current[activeIndex];
-    if (activeTab) {
-      activeTab.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-    }
-  }, [activeIndex]);
+    // rAF lets the new active pill's padding/font-weight changes commit
+    // before we measure, so the centering math uses the post-state width.
+    const raf = requestAnimationFrame(() => centerActivePill(activeIndex));
+    return () => cancelAnimationFrame(raf);
+  }, [activeIndex, centerActivePill]);
 
   useEffect(() => {
     // root: null observes against the viewport (the document is the scroll
@@ -214,6 +234,11 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
         top: target.offsetTop + savedOffset,
         behavior: "instant" as ScrollBehavior,
       });
+      // Centre the active pill in the tab bar synchronously, so the new
+      // snapshot captured by the View Transition already shows the pill
+      // in frame. Without this, mobile users sometimes saw the pill stuck
+      // off-screen left or right during the slide animation.
+      centerActivePill(index);
     };
 
     // Preferred path: the browser's View Transition API. It snapshots the
@@ -265,7 +290,7 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       // Match the animation duration so IO doesn't fire mid-slide and
       // re-yank the active tab to whatever its midpoint sees.
     }, 320);
-  }, [children.length, labels]);
+  }, [children.length, labels, centerActivePill]);
 
   // Horizontal-swipe gesture → previous/next tab.
   //
