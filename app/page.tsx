@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import BrandTitle from '@/components/BrandTitle';
 import InstallButton from '@/components/InstallButton';
 import LanguageToggle from '@/components/LanguageToggle';
 import SettingsMenu from '@/components/SettingsMenu';
@@ -27,7 +27,7 @@ import { fetchTides, computeTideGraph } from '@/lib/fetchers/tides';
 import { fetchRedditPosts } from '@/lib/fetchers/reddit';
 import { safe } from '@/lib/safe';
 
-const TAB_LABELS = ['City Live', 'News', 'Reddit', 'HRM', 'HRFE', 'Transit', 'Events'];
+const TAB_LABELS = ['City Live', 'News', 'Reddit', 'Transit', 'HRM', 'HRFE', 'Events'];
 
 export default async function Home() {
   // Each fetcher already returns an "empty" sentinel on failure; safe() catches
@@ -65,20 +65,13 @@ export default async function Home() {
   const tideGraph = computeTideGraph(tides);
 
   return (
-    <main className="bg-background text-foreground">
+    <main className="bg-background text-foreground select-none [-webkit-user-select:none]">
       <RefreshOnVisible />
       <ScrollSnapContainer
         labels={TAB_LABELS}
         topBar={
           <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-2">
-            <h1
-              data-scroll-top
-              className="flex items-center gap-2 text-base font-bold tracking-tight cursor-pointer select-none min-w-0"
-              title="Double-click to return to the top"
-            >
-              <Image src="/logo.png" alt="" width={32} height={32} className="shrink-0" priority unoptimized />
-              <span className="truncate">Made in Halifax</span>
-            </h1>
+            <BrandTitle />
             <div className="flex items-center gap-2 shrink-0">
               <InstallButton />
               <LanguageToggle />
@@ -96,14 +89,14 @@ export default async function Home() {
         />
         <NewsScreen items={news.items} />
         <RedditScreen posts={redditData.posts} fetchedAt={redditData.fetchedAt} />
-        <HrmNewsScreen items={hrmResult.items} dateLabel={hrmResult.dateLabel} />
-        <HrfeIncidentsScreen incidents={hrfeIncidents} />
         <TransitDisruptionScreen
           detours={transitDetours}
           ferryAlerts={ferryAlerts}
           hasRecent={transitHasRecent}
           adjustments={transitAdjustments}
         />
+        <HrmNewsScreen items={hrmResult.items} dateLabel={hrmResult.dateLabel} />
+        <HrfeIncidentsScreen incidents={hrfeIncidents} />
         <EventsCalendarScreen />
       </ScrollSnapContainer>
     </main>

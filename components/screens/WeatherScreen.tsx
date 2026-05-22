@@ -1,3 +1,4 @@
+import React from 'react';
 import LiveClock from '@/components/LiveClock';
 import HalifaxWebcams from '@/components/HalifaxWebcams';
 import { HFX_TZ, getDayName, formatTime } from '@/lib/date';
@@ -93,6 +94,12 @@ function burnColor(level: BurnStatus['level']) {
   return 'text-red-700 dark:text-red-200';
 }
 
+function boldNumbers(text: string): React.ReactNode[] {
+  return text.split(/(\d+(?:\.\d+)?)/).map((part, i) =>
+    /^\d+(?:\.\d+)?$/.test(part) ? <strong key={i} className="font-bold">{part}</strong> : part
+  );
+}
+
 export default function WeatherScreen({ weather, tideGraph, airQuality, burnStatus, alerts }: Props) {
   const currentWeather = weather ? getWeatherInfo(weather.weatherCode, !weather.isDay) : null;
 
@@ -143,7 +150,9 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
                         {a.issuedText && (
                           <>
                             <span aria-hidden>·</span>
-                            <span>Issued {a.issuedText}</span>
+                            <span className={`font-semibold ${styles.title}`}>
+                              Issued {boldNumbers(a.issuedText)}
+                            </span>
                           </>
                         )}
                       </p>
@@ -153,8 +162,8 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
                           ('\n'). `whitespace-pre-line` honours both, so
                           we can drop the raw string in unchanged. */}
                       {a.description && (
-                        <p className={`text-sm mt-3 whitespace-pre-line leading-relaxed ${styles.title}`}>
-                          {a.description}
+                        <p className={`text-base mt-3 whitespace-pre-line leading-relaxed ${styles.title}`}>
+                          {boldNumbers(a.description)}
                         </p>
                       )}
 
