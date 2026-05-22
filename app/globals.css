@@ -79,3 +79,59 @@ body {
   height: 1px;
   overflow: hidden;
 }
+
+/* === Tab-switch page transition ===
+   Drives the View Transitions API. When ScrollSnapContainer.switchTo()
+   calls document.startViewTransition(), the browser snapshots the old
+   viewport, runs the navigation callback, snapshots the new viewport,
+   and animates between the two using these pseudo-elements.
+
+   The direction (forward = swiping to a later tab; back = earlier tab)
+   is signalled via `html[data-tab-direction]`, set just before the
+   transition fires and cleared when it finishes. CSS picks the matching
+   keyframe pair so a "forward" switch slides the old view out to the
+   left and the new view in from the right, and vice-versa.
+
+   Browsers without View Transition support never set
+   data-tab-direction and never spawn the pseudo-elements; the fallback
+   in switchTo() handles them with an inline translateX animation. */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation-fill-mode: both;
+  /* Don't let the old/new layers stack and double-paint composite-blend
+     artefacts on text — last-paint-wins is fine for a horizontal slide. */
+  mix-blend-mode: normal;
+}
+
+html[data-tab-direction="forward"]::view-transition-old(root) {
+  animation-name: tab-slide-out-left;
+}
+html[data-tab-direction="forward"]::view-transition-new(root) {
+  animation-name: tab-slide-in-right;
+}
+html[data-tab-direction="back"]::view-transition-old(root) {
+  animation-name: tab-slide-out-right;
+}
+html[data-tab-direction="back"]::view-transition-new(root) {
+  animation-name: tab-slide-in-left;
+}
+
+@keyframes tab-slide-out-left {
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(-100%); opacity: 0; }
+}
+@keyframes tab-slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes tab-slide-out-right {
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(100%); opacity: 0; }
+}
+@keyframes tab-slide-in-left {
+  from { transform: translateX(-100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}

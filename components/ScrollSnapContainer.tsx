@@ -197,25 +197,52 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     ) as HTMLElement | null;
     if (!target) return;
 
-    // Instant jump (not smooth): a smooth scroll across 6 screens would fire
-    // the IO for every intermediate section and visibly cycle the active tab.
-    isNavigatingRef.current = true;
-    setActiveIndex(index);
-    track("tab_click", { from: labels[oldIdx], to: labels[index] });
-    const savedOffset = sectionOffsetsRef.current[index] ?? 0;
-    window.scrollTo({
-      top: target.offsetTop + savedOffset,
-      behavior: "instant" as ScrollBehavior,
-    });
-
-    // Horizontal slide-in on the arriving section. Sections are stacked
-    // vertically in the DOM (each is min-h-dvh), so we can't actually
-    // animate sliding between them — but we CAN make the arriving tab's
-    // content slide in from the direction of travel (next tab → from the
-    // right; previous tab → from the left). Every tab switch (pill click
-    // or swipe) reinforces "tabs are arranged horizontally", which is the
-    // mental model the swipe gesture needs.
+    // The actual navigation work (active-tab swap + vertical jump). Factored
+    // so the View Transition path can wrap it and so the fallback path can
+    // call it the same way.
     const direction = index > oldIdx ? 1 : -1;
+    const doNavigate = () => {
+      isNavigatingRef.current = true;
+      setActiveIndex(index);
+      track("tab_click", { from: labels[oldIdx], to: labels[index] });
+      const savedOffset = sectionOffsetsRef.current[index] ?? 0;
+      // Instant jump (not smooth): a smooth scroll across 6 screens would
+      // fire the IO for every intermediate section and visibly cycle the
+      // active tab. With View Transitions on, the slide animation happens
+      // on a snapshot — the real scroll position lands instantly.
+      window.scrollTo({
+        top: target.offsetTop + savedOffset,
+        behavior: "instant" as ScrollBehavior,
+      });
+    };
+
+    // Preferred path: the browser's View Transition API. It snapshots the
+    // current viewport, runs our DOM mutations (navigation), snapshots the
+    // new state, and animates between the two. The slide direction is
+    // driven by a data attribute on <html> that CSS in globals.css reads
+    // (`::view-transition-old(root)` / `::view-transition-new(root)`).
+    //
+    // Chromium-based browsers since Mar 2023 and Safari 18 (Sep 2024) ship
+    // this. Older browsers fall through to the manual slide-in below.
+    type DocWithVT = Document & {
+      startViewTransition?: (cb: () => void) => { finished: Promise<void> };
+    };
+    const docVT = document as DocWithVT;
+    if (typeof docVT.startViewTransition === "function") {
+      document.documentElement.dataset.tabDirection = direction > 0 ? "forward" : "back";
+      const vt = docVT.startViewTransition(doNavigate);
+      vt.finished.finally(() => {
+        delete document.documentElement.dataset.tabDirection;
+        isNavigatingRef.current = false;
+      });
+      return;
+    }
+
+    // Fallback: animate the arriving section only. Sections are stacked
+    // vertically in the DOM, so the leaving content is instant-scrolled
+    // away — what we CAN do is make the arriving tab's content slide in
+    // from the direction of travel.
+    doNavigate();
     target.style.transition = "none";
     target.style.transform = `translateX(${direction * 28}px)`;
     target.style.opacity = "0.6";
