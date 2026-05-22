@@ -29,9 +29,19 @@ export function getDayName(dateStr: string): string {
   });
 }
 
+// Format a naive local-time ISO ("2026-05-22T05:42") as "5:42 AM".
+// Used for Open-Meteo sunrise/sunset, which arrive without a timezone
+// offset (we request timezone=America/Halifax). Parsing through Date()
+// would reinterpret those strings in the viewer's browser timezone, so a
+// user in Vancouver would see Halifax sunrise shifted by 4 hours. Pull
+// HH:MM out of the string directly to keep the value timezone-stable.
 export function formatTime(iso: string): string {
-  const d = new Date(iso);
-  return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  const m = iso.match(/T(\d{2}):(\d{2})/);
+  if (!m) return iso;
+  const hours = parseInt(m[1], 10);
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const h12 = hours % 12 || 12;
+  return `${h12}:${m[2]} ${period}`;
 }
 
 export function timeAgo(utcSeconds: number): string {
