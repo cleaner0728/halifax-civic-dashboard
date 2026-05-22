@@ -47,19 +47,27 @@ export default function NewsScreen({ items }: Props) {
             </div>
           ) : (
             items.map((item, index) => (
+              // Whole card is a single <a> so any tap lands on the article.
+              // Two inner <a> tags (one on the image, one on the title) used
+              // to fight for the tap zone and left the snippet/meta as dead
+              // space — users read the snippet, didn't realise there was a
+              // full article behind it, and bailed. The "Read on {source} →"
+              // affordance at the bottom makes the call-to-action explicit;
+              // `group-hover` on the title + arrow gives a consistent signal
+              // across desktop hover and (via :active) mobile press.
               <article
                 key={index}
                 className="bg-card rounded-xl border border-border hover:border-foreground/15 shadow-sm hover:shadow-md transition-all overflow-hidden"
               >
-                <div className={`flex ${item.imageUrl ? 'flex-col sm:flex-row' : ''}`}>
-                  {item.imageUrl && (
-                    <div className="relative h-52 sm:h-auto sm:min-h-[160px] sm:w-72 sm:shrink-0">
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block absolute inset-0"
-                      >
+                <a
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block"
+                >
+                  <div className={`flex ${item.imageUrl ? 'flex-col sm:flex-row' : ''}`}>
+                    {item.imageUrl && (
+                      <div className="relative h-52 sm:h-auto sm:min-h-[160px] sm:w-72 sm:shrink-0">
                         <Image
                           src={newsImageSrc(item.imageUrl)}
                           alt={item.title || 'News image'}
@@ -68,27 +76,26 @@ export default function NewsScreen({ items }: Props) {
                           className="object-cover"
                           unoptimized
                         />
-                      </a>
+                      </div>
+                    )}
+                    <div className="p-3 flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-foreground group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors leading-snug">
+                        {item.title}
+                      </h3>
+                      <p className="text-xs text-foreground/40 mt-1 font-mono">
+                        {item.source && <span className="text-blue-400 mr-2">{item.source}</span>}
+                        {item.pubDate
+                          ? new Date(item.pubDate).toLocaleString('en-US', { timeZone: 'America/Halifax' })
+                          : 'Unknown'}
+                      </p>
+                      <p className="text-foreground/60 mt-1 text-base leading-relaxed">{item.contentSnippet}</p>
+                      <p className="mt-3 text-sm font-medium text-blue-500 dark:text-blue-400 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                        Read on {item.source || 'source'}
+                        <span aria-hidden>→</span>
+                      </p>
                     </div>
-                  )}
-                  <div className="p-2 flex-1 min-w-0">
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-lg font-semibold text-foreground hover:text-blue-500 dark:hover:text-blue-400 transition-colors leading-snug"
-                    >
-                      {item.title}
-                    </a>
-                    <p className="text-xs text-foreground/40 mt-1 font-mono">
-                      {item.source && <span className="text-blue-400 mr-2">{item.source}</span>}
-                      {item.pubDate
-                        ? new Date(item.pubDate).toLocaleString('en-US', { timeZone: 'America/Halifax' })
-                        : 'Unknown'}
-                    </p>
-                    <p className="text-foreground/60 mt-1 text-base leading-relaxed">{item.contentSnippet}</p>
                   </div>
-                </div>
+                </a>
               </article>
             ))
           )}
