@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { track } from "@vercel/analytics";
+import HapticTab from "./HapticTab";
 
 interface ScrollSnapContainerProps {
   children: React.ReactNode[];
@@ -12,7 +13,7 @@ interface ScrollSnapContainerProps {
 
 export default function ScrollSnapContainer({ children, labels, topBar }: ScrollSnapContainerProps) {
   const router = useRouter();
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const tabRefs = useRef<(HTMLLabelElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [pullProgress, setPullProgress] = useState(0); // 0..1, drives the indicator
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -460,21 +461,22 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
             className="max-w-5xl mx-auto flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
           >
             {labels.map((label, i) => (
-              <button
+              <HapticTab
                 key={i}
                 ref={(el) => { tabRefs.current[i] = el; }}
-                onClick={() => switchTo(i)}
+                onPress={() => switchTo(i)}
+                role="tab"
                 // Active tab gets bolder weight + slightly larger pill
                 // padding so the current location reads at a glance even
                 // when you're scrolled deep inside a long section.
-                className={`shrink-0 my-1.5 mx-0.5 px-3.5 py-1.5 rounded-full text-center text-sm whitespace-nowrap transition-all duration-200 ${
+                className={`shrink-0 my-1.5 mx-0.5 px-3.5 py-1.5 rounded-full text-center text-sm whitespace-nowrap cursor-pointer transition-all duration-200 ${
                   activeIndex === i
                     ? "bg-blue-500/15 dark:bg-blue-500/20 text-blue-500 font-semibold"
                     : "text-foreground/60 hover:text-foreground hover:bg-foreground/5 font-medium"
                 }`}
               >
                 {label}
-              </button>
+              </HapticTab>
             ))}
           </div>
         </div>
@@ -499,9 +501,9 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
         aria-hidden
       >
         {labels.map((label, i) => (
-          <button
+          <HapticTab
             key={i}
-            onClick={() => switchTo(i)}
+            onPress={() => switchTo(i)}
             tabIndex={-1}
             aria-label={`Switch to ${label}`}
             // pointer-events:auto on each dot only, so the *gaps* between
@@ -530,23 +532,25 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
         >
           {child}
 
-          {/* "Up next" hint — floats above the dead space at the bottom of
-              short sections so the gap looks intentional, not empty. Doubles
-              as a navigation affordance teaching users the swipe gesture. */}
+          {/* "Back to top" hint — floats at the bottom of each section.
+              Tapping scrolls back to the very top of the current section. */}
           {i < labels.length - 1 && (
             <button
-              onClick={() => switchTo(i + 1)}
-              aria-label={`Go to ${labels[i + 1]}`}
+              onClick={() => {
+                const section = document.querySelector(`[data-snap-section="${i}"]`) as HTMLElement | null;
+                if (section) window.scrollTo({ top: section.offsetTop, behavior: 'smooth' });
+              }}
+              aria-label={`Back to top of ${labels[i]}`}
               className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-1.5
                 px-4 py-1.5 rounded-full text-xs font-medium
                 bg-foreground/6 border border-foreground/10
                 text-foreground/40 hover:text-foreground/70 hover:bg-foreground/10
                 transition-all duration-200 backdrop-blur-sm pointer-events-auto"
             >
-              <span>{labels[i + 1]}</span>
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
               </svg>
+              <span>{labels[i]}</span>
             </button>
           )}
         </div>
