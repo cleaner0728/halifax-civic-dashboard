@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-22T23:16:13.460Z",
+  "fetchedAt": "2026-05-22T23:46:13.021Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -110,15 +110,6 @@
       "createdUtc": 1779470845
     },
     {
-      "title": "‘Hidden homelessness’ a problem for N.S. post-secondary students: researcher",
-      "score": 0,
-      "numComments": 0,
-      "author": "insino93",
-      "url": "https://www.reddit.com/r/halifax/comments/1tkjlib/hidden_homelessness_a_problem_for_ns/",
-      "flair": null,
-      "createdUtc": 1779457827
-    },
-    {
       "title": "Cheap premium gas",
       "score": 0,
       "numComments": 0,
@@ -126,6 +117,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tkxeau/cheap_premium_gas/",
       "flair": null,
       "createdUtc": 1779487257
+    },
+    {
+      "title": "‘Hidden homelessness’ a problem for N.S. post-secondary students: researcher",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1tkjlib/hidden_homelessness_a_problem_for_ns/",
+      "flair": null,
+      "createdUtc": 1779457827
     },
     {
       "title": "Positive Vibes Friday",
@@ -146,6 +146,15 @@
       "createdUtc": 1779443454
     },
     {
+      "title": "Home Depot security guard assaulted in robbery",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1tkhixa/home_depot_security_guard_assaulted_in_robbery/",
+      "flair": null,
+      "createdUtc": 1779452920
+    },
+    {
       "title": "Traffic in Dartmouth",
       "score": 0,
       "numComments": 0,
@@ -155,13 +164,22 @@
       "createdUtc": 1779449630
     },
     {
-      "title": "Home Depot security guard assaulted in robbery",
+      "title": "The next era of Atlantic hurricanes could be far more destructive",
       "score": 0,
       "numComments": 0,
-      "author": "insino93",
-      "url": "https://www.reddit.com/r/halifax/comments/1tkhixa/home_depot_security_guard_assaulted_in_robbery/",
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1tkzjv6/the_next_era_of_atlantic_hurricanes_could_be_far/",
       "flair": null,
-      "createdUtc": 1779452920
+      "createdUtc": 1779492525
+    },
+    {
+      "title": "2 women needed medical attention after possible drink tampering: Halifax police",
+      "score": 0,
+      "numComments": 0,
+      "author": "justlogmeon",
+      "url": "https://www.reddit.com/r/halifax/comments/1tkz6y1/2_women_needed_medical_attention_after_possible/",
+      "flair": null,
+      "createdUtc": 1779491622
     },
     {
       "title": "Looking for M. Costello in Halifax",
@@ -252,24 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tkebt3/hrce_denies_responsibility_in_cp_allen_stabbing/",
       "flair": null,
       "createdUtc": 1779443812
-    },
-    {
-      "title": "Carwash advice needed",
-      "score": 0,
-      "numComments": 0,
-      "author": "ItsYaBoyCasu",
-      "url": "https://www.reddit.com/r/halifax/comments/1tklran/carwash_advice_needed/",
-      "flair": null,
-      "createdUtc": 1779462493
-    },
-    {
-      "title": "2 women needed medical attention after possible drink tampering: Halifax police",
-      "score": 0,
-      "numComments": 0,
-      "author": "justlogmeon",
-      "url": "https://www.reddit.com/r/halifax/comments/1tkz6y1/2_women_needed_medical_attention_after_possible/",
-      "flair": null,
-      "createdUtc": 1779491622
     }
   ]
 }
