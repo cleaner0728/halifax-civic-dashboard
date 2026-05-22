@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
+import { usePolledImage } from "./usePolledImage";
 
 // Two render shapes:
 //   - image: poll a still-frame URL on a fixed cadence. Each upstream sets
@@ -116,33 +117,9 @@ function ImageCam({
   imageUrl: (t: number) => string;
   refreshMs: number;
 }) {
-  const [t, setT] = useState(0);
-  const intervalRef = useRef<number | null>(null);
-
-  // Poll-and-replace at the per-cam cadence. Paused while the tab is hidden
-  // so we don't burn requests in the background; resumes with an immediate
-  // refresh on focus so the user never sees a frame older than one tick
-  // after they look at the page.
-  useEffect(() => {
-    const start = () => {
-      setT(Date.now());
-      if (intervalRef.current) window.clearInterval(intervalRef.current);
-      intervalRef.current = window.setInterval(() => setT(Date.now()), refreshMs);
-    };
-    const stop = () => {
-      if (intervalRef.current) {
-        window.clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-    if (document.visibilityState === "visible") start();
-    const onVis = () => (document.visibilityState === "visible" ? start() : stop());
-    document.addEventListener("visibilitychange", onVis);
-    return () => {
-      stop();
-      document.removeEventListener("visibilitychange", onVis);
-    };
-  }, [imageUrl, refreshMs]);
+  // Polls at the per-cam cadence, pauses while the tab is hidden, resumes
+  // with an immediate refresh on focus. Shared with EmeraOvalWebcam.
+  const t = usePolledImage(refreshMs);
 
   if (t === 0) return null;
   return (

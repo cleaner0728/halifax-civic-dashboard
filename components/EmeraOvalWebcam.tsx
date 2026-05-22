@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { usePolledImage } from "./usePolledImage";
 
 const BASE = "https://cdn.halifax.ca/webcam/webcamImage1.jpg";
 const SOURCE_URL = "https://www.halifax.ca/parks-recreation/programs-activities/outdoor-recreation/emera-oval";
@@ -17,13 +17,7 @@ export default function EmeraOvalWebcam() {
   // ?t=... URL counted as a new Vercel Image Optimization transformation,
   // ~360 per active hour of viewing. We now use Image with `unoptimized`
   // so the browser fetches the CDN directly and Vercel charges nothing.
-  const [t, setT] = useState(0);
-
-  useEffect(() => {
-    setT(Date.now());
-    const id = setInterval(() => setT(Date.now()), REFRESH_MS);
-    return () => clearInterval(id);
-  }, []);
+  const t = usePolledImage(REFRESH_MS);
 
   // Skip rendering until mount so SSR + first client render agree (no hydration mismatch).
   if (t === 0) return null;
