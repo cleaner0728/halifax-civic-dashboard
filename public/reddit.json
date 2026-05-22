@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-22T14:01:21.407Z",
+  "fetchedAt": "2026-05-22T14:15:15.455Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -38,15 +38,6 @@
       "createdUtc": 1779443454
     },
     {
-      "title": "Traffic in Dartmouth",
-      "score": 0,
-      "numComments": 0,
-      "author": "red_feath3rs",
-      "url": "https://www.reddit.com/r/halifax/comments/1tkgakc/traffic_in_dartmouth/",
-      "flair": null,
-      "createdUtc": 1779449630
-    },
-    {
       "title": "Positive Vibes Friday",
       "score": 0,
       "numComments": 0,
@@ -54,6 +45,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tkeevh/positive_vibes_friday/",
       "flair": null,
       "createdUtc": 1779444076
+    },
+    {
+      "title": "Traffic in Dartmouth",
+      "score": 0,
+      "numComments": 0,
+      "author": "red_feath3rs",
+      "url": "https://www.reddit.com/r/halifax/comments/1tkgakc/traffic_in_dartmouth/",
+      "flair": null,
+      "createdUtc": 1779449630
     },
     {
       "title": "11-year-old struck in crosswalk in Bedford hit-and-run",
@@ -92,13 +92,13 @@
       "createdUtc": 1779444495
     },
     {
-      "title": "Halifax gas right now.",
+      "title": "HRCE denies responsibility in C.P. Allen stabbing suit, says case should be thrown out",
       "score": 0,
       "numComments": 0,
-      "author": "Appropriate_Look_510",
-      "url": "https://www.reddit.com/r/halifax/comments/1tjuerv/halifax_gas_right_now/",
+      "author": "Bean_Tiger",
+      "url": "https://www.reddit.com/r/halifax/comments/1tkebt3/hrce_denies_responsibility_in_cp_allen_stabbing/",
       "flair": null,
-      "createdUtc": 1779390160
+      "createdUtc": 1779443812
     },
     {
       "title": "Cherry Blossom Update - Park St Dartmouth",
@@ -110,13 +110,22 @@
       "createdUtc": 1779392929
     },
     {
-      "title": "HRCE denies responsibility in C.P. Allen stabbing suit, says case should be thrown out",
+      "title": "Halifax gas right now.",
       "score": 0,
       "numComments": 0,
-      "author": "Bean_Tiger",
-      "url": "https://www.reddit.com/r/halifax/comments/1tkebt3/hrce_denies_responsibility_in_cp_allen_stabbing/",
+      "author": "Appropriate_Look_510",
+      "url": "https://www.reddit.com/r/halifax/comments/1tjuerv/halifax_gas_right_now/",
       "flair": null,
-      "createdUtc": 1779443812
+      "createdUtc": 1779390160
+    },
+    {
+      "title": "Halifax RCMP arrests 3 people for impaired driving in separate crashes",
+      "score": 0,
+      "numComments": 0,
+      "author": "Injustice_For_All_",
+      "url": "https://www.reddit.com/r/halifax/comments/1tk817s/halifax_rcmp_arrests_3_people_for_impaired/",
+      "flair": null,
+      "createdUtc": 1779423527
     },
     {
       "title": "Property taxes make up nearly all of Halifax’s budget",
@@ -128,13 +137,13 @@
       "createdUtc": 1779403269
     },
     {
-      "title": "Halifax RCMP arrests 3 people for impaired driving in separate crashes",
+      "title": "‘Hidden homelessness’ a problem for N.S. post-secondary students: researcher",
       "score": 0,
       "numComments": 0,
-      "author": "Injustice_For_All_",
-      "url": "https://www.reddit.com/r/halifax/comments/1tk817s/halifax_rcmp_arrests_3_people_for_impaired/",
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1tkjlib/hidden_homelessness_a_problem_for_ns/",
       "flair": null,
-      "createdUtc": 1779423527
+      "createdUtc": 1779457827
     },
     {
       "title": "a local journalist is reporting a possible $2bil development near halifax airport including a stadium, hotels, retail & more?",
@@ -164,13 +173,13 @@
       "createdUtc": 1779408180
     },
     {
-      "title": "‘Hidden homelessness’ a problem for N.S. post-secondary students: researcher",
+      "title": "Chain link Fence",
       "score": 0,
       "numComments": 0,
-      "author": "insino93",
-      "url": "https://www.reddit.com/r/halifax/comments/1tkjlib/hidden_homelessness_a_problem_for_ns/",
+      "author": "Safe-Lake-531",
+      "url": "https://www.reddit.com/r/halifax/comments/1tkk4jk/chain_link_fence/",
       "flair": null,
-      "createdUtc": 1779457827
+      "createdUtc": 1779458995
     },
     {
       "title": "Cost to address 'big mess' wage restraint legislation could top $300M, says Houston | CBC News",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tjk55z/we_shouldnt_have_to_go_ns_woman_gets_mammogram_in/",
       "flair": null,
       "createdUtc": 1779369217
-    },
-    {
-      "title": "Tight weave/ grade 90 cheesecloth in Halifax?",
-      "score": 0,
-      "numComments": 0,
-      "author": "happylikelarry",
-      "url": "https://www.reddit.com/r/halifax/comments/1tk2fzp/tight_weave_grade_90_cheesecloth_in_halifax/",
-      "flair": null,
-      "createdUtc": 1779408354
     }
   ]
 }
