@@ -1,5 +1,4 @@
 import LiveClock from '@/components/LiveClock';
-import WeatherPills from '@/components/WeatherPills';
 import HalifaxWebcams from '@/components/HalifaxWebcams';
 import { HFX_TZ, getDayName, formatTime } from '@/lib/date';
 import { getWeatherInfo } from '@/lib/weather-theme';
@@ -49,11 +48,56 @@ const SEVERITY_LABEL: Record<WeatherAlert['severity'], string> = {
   unknown: 'ALERT',
 };
 
+function degreesToCompass(deg: number): string {
+  const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+  return dirs[Math.round(deg / 22.5) % 16];
+}
+function uvLabel(uv: number) {
+  if (uv < 3) return 'Low';
+  if (uv < 6) return 'Moderate';
+  if (uv < 8) return 'High';
+  if (uv < 11) return 'Very high';
+  return 'Extreme';
+}
+function uvColor(uv: number) {
+  if (uv < 3) return 'text-emerald-700 dark:text-emerald-200';
+  if (uv < 6) return 'text-amber-700 dark:text-amber-200';
+  if (uv < 8) return 'text-orange-700 dark:text-orange-200';
+  if (uv < 11) return 'text-red-700 dark:text-red-200';
+  return 'text-fuchsia-700 dark:text-fuchsia-200';
+}
+function aqiLabel(aqi: number) {
+  if (aqi <= 50) return 'Good';
+  if (aqi <= 100) return 'Moderate';
+  if (aqi <= 150) return 'Sensitive';
+  if (aqi <= 200) return 'Unhealthy';
+  if (aqi <= 300) return 'Very unhealthy';
+  return 'Hazardous';
+}
+function aqiColor(aqi: number) {
+  if (aqi <= 50) return 'text-emerald-700 dark:text-emerald-200';
+  if (aqi <= 100) return 'text-amber-700 dark:text-amber-200';
+  if (aqi <= 150) return 'text-orange-700 dark:text-orange-200';
+  if (aqi <= 200) return 'text-red-700 dark:text-red-200';
+  if (aqi <= 300) return 'text-fuchsia-700 dark:text-fuchsia-200';
+  return 'text-rose-700 dark:text-rose-200';
+}
+function burnLabel(level: BurnStatus['level']) {
+  if (level === 'allowed') return 'Allowed';
+  if (level === 'restricted') return 'Restricted';
+  return 'No burning';
+}
+function burnColor(level: BurnStatus['level']) {
+  if (level === 'allowed') return 'text-emerald-700 dark:text-emerald-200';
+  if (level === 'restricted') return 'text-amber-700 dark:text-amber-200';
+  return 'text-red-700 dark:text-red-200';
+}
+
 export default function WeatherScreen({ weather, tideGraph, airQuality, burnStatus, alerts }: Props) {
   const currentWeather = weather ? getWeatherInfo(weather.weatherCode, !weather.isDay) : null;
 
   return (
-    <div className="pt-20 pb-4 min-h-dvh">
+    <div className="pt-20 pb-24 min-h-dvh">
       <div className="max-w-5xl mx-auto px-2 mt-4">
         {alerts.length > 0 && (
           // Stack alerts above the weather card so they're the first thing
@@ -221,13 +265,69 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
                 </div>
                 <div className="text-4xl">{currentWeather.emoji}</div>
               </div>
-              <div className={`grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1 mt-4 text-sm ${currentWeather.theme.textSecondary}`}>
-                <span>💨 {weather.windSpeed} km/h</span>
-                <span>💧 {weather.humidity}%</span>
-                {weather.daily[0] && (
+              {/* Unified conditions grid — all metrics together, no icons */}
+              <div className="mt-4 space-y-3">
+                {/* Row 1: Weather conditions */}
+                <div className={`grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-3 ${currentWeather.theme.textSecondary}`}>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest opacity-60">Wind</p>
+                    <p className="text-sm font-semibold mt-0.5">
+                      <span className="font-mono">{degreesToCompass(weather.windDirection)}</span>
+                      {' · '}{weather.windSpeed} km/h
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest opacity-60">Humidity</p>
+                    <p className="text-sm font-semibold mt-0.5">{weather.humidity}%</p>
+                  </div>
+                  {weather.daily[0] && (
+                    <>
+                      <div>
+                        <p className="text-[10px] uppercase tracking-widest opacity-60">Sunrise</p>
+                        <p className="text-sm font-semibold mt-0.5">{formatTime(weather.daily[0].sunrise)}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase tracking-widest opacity-60">Sunset</p>
+                        <p className="text-sm font-semibold mt-0.5">{formatTime(weather.daily[0].sunset)}</p>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Divider + Row 2: Air quality / risk indices */}
+                {(weather.uvIndex !== null || airQuality || burnStatus) && (
                   <>
-                    <span>🌅 {formatTime(weather.daily[0].sunrise)}</span>
-                    <span>🌇 {formatTime(weather.daily[0].sunset)}</span>
+                    <div className="border-t border-black/10 dark:border-white/15" />
+                    <div className={`grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-3 ${currentWeather.theme.textSecondary}`}>
+                      {weather.uvIndex !== null && (
+                        <div>
+                          <p className="text-[10px] uppercase tracking-widest opacity-60">UV Index</p>
+                          <p className={`text-sm font-semibold mt-0.5 ${uvColor(weather.uvIndex)}`}>
+                            {Math.round(weather.uvIndex)} — {uvLabel(weather.uvIndex)}
+                          </p>
+                        </div>
+                      )}
+                      {airQuality && (
+                        <div>
+                          <p className="text-[10px] uppercase tracking-widest opacity-60">Air Quality</p>
+                          <p className={`text-sm font-semibold mt-0.5 ${aqiColor(airQuality.aqi)}`}>
+                            {airQuality.aqi} — {aqiLabel(airQuality.aqi)}
+                          </p>
+                        </div>
+                      )}
+                      {burnStatus && (
+                        <div>
+                          <p className="text-[10px] uppercase tracking-widest opacity-60">Open Burning</p>
+                          <p className={`text-sm font-semibold mt-0.5 ${burnColor(burnStatus.level)}`}>
+                            {burnLabel(burnStatus.level)}
+                          </p>
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-[10px] uppercase tracking-widest opacity-60">Pressure</p>
+                        <p className="text-sm font-semibold mt-0.5">{Math.round(weather.pressure)} hPa</p>
+                      </div>
+                    </div>
                   </>
                 )}
               </div>
@@ -251,12 +351,6 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
                 })}
               </div>
             </div>
-            <WeatherPills
-              uvIndex={weather.uvIndex}
-              uvIndexMaxToday={weather.uvIndexMaxToday}
-              airQuality={airQuality}
-              burnStatus={burnStatus}
-            />
           </section>
         )}
 

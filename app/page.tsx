@@ -73,13 +73,13 @@ export default async function Home() {
           <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-2">
             <h1
               data-scroll-top
-              className="flex items-center gap-2 text-base font-bold tracking-tight cursor-pointer select-none"
+              className="flex items-center gap-2 text-base font-bold tracking-tight cursor-pointer select-none min-w-0"
               title="Double-click to return to the top"
             >
               <Image src="/logo.png" alt="" width={32} height={32} className="shrink-0" priority unoptimized />
-              Halifax Today
+              <span className="truncate">Halifax Today</span>
             </h1>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <InstallButton />
               <LanguageToggle />
               <SettingsMenu />

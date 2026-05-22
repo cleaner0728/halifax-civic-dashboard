@@ -15,43 +15,43 @@ const weatherThemes = {
   clearDay: {
     container:
       'bg-gradient-to-br from-sky-200 via-blue-300 to-blue-400 dark:from-sky-800 dark:via-blue-900 dark:to-slate-900',
-    textPrimary: 'text-white',
-    textSecondary: 'text-white/80',
+    textPrimary: 'text-sky-950 dark:text-white',
+    textSecondary: 'text-sky-900/80 dark:text-white/80',
     bottomBar: 'bg-black/10 dark:bg-white/5',
   },
   clearNight: {
     container:
       'bg-gradient-to-br from-indigo-400 via-slate-500 to-slate-600 dark:from-indigo-900 dark:via-slate-800 dark:to-slate-900',
-    textPrimary: 'text-white',
-    textSecondary: 'text-white/80 dark:text-white/70',
+    textPrimary: 'text-indigo-950 dark:text-white',
+    textSecondary: 'text-indigo-900/80 dark:text-white/70',
     bottomBar: 'bg-black/10 dark:bg-white/5',
   },
   cloudyDay: {
     container:
       'bg-gradient-to-br from-slate-300 via-slate-400 to-slate-500 dark:from-slate-700 dark:via-slate-800 dark:to-slate-900',
-    textPrimary: 'text-white',
-    textSecondary: 'text-white/80 dark:text-white/70',
+    textPrimary: 'text-slate-900 dark:text-white',
+    textSecondary: 'text-slate-800/80 dark:text-white/70',
     bottomBar: 'bg-black/10 dark:bg-white/5',
   },
   cloudyNight: {
     container:
       'bg-gradient-to-br from-slate-400 via-slate-500 to-slate-600 dark:from-slate-700 dark:via-slate-800 dark:to-slate-900',
-    textPrimary: 'text-white',
-    textSecondary: 'text-white/80 dark:text-white/70',
+    textPrimary: 'text-slate-900 dark:text-white',
+    textSecondary: 'text-slate-800/80 dark:text-white/70',
     bottomBar: 'bg-black/10 dark:bg-white/5',
   },
   rainDay: {
     container:
       'bg-gradient-to-br from-slate-400 via-blue-500 to-slate-600 dark:from-slate-700 dark:via-blue-800 dark:to-slate-900',
-    textPrimary: 'text-white',
-    textSecondary: 'text-white/80 dark:text-white/70',
+    textPrimary: 'text-slate-900 dark:text-white',
+    textSecondary: 'text-slate-800/80 dark:text-white/70',
     bottomBar: 'bg-black/15 dark:bg-white/5',
   },
   rainNight: {
     container:
       'bg-gradient-to-br from-slate-400 via-blue-500 to-slate-700 dark:from-slate-700 dark:via-slate-800 dark:to-blue-900',
-    textPrimary: 'text-white',
-    textSecondary: 'text-white/80 dark:text-white/70',
+    textPrimary: 'text-slate-900 dark:text-white',
+    textSecondary: 'text-slate-800/80 dark:text-white/70',
     bottomBar: 'bg-black/15 dark:bg-white/5',
   },
   snowDay: {
@@ -64,8 +64,8 @@ const weatherThemes = {
   snowNight: {
     container:
       'bg-gradient-to-br from-slate-300 via-indigo-400 to-slate-500 dark:from-slate-700 dark:via-indigo-900 dark:to-slate-800',
-    textPrimary: 'text-white',
-    textSecondary: 'text-white/80 dark:text-white/70',
+    textPrimary: 'text-slate-900 dark:text-white',
+    textSecondary: 'text-slate-800/80 dark:text-white/70',
     bottomBar: 'bg-black/10 dark:bg-white/5',
   },
 } satisfies Record<string, WeatherTheme>;
