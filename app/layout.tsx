@@ -16,11 +16,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Halifax Dashboard",
+  title: "Made in Halifax",
   description: "Live news feed and weather for Halifax, Nova Scotia",
   appleWebApp: {
     capable: true,
-    title: "Halifax",
+    title: "Made in Halifax",
     statusBarStyle: "default",
   },
 };

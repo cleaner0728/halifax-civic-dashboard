@@ -77,7 +77,7 @@ export default async function Home() {
               title="Double-click to return to the top"
             >
               <Image src="/logo.png" alt="" width={32} height={32} className="shrink-0" priority unoptimized />
-              <span className="truncate">Halifax Today</span>
+              <span className="truncate">Made in Halifax</span>
             </h1>
             <div className="flex items-center gap-2 shrink-0">
               <InstallButton />

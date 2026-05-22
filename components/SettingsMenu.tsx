@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 import { track } from "@vercel/analytics";
 import FeedbackModal from "@/components/FeedbackModal";
 
-const SHARE_TITLE = "Halifax Today";
+const SHARE_TITLE = "Made in Halifax";
 const SHARE_TEXT = "Live news, weather, and transit for Halifax, NS.";
 
 export default function SettingsMenu() {

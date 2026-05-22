@@ -59,7 +59,7 @@ export default function FeedbackModal({
         body: JSON.stringify({
           email: email.trim() || undefined,
           message: message.trim(),
-          _subject: "Halifax Today feedback",
+          _subject: "Made in Halifax feedback",
         }),
       });
       if (!res.ok) {
