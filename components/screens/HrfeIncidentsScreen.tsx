@@ -31,9 +31,9 @@ function getIncidentIcon(title?: string): IconSpec {
 
 export default function HrfeIncidentsScreen({ incidents }: { incidents: HrmItem[] }) {
   return (
-    <div className="pt-[88px] pb-8 min-h-dvh">
+    <div className="pt-20 pb-4 min-h-dvh">
       <div className="max-w-5xl mx-auto px-2 mt-4">
-        <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-red-500 via-orange-600 to-amber-600 dark:from-red-800 dark:via-orange-900 dark:to-slate-900 text-white shadow-xl mb-6 px-6 py-6">
+        <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-red-500 via-orange-600 to-amber-600 dark:from-red-800 dark:via-orange-900 dark:to-slate-900 text-white shadow-xl mb-6 px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-white/70 uppercase tracking-widest">

@@ -1,8 +1,9 @@
 import Image from 'next/image';
-import ThemeToggle from '@/components/ThemeToggle';
 import InstallButton from '@/components/InstallButton';
 import LanguageToggle from '@/components/LanguageToggle';
+import SettingsMenu from '@/components/SettingsMenu';
 import ScrollSnapContainer from '@/components/ScrollSnapContainer';
+import RefreshOnVisible from '@/components/RefreshOnVisible';
 import WeatherScreen from '@/components/screens/WeatherScreen';
 import NewsScreen from '@/components/screens/NewsScreen';
 import HrmNewsScreen from '@/components/screens/HrmNewsScreen';
@@ -65,6 +66,7 @@ export default async function Home() {
 
   return (
     <main className="bg-background text-foreground">
+      <RefreshOnVisible />
       <ScrollSnapContainer
         labels={TAB_LABELS}
         topBar={
@@ -75,12 +77,12 @@ export default async function Home() {
               title="Double-click to return to the top"
             >
               <Image src="/logo.png" alt="" width={32} height={32} className="shrink-0" priority unoptimized />
-              Halifax Dashboard
+              Halifax Today
             </h1>
             <div className="flex items-center gap-2">
-              <LanguageToggle />
               <InstallButton />
-              <ThemeToggle />
+              <LanguageToggle />
+              <SettingsMenu />
             </div>
           </div>
         }

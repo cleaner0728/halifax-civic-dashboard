@@ -526,9 +526,29 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
         <div
           key={i}
           data-snap-section={i}
-          className="min-h-dvh"
+          className="min-h-dvh relative"
         >
           {child}
+
+          {/* "Up next" hint — floats above the dead space at the bottom of
+              short sections so the gap looks intentional, not empty. Doubles
+              as a navigation affordance teaching users the swipe gesture. */}
+          {i < labels.length - 1 && (
+            <button
+              onClick={() => switchTo(i + 1)}
+              aria-label={`Go to ${labels[i + 1]}`}
+              className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-1.5
+                px-4 py-1.5 rounded-full text-xs font-medium
+                bg-foreground/6 border border-foreground/10
+                text-foreground/40 hover:text-foreground/70 hover:bg-foreground/10
+                transition-all duration-200 backdrop-blur-sm pointer-events-auto"
+            >
+              <span>{labels[i + 1]}</span>
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          )}
         </div>
       ))}
     </>

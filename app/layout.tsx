@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import GoogleTranslateMount from "@/components/GoogleTranslateMount";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,6 +55,7 @@ export default function RootLayout({
             already picked light/dark in next-themes' storage keeps it. */}
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           {children}
+          <GoogleTranslateMount />
         </ThemeProvider>
         {/* Vercel Web Analytics. Auto-tracks pageviews + receives
             track() calls fired from interactive components (tab switch,
