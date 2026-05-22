@@ -14,7 +14,6 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
   const router = useRouter();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [headerOpacity, setHeaderOpacity] = useState(1);
   const [pullProgress, setPullProgress] = useState(0); // 0..1, drives the indicator
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -129,51 +128,7 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     };
   }, []);
 
-  // Header visibility follows the classic "scroll-up to summon nav" mobile
-  // pattern. Two inputs:
-  //   - Direction: any backward scroll (finger swipes down, scrollY
-  //     decreasing) snaps the tab bar fully visible — that's how users
-  //     reach for navigation mid-read without having to scroll all the way
-  //     to a section top.
-  //   - Distance: forward scrolling (scrollY increasing) fades the bar out
-  //     across FADE_RANGE px measured from the ACTIVE section's real
-  //     offsetTop. Anchoring on the section (not a rounded half-screen)
-  //     means the bar stays hidden the whole way through a long article.
-  useEffect(() => {
-    const FADE_RANGE = 160;
-    let raf = 0;
-    let prevY = window.scrollY;
-    const update = () => {
-      raf = 0;
-      const y = window.scrollY;
-      const dy = y - prevY;
-      prevY = y;
-      const section = document.querySelector(
-        `[data-snap-section="${activeIndexRef.current}"]`,
-      ) as HTMLElement | null;
-      const sectionTop = section?.offsetTop ?? 0;
-      const withinSection = Math.max(0, y - sectionTop);
-      const distanceOpacity = Math.max(0, Math.min(1, 1 - withinSection / FADE_RANGE));
-      // dy < 0 → user is scrolling back toward the top of the document;
-      // reveal the tab bar regardless of how far in we are.
-      setHeaderOpacity(dy < 0 ? 1 : distanceOpacity);
-    };
-    const onScroll = () => {
-      // rAF-throttle so we don't fire setState 60+ times/sec during a flick.
-      if (!raf) raf = requestAnimationFrame(update);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    // Re-evaluate when the active section changes (tab switch or IO update)
-    // so the header lands in the right state on arrival, not after the next
-    // scroll tick.
-    update();
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, [activeIndex]);
-
-  // iOS "tap the status bar" classic — double-click anywhere on the fixed
+// iOS "tap the status bar" classic — double-click anywhere on the fixed
   // header (that isn't a button/link) and we'll smooth-scroll back to the
   // first tab's top. Filter out double-clicks on interactive children so
   // a quick double-tap on a tab pill doesn't also trigger this.
@@ -224,10 +179,37 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       top: target.offsetTop + savedOffset,
       behavior: "instant" as ScrollBehavior,
     });
+
+    // Horizontal slide-in on the arriving section. Sections are stacked
+    // vertically in the DOM (each is min-h-dvh), so we can't actually
+    // animate sliding between them — but we CAN make the arriving tab's
+    // content slide in from the direction of travel (next tab → from the
+    // right; previous tab → from the left). Every tab switch (pill click
+    // or swipe) reinforces "tabs are arranged horizontally", which is the
+    // mental model the swipe gesture needs.
+    const direction = index > oldIdx ? 1 : -1;
+    target.style.transition = "none";
+    target.style.transform = `translateX(${direction * 28}px)`;
+    target.style.opacity = "0.6";
+    // Force a reflow so the browser registers the starting state before
+    // we add the transition — otherwise it would short-circuit straight
+    // to the end values with no animation.
+    void target.offsetWidth;
+    target.style.transition = "transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 220ms ease-out";
+    target.style.transform = "translateX(0)";
+    target.style.opacity = "1";
+    window.setTimeout(() => {
+      target.style.transition = "";
+      target.style.transform = "";
+      target.style.opacity = "";
+    }, 320);
+
     if (navTimeoutRef.current) window.clearTimeout(navTimeoutRef.current);
     navTimeoutRef.current = window.setTimeout(() => {
       isNavigatingRef.current = false;
-    }, 200);
+      // Match the animation duration so IO doesn't fire mid-slide and
+      // re-yank the active tab to whatever its midpoint sees.
+    }, 320);
   }, [children.length, labels]);
 
   // Horizontal-swipe gesture → previous/next tab.
@@ -356,14 +338,14 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
         </div>
       </div>
 
-      {/* Header + Tabs — fade in/out together based on scroll position */}
+      {/* Header + Tabs — always visible. User feedback was that the
+          scroll-direction reveal made the swipe-between-tabs gesture even
+          harder to discover. We now teach that gesture two other ways:
+          the slide-in animation on tab switch (see switchTo above) and
+          the page-dot row below the pills. */}
       <div
         onDoubleClick={onHeaderDoubleClick}
         className="fixed top-0 left-0 right-0 z-[60]"
-        style={{
-          opacity: headerOpacity,
-          pointerEvents: headerOpacity < 0.05 ? "none" : "auto",
-        }}
       >
         {topBar && (
           <div
@@ -406,6 +388,31 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
               >
                 {label}
               </button>
+            ))}
+          </div>
+          {/* Page-dot row. Same idiom as iOS home-screen and Instagram
+              stories: a single row of dots saying "this is a swipeable
+              carousel". Redundant with the pills as a navigation control,
+              but that's the point — pills say "these are choices", dots
+              say "and you can swipe between them". Active dot is wider
+              (pill-shaped) so position-in-set reads at a glance. */}
+          <div
+            data-no-tab-swipe
+            className="flex justify-center items-center gap-1.5 pb-1.5 pt-0.5"
+            aria-hidden
+          >
+            {labels.map((label, i) => (
+              <button
+                key={i}
+                onClick={() => switchTo(i)}
+                tabIndex={-1}
+                aria-label={`Switch to ${label}`}
+                className={`rounded-full transition-all duration-200 ${
+                  activeIndex === i
+                    ? "w-5 h-1.5 bg-blue-500"
+                    : "w-1.5 h-1.5 bg-foreground/25 hover:bg-foreground/45"
+                }`}
+              />
             ))}
           </div>
         </div>
