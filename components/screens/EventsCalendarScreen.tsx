@@ -2,6 +2,7 @@
 // Emera Oval live webcam below it.
 
 import EmeraOvalWebcam from '@/components/EmeraOvalWebcam';
+import EndOfDashboardFooter from '@/components/EndOfDashboardFooter';
 
 const CALENDAR_SRC =
   'https://calendar.google.com/calendar/embed?showTitle=0&mode=AGENDA&height=600&wkst=1&bgcolor=%23FFFFFF' +
@@ -23,7 +24,7 @@ const CALENDAR_SRC =
   '&src=2568t0odfpavvip1tnqq4mhvpo%40group.calendar.google.com&color=%23691426' +
   '&ctz=America%2FHalifax';
 
-export default function EventsCalendarScreen() {
+export default function EventsCalendarScreen({ renderedAt }: { renderedAt: number }) {
   return (
     <div className="pt-20 pb-4 min-h-dvh">
       <div className="max-w-5xl mx-auto px-2 mt-4">
@@ -59,6 +60,8 @@ export default function EventsCalendarScreen() {
         </div>
 
         <EmeraOvalWebcam />
+
+        <EndOfDashboardFooter renderedAt={renderedAt} />
       </div>
     </div>
   );

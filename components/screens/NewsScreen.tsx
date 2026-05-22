@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import type { NewsItem } from '@/lib/fetchers/news';
+import { formatRelative } from '@/lib/date';
 
 type Props = {
   items: NewsItem[];
@@ -84,9 +85,7 @@ export default function NewsScreen({ items }: Props) {
                       </h3>
                       <p className="text-xs text-foreground/40 mt-1 font-mono">
                         {item.source && <span className="text-blue-400 mr-2">{item.source}</span>}
-                        {item.pubDate
-                          ? new Date(item.pubDate).toLocaleString('en-US', { timeZone: 'America/Halifax' })
-                          : 'Unknown'}
+                        {formatRelative(item.pubDate) || 'Unknown'}
                       </p>
                       <p className="text-foreground/60 mt-1 text-base leading-relaxed">{item.contentSnippet}</p>
                       <p className="mt-3 text-sm font-medium text-blue-500 dark:text-blue-400 inline-flex items-center gap-1 group-hover:gap-2 transition-all">

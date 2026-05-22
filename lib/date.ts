@@ -44,9 +44,40 @@ export function formatTime(iso: string): string {
   return `${h12}:${m[2]} ${period}`;
 }
 
-export function timeAgo(utcSeconds: number): string {
-  const diff = Math.floor(Date.now() / 1000 - utcSeconds);
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
+// Unified timestamp formatter for feed-style content. Tuned so the same
+// rule reads naturally regardless of how recent the item is:
+//   - first minute    → "just now"
+//   - within 1 hour   → "5m ago"
+//   - within 24 hours → "3h ago"
+//   - within 7 days   → "Tue 5:42 PM" (Halifax local)
+//   - older           → "May 18" (Halifax local)
+//
+// Accepts an ISO string OR a millisecond timestamp (Date.now() shape).
+// For unix-seconds sources (Reddit's createdUtc) multiply by 1000 at the
+// call site — that's an explicit conversion the reader can see.
+export function formatRelative(input: string | number | undefined | null): string {
+  if (input == null || input === '') return '';
+  const ms = typeof input === 'number' ? input : new Date(input).getTime();
+  if (!Number.isFinite(ms)) return '';
+
+  const diff = Date.now() - ms;
+  if (diff < 60_000) return 'just now';
+  if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m ago`;
+  if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h ago`;
+
+  const d = new Date(ms);
+  if (diff < 7 * 86_400_000) {
+    return d.toLocaleString('en-US', {
+      timeZone: HFX_TZ,
+      weekday: 'short',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+  }
+  return d.toLocaleDateString('en-US', {
+    timeZone: HFX_TZ,
+    month: 'short',
+    day: 'numeric',
+  });
 }

@@ -1,4 +1,4 @@
-import { timeAgo } from '@/lib/date';
+import { formatRelative } from '@/lib/date';
 import type { RedditPost } from '@/lib/fetchers/reddit';
 
 type Props = {
@@ -24,7 +24,7 @@ export default function RedditScreen({ posts, fetchedAt }: Props) {
                     Phrasing this as "last change" + a steady "checked every
                     30 min" hint keeps the UI honest on quiet nights. */}
                 {fetchedAt
-                  ? ` · last change ${timeAgo(Math.floor(new Date(fetchedAt).getTime() / 1000))} · checked every 30 min`
+                  ? ` · last change ${formatRelative(fetchedAt)} · checked every 30 min`
                   : ' · checked every 30 min'}{' '}
                 ·{' '}
                 <a
@@ -74,7 +74,7 @@ export default function RedditScreen({ posts, fetchedAt }: Props) {
                       <div className="flex items-center gap-3 mt-1.5 text-xs text-foreground/40">
                         {post.numComments > 0 && <span>💬 {post.numComments}</span>}
                         <span>u/{post.author}</span>
-                        <span>{timeAgo(post.createdUtc)}</span>
+                        <span>{formatRelative(post.createdUtc * 1000)}</span>
                       </div>
                     </div>
                   </div>

@@ -53,22 +53,6 @@ function extractDetourSummary(html: string): string {
     .trim();
 }
 
-// Lightweight signal: is there any transit RSS activity in the last 2 days?
-// Used by the UI to decide whether to surface a "view source" link.
-export async function fetchTransitRss(): Promise<boolean> {
-  try {
-    const parser = new Parser();
-    const feed = await parser.parseURL('https://www.halifax.ca/page-published-feed/15879');
-    const cutoff = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
-    return (feed.items || []).some((item) => {
-      const d = item.pubDate || item.isoDate;
-      return d ? new Date(d) > cutoff : false;
-    });
-  } catch {
-    return false;
-  }
-}
-
 // Both Detours and Ferry alerts live on the same page — fetching once and
 // slicing into sections keeps us at one network call per build.
 async function fetchDisruptionsHtml(): Promise<string | null> {

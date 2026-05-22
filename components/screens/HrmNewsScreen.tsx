@@ -1,4 +1,5 @@
 import type { HrmItem } from '@/lib/fetchers/hrm';
+import { formatRelative } from '@/lib/date';
 
 type Props = {
   items: HrmItem[];
@@ -40,30 +41,31 @@ export default function HrmNewsScreen({ items, dateLabel }: Props) {
               <p className="text-sm mt-1">Check back later for updates from Halifax City Hall.</p>
             </div>
           ) : (
-            items.map((item, index) => (
-              <article
-                key={index}
-                className="bg-card rounded-xl border border-border hover:border-emerald-500/30 shadow-sm hover:shadow-md transition-all overflow-hidden"
+            items.map((item) => (
+              // Whole card → single <a>. Earlier the inner title was the
+              // only clickable target, so taps on the description or the
+              // timestamp landed on dead space. Users were hitting those
+              // areas (especially the multi-line description on mobile)
+              // and bouncing.
+              <a
+                key={item.link ?? item.title}
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block bg-card rounded-xl border border-border hover:border-emerald-500/30 shadow-sm hover:shadow-md transition-all overflow-hidden"
               >
-                <div className="p-2">
-                  <a
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-lg font-semibold text-foreground hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors leading-snug"
-                  >
+                <article className="p-2">
+                  <h3 className="text-lg font-semibold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-snug">
                     {item.title}
-                  </a>
+                  </h3>
                   <p className="text-xs text-foreground/40 mt-1 font-mono">
-                    {item.pubDate
-                      ? new Date(item.pubDate).toLocaleString('en-US', { timeZone: 'America/Halifax' })
-                      : 'Unknown'}
+                    {formatRelative(item.pubDate) || 'Unknown'}
                   </p>
                   {item.description && (
                     <p className="text-foreground/60 mt-1 text-base leading-relaxed">{item.description}</p>
                   )}
-                </div>
-              </article>
+                </article>
+              </a>
             ))
           )}
         </div>

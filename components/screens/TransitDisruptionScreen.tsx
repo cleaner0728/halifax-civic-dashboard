@@ -1,9 +1,10 @@
 import type { TransitDetour, FerryAlert, TransitAdjustment } from '@/lib/fetchers/transit';
 
+const DISRUPTIONS_URL = 'https://www.halifax.ca/transportation/halifax-transit/service-disruptions';
+
 type Props = {
   detours: TransitDetour[];
   ferryAlerts: FerryAlert[];
-  hasRecent: boolean;
   adjustments: TransitAdjustment | null;
 };
 
@@ -53,7 +54,7 @@ function highlightRoutes(text: string): React.ReactNode {
   return <>{nodes}</>;
 }
 
-export default function TransitDisruptionScreen({ detours, ferryAlerts, hasRecent, adjustments }: Props) {
+export default function TransitDisruptionScreen({ detours, ferryAlerts, adjustments }: Props) {
   return (
     <div className="pt-20 pb-4 min-h-dvh">
       <div className="max-w-5xl mx-auto px-2 mt-4">
@@ -73,7 +74,14 @@ export default function TransitDisruptionScreen({ detours, ferryAlerts, hasRecen
           // fetchTransitAdjustments. Same amber palette as the detour
           // cards below: this whole tab is "Halifax Transit", and one
           // colour family keeps the page reading as a single surface.
-          <article className="bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-all overflow-hidden mb-6">
+          // Whole card is the link to the upstream page for route-by-route
+          // details — saves users hunting for the "→ more" hyperlink.
+          <a
+            href={adjustments.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-all overflow-hidden mb-6"
+          >
             <div className="px-4 py-3 bg-amber-500/10 border-b border-amber-500/20 flex items-center gap-2">
               <span className="text-xl">📅</span>
               <h3 className="font-bold text-foreground leading-snug">
@@ -93,48 +101,47 @@ export default function TransitDisruptionScreen({ detours, ferryAlerts, hasRecen
                   ))}
                 </ul>
               )}
-              <a
-                href={adjustments.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block text-sm text-amber-600 dark:text-amber-400 hover:underline"
-              >
-                → Full route-by-route details on halifax.ca
-              </a>
+              <p className="text-sm text-amber-600 dark:text-amber-400">
+                Full route-by-route details on halifax.ca
+                <span aria-hidden className="inline-block ml-1 transition-transform group-hover:translate-x-0.5">↗</span>
+              </p>
             </div>
-          </article>
+          </a>
         )}
 
         {ferryAlerts.length > 0 && (
           <div className="space-y-3 mb-6">
-            {ferryAlerts.map((alert, i) => (
-              <article
-                key={i}
-                className="bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-all overflow-hidden"
-              >
-                <div className="px-4 py-3 bg-sky-500/10 border-b border-sky-500/20 flex items-center gap-2">
-                  <span className="text-xl">⛴️</span>
-                  <h3 className="font-bold text-foreground leading-snug">{alert.title}</h3>
-                </div>
-                <div className="p-4 space-y-3">
-                  {alert.body && (
-                    <p className="text-sm text-foreground/70 leading-relaxed whitespace-pre-line">
-                      {highlightRoutes(alert.body)}
+            {ferryAlerts.map((alert, i) => {
+              // Prefer the alert-specific halifax.ca news URL if the upstream
+              // provided one; otherwise fall back to the parent disruptions
+              // page so the whole card always has a destination.
+              const href = alert.moreDetailsUrl ?? DISRUPTIONS_URL;
+              return (
+                <a
+                  key={alert.moreDetailsUrl ?? `ferry-${i}`}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-all overflow-hidden"
+                >
+                  <div className="px-4 py-3 bg-sky-500/10 border-b border-sky-500/20 flex items-center gap-2">
+                    <span className="text-xl">⛴️</span>
+                    <h3 className="font-bold text-foreground leading-snug">{alert.title}</h3>
+                  </div>
+                  <div className="p-4 space-y-3">
+                    {alert.body && (
+                      <p className="text-sm text-foreground/70 leading-relaxed whitespace-pre-line">
+                        {highlightRoutes(alert.body)}
+                      </p>
+                    )}
+                    <p className="text-sm text-sky-600 dark:text-sky-400">
+                      {alert.moreDetailsUrl ? 'More details on halifax.ca' : 'Source: halifax.ca'}
+                      <span aria-hidden className="inline-block ml-1 transition-transform group-hover:translate-x-0.5">↗</span>
                     </p>
-                  )}
-                  {alert.moreDetailsUrl && (
-                    <a
-                      href={alert.moreDetailsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block text-sm text-sky-600 dark:text-sky-400 hover:underline"
-                    >
-                      → More details on halifax.ca
-                    </a>
-                  )}
-                </div>
-              </article>
-            ))}
+                  </div>
+                </a>
+              );
+            })}
           </div>
         )}
 
@@ -147,9 +154,17 @@ export default function TransitDisruptionScreen({ detours, ferryAlerts, hasRecen
             </div>
           ) : (
             detours.map((detour, index) => (
-              <article
-                key={index}
-                className="bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-all overflow-hidden"
+              // Detours don't have a per-item URL (they're parsed out of one
+              // big accordion page), so the whole card links to the same
+              // service-disruptions page. The user lands on the section
+              // they were already reading and can see the upstream version
+              // if our scrape ever drifts.
+              <a
+                key={`${detour.title}-${index}`}
+                href={DISRUPTIONS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-all overflow-hidden"
               >
                 <div className="px-4 py-3 bg-amber-500/10 border-b border-amber-500/20 flex items-center gap-2">
                   <span className="text-xl">🚌</span>
@@ -216,18 +231,12 @@ export default function TransitDisruptionScreen({ detours, ferryAlerts, hasRecen
                     </p>
                   )}
 
-                  {hasRecent && (
-                    <a
-                      href="https://www.halifax.ca/transportation/halifax-transit/service-disruptions"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block text-sm text-amber-600 dark:text-amber-400 hover:underline"
-                    >
-                      → View source on halifax.ca
-                    </a>
-                  )}
+                  <p className="text-sm text-amber-600 dark:text-amber-400">
+                    Source: halifax.ca
+                    <span aria-hidden className="inline-block ml-1 transition-transform group-hover:translate-x-0.5">↗</span>
+                  </p>
                 </div>
-              </article>
+              </a>
             ))
           )}
         </div>

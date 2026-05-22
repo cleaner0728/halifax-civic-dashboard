@@ -18,7 +18,6 @@ import { fetchAlerts } from '@/lib/fetchers/alerts';
 import { fetchNews } from '@/lib/fetchers/news';
 import { fetchHrmNews, fetchHrfeIncidents } from '@/lib/fetchers/hrm';
 import {
-  fetchTransitRss,
   fetchTransitDetours,
   fetchFerryAlerts,
   fetchTransitAdjustments,
@@ -30,6 +29,12 @@ import { safe } from '@/lib/safe';
 const TAB_LABELS = ['City Live', 'News', 'Reddit', 'Transit', 'HRM', 'HRFE', 'Events'];
 
 export default async function Home() {
+  // Captured here so the same value flows to anything that displays "data
+  // freshness". Resolves at the moment the RSC tree is computed; RSC cache
+  // hits will reuse this older value, which is what we want — a cached
+  // render genuinely IS older data.
+  const renderedAt = Date.now();
+
   // Each fetcher already returns an "empty" sentinel on failure; safe() catches
   // anything that still escapes so one bad source can't 500 the whole dashboard.
   const [
@@ -39,7 +44,6 @@ export default async function Home() {
     hrfeIncidents,
     transitDetours,
     ferryAlerts,
-    transitHasRecent,
     transitAdjustments,
     tides,
     redditData,
@@ -53,7 +57,6 @@ export default async function Home() {
     safe(fetchHrfeIncidents(), [], 'hrfe'),
     safe(fetchTransitDetours(), [], 'transit-detours'),
     safe(fetchFerryAlerts(), [], 'ferry-alerts'),
-    safe(fetchTransitRss(), false, 'transit-rss'),
     safe(fetchTransitAdjustments(), null, 'transit-adjustments'),
     safe(fetchTides(), [], 'tides'),
     safe(fetchRedditPosts(), { posts: [], fetchedAt: null }, 'reddit'),
@@ -92,12 +95,11 @@ export default async function Home() {
         <TransitDisruptionScreen
           detours={transitDetours}
           ferryAlerts={ferryAlerts}
-          hasRecent={transitHasRecent}
           adjustments={transitAdjustments}
         />
         <HrmNewsScreen items={hrmResult.items} dateLabel={hrmResult.dateLabel} />
         <HrfeIncidentsScreen incidents={hrfeIncidents} />
-        <EventsCalendarScreen />
+        <EventsCalendarScreen renderedAt={renderedAt} />
       </ScrollSnapContainer>
     </main>
   );

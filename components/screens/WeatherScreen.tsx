@@ -329,6 +329,15 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
                           <p className={`text-sm font-semibold mt-0.5 ${burnColor(burnStatus.level)}`}>
                             {burnLabel(burnStatus.level)}
                           </p>
+                          {/* Show the upstream detail string (e.g. "Burning
+                              is only allowed between 7:00 pm and 8:00 am")
+                              — the label alone could mislead a user into
+                              thinking "Allowed" means anytime. */}
+                          {burnStatus.text && (
+                            <p className="text-[11px] mt-0.5 opacity-70 leading-snug">
+                              {burnStatus.text}
+                            </p>
+                          )}
                         </div>
                       )}
                       <div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { track } from "@vercel/analytics";
 import HapticTab from "./HapticTab";
@@ -16,7 +16,12 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
   const tabRefs = useRef<(HTMLLabelElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [pullProgress, setPullProgress] = useState(0); // 0..1, drives the indicator
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  // `isPending` is true while the RSC refresh is genuinely in flight.
+  // Previously we faked the spinner with a 800ms setTimeout — sometimes
+  // the data was still loading after the spinner cleared, sometimes the
+  // data was ready 200ms in and the spinner overstayed. useTransition
+  // ties the indicator to the actual refresh lifecycle.
+  const [isPending, startTransition] = useTransition();
 
   // Refs that mirror state so touch/scroll handlers see live values without
   // having to re-attach their listeners on every render.
@@ -366,13 +371,11 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       pullProgressRef.current = 0;
       setPullProgress(0);
       if (triggered) {
-        setIsRefreshing(true);
         track("pull_to_refresh", { tab: labels[activeIndexRef.current] });
-        router.refresh();
-        // router.refresh() is fire-and-forget for client code — we can't
-        // await the RSC fetch. 800ms is enough for the spinner to register
-        // as feedback without lingering past the actual refresh.
-        window.setTimeout(() => setIsRefreshing(false), 800);
+        // Wrap router.refresh() in startTransition so React tracks the RSC
+        // fetch lifecycle for us — `isPending` flips false the instant the
+        // server payload lands.
+        startTransition(() => router.refresh());
       }
     };
     window.addEventListener("touchstart", onStart, { passive: true });
@@ -393,11 +396,11 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
           the header on-screen. */}
       <div
         className="fixed left-1/2 -translate-x-1/2 z-[70] pointer-events-none transition-opacity duration-200"
-        style={{ top: 96, opacity: pullProgress > 0 || isRefreshing ? 1 : 0 }}
+        style={{ top: 96, opacity: pullProgress > 0 || isPending ? 1 : 0 }}
         aria-hidden
       >
         <div className="rounded-full bg-card/90 backdrop-blur border border-border shadow-lg p-2.5">
-          {isRefreshing ? (
+          {isPending ? (
             <span className="block w-5 h-5 rounded-full border-2 border-foreground/20 border-t-foreground animate-spin" />
           ) : (
             <span

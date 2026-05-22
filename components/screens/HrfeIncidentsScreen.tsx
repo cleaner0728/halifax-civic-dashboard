@@ -1,4 +1,5 @@
 import type { HrmItem } from '@/lib/fetchers/hrm';
+import { formatRelative } from '@/lib/date';
 
 // HRFE incident titles are short, all-caps category labels like
 // "MEDICAL ASSISTANCE", "VEHICLE FIRE", "MOTOR VEHICLE COLLISION".
@@ -101,9 +102,7 @@ export default function HrfeIncidentsScreen({ incidents }: { incidents: HrmItem[
                         )}
                       </p>
                       <p className="text-xs text-foreground/40 mt-0.5 font-mono">
-                        {item.pubDate
-                          ? new Date(item.pubDate).toLocaleString('en-US', { timeZone: 'America/Halifax' })
-                          : 'Unknown'}
+                        {formatRelative(item.pubDate) || 'Unknown'}
                       </p>
                     </div>
                   </div>
