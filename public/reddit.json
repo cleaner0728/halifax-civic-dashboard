@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-23T02:46:15.918Z",
+  "fetchedAt": "2026-05-23T03:16:12.227Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -47,15 +47,6 @@
       "createdUtc": 1779483661
     },
     {
-      "title": "Police warn of possible drink tampering incidents",
-      "score": 0,
-      "numComments": 0,
-      "author": "sjmorris",
-      "url": "https://www.reddit.com/r/halifax/comments/1tktg8d/police_warn_of_possible_drink_tampering_incidents/",
-      "flair": null,
-      "createdUtc": 1779478487
-    },
-    {
       "title": "Bare feet at head level in Dartmouth movie theatre should cause sole-searching, online commenters say about photo",
       "score": 0,
       "numComments": 0,
@@ -63,6 +54,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tky9pk/bare_feet_at_head_level_in_dartmouth_movie/",
       "flair": null,
       "createdUtc": 1779489331
+    },
+    {
+      "title": "Police warn of possible drink tampering incidents",
+      "score": 0,
+      "numComments": 0,
+      "author": "sjmorris",
+      "url": "https://www.reddit.com/r/halifax/comments/1tktg8d/police_warn_of_possible_drink_tampering_incidents/",
+      "flair": null,
+      "createdUtc": 1779478487
     },
     {
       "title": "Carmichael street",
@@ -90,6 +90,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tkjc3i/such_beauty_deserves_praise/",
       "flair": null,
       "createdUtc": 1779457223
+    },
+    {
+      "title": "Does anyone know the actual story behind 5517 Spring Garden? The lease sign feels permanent.",
+      "score": 0,
+      "numComments": 0,
+      "author": "crispy5s",
+      "url": "https://www.reddit.com/r/halifax/comments/1tl3ybj/does_anyone_know_the_actual_story_behind_5517/",
+      "flair": null,
+      "createdUtc": 1779504197
     },
     {
       "title": "The next era of Atlantic hurricanes could be far more destructive",
@@ -155,6 +164,15 @@
       "createdUtc": 1779457827
     },
     {
+      "title": "Struggling to find place to sell trading cards",
+      "score": 0,
+      "numComments": 0,
+      "author": "Wahrk_Gallows",
+      "url": "https://www.reddit.com/r/halifax/comments/1tkuiyr/struggling_to_find_place_to_sell_trading_cards/",
+      "flair": null,
+      "createdUtc": 1779480812
+    },
+    {
       "title": "Booster seat from YHZ Monday evening",
       "score": 0,
       "numComments": 0,
@@ -180,15 +198,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tkeevh/positive_vibes_friday/",
       "flair": null,
       "createdUtc": 1779444076
-    },
-    {
-      "title": "Struggling to find place to sell trading cards",
-      "score": 0,
-      "numComments": 0,
-      "author": "Wahrk_Gallows",
-      "url": "https://www.reddit.com/r/halifax/comments/1tkuiyr/struggling_to_find_place_to_sell_trading_cards/",
-      "flair": null,
-      "createdUtc": 1779480812
     },
     {
       "title": "Anyone know where to buy a futon cover?",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tktgme/looking_for_assistance_3d_print/",
       "flair": null,
       "createdUtc": 1779478511
-    },
-    {
-      "title": "11-year-old struck in crosswalk in Bedford hit-and-run",
-      "score": 0,
-      "numComments": 0,
-      "author": "luxoryapartmentlover",
-      "url": "https://www.reddit.com/r/halifax/comments/1tk31ic/11yearold_struck_in_crosswalk_in_bedford_hitandrun/",
-      "flair": null,
-      "createdUtc": 1779409920
     }
   ]
 }
