@@ -100,7 +100,7 @@ export default function SettingsMenu() {
           className="absolute right-0 top-11 z-[80] w-48 rounded-xl border border-border bg-card shadow-xl overflow-hidden"
         >
           <button
-            onClick={() => mounted && setTheme(isDark ? "light" : "dark")}
+            onClick={() => { if (!mounted) return; setTheme(isDark ? 'light' : 'dark'); setOpen(false); }}
             role="menuitem"
             className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-foreground hover:bg-foreground/5 transition-colors"
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
