@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-23T03:46:12.342Z",
+  "fetchedAt": "2026-05-23T04:16:11.848Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -38,15 +38,6 @@
       "createdUtc": 1779483714
     },
     {
-      "title": "U.S. corporation pitching $1.5 billion CFL stadium near Halifax Stanfield airport",
-      "score": 0,
-      "numComments": 0,
-      "author": "NotABoyGenius45",
-      "url": "https://www.reddit.com/r/halifax/comments/1tkvthm/us_corporation_pitching_15_billion_cfl_stadium/",
-      "flair": null,
-      "createdUtc": 1779483661
-    },
-    {
       "title": "Does anyone know the actual story behind 5517 Spring Garden? The lease sign feels permanent.",
       "score": 0,
       "numComments": 0,
@@ -54,6 +45,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tl3ybj/does_anyone_know_the_actual_story_behind_5517/",
       "flair": null,
       "createdUtc": 1779504197
+    },
+    {
+      "title": "U.S. corporation pitching $1.5 billion CFL stadium near Halifax Stanfield airport",
+      "score": 0,
+      "numComments": 0,
+      "author": "NotABoyGenius45",
+      "url": "https://www.reddit.com/r/halifax/comments/1tkvthm/us_corporation_pitching_15_billion_cfl_stadium/",
+      "flair": null,
+      "createdUtc": 1779483661
     },
     {
       "title": "Bare feet at head level in Dartmouth movie theatre should cause sole-searching, online commenters say about photo",
@@ -227,6 +227,15 @@
       "createdUtc": 1779449630
     },
     {
+      "title": "Injured baby fox rescued by RCMP in Tantallon on the mend",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1tl5r0b/injured_baby_fox_rescued_by_rcmp_in_tantallon_on/",
+      "flair": null,
+      "createdUtc": 1779509252
+    },
+    {
       "title": "Looking for M. Costello in Halifax",
       "score": 0,
       "numComments": 0,
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tkw5ha/halifax_to_dartmouth_or_vice_versa/",
       "flair": null,
       "createdUtc": 1779484397
-    },
-    {
-      "title": "Looking for assistance - 3D print",
-      "score": 0,
-      "numComments": 0,
-      "author": "BigBrutusBeefcake",
-      "url": "https://www.reddit.com/r/halifax/comments/1tktgme/looking_for_assistance_3d_print/",
-      "flair": null,
-      "createdUtc": 1779478511
     }
   ]
 }
