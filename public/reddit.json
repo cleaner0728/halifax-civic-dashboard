@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-23T04:16:11.848Z",
+  "fetchedAt": "2026-05-23T04:46:12.342Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -173,6 +173,15 @@
       "createdUtc": 1779495926
     },
     {
+      "title": "Injured baby fox rescued by RCMP in Tantallon on the mend",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1tl5r0b/injured_baby_fox_rescued_by_rcmp_in_tantallon_on/",
+      "flair": null,
+      "createdUtc": 1779509252
+    },
+    {
       "title": "Struggling to find place to sell trading cards",
       "score": 0,
       "numComments": 0,
@@ -227,13 +236,13 @@
       "createdUtc": 1779449630
     },
     {
-      "title": "Injured baby fox rescued by RCMP in Tantallon on the mend",
+      "title": "Lower Sackville jeweler",
       "score": 0,
       "numComments": 0,
-      "author": "IStillListenToRadio",
-      "url": "https://www.reddit.com/r/halifax/comments/1tl5r0b/injured_baby_fox_rescued_by_rcmp_in_tantallon_on/",
+      "author": "Longjumping-Lynx2957",
+      "url": "https://www.reddit.com/r/halifax/comments/1tl65lp/lower_sackville_jeweler/",
       "flair": null,
-      "createdUtc": 1779509252
+      "createdUtc": 1779510410
     },
     {
       "title": "Looking for M. Costello in Halifax",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tkptb5/hand_knit_sweaters/",
       "flair": null,
       "createdUtc": 1779470962
-    },
-    {
-      "title": "Halifax to Dartmouth or vice versa?",
-      "score": 0,
-      "numComments": 0,
-      "author": "National_View_4073",
-      "url": "https://www.reddit.com/r/halifax/comments/1tkw5ha/halifax_to_dartmouth_or_vice_versa/",
-      "flair": null,
-      "createdUtc": 1779484397
     }
   ]
 }
