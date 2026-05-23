@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-23T12:16:14.807Z",
+  "fetchedAt": "2026-05-23T12:46:14.667Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -38,6 +38,15 @@
       "createdUtc": 1779504197
     },
     {
+      "title": "Video on Halifax rents",
+      "score": 0,
+      "numComments": 0,
+      "author": "Exotic-Clue1647",
+      "url": "https://www.reddit.com/r/halifax/comments/1tlddtd/video_on_halifax_rents/",
+      "flair": null,
+      "createdUtc": 1779534061
+    },
+    {
       "title": "Halifax volunteers fill 40-foot container with medical supplies for Cuba",
       "score": 0,
       "numComments": 0,
@@ -47,13 +56,13 @@
       "createdUtc": 1779483714
     },
     {
-      "title": "Video on Halifax rents",
+      "title": "Recent Hospital Visit - Infirmary",
       "score": 0,
       "numComments": 0,
-      "author": "Exotic-Clue1647",
-      "url": "https://www.reddit.com/r/halifax/comments/1tlddtd/video_on_halifax_rents/",
+      "author": "tangwitme",
+      "url": "https://www.reddit.com/r/halifax/comments/1tlfcr5/recent_hospital_visit_infirmary/",
       "flair": null,
-      "createdUtc": 1779534061
+      "createdUtc": 1779539839
     },
     {
       "title": "Injured baby fox rescued by RCMP in Tantallon on the mend",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tkgakc/traffic_in_dartmouth/",
       "flair": null,
       "createdUtc": 1779449630
-    },
-    {
-      "title": "Looking for M. Costello in Halifax",
-      "score": 0,
-      "numComments": 0,
-      "author": "halichk",
-      "url": "https://www.reddit.com/r/halifax/comments/1tkejyp/looking_for_m_costello_in_halifax/",
-      "flair": null,
-      "createdUtc": 1779444495
     }
   ]
 }
