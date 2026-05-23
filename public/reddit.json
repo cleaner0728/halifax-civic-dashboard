@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-23T21:11:33.046Z",
+  "fetchedAt": "2026-05-23T21:16:16.279Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -146,15 +146,6 @@
       "createdUtc": 1779565507
     },
     {
-      "title": "Golf Clubs Stolen From Car",
-      "score": 0,
-      "numComments": 0,
-      "author": "EngineeringFull9246",
-      "url": "https://www.reddit.com/r/halifax/comments/1tlkxyb/golf_clubs_stolen_from_car/",
-      "flair": null,
-      "createdUtc": 1779553401
-    },
-    {
       "title": "Dads of the HRM, where are you bringing your small ones this summer?",
       "score": 0,
       "numComments": 0,
@@ -162,6 +153,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tlnvc5/dads_of_the_hrm_where_are_you_bringing_your_small/",
       "flair": null,
       "createdUtc": 1779560129
+    },
+    {
+      "title": "Golf Clubs Stolen From Car",
+      "score": 0,
+      "numComments": 0,
+      "author": "EngineeringFull9246",
+      "url": "https://www.reddit.com/r/halifax/comments/1tlkxyb/golf_clubs_stolen_from_car/",
+      "flair": null,
+      "createdUtc": 1779553401
     },
     {
       "title": "Injured baby fox rescued by RCMP in Tantallon on the mend",
@@ -227,6 +227,15 @@
       "createdUtc": 1779489331
     },
     {
+      "title": "Where should I eat downtown tonight.",
+      "score": 0,
+      "numComments": 0,
+      "author": "SpecialistHoneydew51",
+      "url": "https://www.reddit.com/r/halifax/comments/1tlse86/where_should_i_eat_downtown_tonight/",
+      "flair": null,
+      "createdUtc": 1779570856
+    },
+    {
       "title": "Police warn of possible drink tampering incidents",
       "score": 0,
       "numComments": 0,
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tlcgx9/looking_for_vintage_audio_gear_for_podcast_event/",
       "flair": null,
       "createdUtc": 1779531058
-    },
-    {
-      "title": "2 women needed medical attention after possible drink tampering: Halifax police",
-      "score": 0,
-      "numComments": 0,
-      "author": "justlogmeon",
-      "url": "https://www.reddit.com/r/halifax/comments/1tkz6y1/2_women_needed_medical_attention_after_possible/",
-      "flair": null,
-      "createdUtc": 1779491622
     }
   ]
 }
