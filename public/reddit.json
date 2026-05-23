@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-23T12:56:13.348Z",
+  "fetchedAt": "2026-05-23T13:16:13.015Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -20,6 +20,15 @@
       "createdUtc": 1777629714
     },
     {
+      "title": "Recent Hospital Visit - Infirmary",
+      "score": 0,
+      "numComments": 0,
+      "author": "tangwitme",
+      "url": "https://www.reddit.com/r/halifax/comments/1tlfcr5/recent_hospital_visit_infirmary/",
+      "flair": null,
+      "createdUtc": 1779539839
+    },
+    {
       "title": "Alehouse sign came down today",
       "score": 0,
       "numComments": 0,
@@ -27,15 +36,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tky0tg/alehouse_sign_came_down_today/",
       "flair": null,
       "createdUtc": 1779488724
-    },
-    {
-      "title": "Does anyone know the actual story behind 5517 Spring Garden? The lease sign feels permanent.",
-      "score": 0,
-      "numComments": 0,
-      "author": "crispy5s",
-      "url": "https://www.reddit.com/r/halifax/comments/1tl3ybj/does_anyone_know_the_actual_story_behind_5517/",
-      "flair": null,
-      "createdUtc": 1779504197
     },
     {
       "title": "Video on Halifax rents",
@@ -47,13 +47,13 @@
       "createdUtc": 1779534061
     },
     {
-      "title": "Recent Hospital Visit - Infirmary",
+      "title": "Does anyone know the actual story behind 5517 Spring Garden? The lease sign feels permanent.",
       "score": 0,
       "numComments": 0,
-      "author": "tangwitme",
-      "url": "https://www.reddit.com/r/halifax/comments/1tlfcr5/recent_hospital_visit_infirmary/",
+      "author": "crispy5s",
+      "url": "https://www.reddit.com/r/halifax/comments/1tl3ybj/does_anyone_know_the_actual_story_behind_5517/",
       "flair": null,
-      "createdUtc": 1779539839
+      "createdUtc": 1779504197
     },
     {
       "title": "Halifax volunteers fill 40-foot container with medical supplies for Cuba",
@@ -173,6 +173,24 @@
       "createdUtc": 1779467506
     },
     {
+      "title": "Crown adds conspiracy charges against trio in Halifax-area condo fraud case",
+      "score": 0,
+      "numComments": 0,
+      "author": "justlogmeon",
+      "url": "https://www.reddit.com/r/halifax/comments/1tlbqag/crown_adds_conspiracy_charges_against_trio_in/",
+      "flair": null,
+      "createdUtc": 1779528511
+    },
+    {
+      "title": "Local hot tub parts",
+      "score": 0,
+      "numComments": 0,
+      "author": "SGWGN",
+      "url": "https://www.reddit.com/r/halifax/comments/1tlg65j/local_hot_tub_parts/",
+      "flair": null,
+      "createdUtc": 1779542000
+    },
+    {
       "title": "Lower Sackville jeweler",
       "score": 0,
       "numComments": 0,
@@ -218,15 +236,6 @@
       "createdUtc": 1779495926
     },
     {
-      "title": "Crown adds conspiracy charges against trio in Halifax-area condo fraud case",
-      "score": 0,
-      "numComments": 0,
-      "author": "justlogmeon",
-      "url": "https://www.reddit.com/r/halifax/comments/1tlbqag/crown_adds_conspiracy_charges_against_trio_in/",
-      "flair": null,
-      "createdUtc": 1779528511
-    },
-    {
       "title": "Struggling to find place to sell trading cards",
       "score": 0,
       "numComments": 0,
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tkhixa/home_depot_security_guard_assaulted_in_robbery/",
       "flair": null,
       "createdUtc": 1779452920
-    },
-    {
-      "title": "Traffic in Dartmouth",
-      "score": 0,
-      "numComments": 0,
-      "author": "red_feath3rs",
-      "url": "https://www.reddit.com/r/halifax/comments/1tkgakc/traffic_in_dartmouth/",
-      "flair": null,
-      "createdUtc": 1779449630
     }
   ]
 }
