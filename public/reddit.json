@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-24T13:16:15.956Z",
+  "fetchedAt": "2026-05-24T13:46:16.160Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -74,6 +74,15 @@
       "createdUtc": 1779619595
     },
     {
+      "title": "Cheap Food Question",
+      "score": 0,
+      "numComments": 0,
+      "author": "noburgersforme45",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmbulq/cheap_food_question/",
+      "flair": null,
+      "createdUtc": 1779628367
+    },
+    {
       "title": "Indoor Painting",
       "score": 0,
       "numComments": 0,
@@ -119,22 +128,13 @@
       "createdUtc": 1779550214
     },
     {
-      "title": "Cheap Food Question",
+      "title": "Lego set location",
       "score": 0,
       "numComments": 0,
-      "author": "noburgersforme45",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmbulq/cheap_food_question/",
+      "author": "ChefHashish",
+      "url": "https://www.reddit.com/r/halifax/comments/1tm4p6o/lego_set_location/",
       "flair": null,
-      "createdUtc": 1779628367
-    },
-    {
-      "title": "Recent Hospital Visit - Infirmary",
-      "score": 0,
-      "numComments": 0,
-      "author": "tangwitme",
-      "url": "https://www.reddit.com/r/halifax/comments/1tlfcr5/recent_hospital_visit_infirmary/",
-      "flair": null,
-      "createdUtc": 1779539839
+      "createdUtc": 1779605821
     },
     {
       "title": "Beautiful day in Dartmouth",
@@ -146,6 +146,15 @@
       "createdUtc": 1779544881
     },
     {
+      "title": "Recent Hospital Visit - Infirmary",
+      "score": 0,
+      "numComments": 0,
+      "author": "tangwitme",
+      "url": "https://www.reddit.com/r/halifax/comments/1tlfcr5/recent_hospital_visit_infirmary/",
+      "flair": null,
+      "createdUtc": 1779539839
+    },
+    {
       "title": "Alderney Ferry shutting down 2 hours early tonight",
       "score": 0,
       "numComments": 0,
@@ -153,15 +162,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tlt9vp/alderney_ferry_shutting_down_2_hours_early_tonight/",
       "flair": null,
       "createdUtc": 1779573016
-    },
-    {
-      "title": "Lego set location",
-      "score": 0,
-      "numComments": 0,
-      "author": "ChefHashish",
-      "url": "https://www.reddit.com/r/halifax/comments/1tm4p6o/lego_set_location/",
-      "flair": null,
-      "createdUtc": 1779605821
     },
     {
       "title": "Tim Outhit is Refusing to Respond to Constituents",
@@ -191,15 +191,6 @@
       "createdUtc": 1779574000
     },
     {
-      "title": "Video on Halifax rents",
-      "score": 0,
-      "numComments": 0,
-      "author": "Exotic-Clue1647",
-      "url": "https://www.reddit.com/r/halifax/comments/1tlddtd/video_on_halifax_rents/",
-      "flair": null,
-      "createdUtc": 1779534061
-    },
-    {
       "title": "Moving bag off seat on the bus",
       "score": 0,
       "numComments": 0,
@@ -216,6 +207,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tluxby/does_anyone_know_where_i_can_find_cute_and_local/",
       "flair": null,
       "createdUtc": 1779577324
+    },
+    {
+      "title": "Video on Halifax rents",
+      "score": 0,
+      "numComments": 0,
+      "author": "Exotic-Clue1647",
+      "url": "https://www.reddit.com/r/halifax/comments/1tlddtd/video_on_halifax_rents/",
+      "flair": null,
+      "createdUtc": 1779534061
     },
     {
       "title": "Accident in Dartmouth/Shearwater?",
