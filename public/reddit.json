@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-24T06:16:12.559Z",
+  "fetchedAt": "2026-05-24T06:46:12.411Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -119,15 +119,6 @@
       "createdUtc": 1779562724
     },
     {
-      "title": "Racism at the Pacifico",
-      "score": 0,
-      "numComments": 0,
-      "author": "mariamac13",
-      "url": "https://www.reddit.com/r/halifax/comments/1tm2td2/racism_at_the_pacifico/",
-      "flair": null,
-      "createdUtc": 1779599715
-    },
-    {
       "title": "Lost stuffed animal",
       "score": 0,
       "numComments": 0,
@@ -164,15 +155,6 @@
       "createdUtc": 1779577324
     },
     {
-      "title": "credit card found at the citadel",
-      "score": 0,
-      "numComments": 0,
-      "author": "crows_crocheting",
-      "url": "https://www.reddit.com/r/halifax/comments/1tlt15s/credit_card_found_at_the_citadel/",
-      "flair": null,
-      "createdUtc": 1779572412
-    },
-    {
       "title": "Moving bag off seat on the bus",
       "score": 0,
       "numComments": 0,
@@ -180,6 +162,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tll65x/moving_bag_off_seat_on_the_bus/",
       "flair": null,
       "createdUtc": 1779553920
+    },
+    {
+      "title": "credit card found at the citadel",
+      "score": 0,
+      "numComments": 0,
+      "author": "crows_crocheting",
+      "url": "https://www.reddit.com/r/halifax/comments/1tlt15s/credit_card_found_at_the_citadel/",
+      "flair": null,
+      "createdUtc": 1779572412
     },
     {
       "title": "Does anyone know the actual story behind 5517 Spring Garden? The lease sign feels permanent.",
@@ -236,15 +227,6 @@
       "createdUtc": 1779545564
     },
     {
-      "title": "Stat Pay Qquestion",
-      "score": 0,
-      "numComments": 0,
-      "author": "lininop",
-      "url": "https://www.reddit.com/r/halifax/comments/1tm35qt/stat_pay_qquestion/",
-      "flair": null,
-      "createdUtc": 1779600774
-    },
-    {
       "title": "Best Burger Spots in Halifax",
       "score": 0,
       "numComments": 0,
@@ -270,6 +252,24 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tlhd3b/where_in_town_to_buy_a_good_waiters_corkscrew/",
       "flair": null,
       "createdUtc": 1779544993
+    },
+    {
+      "title": "Injured baby fox rescued by RCMP in Tantallon on the mend",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1tl5r0b/injured_baby_fox_rescued_by_rcmp_in_tantallon_on/",
+      "flair": null,
+      "createdUtc": 1779509252
+    },
+    {
+      "title": "Halifax volunteers fill 40-foot container with medical supplies for Cuba",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1tkvuc1/halifax_volunteers_fill_40foot_container_with/",
+      "flair": null,
+      "createdUtc": 1779483714
     }
   ]
 }
