@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-24T16:16:14.902Z",
+  "fetchedAt": "2026-05-24T16:46:14.710Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -29,13 +29,13 @@
       "createdUtc": 1779631025
     },
     {
-      "title": "Fire at Joe howe superstore,",
+      "title": "Joseph Howe super store gas station fire",
       "score": 0,
       "numComments": 0,
-      "author": "Firm_Knowledge_60",
-      "url": "https://www.reddit.com/r/halifax/comments/1tm51nj/fire_at_joe_howe_superstore/",
+      "author": "Former_Apple3556",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmh1md/joseph_howe_super_store_gas_station_fire/",
       "flair": null,
-      "createdUtc": 1779606967
+      "createdUtc": 1779640509
     },
     {
       "title": "How long are cars allowed to be parked on the street?",
@@ -45,6 +45,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tm8g2s/how_long_are_cars_allowed_to_be_parked_on_the/",
       "flair": null,
       "createdUtc": 1779618430
+    },
+    {
+      "title": "Fire at Joe howe superstore,",
+      "score": 0,
+      "numComments": 0,
+      "author": "Firm_Knowledge_60",
+      "url": "https://www.reddit.com/r/halifax/comments/1tm51nj/fire_at_joe_howe_superstore/",
+      "flair": null,
+      "createdUtc": 1779606967
     },
     {
       "title": "Cheap Food Question",
@@ -101,6 +110,15 @@
       "createdUtc": 1779619595
     },
     {
+      "title": "Incredible Work From Local Tattoo Artist",
+      "score": 0,
+      "numComments": 0,
+      "author": "DIWife90",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmgjk3/incredible_work_from_local_tattoo_artist/",
+      "flair": null,
+      "createdUtc": 1779639383
+    },
+    {
       "title": "Some Photos I took of driven 2026 at the Halifax Exhibition Centre",
       "score": 0,
       "numComments": 0,
@@ -137,13 +155,13 @@
       "createdUtc": 1779569229
     },
     {
-      "title": "Soft Serve ice cream hunt",
+      "title": "Library Summer Hours",
       "score": 0,
       "numComments": 0,
-      "author": "timmychalaslay",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmg7tb/soft_serve_ice_cream_hunt/",
+      "author": "Schmidtvegas",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmh35x/library_summer_hours/",
       "flair": null,
-      "createdUtc": 1779638644
+      "createdUtc": 1779640612
     },
     {
       "title": "Burchell’s Wharf, Peggy’s Cove Road, HRM. My first real attempt with oils. Challenging but very rewarding!",
@@ -153,6 +171,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tljkdh/burchells_wharf_peggys_cove_road_hrm_my_first/",
       "flair": null,
       "createdUtc": 1779550214
+    },
+    {
+      "title": "Approximate electricity price for studio?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Coskoshawp",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmh9lw/approximate_electricity_price_for_studio/",
+      "flair": null,
+      "createdUtc": 1779641019
     },
     {
       "title": "Lego set location",
@@ -200,6 +227,15 @@
       "createdUtc": 1779573016
     },
     {
+      "title": "Soft Serve ice cream hunt",
+      "score": 0,
+      "numComments": 0,
+      "author": "timmychalaslay",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmg7tb/soft_serve_ice_cream_hunt/",
+      "flair": null,
+      "createdUtc": 1779638644
+    },
+    {
       "title": "Tim Outhit is Refusing to Respond to Constituents",
       "score": 0,
       "numComments": 0,
@@ -234,42 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tll65x/moving_bag_off_seat_on_the_bus/",
       "flair": null,
       "createdUtc": 1779553920
-    },
-    {
-      "title": "Does anyone know where i can find cute and local claw clips/hair accessories?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Pawssabillitysawait",
-      "url": "https://www.reddit.com/r/halifax/comments/1tluxby/does_anyone_know_where_i_can_find_cute_and_local/",
-      "flair": null,
-      "createdUtc": 1779577324
-    },
-    {
-      "title": "Video on Halifax rents",
-      "score": 0,
-      "numComments": 0,
-      "author": "Exotic-Clue1647",
-      "url": "https://www.reddit.com/r/halifax/comments/1tlddtd/video_on_halifax_rents/",
-      "flair": null,
-      "createdUtc": 1779534061
-    },
-    {
-      "title": "Accident in Dartmouth/Shearwater?",
-      "score": 0,
-      "numComments": 0,
-      "author": "No-Championship-708",
-      "url": "https://www.reddit.com/r/halifax/comments/1tlq62g/accident_in_dartmouthshearwater/",
-      "flair": null,
-      "createdUtc": 1779565507
-    },
-    {
-      "title": "credit card found at the citadel",
-      "score": 0,
-      "numComments": 0,
-      "author": "crows_crocheting",
-      "url": "https://www.reddit.com/r/halifax/comments/1tlt15s/credit_card_found_at_the_citadel/",
-      "flair": null,
-      "createdUtc": 1779572412
     }
   ]
 }
