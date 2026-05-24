@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-24T11:46:03.647Z",
+  "fetchedAt": "2026-05-24T12:16:12.244Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -74,6 +74,15 @@
       "createdUtc": 1779569229
     },
     {
+      "title": "Does a HFXGO ticket work for bus 320 to the airport?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Thisguy_likes_reddit",
+      "url": "https://www.reddit.com/r/halifax/comments/1tm8suy/does_a_hfxgo_ticket_work_for_bus_320_to_the/",
+      "flair": null,
+      "createdUtc": 1779619595
+    },
+    {
       "title": "Some Photos I took of driven 2026 at the Halifax Exhibition Centre",
       "score": 0,
       "numComments": 0,
@@ -92,15 +101,6 @@
       "createdUtc": 1779550214
     },
     {
-      "title": "St. Patrick’s Church development",
-      "score": 0,
-      "numComments": 0,
-      "author": "False-Jelly2648",
-      "url": "https://www.reddit.com/r/halifax/comments/1tm9uls/st_patricks_church_development/",
-      "flair": null,
-      "createdUtc": 1779622845
-    },
-    {
       "title": "All are welcome to join us for a rally Monday May 25th 12-1 in support of LTC striking workers at the Halifax convention centre.",
       "score": 0,
       "numComments": 0,
@@ -110,13 +110,13 @@
       "createdUtc": 1779570853
     },
     {
-      "title": "Does a HFXGO ticket work for bus 320 to the airport?",
+      "title": "Indoor Painting",
       "score": 0,
       "numComments": 0,
-      "author": "Thisguy_likes_reddit",
-      "url": "https://www.reddit.com/r/halifax/comments/1tm8suy/does_a_hfxgo_ticket_work_for_bus_320_to_the/",
+      "author": "Alarmed-Individual42",
+      "url": "https://www.reddit.com/r/halifax/comments/1tm9c93/indoor_painting/",
       "flair": null,
-      "createdUtc": 1779619595
+      "createdUtc": 1779621299
     },
     {
       "title": "Recent Hospital Visit - Infirmary",
@@ -146,13 +146,13 @@
       "createdUtc": 1779573016
     },
     {
-      "title": "Indoor Painting",
+      "title": "How long are cars allowed to be parked on the street?",
       "score": 0,
       "numComments": 0,
-      "author": "Alarmed-Individual42",
-      "url": "https://www.reddit.com/r/halifax/comments/1tm9c93/indoor_painting/",
+      "author": "thefaderbuckitt",
+      "url": "https://www.reddit.com/r/halifax/comments/1tm8g2s/how_long_are_cars_allowed_to_be_parked_on_the/",
       "flair": null,
-      "createdUtc": 1779621299
+      "createdUtc": 1779618430
     },
     {
       "title": "Tim Outhit is Refusing to Respond to Constituents",
@@ -173,6 +173,15 @@
       "createdUtc": 1779562120
     },
     {
+      "title": "Link post St. Patrick’s church redevelopment Global News",
+      "score": 0,
+      "numComments": 0,
+      "author": "False-Jelly2648",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmacst/link_post_st_patricks_church_redevelopment_global/",
+      "flair": null,
+      "createdUtc": 1779624311
+    },
+    {
       "title": "Loud obnoxious buzzing noise in downtown Halifax",
       "score": 0,
       "numComments": 0,
@@ -180,6 +189,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tltnqn/loud_obnoxious_buzzing_noise_in_downtown_halifax/",
       "flair": null,
       "createdUtc": 1779574000
+    },
+    {
+      "title": "Moving bag off seat on the bus",
+      "score": 0,
+      "numComments": 0,
+      "author": "Prettycoolgraff",
+      "url": "https://www.reddit.com/r/halifax/comments/1tll65x/moving_bag_off_seat_on_the_bus/",
+      "flair": null,
+      "createdUtc": 1779553920
     },
     {
       "title": "Video on Halifax rents",
@@ -191,22 +209,13 @@
       "createdUtc": 1779534061
     },
     {
-      "title": "How long are cars allowed to be parked on the street?",
+      "title": "Lego set location",
       "score": 0,
       "numComments": 0,
-      "author": "thefaderbuckitt",
-      "url": "https://www.reddit.com/r/halifax/comments/1tm8g2s/how_long_are_cars_allowed_to_be_parked_on_the/",
+      "author": "ChefHashish",
+      "url": "https://www.reddit.com/r/halifax/comments/1tm4p6o/lego_set_location/",
       "flair": null,
-      "createdUtc": 1779618430
-    },
-    {
-      "title": "Moving bag off seat on the bus",
-      "score": 0,
-      "numComments": 0,
-      "author": "Prettycoolgraff",
-      "url": "https://www.reddit.com/r/halifax/comments/1tll65x/moving_bag_off_seat_on_the_bus/",
-      "flair": null,
-      "createdUtc": 1779553920
+      "createdUtc": 1779605821
     },
     {
       "title": "Does anyone know where i can find cute and local claw clips/hair accessories?",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tky0tg/alehouse_sign_came_down_today/",
       "flair": null,
       "createdUtc": 1779488724
-    },
-    {
-      "title": "Lego set location",
-      "score": 0,
-      "numComments": 0,
-      "author": "ChefHashish",
-      "url": "https://www.reddit.com/r/halifax/comments/1tm4p6o/lego_set_location/",
-      "flair": null,
-      "createdUtc": 1779605821
     }
   ]
 }
