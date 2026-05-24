@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-24T05:16:14.987Z",
+  "fetchedAt": "2026-05-24T05:31:16.442Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -119,6 +119,15 @@
       "createdUtc": 1779562724
     },
     {
+      "title": "Racism at the Pacifico",
+      "score": 0,
+      "numComments": 0,
+      "author": "mariamac13",
+      "url": "https://www.reddit.com/r/halifax/comments/1tm2td2/racism_at_the_pacifico/",
+      "flair": null,
+      "createdUtc": 1779599715
+    },
+    {
       "title": "Lost stuffed animal",
       "score": 0,
       "numComments": 0,
@@ -182,15 +191,6 @@
       "createdUtc": 1779504197
     },
     {
-      "title": "Best Burger Spots in Halifax",
-      "score": 0,
-      "numComments": 0,
-      "author": "Turbulent-Employer93",
-      "url": "https://www.reddit.com/r/halifax/comments/1tm1kpv/best_burger_spots_in_halifax/",
-      "flair": null,
-      "createdUtc": 1779595898
-    },
-    {
       "title": "Accident in Dartmouth/Shearwater?",
       "score": 0,
       "numComments": 0,
@@ -236,13 +236,13 @@
       "createdUtc": 1779545564
     },
     {
-      "title": "Racism at the Pacifico",
+      "title": "Best Burger Spots in Halifax",
       "score": 0,
       "numComments": 0,
-      "author": "mariamac13",
-      "url": "https://www.reddit.com/r/halifax/comments/1tm2td2/racism_at_the_pacifico/",
+      "author": "Turbulent-Employer93",
+      "url": "https://www.reddit.com/r/halifax/comments/1tm1kpv/best_burger_spots_in_halifax/",
       "flair": null,
-      "createdUtc": 1779599715
+      "createdUtc": 1779595898
     },
     {
       "title": "Golf Clubs Stolen From Car",
