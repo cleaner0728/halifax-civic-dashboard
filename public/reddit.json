@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-24T05:31:16.442Z",
+  "fetchedAt": "2026-05-24T05:46:13.586Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -236,6 +236,15 @@
       "createdUtc": 1779545564
     },
     {
+      "title": "Stat Pay Qquestion",
+      "score": 0,
+      "numComments": 0,
+      "author": "lininop",
+      "url": "https://www.reddit.com/r/halifax/comments/1tm35qt/stat_pay_qquestion/",
+      "flair": null,
+      "createdUtc": 1779600774
+    },
+    {
       "title": "Best Burger Spots in Halifax",
       "score": 0,
       "numComments": 0,
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tlhd3b/where_in_town_to_buy_a_good_waiters_corkscrew/",
       "flair": null,
       "createdUtc": 1779544993
-    },
-    {
-      "title": "Injured baby fox rescued by RCMP in Tantallon on the mend",
-      "score": 0,
-      "numComments": 0,
-      "author": "IStillListenToRadio",
-      "url": "https://www.reddit.com/r/halifax/comments/1tl5r0b/injured_baby_fox_rescued_by_rcmp_in_tantallon_on/",
-      "flair": null,
-      "createdUtc": 1779509252
     }
   ]
 }
