@@ -18,27 +18,47 @@ async function fetchHtml(url) {
   return res.text();
 }
 
+function stripTags(html) {
+  return html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ');
+}
+
 function parseDate(html) {
-  // Page shows "As at: Saturday, May 23, 2026" (possibly with HTML tags around the date)
+  // Strip HTML tags so we can regex on plain text regardless of markup structure
+  const text = stripTags(html);
+
+  // Try "As at: Saturday, May 23, 2026" or "As at: May 23, 2026"
   const patterns = [
-    /As at[^:]*:\s*(?:<[^>]+>)?\s*([A-Za-z]+,\s*[A-Za-z]+\s+\d+,\s*\d{4})/i,
-    /As at[^:]*:\s*([A-Za-z]+\s+\d+,\s*\d{4})/i,
+    /As\s+at[^:]*:\s*([A-Za-z]+,\s*[A-Za-z]+\s+\d+,\s*\d{4})/i,
+    /As\s+at[^:]*:\s*([A-Za-z]+\s+\d+,\s*\d{4})/i,
+    // Fallback: any "Saturday, Month DD, YYYY" on the page
+    /\b(Saturday,\s*[A-Za-z]+\s+\d{1,2},\s*\d{4})\b/i,
   ];
   for (const pat of patterns) {
-    const m = html.match(pat);
+    const m = text.match(pat);
     if (m) {
       const d = new Date(m[1].trim());
       if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
     }
   }
+
+  // Last resort: log a snippet around "As at" to help diagnose future failures
+  const idx = text.search(/As\s+at/i);
+  if (idx >= 0) {
+    console.error('Found "As at" but could not parse date. Context:', JSON.stringify(text.slice(idx, idx + 120)));
+  } else {
+    console.error('"As at" not found in page text. First 500 chars:', JSON.stringify(text.slice(0, 500)));
+  }
   return null;
 }
 
 function parseZone1Prices(html) {
+  // Strip tags so layout doesn't affect number extraction
+  const text = stripTags(html);
+
   // Isolate Zone 1 section (everything before Zone 2 heading)
-  const zone1Match = html.match(/Zone\s*1([\s\S]*?)(?=Zone\s*2|$)/i);
+  const zone1Match = text.match(/Zone\s*1([\s\S]*?)(?=Zone\s*2|$)/i);
   if (!zone1Match) {
-    console.error('Zone 1 section not found in page');
+    console.error('Zone 1 section not found in page text. First 500 chars:', JSON.stringify(text.slice(0, 500)));
     return null;
   }
   const zone1 = zone1Match[1];
@@ -47,7 +67,7 @@ function parseZone1Prices(html) {
   // Extract all 3-digit-dot-1-digit prices (e.g. 187.9) in order.
   const nums = [...zone1.matchAll(/\b(\d{3}\.\d)\b/g)].map(m => parseFloat(m[1]));
   if (nums.length < 4) {
-    console.error('Expected at least 4 price values in Zone 1, found:', nums);
+    console.error('Expected at least 4 price values in Zone 1, found:', nums, '— Zone 1 text:', JSON.stringify(zone1.slice(0, 300)));
     return null;
   }
 
