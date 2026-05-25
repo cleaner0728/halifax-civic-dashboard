@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-25T10:46:15.164Z",
+  "fetchedAt": "2026-05-25T11:03:18.466Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -29,15 +29,6 @@
       "createdUtc": 1779654720
     },
     {
-      "title": "Outsider Opinion: Tony's, no contest.",
-      "score": 0,
-      "numComments": 0,
-      "author": "AlexRogansBeta",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmunoh/outsider_opinion_tonys_no_contest/",
-      "flair": null,
-      "createdUtc": 1779673091
-    },
-    {
       "title": "TIL: An African Nova Scotian Village was destroyed to build the Halifax Airport",
       "score": 0,
       "numComments": 0,
@@ -47,13 +38,13 @@
       "createdUtc": 1779700065
     },
     {
-      "title": "Joseph Howe super store gas station fire",
+      "title": "Outsider Opinion: Tony's, no contest.",
       "score": 0,
       "numComments": 0,
-      "author": "Former_Apple3556",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmh1md/joseph_howe_super_store_gas_station_fire/",
+      "author": "AlexRogansBeta",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmunoh/outsider_opinion_tonys_no_contest/",
       "flair": null,
-      "createdUtc": 1779640509
+      "createdUtc": 1779673091
     },
     {
       "title": "Federal NDP looks to Nova Scotia as blueprint to rebuild",
@@ -63,6 +54,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tmyfgy/federal_ndp_looks_to_nova_scotia_as_blueprint_to/",
       "flair": null,
       "createdUtc": 1779683663
+    },
+    {
+      "title": "Joseph Howe super store gas station fire",
+      "score": 0,
+      "numComments": 0,
+      "author": "Former_Apple3556",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmh1md/joseph_howe_super_store_gas_station_fire/",
+      "flair": null,
+      "createdUtc": 1779640509
     },
     {
       "title": "Grumblemania Monday",
@@ -173,15 +173,6 @@
       "createdUtc": 1779662923
     },
     {
-      "title": "Show cause hearing for the 2 charged over the weekend",
-      "score": 0,
-      "numComments": 0,
-      "author": "HappyBurdy",
-      "url": "https://www.reddit.com/r/halifax/comments/1tn55fy/show_cause_hearing_for_the_2_charged_over_the/",
-      "flair": null,
-      "createdUtc": 1779704984
-    },
-    {
       "title": "Where to buy Gravenstein apple trees?",
       "score": 0,
       "numComments": 0,
@@ -218,15 +209,6 @@
       "createdUtc": 1779657268
     },
     {
-      "title": "Aliant underground wiring, anyone else?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Ok_Menu_2231",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmyi1a/aliant_underground_wiring_anyone_else/",
-      "flair": null,
-      "createdUtc": 1779683874
-    },
-    {
       "title": "How do renovations impact your property taxes?",
       "score": 0,
       "numComments": 0,
@@ -236,15 +218,6 @@
       "createdUtc": 1779649024
     },
     {
-      "title": "Cheap Food Question",
-      "score": 0,
-      "numComments": 0,
-      "author": "noburgersforme45",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmbulq/cheap_food_question/",
-      "flair": null,
-      "createdUtc": 1779628367
-    },
-    {
       "title": "How long are cars allowed to be parked on the street?",
       "score": 0,
       "numComments": 0,
@@ -252,6 +225,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tm8g2s/how_long_are_cars_allowed_to_be_parked_on_the/",
       "flair": null,
       "createdUtc": 1779618430
+    },
+    {
+      "title": "Cheap Food Question",
+      "score": 0,
+      "numComments": 0,
+      "author": "noburgersforme45",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmbulq/cheap_food_question/",
+      "flair": null,
+      "createdUtc": 1779628367
     },
     {
       "title": "Library Summer Hours",
@@ -270,6 +252,24 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tm7hw2/parishioners_issue_hail_mary_to_save_historic/",
       "flair": null,
       "createdUtc": 1779615207
+    },
+    {
+      "title": "Nature trust’s virtual tours bring protected areas into homes",
+      "score": 0,
+      "numComments": 0,
+      "author": "Bean_Tiger",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmcr4n/nature_trusts_virtual_tours_bring_protected_areas/",
+      "flair": null,
+      "createdUtc": 1779630635
+    },
+    {
+      "title": "Where can I find Topical 5% Minoxidil? There's literally nothing in the 200km radius!!",
+      "score": 0,
+      "numComments": 0,
+      "author": "MikeOxbrown",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmz4ke/where_can_i_find_topical_5_minoxidil_theres/",
+      "flair": null,
+      "createdUtc": 1779685774
     }
   ]
 }
