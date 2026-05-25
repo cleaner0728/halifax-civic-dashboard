@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-25T17:16:15.545Z",
+  "fetchedAt": "2026-05-25T17:46:13.190Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -36,6 +36,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tnavch/stolen_bike_gottingen_street_sunday_may_24/",
       "flair": null,
       "createdUtc": 1779719380
+    },
+    {
+      "title": "Halifax newborn death may lead to more ‘very serious charges,’ mother unresponsive: Crown",
+      "score": 0,
+      "numComments": 0,
+      "author": "Street_Anon",
+      "url": "https://www.reddit.com/r/halifax/comments/1tnfu3l/halifax_newborn_death_may_lead_to_more_very/",
+      "flair": null,
+      "createdUtc": 1779729946
     },
     {
       "title": "New Signal Technology Targets Traffic Congestion Along Macdonald Bridge Corridor",
@@ -119,15 +128,6 @@
       "createdUtc": 1779711549
     },
     {
-      "title": "Joseph Howe super store gas station fire",
-      "score": 0,
-      "numComments": 0,
-      "author": "Former_Apple3556",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmh1md/joseph_howe_super_store_gas_station_fire/",
-      "flair": null,
-      "createdUtc": 1779640509
-    },
-    {
       "title": "Grumblemania Monday",
       "score": 0,
       "numComments": 0,
@@ -137,13 +137,22 @@
       "createdUtc": 1779703265
     },
     {
-      "title": "New development on Drysdale Rd",
+      "title": "Joseph Howe super store gas station fire",
       "score": 0,
       "numComments": 0,
-      "author": "mpublicover",
-      "url": "https://www.reddit.com/r/halifax/comments/1tn89fd/new_development_on_drysdale_rd/",
+      "author": "Former_Apple3556",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmh1md/joseph_howe_super_store_gas_station_fire/",
       "flair": null,
-      "createdUtc": 1779713479
+      "createdUtc": 1779640509
+    },
+    {
+      "title": "Part Time Blended Flex Disability Support Professional Advice",
+      "score": 0,
+      "numComments": 0,
+      "author": "Danelg0d777",
+      "url": "https://www.reddit.com/r/halifax/comments/1tn8gqx/part_time_blended_flex_disability_support/",
+      "flair": null,
+      "createdUtc": 1779713976
     },
     {
       "title": "N.S. releases offer details for striking long-term care workers",
@@ -155,13 +164,13 @@
       "createdUtc": 1779681082
     },
     {
-      "title": "American Football gear",
+      "title": "Cosmetic dentistry specifically veneers",
       "score": 0,
       "numComments": 0,
-      "author": "lamacon",
-      "url": "https://www.reddit.com/r/halifax/comments/1tndjnr/american_football_gear/",
+      "author": "PossibilityFirm1892",
+      "url": "https://www.reddit.com/r/halifax/comments/1tnd6sc/cosmetic_dentistry_specifically_veneers/",
       "flair": null,
-      "createdUtc": 1779725102
+      "createdUtc": 1779724351
     },
     {
       "title": "Any info on going to ER for mental health?",
@@ -173,13 +182,22 @@
       "createdUtc": 1779672816
     },
     {
-      "title": "Part Time Blended Flex Disability Support Professional Advice",
+      "title": "Beauty and the bitch",
       "score": 0,
       "numComments": 0,
-      "author": "Danelg0d777",
-      "url": "https://www.reddit.com/r/halifax/comments/1tn8gqx/part_time_blended_flex_disability_support/",
+      "author": "ph0enix1211",
+      "url": "https://www.reddit.com/r/halifax/comments/1tn697k/beauty_and_the_bitch/",
       "flair": null,
-      "createdUtc": 1779713976
+      "createdUtc": 1779708224
+    },
+    {
+      "title": "New development on Drysdale Rd",
+      "score": 0,
+      "numComments": 0,
+      "author": "mpublicover",
+      "url": "https://www.reddit.com/r/halifax/comments/1tn89fd/new_development_on_drysdale_rd/",
+      "flair": null,
+      "createdUtc": 1779713479
     },
     {
       "title": "Does anyone locally do cheap/discounted cover-ups on problematic tattoos?",
@@ -200,13 +218,13 @@
       "createdUtc": 1779680040
     },
     {
-      "title": "Beauty and the bitch",
+      "title": "Where can I find used instruments?",
       "score": 0,
       "numComments": 0,
-      "author": "ph0enix1211",
-      "url": "https://www.reddit.com/r/halifax/comments/1tn697k/beauty_and_the_bitch/",
+      "author": "EggySings3137",
+      "url": "https://www.reddit.com/r/halifax/comments/1tnebla/where_can_i_find_used_instruments/",
       "flair": null,
-      "createdUtc": 1779708224
+      "createdUtc": 1779726752
     },
     {
       "title": "Incredible Work From Local Tattoo Artist",
@@ -218,13 +236,13 @@
       "createdUtc": 1779639383
     },
     {
-      "title": "Cosmetic dentistry specifically veneers",
+      "title": "American Football gear",
       "score": 0,
       "numComments": 0,
-      "author": "PossibilityFirm1892",
-      "url": "https://www.reddit.com/r/halifax/comments/1tnd6sc/cosmetic_dentistry_specifically_veneers/",
+      "author": "lamacon",
+      "url": "https://www.reddit.com/r/halifax/comments/1tndjnr/american_football_gear/",
       "flair": null,
-      "createdUtc": 1779724351
+      "createdUtc": 1779725102
     },
     {
       "title": "Search stretches into second day for missing newborn in Halifax",
@@ -252,24 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tmt35g/renting_a_telescope/",
       "flair": null,
       "createdUtc": 1779668839
-    },
-    {
-      "title": "Looking for used books",
-      "score": 0,
-      "numComments": 0,
-      "author": "Thin-Ad-6094",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmq33h/looking_for_used_books/",
-      "flair": null,
-      "createdUtc": 1779661176
-    },
-    {
-      "title": "Visiting for the first time this week during rain - any indoor must go places?",
-      "score": 0,
-      "numComments": 0,
-      "author": "jayemcee88",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmr1ou/visiting_for_the_first_time_this_week_during_rain/",
-      "flair": null,
-      "createdUtc": 1779663566
     }
   ]
 }
