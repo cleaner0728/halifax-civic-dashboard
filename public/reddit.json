@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-25T04:16:12.045Z",
+  "fetchedAt": "2026-05-25T04:46:16.004Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -101,15 +101,6 @@
       "createdUtc": 1779663566
     },
     {
-      "title": "Looking for used books",
-      "score": 0,
-      "numComments": 0,
-      "author": "Thin-Ad-6094",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmq33h/looking_for_used_books/",
-      "flair": null,
-      "createdUtc": 1779661176
-    },
-    {
       "title": "Renting a telescope!",
       "score": 0,
       "numComments": 0,
@@ -117,6 +108,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tmt35g/renting_a_telescope/",
       "flair": null,
       "createdUtc": 1779668839
+    },
+    {
+      "title": "Looking for used books",
+      "score": 0,
+      "numComments": 0,
+      "author": "Thin-Ad-6094",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmq33h/looking_for_used_books/",
+      "flair": null,
+      "createdUtc": 1779661176
     },
     {
       "title": "Goo Goo Dolls concert",
@@ -182,15 +182,6 @@
       "createdUtc": 1779618430
     },
     {
-      "title": "N.S. releases offer details for striking long-term care workers",
-      "score": 0,
-      "numComments": 0,
-      "author": "Injustice_For_All_",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmxj1p/ns_releases_offer_details_for_striking_longterm/",
-      "flair": null,
-      "createdUtc": 1779681082
-    },
-    {
       "title": "Where is the live music /singing coming from tonight?",
       "score": 0,
       "numComments": 0,
@@ -245,6 +236,24 @@
       "createdUtc": 1779606967
     },
     {
+      "title": "Aliant underground wiring, anyone else?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Ok_Menu_2231",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmyi1a/aliant_underground_wiring_anyone_else/",
+      "flair": null,
+      "createdUtc": 1779683874
+    },
+    {
+      "title": "Federal NDP looks to Nova Scotia as blueprint to rebuild",
+      "score": 0,
+      "numComments": 0,
+      "author": "No_Magazine9625",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmyfgy/federal_ndp_looks_to_nova_scotia_as_blueprint_to/",
+      "flair": null,
+      "createdUtc": 1779683663
+    },
+    {
       "title": "Police searching for missing newborn baby in Halifax",
       "score": 0,
       "numComments": 0,
@@ -254,22 +263,13 @@
       "createdUtc": 1779578259
     },
     {
-      "title": "Soccer/Rugby Cleats HRM+",
+      "title": "N.S. releases offer details for striking long-term care workers",
       "score": 0,
       "numComments": 0,
-      "author": "Dangerous-Ad-4867",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmk74x/soccerrugby_cleats_hrm/",
+      "author": "Injustice_For_All_",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmxj1p/ns_releases_offer_details_for_striking_longterm/",
       "flair": null,
-      "createdUtc": 1779647444
-    },
-    {
-      "title": "Halifax Bar & Restaurant Scene, circa 2000",
-      "score": 0,
-      "numComments": 0,
-      "author": "ConcernedMap",
-      "url": "https://www.reddit.com/r/halifax/comments/1tlrwxv/halifax_bar_restaurant_scene_circa_2000/",
-      "flair": null,
-      "createdUtc": 1779569672
+      "createdUtc": 1779681082
     }
   ]
 }
