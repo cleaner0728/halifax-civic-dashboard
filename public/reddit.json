@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-25T18:46:13.231Z",
+  "fetchedAt": "2026-05-25T19:16:13.511Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -137,6 +137,15 @@
       "createdUtc": 1779724351
     },
     {
+      "title": "Where do people in Halifax actually go to socialize?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Feisty_Ad_475",
+      "url": "https://www.reddit.com/r/halifax/comments/1tniqqw/where_do_people_in_halifax_actually_go_to/",
+      "flair": null,
+      "createdUtc": 1779736163
+    },
+    {
       "title": "Grumblemania Monday",
       "score": 0,
       "numComments": 0,
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tmrn2z/old_stamp_collection/",
       "flair": null,
       "createdUtc": 1779665066
-    },
-    {
-      "title": "Renting a telescope!",
-      "score": 0,
-      "numComments": 0,
-      "author": "TemperatureQuirky541",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmt35g/renting_a_telescope/",
-      "flair": null,
-      "createdUtc": 1779668839
     }
   ]
 }
