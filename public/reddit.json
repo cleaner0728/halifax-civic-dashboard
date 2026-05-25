@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-25T16:36:38.642Z",
+  "fetchedAt": "2026-05-25T16:46:13.768Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -137,13 +137,13 @@
       "createdUtc": 1779703265
     },
     {
-      "title": "Any info on going to ER for mental health?",
+      "title": "New development on Drysdale Rd",
       "score": 0,
       "numComments": 0,
-      "author": "enrolmentcard",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmuk0c/any_info_on_going_to_er_for_mental_health/",
+      "author": "mpublicover",
+      "url": "https://www.reddit.com/r/halifax/comments/1tn89fd/new_development_on_drysdale_rd/",
       "flair": null,
-      "createdUtc": 1779672816
+      "createdUtc": 1779713479
     },
     {
       "title": "N.S. releases offer details for striking long-term care workers",
@@ -155,6 +155,15 @@
       "createdUtc": 1779681082
     },
     {
+      "title": "Any info on going to ER for mental health?",
+      "score": 0,
+      "numComments": 0,
+      "author": "enrolmentcard",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmuk0c/any_info_on_going_to_er_for_mental_health/",
+      "flair": null,
+      "createdUtc": 1779672816
+    },
+    {
       "title": "Part Time Blended Flex Disability Support Professional Advice",
       "score": 0,
       "numComments": 0,
@@ -162,15 +171,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tn8gqx/part_time_blended_flex_disability_support/",
       "flair": null,
       "createdUtc": 1779713976
-    },
-    {
-      "title": "New development on Drysdale Rd",
-      "score": 0,
-      "numComments": 0,
-      "author": "mpublicover",
-      "url": "https://www.reddit.com/r/halifax/comments/1tn89fd/new_development_on_drysdale_rd/",
-      "flair": null,
-      "createdUtc": 1779713479
     },
     {
       "title": "Does anyone locally do cheap/discounted cover-ups on problematic tattoos?",
@@ -198,6 +198,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tn697k/beauty_and_the_bitch/",
       "flair": null,
       "createdUtc": 1779708224
+    },
+    {
+      "title": "American Football gear",
+      "score": 0,
+      "numComments": 0,
+      "author": "lamacon",
+      "url": "https://www.reddit.com/r/halifax/comments/1tndjnr/american_football_gear/",
+      "flair": null,
+      "createdUtc": 1779725102
     },
     {
       "title": "Incredible Work From Local Tattoo Artist",
@@ -245,24 +254,6 @@
       "createdUtc": 1779668839
     },
     {
-      "title": "Visiting for the first time this week during rain - any indoor must go places?",
-      "score": 0,
-      "numComments": 0,
-      "author": "jayemcee88",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmr1ou/visiting_for_the_first_time_this_week_during_rain/",
-      "flair": null,
-      "createdUtc": 1779663566
-    },
-    {
-      "title": "American Football gear",
-      "score": 0,
-      "numComments": 0,
-      "author": "lamacon",
-      "url": "https://www.reddit.com/r/halifax/comments/1tndjnr/american_football_gear/",
-      "flair": null,
-      "createdUtc": 1779725102
-    },
-    {
       "title": "Looking for used books",
       "score": 0,
       "numComments": 0,
@@ -270,6 +261,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tmq33h/looking_for_used_books/",
       "flair": null,
       "createdUtc": 1779661176
+    },
+    {
+      "title": "Visiting for the first time this week during rain - any indoor must go places?",
+      "score": 0,
+      "numComments": 0,
+      "author": "jayemcee88",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmr1ou/visiting_for_the_first_time_this_week_during_rain/",
+      "flair": null,
+      "createdUtc": 1779663566
     }
   ]
 }
