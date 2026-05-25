@@ -1,0 +1,38 @@
+name: Fetch NS Gas Prices
+
+on:
+  schedule:
+    - cron: '0 19 * * 6'   # Every Saturday at 19:00 UTC (15:00 ADT) — after NSERBT publishes
+  workflow_dispatch:         # allow manual runs from Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-gas-prices
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch gas prices
+        run: node scripts/fetch-gas-prices.mjs
+
+      - name: Commit if changed
+        run: |
+          if [[ -n "$(git status --porcelain public/gas-prices.json)" ]]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add public/gas-prices.json
+            git commit -m "chore: refresh gas prices [skip ci]"
+            git push
+          else
+            echo "No changes to commit"
+          fi

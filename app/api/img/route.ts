@@ -17,7 +17,7 @@ import type { NextRequest } from "next/server";
 // on the internet can use to fetch arbitrary URLs through our domain.
 // Mirrors the news-feed sources in next.config.ts; webcam hosts that
 // already use `unoptimized` direct fetches don't need an entry here.
-const ALLOWED_HOST = /(?:^|\.)cbc\.ca$|^globalnews\.ca$|(?:^|\.)wp\.com$|(?:^|\.)halifaxexaminer\.ca$|^i\.redd\.it$/i;
+const ALLOWED_HOST = /(?:^|\.)cbc\.ca$|^globalnews\.ca$|(?:^|\.)wp\.com$|(?:^|\.)halifaxexaminer\.ca$|^i\.redd\.it$|(?:^|\.)citynews\.ca$/i;
 
 export async function GET(req: NextRequest) {
   const raw = req.nextUrl.searchParams.get("url");

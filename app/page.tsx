@@ -24,6 +24,7 @@ import {
 } from '@/lib/fetchers/transit';
 import { fetchTides, computeTideGraph } from '@/lib/fetchers/tides';
 import { fetchRedditPosts } from '@/lib/fetchers/reddit';
+import { fetchGasPrices } from '@/lib/fetchers/gas';
 import { safe } from '@/lib/safe';
 
 const TAB_LABELS = ['City Live', 'News', 'Reddit', 'Transit', 'HRM', 'HRFE', 'Events'];
@@ -47,6 +48,7 @@ export default async function Home() {
     transitAdjustments,
     tides,
     redditData,
+    gasPrices,
     airQuality,
     burnStatus,
     alerts,
@@ -60,6 +62,7 @@ export default async function Home() {
     safe(fetchTransitAdjustments(), null, 'transit-adjustments'),
     safe(fetchTides(), [], 'tides'),
     safe(fetchRedditPosts(), { posts: [], fetchedAt: null }, 'reddit'),
+    safe(fetchGasPrices(), { history: [] }, 'gas-prices'),
     safe(fetchAirQuality(), null, 'air-quality'),
     safe(fetchBurnStatus(), null, 'burn-status'),
     safe(fetchAlerts(), [], 'alerts'),
@@ -89,6 +92,7 @@ export default async function Home() {
           airQuality={airQuality}
           burnStatus={burnStatus}
           alerts={alerts}
+          gasPrices={gasPrices}
         />
         <NewsScreen items={news.items} />
         <RedditScreen posts={redditData.posts} fetchedAt={redditData.fetchedAt} />

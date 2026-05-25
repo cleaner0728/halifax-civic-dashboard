@@ -1,27 +1,9 @@
-import Image from 'next/image';
 import type { NewsItem } from '@/lib/fetchers/news';
 import { formatRelative } from '@/lib/date';
 
 type Props = {
   items: NewsItem[];
 };
-
-// Wordpress/Jetpack CDNs (wp.com) and Global's WP install serve images with
-// clean Content-Type headers — the browser can fetch them directly. Any
-// other host (notably i.cbc.ca) gets Chrome's Opaque Response Blocking
-// treatment when fetched cross-origin, so we route those through our
-// own /api/img endpoint which fetches server-side and re-emits same-origin.
-// Either way the result is plain `<img>`-style display, with no Vercel
-// Image Optimization transformations getting billed.
-const DIRECT_OK = /(?:^|\.)wp\.com$|^globalnews\.ca$/i;
-function newsImageSrc(url: string): string {
-  try {
-    if (DIRECT_OK.test(new URL(url).hostname)) return url;
-  } catch {
-    return url;
-  }
-  return `/api/img?url=${encodeURIComponent(url)}`;
-}
 
 export default function NewsScreen({ items }: Props) {
   return (
@@ -33,7 +15,7 @@ export default function NewsScreen({ items }: Props) {
               <p className="text-sm font-medium text-white/70 uppercase tracking-widest">News</p>
               <h2 className="text-3xl font-bold tracking-tight mt-1">Latest Headlines</h2>
               <p className="text-base text-white/70 mt-1">
-                {items.length} {items.length === 1 ? 'story' : 'stories'} · past 24 hours · CBC · Examiner · Global
+                {items.length} {items.length === 1 ? 'story' : 'stories'} · past 24 hours · CBC · Examiner · Global · CityNews · CTV
               </p>
             </div>
             <div className="text-5xl">📰</div>
@@ -64,36 +46,20 @@ export default function NewsScreen({ items }: Props) {
                   href={item.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group block"
+                  className="group block p-3"
                 >
-                  <div className={`flex ${item.imageUrl ? 'flex-col sm:flex-row' : ''}`}>
-                    {item.imageUrl && (
-                      <div className="relative h-52 sm:h-auto sm:min-h-[160px] sm:w-72 sm:shrink-0">
-                        <Image
-                          src={newsImageSrc(item.imageUrl)}
-                          alt={item.title || 'News image'}
-                          fill
-                          sizes="(min-width: 640px) 18rem, 100vw"
-                          className="object-cover"
-                          unoptimized
-                        />
-                      </div>
-                    )}
-                    <div className="p-3 flex-1 min-w-0">
-                      <h3 className="text-lg font-semibold text-foreground group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors leading-snug">
-                        {item.title}
-                      </h3>
-                      <p className="text-xs text-foreground/40 mt-1 font-mono">
-                        {item.source && <span className="text-blue-400 mr-2">{item.source}</span>}
-                        {formatRelative(item.pubDate) || 'Unknown'}
-                      </p>
-                      <p className="text-foreground/60 mt-1 text-base leading-relaxed">{item.contentSnippet}</p>
-                      <p className="mt-3 text-sm font-medium text-blue-500 dark:text-blue-400 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
-                        Read on {item.source || 'source'}
-                        <span aria-hidden>→</span>
-                      </p>
-                    </div>
-                  </div>
+                  <h3 className="text-lg font-semibold text-foreground group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors leading-snug">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-foreground/40 mt-1 font-mono">
+                    {item.source && <span className="text-blue-400 mr-2">{item.source}</span>}
+                    {formatRelative(item.pubDate) || 'Unknown'}
+                  </p>
+                  <p className="text-foreground/60 mt-1 text-base leading-relaxed">{item.contentSnippet}</p>
+                  <p className="mt-3 text-sm font-medium text-blue-500 dark:text-blue-400 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                    Read on {item.source || 'source'}
+                    <span aria-hidden>→</span>
+                  </p>
                 </a>
               </article>
             ))

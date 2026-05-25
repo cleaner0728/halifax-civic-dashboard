@@ -1,6 +1,7 @@
 import React from 'react';
 import LiveClock from '@/components/LiveClock';
 import HalifaxWebcams from '@/components/HalifaxWebcams';
+import GasPriceCard from '@/components/GasPriceCard';
 import { HFX_TZ, getDayName, formatTime } from '@/lib/date';
 import { getWeatherInfo } from '@/lib/weather-theme';
 import type { WeatherData } from '@/lib/fetchers/weather';
@@ -8,6 +9,7 @@ import type { TideGraphData } from '@/lib/fetchers/tides';
 import type { AirQuality } from '@/lib/fetchers/air-quality';
 import type { BurnStatus } from '@/lib/fetchers/burn-status';
 import type { WeatherAlert } from '@/lib/fetchers/alerts';
+import type { GasPriceData } from '@/lib/fetchers/gas';
 
 type Props = {
   weather: WeatherData | null;
@@ -15,6 +17,7 @@ type Props = {
   airQuality: AirQuality | null;
   burnStatus: BurnStatus | null;
   alerts: WeatherAlert[];
+  gasPrices: GasPriceData;
 };
 
 // Severity colour map — Tailwind needs the full class name in source so the
@@ -100,7 +103,7 @@ function boldNumbers(text: string): React.ReactNode[] {
   );
 }
 
-export default function WeatherScreen({ weather, tideGraph, airQuality, burnStatus, alerts }: Props) {
+export default function WeatherScreen({ weather, tideGraph, airQuality, burnStatus, alerts, gasPrices }: Props) {
   const currentWeather = weather ? getWeatherInfo(weather.weatherCode, !weather.isDay) : null;
 
   return (
@@ -371,6 +374,7 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
           </section>
         )}
 
+        <GasPriceCard data={gasPrices} />
         <HalifaxWebcams />
       </div>
     </div>
