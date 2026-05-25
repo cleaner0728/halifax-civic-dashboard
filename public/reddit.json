@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-25T12:46:12.625Z",
+  "fetchedAt": "2026-05-25T13:16:14.385Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -47,13 +47,13 @@
       "createdUtc": 1779700065
     },
     {
-      "title": "Outsider Opinion: Tony's, no contest.",
+      "title": "The State of the Province Has a Cover Charge",
       "score": 0,
       "numComments": 0,
-      "author": "AlexRogansBeta",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmunoh/outsider_opinion_tonys_no_contest/",
+      "author": "MiaTheMontrealCat",
+      "url": "https://www.reddit.com/r/halifax/comments/1tn81ve/the_state_of_the_province_has_a_cover_charge/",
       "flair": null,
-      "createdUtc": 1779673091
+      "createdUtc": 1779712954
     },
     {
       "title": "Abacus Nova Scotia: Houston's PCs Still Ahead After Challenging Budget Season (PC 38 NDP 31LIB 23)",
@@ -63,6 +63,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tn672b/abacus_nova_scotia_houstons_pcs_still_ahead_after/",
       "flair": null,
       "createdUtc": 1779708069
+    },
+    {
+      "title": "Outsider Opinion: Tony's, no contest.",
+      "score": 0,
+      "numComments": 0,
+      "author": "AlexRogansBeta",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmunoh/outsider_opinion_tonys_no_contest/",
+      "flair": null,
+      "createdUtc": 1779673091
     },
     {
       "title": "Federal NDP looks to Nova Scotia as blueprint to rebuild",
@@ -92,15 +101,6 @@
       "createdUtc": 1779703265
     },
     {
-      "title": "Any info on going to ER for mental health?",
-      "score": 0,
-      "numComments": 0,
-      "author": "enrolmentcard",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmuk0c/any_info_on_going_to_er_for_mental_health/",
-      "flair": null,
-      "createdUtc": 1779672816
-    },
-    {
       "title": "N.S. releases offer details for striking long-term care workers",
       "score": 0,
       "numComments": 0,
@@ -110,31 +110,13 @@
       "createdUtc": 1779681082
     },
     {
-      "title": "The State of the Province Has a Cover Charge",
+      "title": "Any info on going to ER for mental health?",
       "score": 0,
       "numComments": 0,
-      "author": "MiaTheMontrealCat",
-      "url": "https://www.reddit.com/r/halifax/comments/1tn81ve/the_state_of_the_province_has_a_cover_charge/",
+      "author": "enrolmentcard",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmuk0c/any_info_on_going_to_er_for_mental_health/",
       "flair": null,
-      "createdUtc": 1779712954
-    },
-    {
-      "title": "Does anyone locally do cheap/discounted cover-ups on problematic tattoos?",
-      "score": 0,
-      "numComments": 0,
-      "author": "mary-anns-hammocks",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmka6b/does_anyone_locally_do_cheapdiscounted_coverups/",
-      "flair": null,
-      "createdUtc": 1779647631
-    },
-    {
-      "title": "Where is the live music /singing coming from tonight?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Wild_Hampster_Ride",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmx64o/where_is_the_live_music_singing_coming_from/",
-      "flair": null,
-      "createdUtc": 1779680040
+      "createdUtc": 1779672816
     },
     {
       "title": "Arsenal - PSG final.",
@@ -146,13 +128,13 @@
       "createdUtc": 1779711549
     },
     {
-      "title": "Incredible Work From Local Tattoo Artist",
+      "title": "Does anyone locally do cheap/discounted cover-ups on problematic tattoos?",
       "score": 0,
       "numComments": 0,
-      "author": "DIWife90",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmgjk3/incredible_work_from_local_tattoo_artist/",
+      "author": "mary-anns-hammocks",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmka6b/does_anyone_locally_do_cheapdiscounted_coverups/",
       "flair": null,
-      "createdUtc": 1779639383
+      "createdUtc": 1779647631
     },
     {
       "title": "Beauty and the bitch",
@@ -162,6 +144,33 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tn697k/beauty_and_the_bitch/",
       "flair": null,
       "createdUtc": 1779708224
+    },
+    {
+      "title": "Where is the live music /singing coming from tonight?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Wild_Hampster_Ride",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmx64o/where_is_the_live_music_singing_coming_from/",
+      "flair": null,
+      "createdUtc": 1779680040
+    },
+    {
+      "title": "New development on Drysdale Rd",
+      "score": 0,
+      "numComments": 0,
+      "author": "mpublicover",
+      "url": "https://www.reddit.com/r/halifax/comments/1tn89fd/new_development_on_drysdale_rd/",
+      "flair": null,
+      "createdUtc": 1779713479
+    },
+    {
+      "title": "Incredible Work From Local Tattoo Artist",
+      "score": 0,
+      "numComments": 0,
+      "author": "DIWife90",
+      "url": "https://www.reddit.com/r/halifax/comments/1tmgjk3/incredible_work_from_local_tattoo_artist/",
+      "flair": null,
+      "createdUtc": 1779639383
     },
     {
       "title": "Old stamp collection",
@@ -180,6 +189,24 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tmcwt1/search_stretches_into_second_day_for_missing/",
       "flair": null,
       "createdUtc": 1779631025
+    },
+    {
+      "title": "Massive football stadium plans pitched for Halifax area",
+      "score": 0,
+      "numComments": 0,
+      "author": "mgpnna",
+      "url": "https://www.reddit.com/r/halifax/comments/1tn8v7i/massive_football_stadium_plans_pitched_for/",
+      "flair": null,
+      "createdUtc": 1779714922
+    },
+    {
+      "title": "Part Time Blended Flex Disability Support Professional Advice",
+      "score": 0,
+      "numComments": 0,
+      "author": "Danelg0d777",
+      "url": "https://www.reddit.com/r/halifax/comments/1tn8gqx/part_time_blended_flex_disability_support/",
+      "flair": null,
+      "createdUtc": 1779713976
     },
     {
       "title": "Renting a telescope!",
@@ -243,33 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tmyi1a/aliant_underground_wiring_anyone_else/",
       "flair": null,
       "createdUtc": 1779683874
-    },
-    {
-      "title": "Where to buy Gravenstein apple trees?",
-      "score": 0,
-      "numComments": 0,
-      "author": "AllSeeingLobster",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmoa8j/where_to_buy_gravenstein_apple_trees/",
-      "flair": null,
-      "createdUtc": 1779656837
-    },
-    {
-      "title": "Soft Serve ice cream hunt",
-      "score": 0,
-      "numComments": 0,
-      "author": "timmychalaslay",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmg7tb/soft_serve_ice_cream_hunt/",
-      "flair": null,
-      "createdUtc": 1779638644
-    },
-    {
-      "title": "Erborian CC red correct ant redness spf-25",
-      "score": 0,
-      "numComments": 0,
-      "author": "bradcho",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmogva/erborian_cc_red_correct_ant_redness_spf25/",
-      "flair": null,
-      "createdUtc": 1779657268
     }
   ]
 }
