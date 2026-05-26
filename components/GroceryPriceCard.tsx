@@ -85,7 +85,7 @@ function GroceryChart({ item }: { item: GroceryItem }) {
   const fillPoints = `${firstX},${MT + CH} ${linePoints} ${lastX.toFixed(1)},${MT + CH}`;
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} width="100%" role="img" aria-label={`${item.label} price history`} translate="no">
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" role="img" aria-label={`${item.label} price history`}>
       {yTicks.map(v => (
         <g key={v}>
           <line
@@ -209,7 +209,7 @@ export default function GroceryPriceCard({ data }: { data: GroceryPriceData }) {
         </div>
       </div>
 
-      <div className="px-3 pb-3">
+      <div className="px-3 pb-3" translate="no">
         {hist.length > 1 ? (
           <GroceryChart key={item.key} item={item} />
         ) : (
