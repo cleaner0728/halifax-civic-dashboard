@@ -18,6 +18,12 @@ export interface WeatherData {
   isDay: boolean;
   uvIndex: number;
   uvIndexMaxToday: number;
+  hourly: {
+    timestamp: string;  // ISO UTC
+    temp: number;
+    weatherCode: number;
+    pop: number;        // likelihood of precipitation %
+  }[];
   daily: {
     date: string;
     weatherCode: number;
@@ -128,6 +134,20 @@ export async function fetchWeather(): Promise<WeatherData | null> {
     // UV index from today's "Today" or "Tonight" forecast (index 0).
     const uvIndex = parseFloat(forecasts[0]?.uv?.index?.en ?? '0') || 0;
 
+    // Hourly forecast — next 24 h, keep all 24 slots.
+    const rawHourly: {
+      timestamp: string;
+      temperature: { value: { en: number } };
+      iconCode: { value: number };
+      lop: { value: { en: number } };
+    }[] = p.hourlyForecastGroup?.hourlyForecasts ?? [];
+    const hourly: WeatherData['hourly'] = rawHourly.map((h) => ({
+      timestamp: h.timestamp,
+      temp: h.temperature?.value?.en ?? 0,
+      weatherCode: ecccIconToWmo(h.iconCode?.value),
+      pop: h.lop?.value?.en ?? 0,
+    }));
+
     // Build 5-day daily forecast. ECCC delivers alternating day/night periods:
     // [0] Today (high), [1] Tonight (low), [2] Wednesday (high), [3] Wed night (low), ...
     // We pair them to get a single daily row per calendar day.
@@ -199,6 +219,7 @@ export async function fetchWeather(): Promise<WeatherData | null> {
       isDay,
       uvIndex,
       uvIndexMaxToday: uvIndex,
+      hourly,
       daily,
     };
   } catch (e) {

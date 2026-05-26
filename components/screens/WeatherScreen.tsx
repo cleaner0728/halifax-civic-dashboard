@@ -276,6 +276,44 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
                 </div>
                 <div className="text-4xl">{currentWeather.emoji}</div>
               </div>
+
+              {/* Hourly forecast strip */}
+              {weather.hourly.length > 0 && (
+                <div data-no-tab-swipe className="mt-4 -mx-4 sm:-mx-6 px-4 sm:px-6 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  <div className="flex gap-1 w-max pb-1">
+                    {weather.hourly.map((h, i) => {
+                      const localHour = new Date(h.timestamp).toLocaleString('en-US', {
+                        hour: 'numeric',
+                        hour12: true,
+                        timeZone: HFX_TZ,
+                      });
+                      const info = getWeatherInfo(h.weatherCode, false);
+                      return (
+                        <div
+                          key={h.timestamp}
+                          className={`flex flex-col items-center gap-0.5 px-2 py-2 rounded-lg min-w-[52px] text-center ${
+                            i === 0
+                              ? 'bg-white/20 dark:bg-white/15'
+                              : 'bg-white/10 dark:bg-white/8'
+                          }`}
+                        >
+                          <span className={`text-[11px] font-medium ${currentWeather.theme.textSecondary}`}>
+                            {i === 0 ? 'Now' : localHour}
+                          </span>
+                          <span className="text-xl leading-none">{info.emoji}</span>
+                          <span className="text-sm font-semibold">{Math.round(h.temp)}°</span>
+                          {h.pop > 0 && (
+                            <span className={`text-[10px] ${currentWeather.theme.textSecondary}`}>
+                              {h.pop}%
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Unified conditions grid — all metrics together, no icons */}
               <div className="mt-4 space-y-3">
                 {/* Row 1: Weather conditions */}
