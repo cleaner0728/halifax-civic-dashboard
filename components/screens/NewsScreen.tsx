@@ -15,7 +15,7 @@ export default function NewsScreen({ items }: Props) {
               <p className="text-sm font-medium text-white/70 uppercase tracking-widest">News</p>
               <h2 className="text-3xl font-bold tracking-tight mt-1">Latest Headlines</h2>
               <p className="text-base text-white/70 mt-1">
-                {items.length} {items.length === 1 ? 'story' : 'stories'} · past 8 hours · CBC · Examiner · Global · SaltWire · CTV
+                {items.length} {items.length === 1 ? 'story' : 'stories'} · past 8 hours · CBC · Examiner · Global · SaltWire · CTV · Haligonia · The Coast
               </p>
             </div>
             <div className="text-5xl">📰</div>

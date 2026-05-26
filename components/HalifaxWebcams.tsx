@@ -43,34 +43,6 @@ const hhbUrl = (slug: string) => (t: number) =>
 
 const CAMS: Cam[] = [
   {
-    kind: "video",
-    streamUrl: "https://streaming-1.novascotiawebcams.com/live/kingswharf/playlist.m3u8",
-    source: "https://www.novascotiawebcams.com/webcams/halifax-waterfront",
-    name: "Halifax Waterfront",
-    emoji: "⚓",
-  },
-  {
-    kind: "video",
-    streamUrl: "https://streaming-1.novascotiawebcams.com/live/argylestreet/playlist.m3u8",
-    source: "https://www.novascotiawebcams.com/webcams/argyle-street",
-    name: "Argyle Street",
-    emoji: "🍽️",
-  },
-  {
-    kind: "video",
-    streamUrl: "https://streaming-1.novascotiawebcams.com/live/westin/playlist.m3u8",
-    source: "https://www.novascotiawebcams.com/webcams/pier-21",
-    name: "Pier 21",
-    emoji: "🛳️",
-  },
-  {
-    kind: "video",
-    streamUrl: "https://streaming-1.novascotiawebcams.com/live/armdale2/playlist.m3u8",
-    source: "https://www.novascotiawebcams.com/webcams/armdale-roundabout-2",
-    name: "Armdale Roundabout",
-    emoji: "🚥",
-  },
-  {
     kind: "image",
     imageUrl: hhbUrl("macdonald-halifax-bound"),
     refreshMs: 10_000,
@@ -101,6 +73,34 @@ const CAMS: Cam[] = [
     source: "https://www.novascotiawebcams.com/webcams/mackay-bridge-dartmouth-bound",
     name: "MacKay (Dartmouth)",
     emoji: "🌉",
+  },
+  {
+    kind: "video",
+    streamUrl: "https://streaming-1.novascotiawebcams.com/live/kingswharf/playlist.m3u8",
+    source: "https://www.novascotiawebcams.com/webcams/halifax-waterfront",
+    name: "Halifax Waterfront",
+    emoji: "⚓",
+  },
+  {
+    kind: "video",
+    streamUrl: "https://streaming-1.novascotiawebcams.com/live/argylestreet/playlist.m3u8",
+    source: "https://www.novascotiawebcams.com/webcams/argyle-street",
+    name: "Argyle Street",
+    emoji: "🍽️",
+  },
+  {
+    kind: "video",
+    streamUrl: "https://streaming-1.novascotiawebcams.com/live/westin/playlist.m3u8",
+    source: "https://www.novascotiawebcams.com/webcams/pier-21",
+    name: "Pier 21",
+    emoji: "🛳️",
+  },
+  {
+    kind: "video",
+    streamUrl: "https://streaming-1.novascotiawebcams.com/live/armdale2/playlist.m3u8",
+    source: "https://www.novascotiawebcams.com/webcams/armdale-roundabout-2",
+    name: "Armdale Roundabout",
+    emoji: "🚥",
   },
 ];
 

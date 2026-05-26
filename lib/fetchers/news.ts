@@ -19,6 +19,8 @@ export async function fetchNews(): Promise<{ items: NewsItem[] }> {
     { url: 'https://globalnews.ca/halifax/feed/', name: 'Global News Halifax' },
     { url: 'https://www.saltwire.com/category/nova-scotia/halifax/feed', name: 'SaltWire Halifax' },
     { url: 'http://161.153.114.126:1201/ctv/nova-scotia', name: 'CTV Nova Scotia' },
+    { url: 'http://haligonia.ca/feed/', name: 'Haligonia' },
+    { url: 'https://www.thecoast.ca/feed/', name: 'The Coast' },
   ];
 
   const cutoff = new Date(Date.now() - 8 * 60 * 60 * 1000);
