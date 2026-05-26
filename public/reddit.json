@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-26T09:46:14.503Z",
+  "fetchedAt": "2026-05-26T10:16:18.004Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -27,6 +27,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tnqufc/right_now_at_walmart_mumford_checking_out_the/",
       "flair": null,
       "createdUtc": 1779755299
+    },
+    {
+      "title": "Yesterday's rain opened a hole in our driveway and there's wood in there!",
+      "score": 0,
+      "numComments": 0,
+      "author": "Shark_CatGremlin",
+      "url": "https://www.reddit.com/r/halifax/comments/1to1txx/yesterdays_rain_opened_a_hole_in_our_driveway_and/",
+      "flair": null,
+      "createdUtc": 1779787943
     },
     {
       "title": "If the ferry system needs fixing, why cut revenue?",
@@ -63,15 +72,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tnlawg/explosion_fire_caused_by_arc_welding_equipment/",
       "flair": null,
       "createdUtc": 1779741796
-    },
-    {
-      "title": "Yesterday's rain opened a hole in our driveway and there's wood in there!",
-      "score": 0,
-      "numComments": 0,
-      "author": "Shark_CatGremlin",
-      "url": "https://www.reddit.com/r/halifax/comments/1to1txx/yesterdays_rain_opened_a_hole_in_our_driveway_and/",
-      "flair": null,
-      "createdUtc": 1779787943
     },
     {
       "title": "Premier says Nova Scotia preparing to negotiate with one exploratory fracking bidder",
@@ -144,6 +144,24 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tnjqdw/why_hrm_has_to_use_3rd_party_service_to_allow/",
       "flair": null,
       "createdUtc": 1779738320
+    },
+    {
+      "title": "Floating tiki bar rescues 2 jet skiers in Halifax harbour",
+      "score": 0,
+      "numComments": 0,
+      "author": "Bean_Tiger",
+      "url": "https://www.reddit.com/r/halifax/comments/1to2lzo/floating_tiki_bar_rescues_2_jet_skiers_in_halifax/",
+      "flair": null,
+      "createdUtc": 1779790459
+    },
+    {
+      "title": "Over the air CTV has been un-aliased the last while, now a blue filter over everything",
+      "score": 0,
+      "numComments": 0,
+      "author": "JDGumby",
+      "url": "https://www.reddit.com/r/halifax/comments/1to2gxd/over_the_air_ctv_has_been_unaliased_the_last/",
+      "flair": null,
+      "createdUtc": 1779790006
     },
     {
       "title": "Second hand home decor",
@@ -252,24 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tn89fd/new_development_on_drysdale_rd/",
       "flair": null,
       "createdUtc": 1779713479
-    },
-    {
-      "title": "Grumblemania Monday",
-      "score": 0,
-      "numComments": 0,
-      "author": "AutoModerator",
-      "url": "https://www.reddit.com/r/halifax/comments/1tn4l98/grumblemania_monday/",
-      "flair": null,
-      "createdUtc": 1779703265
-    },
-    {
-      "title": "N.S. releases offer details for striking long-term care workers",
-      "score": 0,
-      "numComments": 0,
-      "author": "Injustice_For_All_",
-      "url": "https://www.reddit.com/r/halifax/comments/1tmxj1p/ns_releases_offer_details_for_striking_longterm/",
-      "flair": null,
-      "createdUtc": 1779681082
     }
   ]
 }
