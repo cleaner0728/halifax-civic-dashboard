@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-26T19:16:19.186Z",
+  "fetchedAt": "2026-05-26T19:31:37.279Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -65,6 +65,15 @@
       "createdUtc": 1779814207
     },
     {
+      "title": "Council says no to waiving Alderney Ferry fares amid ongoing service reduction",
+      "score": 0,
+      "numComments": 0,
+      "author": "SAJewers",
+      "url": "https://www.reddit.com/r/halifax/comments/1toeekw/council_says_no_to_waiving_alderney_ferry_fares/",
+      "flair": null,
+      "createdUtc": 1779817566
+    },
+    {
       "title": "Right now at Walmart Mumford. Checking out the international aisle",
       "score": 0,
       "numComments": 0,
@@ -74,13 +83,13 @@
       "createdUtc": 1779755299
     },
     {
-      "title": "Council says no to waiving Alderney Ferry fares amid ongoing service reduction",
+      "title": "CUPE LTCC Chair Christa Sweeney addressing negotiations and the state of the strike",
       "score": 0,
       "numComments": 0,
-      "author": "SAJewers",
-      "url": "https://www.reddit.com/r/halifax/comments/1toeekw/council_says_no_to_waiving_alderney_ferry_fares/",
+      "author": "Haliwood902",
+      "url": "https://www.reddit.com/r/halifax/comments/1toh96u/cupe_ltcc_chair_christa_sweeney_addressing/",
       "flair": null,
-      "createdUtc": 1779817566
+      "createdUtc": 1779823296
     },
     {
       "title": "Car accident at Old Sackville Road and Beaverbank",
@@ -110,6 +119,15 @@
       "createdUtc": 1779791850
     },
     {
+      "title": "The War On Traffic",
+      "score": 0,
+      "numComments": 0,
+      "author": "ph0enix1211",
+      "url": "https://www.reddit.com/r/halifax/comments/1togzht/the_war_on_traffic/",
+      "flair": null,
+      "createdUtc": 1779822743
+    },
+    {
       "title": "If the ferry system needs fixing, why cut revenue?",
       "score": 0,
       "numComments": 0,
@@ -128,15 +146,6 @@
       "createdUtc": 1779809371
     },
     {
-      "title": "Another saga in whatever the hell's going on on Surge 105: website change?",
-      "score": 0,
-      "numComments": 0,
-      "author": "IStillListenToRadio",
-      "url": "https://www.reddit.com/r/halifax/comments/1todp3q/another_saga_in_whatever_the_hells_going_on_on/",
-      "flair": null,
-      "createdUtc": 1779816138
-    },
-    {
       "title": "Best steakhouse in the city?",
       "score": 0,
       "numComments": 0,
@@ -144,6 +153,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tocke6/best_steakhouse_in_the_city/",
       "flair": null,
       "createdUtc": 1779813839
+    },
+    {
+      "title": "Another saga in whatever the hell's going on on Surge 105: website change?",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1todp3q/another_saga_in_whatever_the_hells_going_on_on/",
+      "flair": null,
+      "createdUtc": 1779816138
     },
     {
       "title": "Apartment hunting in Sackville and area— where are people even finding rentals these days?",
@@ -162,15 +180,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1toekqc/seamstress_suggestions/",
       "flair": null,
       "createdUtc": 1779817909
-    },
-    {
-      "title": "The War On Traffic",
-      "score": 0,
-      "numComments": 0,
-      "author": "ph0enix1211",
-      "url": "https://www.reddit.com/r/halifax/comments/1togzht/the_war_on_traffic/",
-      "flair": null,
-      "createdUtc": 1779822743
     },
     {
       "title": "Where is a good place to buy jerseys in Halifax",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1to7144/parking_in_the_north_end/",
       "flair": null,
       "createdUtc": 1779802217
-    },
-    {
-      "title": "Premier says Nova Scotia preparing to negotiate with one exploratory fracking bidder",
-      "score": 0,
-      "numComments": 0,
-      "author": "IStillListenToRadio",
-      "url": "https://www.reddit.com/r/halifax/comments/1tnjogl/premier_says_nova_scotia_preparing_to_negotiate/",
-      "flair": null,
-      "createdUtc": 1779738201
     }
   ]
 }
