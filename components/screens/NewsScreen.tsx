@@ -15,7 +15,7 @@ export default function NewsScreen({ items }: Props) {
               <p className="text-sm font-medium text-white/70 uppercase tracking-widest">News</p>
               <h2 className="text-3xl font-bold tracking-tight mt-1">Latest Headlines</h2>
               <p className="text-base text-white/70 mt-1">
-                {items.length} {items.length === 1 ? 'story' : 'stories'} · past 24 hours · CBC · Examiner · Global · CityNews · CTV
+                {items.length} {items.length === 1 ? 'story' : 'stories'} · past 8 hours · CBC · Examiner · Global · SaltWire · CTV
               </p>
             </div>
             <div className="text-5xl">📰</div>
@@ -26,7 +26,7 @@ export default function NewsScreen({ items }: Props) {
           {items.length === 0 ? (
             <div className="text-center py-16 text-foreground/40">
               <p className="text-4xl mb-4">📭</p>
-              <p className="text-lg font-medium">No news in the past 24 hours.</p>
+              <p className="text-lg font-medium">No news in the past 8 hours.</p>
             </div>
           ) : (
             items.map((item, index) => (

@@ -27,7 +27,7 @@ import { fetchRedditPosts } from '@/lib/fetchers/reddit';
 import { fetchGasPrices } from '@/lib/fetchers/gas';
 import { safe } from '@/lib/safe';
 
-const TAB_LABELS = ['City Live', 'News', 'Reddit', 'Transit', 'HRM', 'HRFE', 'Events'];
+const TAB_LABELS = ['City Live', 'Reddit', 'News', 'Transit', 'HRM', 'HRFE', 'Events'];
 
 export default async function Home() {
   // Captured here so the same value flows to anything that displays "data
@@ -94,8 +94,8 @@ export default async function Home() {
           alerts={alerts}
           gasPrices={gasPrices}
         />
-        <NewsScreen items={news.items} />
         <RedditScreen posts={redditData.posts} fetchedAt={redditData.fetchedAt} />
+        <NewsScreen items={news.items} />
         <TransitDisruptionScreen
           detours={transitDetours}
           ferryAlerts={ferryAlerts}

@@ -1,4 +1,4 @@
-// Multi-source Nova Scotia news feeds. Last 24h, sorted newest-first.
+// Multi-source Nova Scotia news feeds. Last 8h, sorted newest-first.
 
 import Parser from 'rss-parser';
 
@@ -17,11 +17,11 @@ export async function fetchNews(): Promise<{ items: NewsItem[] }> {
     { url: 'https://www.cbc.ca/webfeed/rss/rss-canada-novascotia', name: 'CBC Nova Scotia' },
     { url: 'https://halifaxexaminer.ca/feed/', name: 'Halifax Examiner' },
     { url: 'https://globalnews.ca/halifax/feed/', name: 'Global News Halifax' },
-    { url: 'https://halifax.citynews.ca/feed', name: 'CityNews Halifax' },
+    { url: 'https://www.saltwire.com/category/nova-scotia/halifax/feed', name: 'SaltWire Halifax' },
     { url: 'http://161.153.114.126:1201/ctv/nova-scotia', name: 'CTV Nova Scotia' },
   ];
 
-  const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const cutoff = new Date(Date.now() - 8 * 60 * 60 * 1000);
 
   const SOURCE_TIMEOUT_MS = 8_000;
 
