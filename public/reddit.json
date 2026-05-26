@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-26T10:16:18.004Z",
+  "fetchedAt": "2026-05-26T10:33:57.840Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -36,6 +36,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1to1txx/yesterdays_rain_opened_a_hole_in_our_driveway_and/",
       "flair": null,
       "createdUtc": 1779787943
+    },
+    {
+      "title": "Floating tiki bar rescues 2 jet skiers in Halifax harbour",
+      "score": 0,
+      "numComments": 0,
+      "author": "Bean_Tiger",
+      "url": "https://www.reddit.com/r/halifax/comments/1to2lzo/floating_tiki_bar_rescues_2_jet_skiers_in_halifax/",
+      "flair": null,
+      "createdUtc": 1779790459
     },
     {
       "title": "If the ferry system needs fixing, why cut revenue?",
@@ -119,15 +128,6 @@
       "createdUtc": 1779719380
     },
     {
-      "title": "New Signal Technology Targets Traffic Congestion Along Macdonald Bridge Corridor",
-      "score": 0,
-      "numComments": 0,
-      "author": "sjmorris",
-      "url": "https://www.reddit.com/r/halifax/comments/1tn9xbw/new_signal_technology_targets_traffic_congestion/",
-      "flair": null,
-      "createdUtc": 1779717334
-    },
-    {
       "title": "TIL: An African Nova Scotian Village was destroyed to build the Halifax Airport",
       "score": 0,
       "numComments": 0,
@@ -137,6 +137,15 @@
       "createdUtc": 1779700065
     },
     {
+      "title": "New Signal Technology Targets Traffic Congestion Along Macdonald Bridge Corridor",
+      "score": 0,
+      "numComments": 0,
+      "author": "sjmorris",
+      "url": "https://www.reddit.com/r/halifax/comments/1tn9xbw/new_signal_technology_targets_traffic_congestion/",
+      "flair": null,
+      "createdUtc": 1779717334
+    },
+    {
       "title": "Why HRM has to use 3rd party service to allow residents to pay tax using Credit Card?",
       "score": 0,
       "numComments": 0,
@@ -144,15 +153,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tnjqdw/why_hrm_has_to_use_3rd_party_service_to_allow/",
       "flair": null,
       "createdUtc": 1779738320
-    },
-    {
-      "title": "Floating tiki bar rescues 2 jet skiers in Halifax harbour",
-      "score": 0,
-      "numComments": 0,
-      "author": "Bean_Tiger",
-      "url": "https://www.reddit.com/r/halifax/comments/1to2lzo/floating_tiki_bar_rescues_2_jet_skiers_in_halifax/",
-      "flair": null,
-      "createdUtc": 1779790459
     },
     {
       "title": "Over the air CTV has been un-aliased the last while, now a blue filter over everything",
