@@ -15,9 +15,12 @@ const CW = W - ML - MR;
 const CH = H - MT - MB;
 
 function GasPriceChart({ history }: { history: GasPriceData['history'] }) {
-  const now = new Date();
-  const end = now;
-  const start = new Date(now);
+  // Anchor the window to the latest data point's date so SSR and client
+  // hydration produce identical SVG coordinates regardless of when each runs.
+  const sorted = history.slice().sort((a, b) => a.date.localeCompare(b.date));
+  const lastDateStr = sorted.length > 0 ? sorted[sorted.length - 1].date : new Date().toISOString().split('T')[0];
+  const end = new Date(lastDateStr + 'T23:59:59Z');
+  const start = new Date(end);
   start.setMonth(start.getMonth() - 6);
 
   const inWindow = history.filter(e => new Date(e.date + 'T12:00:00Z') >= start);

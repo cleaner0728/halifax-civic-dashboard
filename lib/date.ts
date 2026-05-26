@@ -22,7 +22,7 @@ export function getDayName(dateStr: string): string {
   const todayStr = toHfxDateStr(now);
   const tomorrowStr = toHfxDateStr(new Date(now.getTime() + 24 * 60 * 60 * 1000));
   if (dateStr === todayStr) return 'Today';
-  if (dateStr === tomorrowStr) return 'TMR';
+  if (dateStr === tomorrowStr) return new Date(dateStr + 'T12:00:00Z').toLocaleDateString('en-US', { weekday: 'short', timeZone: HFX_TZ });
   return new Date(dateStr + 'T12:00:00Z').toLocaleDateString('en-US', {
     weekday: 'short',
     timeZone: HFX_TZ,

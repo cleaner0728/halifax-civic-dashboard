@@ -314,88 +314,72 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
                 </div>
               )}
 
-              {/* Unified conditions grid — all metrics together, no icons */}
-              <div className="mt-4 space-y-3">
-                {/* Row 1: Weather conditions */}
-                <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-3 ${currentWeather.theme.textSecondary}`}>
-                  <div>
-                    <p className="text-[10px] uppercase tracking-widest opacity-60">Wind</p>
-                    <p className="text-sm font-semibold mt-0.5">
-                      <span className="font-mono">{degreesToCompass(weather.windDirection)}</span>
-                      {' · '}{weather.windSpeed} km/h
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase tracking-widest opacity-60">Humidity</p>
-                    <p className="text-sm font-semibold mt-0.5">{weather.humidity}%</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase tracking-widest opacity-60">Dewpoint</p>
-                    <p className="text-sm font-semibold mt-0.5">{weather.dewpoint}°C</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase tracking-widest opacity-60">Visibility</p>
-                    <p className="text-sm font-semibold mt-0.5">{weather.visibility} km</p>
-                  </div>
-                  {weather.daily[0] && (
-                    <>
-                      <div>
-                        <p className="text-[10px] uppercase tracking-widest opacity-60">Sunrise</p>
-                        <p className="text-sm font-semibold mt-0.5">{formatTime(weather.daily[0].sunrise)}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] uppercase tracking-widest opacity-60">Sunset</p>
-                        <p className="text-sm font-semibold mt-0.5">{formatTime(weather.daily[0].sunset)}</p>
-                      </div>
-                    </>
-                  )}
+              {/* Unified conditions grid — all metrics together */}
+              <div className={`mt-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-3 ${currentWeather.theme.textSecondary}`}>
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest opacity-60">Wind</p>
+                  <p className="text-sm font-semibold mt-0.5">
+                    <span className="font-mono">{degreesToCompass(weather.windDirection)}</span>
+                    {' · '}{weather.windSpeed} km/h
+                  </p>
                 </div>
-
-                {/* Divider + Row 2: Air quality / risk indices */}
-                {(weather.uvIndex !== null || airQuality || burnStatus) && (
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest opacity-60">Humidity</p>
+                  <p className="text-sm font-semibold mt-0.5">{weather.humidity}%</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest opacity-60">Dewpoint</p>
+                  <p className="text-sm font-semibold mt-0.5">{weather.dewpoint}°C</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest opacity-60">Visibility</p>
+                  <p className="text-sm font-semibold mt-0.5">{weather.visibility} km</p>
+                </div>
+                {weather.daily[0] && (
                   <>
-                    <div className="border-t border-black/10 dark:border-white/15" />
-                    <div className={`grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-3 ${currentWeather.theme.textSecondary}`}>
-                      {weather.uvIndex !== null && (
-                        <div>
-                          <p className="text-[10px] uppercase tracking-widest opacity-60">UV Index</p>
-                          <p className={`text-sm font-semibold mt-0.5 ${uvColor(weather.uvIndex)}`}>
-                            {Math.round(weather.uvIndex)} — {uvLabel(weather.uvIndex)}
-                          </p>
-                        </div>
-                      )}
-                      {airQuality && (
-                        <div>
-                          <p className="text-[10px] uppercase tracking-widest opacity-60">Air Quality</p>
-                          <p className={`text-sm font-semibold mt-0.5 ${aqiColor(airQuality.aqi)}`}>
-                            {airQuality.aqi} — {aqiLabel(airQuality.aqi)}
-                          </p>
-                        </div>
-                      )}
-                      {burnStatus && (
-                        <div>
-                          <p className="text-[10px] uppercase tracking-widest opacity-60">Open Burning</p>
-                          <p className={`text-sm font-semibold mt-0.5 ${burnColor(burnStatus.level)}`}>
-                            {burnLabel(burnStatus.level)}
-                          </p>
-                          {/* Show the upstream detail string (e.g. "Burning
-                              is only allowed between 7:00 pm and 8:00 am")
-                              — the label alone could mislead a user into
-                              thinking "Allowed" means anytime. */}
-                          {burnStatus.text && (
-                            <p className="text-[11px] mt-0.5 opacity-70 leading-snug">
-                              {burnStatus.text}
-                            </p>
-                          )}
-                        </div>
-                      )}
-                      <div>
-                        <p className="text-[10px] uppercase tracking-widest opacity-60">Pressure</p>
-                        <p className="text-sm font-semibold mt-0.5">{Math.round(weather.pressure)} hPa</p>
-                      </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-widest opacity-60">Sunrise</p>
+                      <p className="text-sm font-semibold mt-0.5">{formatTime(weather.daily[0].sunrise)}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-widest opacity-60">Sunset</p>
+                      <p className="text-sm font-semibold mt-0.5">{formatTime(weather.daily[0].sunset)}</p>
                     </div>
                   </>
                 )}
+                {weather.uvIndex !== null && (
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest opacity-60">UV Index</p>
+                    <p className={`text-sm font-semibold mt-0.5 ${uvColor(weather.uvIndex)}`}>
+                      {Math.round(weather.uvIndex)} — {uvLabel(weather.uvIndex)}
+                    </p>
+                  </div>
+                )}
+                {airQuality && (
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest opacity-60">Air Quality</p>
+                    <p className={`text-sm font-semibold mt-0.5 ${aqiColor(airQuality.aqi)}`}>
+                      {airQuality.aqi} — {aqiLabel(airQuality.aqi)}
+                    </p>
+                  </div>
+                )}
+                {burnStatus && (
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest opacity-60">Open Burning</p>
+                    <p className={`text-sm font-semibold mt-0.5 ${burnColor(burnStatus.level)}`}>
+                      {burnLabel(burnStatus.level)}
+                    </p>
+                    {burnStatus.text && (
+                      <p className="text-[11px] mt-0.5 opacity-70 leading-snug">
+                        {burnStatus.text}
+                      </p>
+                    )}
+                  </div>
+                )}
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest opacity-60">Pressure</p>
+                  <p className="text-sm font-semibold mt-0.5">{Math.round(weather.pressure)} hPa</p>
+                </div>
               </div>
             </div>
             <div className={`${currentWeather.theme.bottomBar} px-3 sm:px-6 py-4`}>

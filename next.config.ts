@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  devIndicators: false,
   images: {
     // News images come from a handful of trusted RSS sources. Listing hosts
     // explicitly so a future feed swap doesn't silently start optimizing

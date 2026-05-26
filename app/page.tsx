@@ -11,6 +11,7 @@ import HrfeIncidentsScreen from '@/components/screens/HrfeIncidentsScreen';
 import TransitDisruptionScreen from '@/components/screens/TransitDisruptionScreen';
 import EventsCalendarScreen from '@/components/screens/EventsCalendarScreen';
 import RedditScreen from '@/components/screens/RedditScreen';
+import GroceryScreen from '@/components/screens/GroceryScreen';
 import { fetchWeather } from '@/lib/fetchers/weather';
 import { fetchAirQuality } from '@/lib/fetchers/air-quality';
 import { fetchBurnStatus } from '@/lib/fetchers/burn-status';
@@ -25,9 +26,10 @@ import {
 import { fetchTides, computeTideGraph } from '@/lib/fetchers/tides';
 import { fetchRedditPosts } from '@/lib/fetchers/reddit';
 import { fetchGasPrices } from '@/lib/fetchers/gas';
+import { fetchGroceryPrices } from '@/lib/fetchers/grocery';
 import { safe } from '@/lib/safe';
 
-const TAB_LABELS = ['City Live', 'Reddit', 'News', 'Transit', 'HRM', 'HRFE', 'Events'];
+const TAB_LABELS = ['City Live', 'Reddit', 'News', 'Transit', 'HRM', 'HRFE', 'Events', 'Prices'];
 
 export default async function Home() {
   // Captured here so the same value flows to anything that displays "data
@@ -52,6 +54,7 @@ export default async function Home() {
     airQuality,
     burnStatus,
     alerts,
+    groceryPrices,
   ] = await Promise.all([
     safe(fetchWeather(), null, 'weather'),
     safe(fetchNews(), { items: [] }, 'news'),
@@ -66,6 +69,7 @@ export default async function Home() {
     safe(fetchAirQuality(), null, 'air-quality'),
     safe(fetchBurnStatus(), null, 'burn-status'),
     safe(fetchAlerts(), [], 'alerts'),
+    safe(fetchGroceryPrices(), { items: [] }, 'grocery-prices'),
   ]);
 
   const tideGraph = computeTideGraph(tides);
@@ -104,6 +108,7 @@ export default async function Home() {
         <HrmNewsScreen items={hrmResult.items} dateLabel={hrmResult.dateLabel} />
         <HrfeIncidentsScreen incidents={hrfeIncidents} />
         <EventsCalendarScreen renderedAt={renderedAt} />
+        <GroceryScreen groceryPrices={groceryPrices} />
       </ScrollSnapContainer>
     </main>
   );
