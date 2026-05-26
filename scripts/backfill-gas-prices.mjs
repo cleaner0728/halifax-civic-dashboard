@@ -15,6 +15,8 @@ const MAX_HISTORY = 52;
 
 // From NSERBT historical-prices page — weekly effective dates and PDF numbers.
 // Interrupter entries (mid-week adjustments) are excluded; only Saturday prices kept.
+// PDF numbers before April 2026 are estimated (~2 per week); the script skips any
+// that return 404 so wrong guesses are safe.
 const BACKFILL_PDFS = [
   { date: '2026-05-15', url: 'https://nserbt.ca/sites/default/files/gasprice_327.pdf' },
   { date: '2026-05-08', url: 'https://nserbt.ca/sites/default/files/gasprice_326.pdf' },
@@ -23,6 +25,27 @@ const BACKFILL_PDFS = [
   { date: '2026-04-17', url: 'https://nserbt.ca/sites/default/files/gasprice_321.pdf' },
   { date: '2026-04-10', url: 'https://nserbt.ca/sites/default/files/gasprice_319.pdf' },
   { date: '2026-04-03', url: 'https://nserbt.ca/sites/default/files/gasprice_317.pdf' },
+  { date: '2026-03-27', url: 'https://nserbt.ca/sites/default/files/gasprice_315.pdf' },
+  { date: '2026-03-20', url: 'https://nserbt.ca/sites/default/files/gasprice_313.pdf' },
+  { date: '2026-03-13', url: 'https://nserbt.ca/sites/default/files/gasprice_311.pdf' },
+  { date: '2026-03-06', url: 'https://nserbt.ca/sites/default/files/gasprice_309.pdf' },
+  { date: '2026-02-27', url: 'https://nserbt.ca/sites/default/files/gasprice_307.pdf' },
+  { date: '2026-02-20', url: 'https://nserbt.ca/sites/default/files/gasprice_305.pdf' },
+  { date: '2026-02-13', url: 'https://nserbt.ca/sites/default/files/gasprice_303.pdf' },
+  { date: '2026-02-06', url: 'https://nserbt.ca/sites/default/files/gasprice_301.pdf' },
+  { date: '2026-01-30', url: 'https://nserbt.ca/sites/default/files/gasprice_299.pdf' },
+  { date: '2026-01-23', url: 'https://nserbt.ca/sites/default/files/gasprice_297.pdf' },
+  { date: '2026-01-16', url: 'https://nserbt.ca/sites/default/files/gasprice_295.pdf' },
+  { date: '2026-01-09', url: 'https://nserbt.ca/sites/default/files/gasprice_293.pdf' },
+  { date: '2026-01-02', url: 'https://nserbt.ca/sites/default/files/gasprice_291.pdf' },
+  { date: '2025-12-26', url: 'https://nserbt.ca/sites/default/files/gasprice_289.pdf' },
+  { date: '2025-12-19', url: 'https://nserbt.ca/sites/default/files/gasprice_287.pdf' },
+  { date: '2025-12-12', url: 'https://nserbt.ca/sites/default/files/gasprice_285.pdf' },
+  { date: '2025-12-05', url: 'https://nserbt.ca/sites/default/files/gasprice_283.pdf' },
+  { date: '2025-11-28', url: 'https://nserbt.ca/sites/default/files/gasprice_281.pdf' },
+  { date: '2025-11-21', url: 'https://nserbt.ca/sites/default/files/gasprice_279.pdf' },
+  { date: '2025-11-14', url: 'https://nserbt.ca/sites/default/files/gasprice_277.pdf' },
+  { date: '2025-11-07', url: 'https://nserbt.ca/sites/default/files/gasprice_275.pdf' },
 ];
 
 async function downloadPdf(url, destPath) {

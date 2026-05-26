@@ -4,31 +4,118 @@ type Props = {
   data: GasPriceData;
 };
 
-function Sparkline({ history }: { history: GasPriceData['history'] }) {
-  if (history.length < 2) return null;
+// SVG viewBox dimensions
+const W = 560;
+const H = 130;
+const ML = 44; // left margin for Y-axis labels
+const MR = 38; // right margin for current-price label
+const MT = 10; // top margin
+const MB = 22; // bottom margin for X-axis labels
+const CW = W - ML - MR;
+const CH = H - MT - MB;
 
-  const recent = history.slice(-12);
-  const W = 300;
-  const H = 52;
-  const PAD = 6;
+function GasPriceChart({ history }: { history: GasPriceData['history'] }) {
+  const now = new Date();
+  const end = now;
+  const start = new Date(now);
+  start.setMonth(start.getMonth() - 6);
 
-  const values = recent.map(e => e.regular);
-  const minVal = Math.min(...values) - 1;
-  const maxVal = Math.max(...values) + 1;
-  const range = maxVal - minVal || 1;
+  const inWindow = history.filter(e => new Date(e.date + 'T12:00:00Z') >= start);
+  // If fewer than 2 points fall in the 6-month window, show whatever we have
+  const pts = (inWindow.length >= 2 ? inWindow : history)
+    .slice()
+    .sort((a, b) => a.date.localeCompare(b.date));
 
-  const toX = (i: number) => PAD + (i / (recent.length - 1)) * (W - PAD * 2);
-  const toY = (v: number) => H - PAD - ((v - minVal) / range) * (H - PAD * 2);
+  if (pts.length < 2) return null;
 
-  const linePoints = recent.map((e, i) => `${toX(i).toFixed(1)},${toY(e.regular).toFixed(1)}`).join(' ');
-  const fillPoints = `${PAD},${H} ${linePoints} ${toX(recent.length - 1).toFixed(1)},${H}`;
+  const toX = (dateStr: string) => {
+    const t = new Date(dateStr + 'T12:00:00Z').getTime();
+    return ML + ((t - start.getTime()) / (end.getTime() - start.getTime())) * CW;
+  };
 
-  const lastX = toX(recent.length - 1);
-  const lastY = toY(recent[recent.length - 1].regular);
+  const prices = pts.map(e => e.regular);
+  const rawMin = Math.min(...prices);
+  const rawMax = Math.max(...prices);
+  const minP = Math.floor((rawMin - 5) / 10) * 10;
+  const maxP = Math.ceil((rawMax + 5) / 10) * 10;
+  const range = maxP - minP || 1;
+
+  const toY = (p: number) => MT + CH - ((p - minP) / range) * CH;
+
+  // Y-axis ticks every 10 ¢
+  const yTicks: number[] = [];
+  for (let p = minP; p <= maxP; p += 10) yTicks.push(p);
+
+  // Month labels — first of each month inside the window
+  const months: { x: number; label: string }[] = [];
+  const mCur = new Date(start.getFullYear(), start.getMonth() + 1, 1);
+  while (mCur <= end) {
+    const x = toX(mCur.toISOString().split('T')[0]);
+    const label = mCur.toLocaleDateString('en-US', { month: 'short' });
+    months.push({ x, label });
+    mCur.setMonth(mCur.getMonth() + 1);
+  }
+
+  const linePoints = pts
+    .map(e => `${toX(e.date).toFixed(1)},${toY(e.regular).toFixed(1)}`)
+    .join(' ');
+
+  const firstX = toX(pts[0].date).toFixed(1);
+  const lastPt = pts[pts.length - 1];
+  const lastX = toX(lastPt.date);
+  const lastY = toY(lastPt.regular);
+  const fillPoints = `${firstX},${MT + CH} ${linePoints} ${lastX.toFixed(1)},${MT + CH}`;
+
+  // Diesel line — only if real values exist (diesel ≠ 999.9)
+  const dieselPts = pts.filter(e => e.diesel < 500);
+  const dieselLine =
+    dieselPts.length >= 2
+      ? dieselPts.map(e => `${toX(e.date).toFixed(1)},${toY(e.diesel).toFixed(1)}`).join(' ')
+      : null;
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} preserveAspectRatio="none">
-      <polygon points={fillPoints} fill="rgba(251,191,36,0.12)" />
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" role="img" aria-label="Gas price history chart">
+      {/* Horizontal gridlines + Y-axis labels */}
+      {yTicks.map(p => (
+        <g key={p}>
+          <line
+            x1={ML} y1={toY(p)} x2={ML + CW} y2={toY(p)}
+            stroke="currentColor" strokeOpacity="0.07" strokeWidth="1" strokeDasharray="4,3"
+          />
+          <text
+            x={ML - 5} y={toY(p)}
+            textAnchor="end" dominantBaseline="middle"
+            fontSize="9" fill="currentColor" fillOpacity="0.45"
+          >
+            {p}
+          </text>
+        </g>
+      ))}
+
+      {/* Vertical month lines + X-axis labels */}
+      {months.map((m, i) => (
+        <g key={i}>
+          <line
+            x1={m.x} y1={MT} x2={m.x} y2={MT + CH}
+            stroke="currentColor" strokeOpacity="0.06" strokeWidth="1"
+          />
+          <text
+            x={m.x} y={MT + CH + 13}
+            textAnchor="middle" fontSize="9" fill="currentColor" fillOpacity="0.45"
+          >
+            {m.label}
+          </text>
+        </g>
+      ))}
+
+      {/* Axes */}
+      <line x1={ML} y1={MT} x2={ML} y2={MT + CH} stroke="currentColor" strokeOpacity="0.12" strokeWidth="1" />
+      <line x1={ML} y1={MT + CH} x2={ML + CW} y2={MT + CH} stroke="currentColor" strokeOpacity="0.12" strokeWidth="1" />
+
+      {/* Area fill */}
+      <polygon points={fillPoints} fill="rgba(234,179,8,0.10)" />
+
+      {/* Regular price line */}
       <polyline
         points={linePoints}
         fill="none"
@@ -37,7 +124,37 @@ function Sparkline({ history }: { history: GasPriceData['history'] }) {
         strokeLinejoin="round"
         strokeLinecap="round"
       />
-      <circle cx={lastX} cy={lastY} r="4" fill="rgb(234,179,8)" />
+
+      {/* Diesel price line */}
+      {dieselLine && (
+        <polyline
+          points={dieselLine}
+          fill="none"
+          stroke="rgb(148,163,184)"
+          strokeWidth="1.5"
+          strokeDasharray="4,2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          opacity="0.7"
+        />
+      )}
+
+      {/* Data point dots with title tooltips */}
+      {pts.map(e => (
+        <circle key={e.date} cx={toX(e.date)} cy={toY(e.regular)} r="3" fill="rgb(234,179,8)" fillOpacity="0.9">
+          <title>{e.date}: {e.regular.toFixed(1)} ¢/L regular</title>
+        </circle>
+      ))}
+
+      {/* Latest price — larger dot + label */}
+      <circle cx={lastX} cy={lastY} r="4.5" fill="rgb(234,179,8)" />
+      <text
+        x={lastX + 7} y={lastY}
+        dominantBaseline="middle" fontSize="11" fontWeight="700"
+        fill="rgb(202,138,4)"
+      >
+        {lastPt.regular.toFixed(1)}
+      </text>
     </svg>
   );
 }
@@ -54,6 +171,8 @@ export default function GasPriceCard({ data }: Props) {
     month: 'short',
     day: 'numeric',
   });
+
+  const hasRealDiesel = current.diesel < 500;
 
   return (
     <div className="rounded-2xl bg-card border border-border shadow-sm mb-6 overflow-hidden">
@@ -76,14 +195,21 @@ export default function GasPriceCard({ data }: Props) {
           )}
         </div>
 
-        <p className="text-xs text-foreground/40 mt-0.5">
-          Diesel&nbsp;{current.diesel.toFixed(1)} ¢/L
-        </p>
+        <div className="flex items-center gap-3 mt-0.5">
+          <p className="text-xs text-foreground/40">
+            Diesel&nbsp;{hasRealDiesel ? `${current.diesel.toFixed(1)} ¢/L` : 'n/a'}
+          </p>
+          {history.length > 1 && (
+            <p className="text-[10px] text-foreground/30 ml-auto">
+              {history.length} weeks · 6-month view
+            </p>
+          )}
+        </div>
       </div>
 
-      <div className="px-2 pb-3">
+      <div className="px-3 pb-3">
         {history.length > 1 ? (
-          <Sparkline history={history} />
+          <GasPriceChart history={history} />
         ) : (
           <p className="text-[10px] text-foreground/30 text-center pb-1">
             Chart builds weekly — check back next Saturday

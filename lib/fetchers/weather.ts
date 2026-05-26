@@ -14,10 +14,11 @@ export interface WeatherData {
   windSpeed: number;
   windDirection: number;
   humidity: number;
+  dewpoint: number;
+  visibility: number;   // km
   pressure: number;
   isDay: boolean;
   uvIndex: number;
-  uvIndexMaxToday: number;
   hourly: {
     timestamp: string;  // ISO UTC
     temp: number;
@@ -29,6 +30,7 @@ export interface WeatherData {
     weatherCode: number;
     maxTemp: number;
     minTemp: number;
+    textSummary: string;
     sunrise: string;
     sunset: string;
   }[];
@@ -119,17 +121,21 @@ export async function fetchWeather(): Promise<WeatherData | null> {
 
     const temperature: number = cc.temperature?.value?.en ?? 0;
 
-    // Use windChill as feels-like only when it's genuinely cold (temp ≤ 10 °C
-    // and windChill is colder than the actual temperature). Avoids showing a
-    // stale overnight windChill value on a warm afternoon.
+    // Feels-like: humidex on hot days (≥ 25 °C), windChill on cold days (≤ 10 °C).
     const windChill: number | undefined = cc.windChill?.value?.en;
+    const humidex: number | undefined = cc.humidex?.value?.en;
     const apparentTemp =
-      typeof windChill === 'number' && temperature <= 10 && windChill < temperature
+      typeof humidex === 'number' && temperature >= 25 && humidex > temperature
+        ? humidex
+        : typeof windChill === 'number' && temperature <= 10 && windChill < temperature
         ? windChill
         : temperature;
 
     // Pressure: ECCC provides kPa; WeatherScreen expects hPa (× 10).
     const pressure: number = (cc.pressure?.value?.en ?? 0) * 10;
+
+    const dewpoint: number = cc.dewpoint?.value?.en ?? 0;
+    const visibility: number = cc.visibility?.value?.en ?? 0;
 
     // UV index from today's "Today" or "Tonight" forecast (index 0).
     const uvIndex = parseFloat(forecasts[0]?.uv?.index?.en ?? '0') || 0;
@@ -163,7 +169,7 @@ export async function fetchWeather(): Promise<WeatherData | null> {
     const firstIsNight = /night$|tonight/.test(firstName);
     if (firstIsNight) firstDayIdx = -1; // day period is "missing"; use night's low as min only
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 7; i++) {
       let dayFcIdx: number;
       let nightFcIdx: number;
       if (firstIsNight) {
@@ -193,6 +199,7 @@ export async function fetchWeather(): Promise<WeatherData | null> {
         maxTemp;
 
       const iconCode = (dayFc ?? nightFc)?.abbreviatedForecast?.icon?.value;
+      const textSummary = (dayFc ?? nightFc)?.abbreviatedForecast?.textSummary?.en ?? '';
 
       const d = new Date(today);
       d.setDate(today.getDate() + i);
@@ -203,6 +210,7 @@ export async function fetchWeather(): Promise<WeatherData | null> {
         weatherCode: ecccIconToWmo(iconCode),
         maxTemp,
         minTemp,
+        textSummary,
         sunrise: i === 0 ? (riseSet?.sunrise?.en ?? '') : '',
         sunset: i === 0 ? (riseSet?.sunset?.en ?? '') : '',
       });
@@ -215,10 +223,11 @@ export async function fetchWeather(): Promise<WeatherData | null> {
       windSpeed: cc.wind?.speed?.value?.en ?? 0,
       windDirection: cc.wind?.bearing?.value?.en ?? 0,
       humidity: cc.relativeHumidity?.value?.en ?? 0,
+      dewpoint,
+      visibility,
       pressure,
       isDay,
       uvIndex,
-      uvIndexMaxToday: uvIndex,
       hourly,
       daily,
     };

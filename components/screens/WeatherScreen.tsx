@@ -317,7 +317,7 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
               {/* Unified conditions grid — all metrics together, no icons */}
               <div className="mt-4 space-y-3">
                 {/* Row 1: Weather conditions */}
-                <div className={`grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-3 ${currentWeather.theme.textSecondary}`}>
+                <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-3 ${currentWeather.theme.textSecondary}`}>
                   <div>
                     <p className="text-[10px] uppercase tracking-widest opacity-60">Wind</p>
                     <p className="text-sm font-semibold mt-0.5">
@@ -328,6 +328,14 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
                   <div>
                     <p className="text-[10px] uppercase tracking-widest opacity-60">Humidity</p>
                     <p className="text-sm font-semibold mt-0.5">{weather.humidity}%</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest opacity-60">Dewpoint</p>
+                    <p className="text-sm font-semibold mt-0.5">{weather.dewpoint}°C</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest opacity-60">Visibility</p>
+                    <p className="text-sm font-semibold mt-0.5">{weather.visibility} km</p>
                   </div>
                   {weather.daily[0] && (
                     <>
@@ -391,22 +399,29 @@ export default function WeatherScreen({ weather, tideGraph, airQuality, burnStat
               </div>
             </div>
             <div className={`${currentWeather.theme.bottomBar} px-3 sm:px-6 py-4`}>
-              <div className="grid grid-cols-5 gap-1">
-                {weather.daily.map((day) => {
-                  const info = getWeatherInfo(day.weatherCode);
-                  return (
-                    <div key={day.date} className="flex flex-col items-center gap-0.5 text-center">
-                      <span className={`text-[11px] sm:text-xs font-medium uppercase ${currentWeather.theme.textSecondary}`}>
-                        {getDayName(day.date)}
-                      </span>
-                      <span className="text-2xl">{info.emoji}</span>
-                      <div className="flex flex-col items-center leading-tight">
-                        <span className="text-xs sm:text-sm font-semibold">{Math.round(day.maxTemp)}°</span>
-                        <span className={`text-[11px] sm:text-xs ${currentWeather.theme.textSecondary}`}>{Math.round(day.minTemp)}°</span>
+              <div data-no-tab-swipe className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="flex gap-1 min-w-full">
+                  {weather.daily.map((day) => {
+                    const info = getWeatherInfo(day.weatherCode);
+                    return (
+                      <div key={day.date} className="flex flex-col items-center gap-0.5 text-center flex-1 min-w-[60px] px-1">
+                        <span className={`text-[11px] sm:text-xs font-medium uppercase ${currentWeather.theme.textSecondary}`}>
+                          {getDayName(day.date)}
+                        </span>
+                        <span className="text-2xl">{info.emoji}</span>
+                        <div className="flex flex-col items-center leading-tight">
+                          <span className="text-xs sm:text-sm font-semibold">{Math.round(day.maxTemp)}°</span>
+                          <span className={`text-[11px] sm:text-xs ${currentWeather.theme.textSecondary}`}>{Math.round(day.minTemp)}°</span>
+                        </div>
+                        {day.textSummary && (
+                          <span className={`text-[9px] sm:text-[10px] leading-tight opacity-70 mt-0.5 max-w-[60px] ${currentWeather.theme.textSecondary}`}>
+                            {day.textSummary}
+                          </span>
+                        )}
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </section>
