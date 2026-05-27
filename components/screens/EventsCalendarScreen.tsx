@@ -48,7 +48,17 @@ export default function EventsCalendarScreen({ renderedAt }: { renderedAt: numbe
           </div>
         </div>
 
-        <div className="rounded-xl overflow-hidden border border-border shadow-sm bg-white p-2 mb-4">
+        {/* data-no-tab-swipe: iOS Safari forwards touch events from
+            inside iframes up to the parent window's touchstart/touchend
+            listeners. Without this opt-out, every tap or scroll inside
+            the Google Calendar embed would arm the swipe-to-switch-tab
+            gesture and, on release, flip the user to the adjacent tab
+            (Feed) — which unmounted Events and reloaded the iframe.
+            The flicker the user was seeing was that bounce cycle. */}
+        <div
+          data-no-tab-swipe
+          className="rounded-xl overflow-hidden border border-border shadow-sm bg-white p-2 mb-4"
+        >
           <iframe
             src={CALENDAR_SRC}
             style={{ border: 0 }}
