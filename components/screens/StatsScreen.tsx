@@ -10,8 +10,8 @@ type Props = {
 
 export default function StatsScreen({ gasPrices, groceryPrices }: Props) {
   return (
-    <div className="pt-20 pb-24 min-h-dvh">
-      <div className="max-w-5xl mx-auto px-2 mt-4">
+    <div className="pt-14 md:pt-24 pb-24 min-h-dvh">
+      <div className="max-w-5xl mx-auto px-2 mt-2">
         <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-500 via-green-600 to-teal-700 dark:from-emerald-900 dark:via-green-900 dark:to-slate-900 text-white shadow-xl mb-6 px-6 py-4">
           <div className="flex items-center justify-between">
             <div>

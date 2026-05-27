@@ -12,8 +12,8 @@ type Props = {
 
 export default function FeedScreen({ news, redditPosts, redditFetchedAt }: Props) {
   return (
-    <div className="pt-20 pb-24 min-h-dvh">
-      <div className="max-w-3xl mx-auto px-2 mt-4">
+    <div className="pt-14 md:pt-24 pb-24 min-h-dvh">
+      <div className="max-w-3xl mx-auto px-2 mt-2">
         {/* News first, then Reddit underneath — per design spec. Both render
             full-width single-column even on desktop because long-form text
             is most readable at one column. */}

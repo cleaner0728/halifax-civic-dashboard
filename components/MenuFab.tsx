@@ -142,8 +142,12 @@ export default function MenuFab() {
         // On mobile it sits ABOVE the bottom tab bar (~64px tall + safe-area).
         // On desktop the bottom is free of nav, so a smaller offset is fine.
         className="fixed right-4 z-[65]"
+        // Tab bar is ~98px tall once py-3.5 + 3xl icon + xs label + gap
+        // settle (measured live, not estimated). 120px puts the FAB ~22px
+        // above the bar's top edge — enough breathing room not to read
+        // as part of it.
         style={{
-          bottom: "calc(env(safe-area-inset-bottom) + 72px)",
+          bottom: "calc(env(safe-area-inset-bottom) + 120px)",
         }}
         data-menu-fab
       >
@@ -280,8 +284,10 @@ export default function MenuFab() {
           aria-label="Open menu"
           aria-expanded={open}
           aria-haspopup="menu"
+          // 50% translucent so the FAB doesn't dominate the corner;
+          // backdrop-blur keeps it legible over busy content underneath.
           className="w-12 h-12 rounded-full flex items-center justify-center
-            bg-card border-2 border-border hover:border-foreground/30
+            bg-card/50 backdrop-blur border-2 border-border hover:border-foreground/30
             shadow-lg hover:shadow-xl transition-all duration-200
             active:scale-95"
         >

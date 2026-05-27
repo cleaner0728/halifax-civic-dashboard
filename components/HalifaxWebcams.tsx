@@ -50,15 +50,6 @@ const emeraOvalUrl = (t: number) =>
 const CAMS: Cam[] = [
   {
     kind: "image",
-    imageUrl: emeraOvalUrl,
-    refreshMs: 10_000,
-    source:
-      "https://www.halifax.ca/parks-recreation/programs-activities/outdoor-recreation/emera-oval",
-    name: "Emera Oval",
-    emoji: "⛸️",
-  },
-  {
-    kind: "image",
     imageUrl: hhbUrl("macdonald-halifax-bound"),
     refreshMs: 10_000,
     source: "https://www.novascotiawebcams.com/webcams/macdonald-bridge-halifax-bound",
@@ -116,6 +107,18 @@ const CAMS: Cam[] = [
     source: "https://www.novascotiawebcams.com/webcams/armdale-roundabout-2",
     name: "Armdale Roundabout",
     emoji: "🚥",
+  },
+  // Emera Oval moved to the end so traffic / transit cams (which most
+  // users hit first) own the leading pills. Oval is a recreational
+  // ambient feed — useful, but lower-frequency intent.
+  {
+    kind: "image",
+    imageUrl: emeraOvalUrl,
+    refreshMs: 10_000,
+    source:
+      "https://www.halifax.ca/parks-recreation/programs-activities/outdoor-recreation/emera-oval",
+    name: "Emera Oval",
+    emoji: "⛸️",
   },
 ];
 

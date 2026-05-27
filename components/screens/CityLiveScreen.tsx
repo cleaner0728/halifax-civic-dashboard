@@ -60,6 +60,70 @@ function SectionHeader({
   );
 }
 
+// Section that folds its body behind its header. Default closed —
+// keeps long, less-time-sensitive lists (city press releases, fire
+// incidents) from pushing more urgent content off-screen on first
+// load. Native <details>/<summary> for free a11y.
+//
+// Source link lives INSIDE the body, not in the summary row. Two
+// reasons: (1) tapping a link inside <summary> would also toggle the
+// section, requiring an onClick stopPropagation — which would force
+// this whole file to become a client component. (2) The source link is
+// contextual to the expanded content; showing it only when expanded
+// keeps the collapsed header clean.
+function CollapsibleSection({
+  icon,
+  title,
+  meta,
+  href,
+  linkLabel,
+  children,
+}: {
+  icon: string;
+  title: string;
+  meta?: string;
+  href?: string;
+  linkLabel?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <details className="group mt-8">
+      <summary
+        className="list-none cursor-pointer flex items-center justify-between gap-3 mb-3 px-1 [&::-webkit-details-marker]:hidden"
+      >
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-xl" aria-hidden>{icon}</span>
+          <h2 className="text-lg font-bold text-foreground truncate">{title}</h2>
+          {meta && <span className="text-xs text-foreground/40 truncate">· {meta}</span>}
+        </div>
+        <svg
+          className="w-4 h-4 text-foreground/50 shrink-0 transition-transform duration-200 group-open:rotate-180"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2.5}
+          aria-hidden
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </summary>
+      <div className="space-y-3">
+        {children}
+        {href && (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-xs text-foreground/50 hover:text-foreground/80 px-1"
+          >
+            {linkLabel ?? 'source'} ↗
+          </a>
+        )}
+      </div>
+    </details>
+  );
+}
+
 export default function CityLiveScreen({
   weather,
   tideGraph,
@@ -74,8 +138,8 @@ export default function CityLiveScreen({
   hrmDateLabel,
 }: Props) {
   return (
-    <div className="pt-20 pb-24 min-h-dvh">
-      <div className="max-w-5xl mx-auto px-2 mt-4">
+    <div className="pt-14 md:pt-24 pb-24 min-h-dvh">
+      <div className="max-w-5xl mx-auto px-2 mt-2">
         <AlertsBlock alerts={alerts} />
 
         {/* Right Now — weather card already packs tides, AQ, burn, UV, etc.
@@ -100,23 +164,25 @@ export default function CityLiveScreen({
           adjustments={adjustments}
         />
 
-        <SectionHeader
+        <CollapsibleSection
           icon="🚒"
           title="Active Incidents"
           meta="past 90 min"
           href="https://www.halifax.ca/safety-security/fire-emergency/hrfe-incident-feed"
           linkLabel="HRFE feed"
-        />
-        <HrfeBlock incidents={hrfeIncidents} />
+        >
+          <HrfeBlock incidents={hrfeIncidents} />
+        </CollapsibleSection>
 
-        <SectionHeader
+        <CollapsibleSection
           icon="🏛️"
           title="City News"
           meta={hrmDateLabel}
           href="https://www.halifax.ca/home/news"
           linkLabel="halifax.ca"
-        />
-        <HrmNewsBlock items={hrmNews} />
+        >
+          <HrmNewsBlock items={hrmNews} />
+        </CollapsibleSection>
       </div>
     </div>
   );
