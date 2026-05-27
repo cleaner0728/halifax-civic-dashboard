@@ -259,7 +259,24 @@ export default function WeatherBlock({ weather, tideGraph, airQuality, burnStatu
           )}
           <div>
             <p className="text-[10px] uppercase tracking-widest opacity-60">Pressure</p>
-            <p className="text-sm font-semibold mt-0.5">{Math.round(weather.pressure)} hPa</p>
+            <p className="text-sm font-semibold mt-0.5">
+              {Math.round(weather.pressure)} hPa
+              {weather.pressureTendency && (
+                <span className="ml-1 opacity-80">
+                  {weather.pressureTendency === 'rising'
+                    ? '↑'
+                    : weather.pressureTendency === 'falling'
+                    ? '↓'
+                    : '→'}
+                  {weather.pressureChange !== 0 && (
+                    <span className="ml-0.5 text-xs">
+                      {weather.pressureChange > 0 ? '+' : ''}
+                      {weather.pressureChange.toFixed(1)}
+                    </span>
+                  )}
+                </span>
+              )}
+            </p>
           </div>
         </div>
       </div>

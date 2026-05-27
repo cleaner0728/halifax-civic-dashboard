@@ -17,6 +17,8 @@ export interface WeatherData {
   dewpoint: number;
   visibility: number;   // km
   pressure: number;
+  pressureTendency: 'rising' | 'falling' | 'steady' | null;
+  pressureChange: number; // hPa over past 3 h (sign matches tendency)
   isDay: boolean;
   uvIndex: number;
   hourly: {
@@ -133,6 +135,15 @@ export async function fetchWeather(): Promise<WeatherData | null> {
 
     // Pressure: ECCC provides kPa; WeatherBlock expects hPa (× 10).
     const pressure: number = (cc.pressure?.value?.en ?? 0) * 10;
+    const rawTendency = (cc.pressure?.tendency?.en ?? '').toLowerCase();
+    const pressureTendency: WeatherData['pressureTendency'] =
+      rawTendency === 'rising' || rawTendency === 'falling' || rawTendency === 'steady'
+        ? rawTendency
+        : null;
+    // ECCC `change` is unsigned kPa; sign it from tendency and convert to hPa.
+    const rawChange = Math.abs(cc.pressure?.change?.en ?? 0) * 10;
+    const pressureChange =
+      pressureTendency === 'falling' ? -rawChange : pressureTendency === 'rising' ? rawChange : 0;
 
     const dewpoint: number = cc.dewpoint?.value?.en ?? 0;
     const visibility: number = cc.visibility?.value?.en ?? 0;
@@ -226,6 +237,8 @@ export async function fetchWeather(): Promise<WeatherData | null> {
       dewpoint,
       visibility,
       pressure,
+      pressureTendency,
+      pressureChange,
       isDay,
       uvIndex,
       hourly,
