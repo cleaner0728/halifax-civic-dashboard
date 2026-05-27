@@ -19,6 +19,8 @@ import {
   fetchTransitAdjustments,
 } from '@/lib/fetchers/transit';
 import { fetchTides, computeTideGraph } from '@/lib/fetchers/tides';
+import { fetchBuoy } from '@/lib/fetchers/buoy';
+import { fetchMarineForecast } from '@/lib/fetchers/marine-forecast';
 import { fetchRedditPosts } from '@/lib/fetchers/reddit';
 import { fetchGasPrices } from '@/lib/fetchers/gas';
 import { fetchGroceryPrices } from '@/lib/fetchers/grocery';
@@ -49,6 +51,8 @@ export default async function Home() {
     burnStatus,
     alerts,
     groceryPrices,
+    buoy,
+    marineForecast,
   ] = await Promise.all([
     safe(fetchWeather(), null, 'weather'),
     safe(fetchNews(), { items: [] }, 'news'),
@@ -64,6 +68,8 @@ export default async function Home() {
     safe(fetchBurnStatus(), null, 'burn-status'),
     safe(fetchAlerts(), [], 'alerts'),
     safe(fetchGroceryPrices(), { items: [] }, 'grocery-prices'),
+    safe(fetchBuoy(), null, 'buoy'),
+    safe(fetchMarineForecast(), null, 'marine-forecast'),
   ]);
 
   const tideGraph = computeTideGraph(tides);
@@ -94,6 +100,8 @@ export default async function Home() {
           hrfeIncidents={hrfeIncidents}
           hrmNews={hrmResult.items}
           hrmDateLabel={hrmResult.dateLabel}
+          buoy={buoy}
+          marineForecast={marineForecast}
         />
         <FeedScreen
           news={news.items}
