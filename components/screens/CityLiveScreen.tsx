@@ -1,6 +1,7 @@
 import HalifaxWebcams from '@/components/HalifaxWebcams';
 import AlertsBlock from '@/components/blocks/AlertsBlock';
 import WeatherBlock from '@/components/blocks/WeatherBlock';
+import WindyMapBlock from '@/components/blocks/WindyMapBlock';
 import GettingAroundBlock from '@/components/blocks/GettingAroundBlock';
 import HrfeBlock from '@/components/blocks/HrfeBlock';
 import HrmNewsBlock from '@/components/blocks/HrmNewsBlock';
@@ -141,6 +142,8 @@ export default function CityLiveScreen({
     <div className="pt-14 md:pt-24 pb-24 min-h-dvh">
       <div className="max-w-5xl mx-auto px-2 mt-2">
         <AlertsBlock alerts={alerts} />
+
+        <WindyMapBlock />
 
         {/* Right Now — weather card already packs tides, AQ, burn, UV, etc.
             into its own grid. Webcams sit directly under per spec. */}
