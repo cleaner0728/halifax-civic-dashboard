@@ -41,7 +41,22 @@ type Cam =
 const hhbUrl = (slug: string) => (t: number) =>
   `https://halifaxharbourbridges.ca/wp-content/traffic_cam_images/${slug}.png?time=${t}`;
 
+// Emera Oval cam served straight off halifax.ca's CDN. Same image/jpeg
+// response — unoptimized <Image> is fine, no ORB issue, and bypassing
+// next/image avoids Vercel Image Optimization charges on every poll.
+const emeraOvalUrl = (t: number) =>
+  `https://cdn.halifax.ca/webcam/webcamImage1.jpg?t=${t}`;
+
 const CAMS: Cam[] = [
+  {
+    kind: "image",
+    imageUrl: emeraOvalUrl,
+    refreshMs: 10_000,
+    source:
+      "https://www.halifax.ca/parks-recreation/programs-activities/outdoor-recreation/emera-oval",
+    name: "Emera Oval",
+    emoji: "⛸️",
+  },
   {
     kind: "image",
     imageUrl: hhbUrl("macdonald-halifax-bound"),
@@ -118,7 +133,7 @@ function ImageCam({
   refreshMs: number;
 }) {
   // Polls at the per-cam cadence, pauses while the tab is hidden, resumes
-  // with an immediate refresh on focus. Shared with EmeraOvalWebcam.
+  // with an immediate refresh on focus.
   const t = usePolledImage(refreshMs);
 
   if (t === 0) return null;

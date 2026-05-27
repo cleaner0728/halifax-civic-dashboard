@@ -7,18 +7,19 @@ const inflateRawAsync = promisify(inflateRaw);
 const CSV_URL = 'https://www150.statcan.gc.ca/n1/tbl/csv/18100245-eng.zip';
 const MONTHS = 24;
 
-// 1 lb = 0.453592 kg, so $/kg × 0.453592 = $/lb
-const KG_TO_LB = 0.453592;
-
+// Stats Canada publishes per-kilogram prices. We display $/kg as the
+// primary unit (matches the source + Canada's metric convention) with
+// an "≈ $X.XX /lb" hint computed in the card for shoppers used to lb.
+// 1 lb = 0.453592 kg.
 const WANTED = [
-  { key: 'beef',     label: 'Ground Beef',    unit: '$/lb',   match: 'Ground beef, per kilogram',    multiplier: KG_TO_LB },
-  { key: 'chicken',  label: 'Chicken Breast', unit: '$/lb',   match: 'Chicken breasts, per kilogram', multiplier: KG_TO_LB },
-  { key: 'pork',     label: 'Pork Loin',      unit: '$/lb',   match: 'Pork loin cuts, per kilogram',  multiplier: KG_TO_LB },
+  { key: 'beef',     label: 'Ground Beef',    unit: '$/kg',   match: 'Ground beef, per kilogram',     multiplier: 1 },
+  { key: 'chicken',  label: 'Chicken Breast', unit: '$/kg',   match: 'Chicken breasts, per kilogram', multiplier: 1 },
+  { key: 'pork',     label: 'Pork Loin',      unit: '$/kg',   match: 'Pork loin cuts, per kilogram',  multiplier: 1 },
   { key: 'eggs',     label: 'Eggs',           unit: '$/doz',  match: 'Eggs, 1 dozen',                 multiplier: 1 },
   { key: 'milk',     label: 'Milk (2L)',      unit: '$/2L',   match: 'Milk, 2 litres',                multiplier: 1 },
   { key: 'bread',    label: 'White Bread',    unit: '$/loaf', match: 'White bread, 675 grams',        multiplier: 1 },
-  { key: 'potatoes', label: 'Potatoes',       unit: '$/lb',   match: 'Potatoes, per kilogram',        multiplier: KG_TO_LB },
-  { key: 'tomatoes', label: 'Tomatoes',       unit: '$/lb',   match: 'Tomatoes, per kilogram',        multiplier: KG_TO_LB },
+  { key: 'potatoes', label: 'Potatoes',       unit: '$/kg',   match: 'Potatoes, per kilogram',        multiplier: 1 },
+  { key: 'tomatoes', label: 'Tomatoes',       unit: '$/kg',   match: 'Tomatoes, per kilogram',        multiplier: 1 },
 ];
 
 // Lookup from exact product name → WANTED entry

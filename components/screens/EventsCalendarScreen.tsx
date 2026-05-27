@@ -1,7 +1,6 @@
 // Static screen — embeds the HRM Google Calendar aggregator iframe, with the
 // Emera Oval live webcam below it.
 
-import EmeraOvalWebcam from '@/components/EmeraOvalWebcam';
 import EndOfDashboardFooter from '@/components/EndOfDashboardFooter';
 
 const CALENDAR_SRC =
@@ -26,7 +25,7 @@ const CALENDAR_SRC =
 
 export default function EventsCalendarScreen({ renderedAt }: { renderedAt: number }) {
   return (
-    <div className="pt-20 pb-4 min-h-dvh">
+    <div className="pt-20 pb-24 min-h-dvh">
       <div className="max-w-5xl mx-auto px-2 mt-4">
         <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-violet-500 via-purple-600 to-fuchsia-700 dark:from-violet-900 dark:via-purple-900 dark:to-slate-900 text-white shadow-xl mb-6 px-6 py-4">
           <div className="flex items-center justify-between">
@@ -58,8 +57,6 @@ export default function EventsCalendarScreen({ renderedAt }: { renderedAt: numbe
             title="Halifax Events Calendar"
           />
         </div>
-
-        <EmeraOvalWebcam />
 
         <EndOfDashboardFooter renderedAt={renderedAt} />
       </div>

@@ -131,7 +131,7 @@ export async function fetchWeather(): Promise<WeatherData | null> {
         ? windChill
         : temperature;
 
-    // Pressure: ECCC provides kPa; WeatherScreen expects hPa (× 10).
+    // Pressure: ECCC provides kPa; WeatherBlock expects hPa (× 10).
     const pressure: number = (cc.pressure?.value?.en ?? 0) * 10;
 
     const dewpoint: number = cc.dewpoint?.value?.en ?? 0;

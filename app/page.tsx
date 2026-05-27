@@ -1,17 +1,12 @@
 import BrandTitle from '@/components/BrandTitle';
 import InstallButton from '@/components/InstallButton';
-import LanguageToggle from '@/components/LanguageToggle';
-import SettingsMenu from '@/components/SettingsMenu';
-import ScrollSnapContainer from '@/components/ScrollSnapContainer';
+import MenuFab from '@/components/MenuFab';
+import ScrollSnapContainer, { type TabSpec } from '@/components/ScrollSnapContainer';
 import RefreshOnVisible from '@/components/RefreshOnVisible';
-import WeatherScreen from '@/components/screens/WeatherScreen';
-import NewsScreen from '@/components/screens/NewsScreen';
-import HrmNewsScreen from '@/components/screens/HrmNewsScreen';
-import HrfeIncidentsScreen from '@/components/screens/HrfeIncidentsScreen';
-import TransitDisruptionScreen from '@/components/screens/TransitDisruptionScreen';
+import CityLiveScreen from '@/components/screens/CityLiveScreen';
+import FeedScreen from '@/components/screens/FeedScreen';
 import EventsCalendarScreen from '@/components/screens/EventsCalendarScreen';
-import RedditScreen from '@/components/screens/RedditScreen';
-import GroceryScreen from '@/components/screens/GroceryScreen';
+import StatsScreen from '@/components/screens/StatsScreen';
 import { fetchWeather } from '@/lib/fetchers/weather';
 import { fetchAirQuality } from '@/lib/fetchers/air-quality';
 import { fetchBurnStatus } from '@/lib/fetchers/burn-status';
@@ -29,17 +24,16 @@ import { fetchGasPrices } from '@/lib/fetchers/gas';
 import { fetchGroceryPrices } from '@/lib/fetchers/grocery';
 import { safe } from '@/lib/safe';
 
-const TAB_LABELS = ['City Live', 'Reddit', 'News', 'Transit', 'HRM', 'HRFE', 'Events', 'Prices'];
+const TABS: TabSpec[] = [
+  { label: 'City Live', icon: '🏙️' },
+  { label: 'Feed', icon: '📰' },
+  { label: 'Events', icon: '🎟️' },
+  { label: 'Stats', icon: '📊' },
+];
 
 export default async function Home() {
-  // Captured here so the same value flows to anything that displays "data
-  // freshness". Resolves at the moment the RSC tree is computed; RSC cache
-  // hits will reuse this older value, which is what we want — a cached
-  // render genuinely IS older data.
   const renderedAt = Date.now();
 
-  // Each fetcher already returns an "empty" sentinel on failure; safe() catches
-  // anything that still escapes so one bad source can't 500 the whole dashboard.
   const [
     weather,
     news,
@@ -78,38 +72,38 @@ export default async function Home() {
     <main className="bg-background text-foreground select-none [-webkit-user-select:none]">
       <RefreshOnVisible />
       <ScrollSnapContainer
-        labels={TAB_LABELS}
+        tabs={TABS}
         topBar={
           <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-2">
             <BrandTitle />
             <div className="flex items-center gap-2 shrink-0">
               <InstallButton />
-              <LanguageToggle />
-              <SettingsMenu />
             </div>
           </div>
         }
       >
-        <WeatherScreen
+        <CityLiveScreen
           weather={weather}
           tideGraph={tideGraph}
           airQuality={airQuality}
           burnStatus={burnStatus}
           alerts={alerts}
-          gasPrices={gasPrices}
-        />
-        <RedditScreen posts={redditData.posts} fetchedAt={redditData.fetchedAt} />
-        <NewsScreen items={news.items} />
-        <TransitDisruptionScreen
           detours={transitDetours}
           ferryAlerts={ferryAlerts}
           adjustments={transitAdjustments}
+          hrfeIncidents={hrfeIncidents}
+          hrmNews={hrmResult.items}
+          hrmDateLabel={hrmResult.dateLabel}
         />
-        <HrmNewsScreen items={hrmResult.items} dateLabel={hrmResult.dateLabel} />
-        <HrfeIncidentsScreen incidents={hrfeIncidents} />
+        <FeedScreen
+          news={news.items}
+          redditPosts={redditData.posts}
+          redditFetchedAt={redditData.fetchedAt}
+        />
         <EventsCalendarScreen renderedAt={renderedAt} />
-        <GroceryScreen groceryPrices={groceryPrices} />
+        <StatsScreen gasPrices={gasPrices} groceryPrices={groceryPrices} />
       </ScrollSnapContainer>
+      <MenuFab />
     </main>
   );
 }

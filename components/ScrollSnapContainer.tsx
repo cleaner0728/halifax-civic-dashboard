@@ -5,245 +5,59 @@ import { useRouter } from "next/navigation";
 import { track } from "@vercel/analytics";
 import HapticTab from "./HapticTab";
 
+export type TabSpec = { label: string; icon: string };
+
 interface ScrollSnapContainerProps {
   children: React.ReactNode[];
-  labels: string[];
+  tabs: TabSpec[];
   topBar?: React.ReactNode;
 }
 
-export default function ScrollSnapContainer({ children, labels, topBar }: ScrollSnapContainerProps) {
+// Single-tab-rendered architecture: only the active tab lives in the DOM.
+// Switching tabs scrolls back to 0 (per design: each tab is a fresh page).
+// No vertical stacking, so scrolling to the bottom of one tab does NOT
+// continue into the next — users must tap a tab to change context.
+export default function ScrollSnapContainer({ children, tabs, topBar }: ScrollSnapContainerProps) {
   const router = useRouter();
-  const tabRefs = useRef<(HTMLLabelElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [pullProgress, setPullProgress] = useState(0); // 0..1, drives the indicator
-  // `isPending` is true while the RSC refresh is genuinely in flight.
-  // Previously we faked the spinner with a 800ms setTimeout — sometimes
-  // the data was still loading after the spinner cleared, sometimes the
-  // data was ready 200ms in and the spinner overstayed. useTransition
-  // ties the indicator to the actual refresh lifecycle.
+  const [pullProgress, setPullProgress] = useState(0);
   const [isPending, startTransition] = useTransition();
 
-  // Refs that mirror state so touch/scroll handlers see live values without
-  // having to re-attach their listeners on every render.
   const activeIndexRef = useRef(0);
-  const isNavigatingRef = useRef(false);
-  const navTimeoutRef = useRef<number | null>(null);
-
   useEffect(() => { activeIndexRef.current = activeIndex; }, [activeIndex]);
 
   // Tab dwell-time analytics. When activeIndex changes, emit a `tab_view`
   // event for the OUTGOING tab with how long the user spent on it.
-  // Threshold of 1.5s filters out drive-by passes during snap-scrolling
-  // or fast horizontal swipes so the data reflects actual reading time.
-  const tabEnterRef = useRef<{ tab: string; at: number }>({ tab: labels[0], at: Date.now() });
+  // Threshold of 1.5s filters out drive-by switches.
+  // Ref is initialized lazily inside the effect — calling Date.now() during
+  // render is impure and rejected by react-hooks/purity under React 19.
+  const tabEnterRef = useRef<{ tab: string; at: number } | null>(null);
   useEffect(() => {
     const prev = tabEnterRef.current;
-    const elapsedMs = Date.now() - prev.at;
-    if (elapsedMs >= 1500 && prev.tab !== labels[activeIndex]) {
-      track("tab_view", { tab: prev.tab, seconds: Math.round(elapsedMs / 1000) });
+    if (prev) {
+      const elapsedMs = Date.now() - prev.at;
+      if (elapsedMs >= 1500 && prev.tab !== tabs[activeIndex].label) {
+        track("tab_view", { tab: prev.tab, seconds: Math.round(elapsedMs / 1000) });
+      }
     }
-    tabEnterRef.current = { tab: labels[activeIndex], at: Date.now() };
-  }, [activeIndex, labels]);
+    tabEnterRef.current = { tab: tabs[activeIndex].label, at: Date.now() };
+  }, [activeIndex, tabs]);
 
-  // Auto-center the active tab pill in the (horizontally scrollable) tab
-  // bar. We use getBoundingClientRect (not offsetLeft) because the bar's
-  // offsetParent isn't the bar itself — it's the bg-card wrapper above —
-  // so offsetLeft would be measured against the wrong origin and the math
-  // would silently miss when the active tab is far right on mobile. The
-  // older `scrollIntoView({ behavior: "smooth", inline: "center" })` had
-  // its own bug too: the smooth scroll was still mid-flight when the next
-  // swipe fired, and `block: "nearest"` could propagate to body scroll.
-  // Direct scrollLeft assignment is instant and contained.
-  const centerActivePill = useCallback((index: number) => {
-    const tab = tabRefs.current[index];
-    if (!tab) return;
-    const bar = tab.parentElement;
-    if (!bar) return;
-    const tabRect = tab.getBoundingClientRect();
-    const barRect = bar.getBoundingClientRect();
-    const pillCenter = tabRect.left + tabRect.width / 2;
-    const barCenter = barRect.left + barRect.width / 2;
-    bar.scrollLeft = Math.max(0, bar.scrollLeft + (pillCenter - barCenter));
-  }, []);
-
-  useEffect(() => {
-    // rAF lets the new active pill's padding/font-weight changes commit
-    // before we measure, so the centering math uses the post-state width.
-    const raf = requestAnimationFrame(() => centerActivePill(activeIndex));
-    return () => cancelAnimationFrame(raf);
-  }, [activeIndex, centerActivePill]);
-
-  useEffect(() => {
-    // root: null observes against the viewport (the document is the scroll
-    // container now). rootMargin shrinks observation to a 1px band at the
-    // viewport center, so exactly one section's midpoint can cross at a
-    // time — no flicker between two ≥60%-visible sections.
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (isNavigatingRef.current) return;
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const index = Number(entry.target.getAttribute("data-snap-section"));
-            if (!isNaN(index)) setActiveIndex(index);
-          }
-        });
-      },
-      { root: null, rootMargin: "-50% 0px -50% 0px", threshold: 0 },
-    );
-    const sections = document.querySelectorAll("[data-snap-section]");
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, []);
-
-  // After a fling settles, if the user landed within EDGE_BAND of a section
-  // boundary, smooth-scroll the rest of the way so the card tops align to
-  // the viewport. Mid-section is a dead zone — we don't yank users away
-  // from content they may be reading. Done in JS rather than CSS
-  // scroll-snap because every CSS snap-type kills iOS WebKit's inertia.
-  useEffect(() => {
-    const EDGE_BAND = 80;
-    let timer = 0;
-    let touching = false;
-
-    const snapIfNeeded = () => {
-      if (touching) return;
-      if (isNavigatingRef.current) return;
-      const scrollTop = window.scrollY;
-      const screenH = window.innerHeight;
-      const snapPos = Math.round(scrollTop / screenH) * screenH;
-      const withinScreen = scrollTop - snapPos;
-
-      let target: number | null = null;
-      if (withinScreen > 0 && withinScreen < EDGE_BAND) {
-        target = snapPos;
-      } else if (withinScreen > screenH - EDGE_BAND) {
-        target = snapPos + screenH;
-      }
-      if (target == null) return;
-
-      const maxScroll = document.documentElement.scrollHeight - screenH;
-      target = Math.max(0, Math.min(maxScroll, target));
-      if (Math.abs(target - scrollTop) < 1) return;
-
-      window.scrollTo({ top: target, behavior: "smooth" });
-    };
-
-    const onScroll = () => {
-      if (timer) window.clearTimeout(timer);
-      timer = window.setTimeout(snapIfNeeded, 150);
-    };
-    const onTouchStart = () => { touching = true; };
-    const onTouchEnd = () => {
-      touching = false;
-      // After release, give the momentum fling a beat to start, then re-arm.
-      if (timer) window.clearTimeout(timer);
-      timer = window.setTimeout(snapIfNeeded, 250);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchend", onTouchEnd, { passive: true });
-    window.addEventListener("touchcancel", onTouchEnd, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchend", onTouchEnd);
-      window.removeEventListener("touchcancel", onTouchEnd);
-      if (timer) window.clearTimeout(timer);
-    };
-  }, []);
-
-  // iOS "tap the status bar" classic — double-click any blank surface
-  // (the title, a card background, the page void) to jump back to the
-  // top of the Weather tab. The handler is document-wide rather than
-  // attached to the header so the gesture works from anywhere on screen.
-  // Filters:
-  //   - Interactive elements (button, link, input, video, etc.) keep
-  //     their own double-click semantics — e.g. a video doesn't lose
-  //     fullscreen-on-doubleclick because we hijacked the event.
-  //   - When the user double-clicked to SELECT a word (browser's default
-  //     for dblclick on text), we don't yank them to the top.
-  //   - But: any element opted-in with `data-scroll-top` (the dashboard
-  //     title) ALWAYS triggers, even if a word selection was made — that
-  //     element is explicitly a "tap me to go home" target.
-  const scrollToTop = useCallback(() => {
-    isNavigatingRef.current = true;
-    setActiveIndex(0);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    if (navTimeoutRef.current) window.clearTimeout(navTimeoutRef.current);
-    navTimeoutRef.current = window.setTimeout(() => {
-      isNavigatingRef.current = false;
-    }, 600); // smooth scroll runs ~500ms; pad a touch so IO doesn't race
-  }, []);
-
-  useEffect(() => {
-    const onDblClick = (e: MouseEvent) => {
-      const t = e.target as HTMLElement | null;
-      if (!t) return;
-      // Explicit opt-in element (the dashboard title) — fire regardless.
-      if (t.closest("[data-scroll-top]")) {
-        scrollToTop();
-        return;
-      }
-      // Don't steal double-clicks meant for interactive widgets.
-      if (t.closest("button, a, input, select, textarea, label, video, canvas, iframe, [contenteditable='true']")) {
-        return;
-      }
-      // Preserve native "double-click selects a word" on text.
-      if ((window.getSelection()?.toString() ?? "").trim().length > 0) return;
-      scrollToTop();
-    };
-    document.addEventListener("dblclick", onDblClick);
-    return () => document.removeEventListener("dblclick", onDblClick);
-  }, [scrollToTop]);
-
-  // Programmatic tab navigation, used by pill clicks AND horizontal swipes.
-  // Every switch lands at the top of the target section — we deliberately
-  // do NOT remember scroll-within-section across tab switches. The dashboard
-  // surfaces are short, time-sensitive, and bouncing back to wherever the
-  // user last lingered confused testers more than it helped (they expected
-  // "tab = a fresh page", iOS-style).
+  // Switch tab: View Transition for the cross-fade/slide if the browser
+  // supports it, otherwise instant. Always scrolls to the top of the new
+  // tab — tabs are independent fresh pages.
   const switchTo = useCallback((index: number) => {
     if (index < 0 || index >= children.length) return;
     const oldIdx = activeIndexRef.current;
     if (index === oldIdx) return;
 
-    const target = document.querySelector(
-      `[data-snap-section="${index}"]`,
-    ) as HTMLElement | null;
-    if (!target) return;
-
-    // The actual navigation work (active-tab swap + vertical jump). Factored
-    // so the View Transition path can wrap it and so the fallback path can
-    // call it the same way.
     const direction = index > oldIdx ? 1 : -1;
     const doNavigate = () => {
-      isNavigatingRef.current = true;
       setActiveIndex(index);
-      track("tab_click", { from: labels[oldIdx], to: labels[index] });
-      // Instant jump (not smooth): a smooth scroll across 6 screens would
-      // fire the IO for every intermediate section and visibly cycle the
-      // active tab. With View Transitions on, the slide animation happens
-      // on a snapshot — the real scroll position lands instantly.
-      window.scrollTo({
-        top: target.offsetTop,
-        behavior: "instant" as ScrollBehavior,
-      });
-      // Centre the active pill in the tab bar synchronously, so the new
-      // snapshot captured by the View Transition already shows the pill
-      // in frame. Without this, mobile users sometimes saw the pill stuck
-      // off-screen left or right during the slide animation.
-      centerActivePill(index);
+      track("tab_click", { from: tabs[oldIdx].label, to: tabs[index].label });
+      window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
     };
 
-    // Preferred path: the browser's View Transition API. It snapshots the
-    // current viewport, runs our DOM mutations (navigation), snapshots the
-    // new state, and animates between the two. The slide direction is
-    // driven by a data attribute on <html> that CSS in globals.css reads
-    // (`::view-transition-old(root)` / `::view-transition-new(root)`).
-    //
-    // Chromium-based browsers since Mar 2023 and Safari 18 (Sep 2024) ship
-    // this. Older browsers fall through to the manual slide-in below.
     type DocWithVT = Document & {
       startViewTransition?: (cb: () => void) => { finished: Promise<void> };
     };
@@ -253,47 +67,47 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       const vt = docVT.startViewTransition(doNavigate);
       vt.finished.finally(() => {
         delete document.documentElement.dataset.tabDirection;
-        isNavigatingRef.current = false;
       });
       return;
     }
-
-    // Fallback: animate the arriving section only. Sections are stacked
-    // vertically in the DOM, so the leaving content is instant-scrolled
-    // away — what we CAN do is make the arriving tab's content slide in
-    // from the direction of travel.
     doNavigate();
-    target.style.transition = "none";
-    target.style.transform = `translateX(${direction * 28}px)`;
-    target.style.opacity = "0.6";
-    // Force a reflow so the browser registers the starting state before
-    // we add the transition — otherwise it would short-circuit straight
-    // to the end values with no animation.
-    void target.offsetWidth;
-    target.style.transition = "transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 220ms ease-out";
-    target.style.transform = "translateX(0)";
-    target.style.opacity = "1";
-    window.setTimeout(() => {
-      target.style.transition = "";
-      target.style.transform = "";
-      target.style.opacity = "";
-    }, 320);
+  }, [children.length, tabs]);
 
-    if (navTimeoutRef.current) window.clearTimeout(navTimeoutRef.current);
-    navTimeoutRef.current = window.setTimeout(() => {
-      isNavigatingRef.current = false;
-      // Match the animation duration so IO doesn't fire mid-slide and
-      // re-yank the active tab to whatever its midpoint sees.
-    }, 320);
-  }, [children.length, labels, centerActivePill]);
+  // Double-click any blank surface (title, card background, page void) →
+  // jump to the very top. With only one tab in the DOM at a time, "top" is
+  // unambiguous: window.scrollTo(0). The dashboard-title `[data-scroll-top]`
+  // element additionally returns the user to the FIRST tab (City Live)
+  // since that's the conventional "home" affordance.
+  const scrollToTop = useCallback(() => {
+    if (activeIndexRef.current !== 0) {
+      switchTo(0);
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [switchTo]);
 
-  // Horizontal-swipe gesture → previous/next tab.
-  //
-  // Thresholds tuned to feel native: 80px minimum travel, must dominate the
-  // vertical component by 2:1 (so vertical scrolling never accidentally
-  // triggers a tab swap), and the gesture must complete within 500ms.
-  // Touches that start inside `[data-no-tab-swipe]` are ignored so the
-  // horizontally-scrollable tab bar and any future inline carousels keep
+  useEffect(() => {
+    const onDblClick = (e: MouseEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (!t) return;
+      if (t.closest("[data-scroll-top]")) {
+        scrollToTop();
+        return;
+      }
+      if (t.closest("button, a, input, select, textarea, label, video, canvas, iframe, [contenteditable='true']")) {
+        return;
+      }
+      if ((window.getSelection()?.toString() ?? "").trim().length > 0) return;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    document.addEventListener("dblclick", onDblClick);
+    return () => document.removeEventListener("dblclick", onDblClick);
+  }, [scrollToTop]);
+
+  // Horizontal swipe → previous/next tab. Same gesture thresholds as
+  // before: 80px minimum travel, 2:1 horizontal dominance, ≤500ms.
+  // Touches starting inside `[data-no-tab-swipe]` are ignored so inner
+  // horizontal-scroll regions (hourly forecast, webcam pills, etc.) keep
   // their own gestures.
   useEffect(() => {
     let startX = 0;
@@ -320,7 +134,7 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       if (Math.abs(dx) < 80) return;
       if (Math.abs(dx) < Math.abs(dy) * 2) return;
       if (dt > 500) return;
-      const direction = dx < 0 ? 1 : -1; // swipe left → next tab
+      const direction = dx < 0 ? 1 : -1;
       switchTo(activeIndexRef.current + direction);
     };
     window.addEventListener("touchstart", onStart, { passive: true });
@@ -331,21 +145,19 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
     };
   }, [switchTo]);
 
-  // Custom pull-to-refresh. iOS Safari's built-in PTR reloads the whole
-  // page (lossy + slow); we'd rather refetch only the server-component
-  // data via router.refresh() while preserving client state. Native PTR
-  // is suppressed via `overscroll-behavior-y: contain` in globals.css.
+  // Custom pull-to-refresh. Native iOS PTR reloads the whole page; we'd
+  // rather refetch only the RSC payload via router.refresh() and keep
+  // client state. `useTransition` ties the spinner to the actual refresh
+  // lifecycle rather than a fake setTimeout.
   const pullProgressRef = useRef(0);
   useEffect(() => {
     const THRESHOLD_PX = 80;
-    const RATCHET = 2; // dy / 2 → user has to pull twice as far as the indicator moves
+    const RATCHET = 2;
     let startY = 0;
     let pulling = false;
 
     const onStart = (e: TouchEvent) => {
       if (e.touches.length !== 1) return;
-      // Only engage when we're at the very top — otherwise a normal scroll
-      // gesture mid-page would accidentally fire the indicator.
       if (window.scrollY > 2) return;
       startY = e.touches[0].clientY;
       pulling = true;
@@ -354,7 +166,6 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       if (!pulling) return;
       const dy = e.touches[0].clientY - startY;
       if (dy < 0) {
-        // User reversed direction — abandon pull, let scroll take over.
         pulling = false;
         pullProgressRef.current = 0;
         setPullProgress(0);
@@ -371,10 +182,7 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       pullProgressRef.current = 0;
       setPullProgress(0);
       if (triggered) {
-        track("pull_to_refresh", { tab: labels[activeIndexRef.current] });
-        // Wrap router.refresh() in startTransition so React tracks the RSC
-        // fetch lifecycle for us — `isPending` flips false the instant the
-        // server payload lands.
+        track("pull_to_refresh", { tab: tabs[activeIndexRef.current].label });
         startTransition(() => router.refresh());
       }
     };
@@ -386,14 +194,11 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
       window.removeEventListener("touchmove", onMove);
       window.removeEventListener("touchend", onEnd);
     };
-  }, [router, labels]);
+  }, [router, tabs]);
 
   return (
     <>
-      {/* Pull-to-refresh indicator — a small ring that fills as the user
-          pulls down from the top, then spins while we wait on the RSC
-          refresh. Sits below the fixed header so it's visible even with
-          the header on-screen. */}
+      {/* Pull-to-refresh indicator */}
       <div
         className="fixed left-1/2 -translate-x-1/2 z-[70] pointer-events-none transition-opacity duration-200"
         style={{ top: 96, opacity: pullProgress > 0 || isPending ? 1 : 0 }}
@@ -411,20 +216,11 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
         </div>
       </div>
 
-      {/* Header + Tabs — always visible. User feedback was that the
-          scroll-direction reveal made the swipe-between-tabs gesture even
-          harder to discover. We now teach that gesture two other ways:
-          the slide-in animation on tab switch (see switchTo above) and
-          the page-dot row pinned to the bottom of the viewport. Double-
-          click handling lives on document (see scrollToTop) so it fires
-          anywhere, not just the header. */}
+      {/* Top bar — always shows brand/settings row. On md+ (iPad/desktop)
+          it also shows the tab bar. Mobile gets a dedicated bottom tab bar
+          (see below) for thumb reach. */}
       <div
         className="fixed top-0 left-0 right-0 z-[60]"
-        // Pulled out of the View Transition's "root" snapshot so the
-        // header doesn't slide along with content during a tab switch.
-        // Browser instead cross-fades old↔new for this layer alone,
-        // which is invisible since the header structure is identical
-        // between snapshots and only the active pill's colour shifts.
         style={{ viewTransitionName: "tab-header" }}
       >
         {topBar && (
@@ -435,118 +231,74 @@ export default function ScrollSnapContainer({ children, labels, topBar }: Scroll
             {topBar}
           </div>
         )}
-        <div className="bg-card/95 backdrop-blur-md border-b border-border shadow-sm">
+        <div className="hidden md:block bg-card/95 backdrop-blur-md border-b border-border shadow-sm">
           <div
-            // The tab bar scrolls horizontally on narrow screens; tag it so
-            // dragging inside the bar pans the tabs instead of swapping tab.
             data-no-tab-swipe
-            // Edge fade hint: the leftmost/rightmost ~12px softly fade out,
-            // so on a narrow viewport where some tabs are cut off the bar
-            // visibly hints "there's more — scroll horizontally." On wide
-            // screens with no overflow the fade is barely visible.
-            style={{
-              maskImage:
-                "linear-gradient(to right, transparent 0, black 14px, black calc(100% - 14px), transparent 100%)",
-              WebkitMaskImage:
-                "linear-gradient(to right, transparent 0, black 14px, black calc(100% - 14px), transparent 100%)",
-            }}
-            className="max-w-5xl mx-auto flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            className="max-w-5xl mx-auto flex justify-center"
           >
-            {labels.map((label, i) => (
+            {tabs.map((tab, i) => (
               <HapticTab
-                key={i}
-                ref={(el) => { tabRefs.current[i] = el; }}
+                key={tab.label}
                 onPress={() => switchTo(i)}
                 role="tab"
-                // Active tab gets bolder weight + slightly larger pill
-                // padding so the current location reads at a glance even
-                // when you're scrolled deep inside a long section.
-                className={`shrink-0 my-1.5 mx-0.5 px-3.5 py-1.5 rounded-full text-center text-sm whitespace-nowrap cursor-pointer transition-all duration-200 ${
+                className={`my-1.5 mx-0.5 px-4 py-1.5 rounded-full text-center text-sm whitespace-nowrap cursor-pointer transition-all duration-200 flex items-center gap-1.5 ${
                   activeIndex === i
                     ? "bg-blue-500/15 dark:bg-blue-500/20 text-blue-500 font-semibold"
                     : "text-foreground/60 hover:text-foreground hover:bg-foreground/5 font-medium"
                 }`}
               >
-                {label}
+                <span aria-hidden>{tab.icon}</span>
+                <span>{tab.label}</span>
               </HapticTab>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Page-dot row, pinned to the bottom of the viewport. Same idiom as
-          iOS home-screen and Instagram stories — a row of dots saying
-          "this is a swipeable carousel". The container has no background
-          and no blur: dots float over whatever content is behind, so on
-          a long article the page void at the bottom keeps reading clean.
-          safe-area-inset-bottom keeps them clear of the iOS home indicator. */}
-      <div
-        data-no-tab-swipe
-        className="fixed left-1/2 -translate-x-1/2 z-50 flex justify-center items-center gap-1.5 px-3 py-1.5 pointer-events-none"
-        // Same opt-out as the header: dots stay in place during the
-        // tab-switch slide and only cross-fade between active-dot
-        // positions.
-        style={{
-          bottom: "max(0.75rem, env(safe-area-inset-bottom))",
-          viewTransitionName: "tab-dots",
-        }}
-        aria-hidden
-      >
-        {labels.map((label, i) => (
-          <HapticTab
-            key={i}
-            onPress={() => switchTo(i)}
-            tabIndex={-1}
-            aria-label={`Switch to ${label}`}
-            // pointer-events:auto on each dot only, so the *gaps* between
-            // them stay transparent for clicks (don't block content
-            // behind them).
-            className={`pointer-events-auto rounded-full transition-all duration-200 ${
-              activeIndex === i
-                ? "w-5 h-1.5 bg-blue-500"
-                : "w-1.5 h-1.5 bg-foreground/25 hover:bg-foreground/45"
-            }`}
-          />
-        ))}
+      {/* Only the active tab is in the DOM. React unmounts the previous
+          tab on switch — heavy client components like the webcam stop
+          polling automatically. Scroll position resets on switch by
+          design. */}
+      <div key={activeIndex} className="min-h-dvh">
+        {children[activeIndex]}
       </div>
 
-      {/* Sections render directly in document flow — iOS hands body scroll
-          to its native UIScrollView, the smoothest path. We deliberately
-          do NOT use scroll-snap (not even `proximity`): on real iOS
-          devices any snap config makes the OS soft-brake toward snap
-          points and the inertia "fling" feels clipped. Sections won't
-          perfectly align to the viewport top, but momentum wins. */}
-      {children.map((child, i) => (
-        <div
-          key={i}
-          data-snap-section={i}
-          className="min-h-dvh relative"
-        >
-          {child}
-
-          {/* "Back to top" hint — floats at the bottom of each section.
-              Tapping scrolls back to the very top of the current section. */}
-          {i < labels.length - 1 && (
-            <button
-              onClick={() => {
-                const section = document.querySelector(`[data-snap-section="${i}"]`) as HTMLElement | null;
-                if (section) window.scrollTo({ top: section.offsetTop, behavior: 'smooth' });
-              }}
-              aria-label={`Back to top of ${labels[i]}`}
-              className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-1.5
-                px-4 py-1.5 rounded-full text-xs font-medium
-                bg-foreground/6 border border-foreground/10
-                text-foreground/40 hover:text-foreground/70 hover:bg-foreground/10
-                transition-all duration-200 backdrop-blur-sm pointer-events-auto"
-            >
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-              </svg>
-              <span>{labels[i]}</span>
-            </button>
-          )}
+      {/* Mobile bottom tab bar — full-width with icon+label per tab, sits
+          in the natural thumb zone. Hidden at md+ where the top tab bar
+          takes over. safe-area-inset-bottom keeps it clear of the iOS
+          home indicator. */}
+      <nav
+        data-no-tab-swipe
+        className="md:hidden fixed bottom-0 left-0 right-0 z-[60] bg-card/95 backdrop-blur-md border-t border-border"
+        style={{
+          paddingBottom: "env(safe-area-inset-bottom)",
+          viewTransitionName: "tab-dots",
+        }}
+        aria-label="Primary"
+      >
+        <div className="flex">
+          {tabs.map((tab, i) => {
+            const active = activeIndex === i;
+            return (
+              <HapticTab
+                key={tab.label}
+                onPress={() => switchTo(i)}
+                aria-label={`Switch to ${tab.label}`}
+                className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2 transition-colors duration-150 ${
+                  active
+                    ? "text-blue-500"
+                    : "text-foreground/50 hover:text-foreground/80"
+                }`}
+              >
+                <span className="text-xl leading-none" aria-hidden>{tab.icon}</span>
+                <span className={`text-[10px] ${active ? "font-semibold" : "font-medium"}`}>
+                  {tab.label}
+                </span>
+              </HapticTab>
+            );
+          })}
         </div>
-      ))}
+      </nav>
     </>
   );
 }

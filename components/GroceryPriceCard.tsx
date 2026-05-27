@@ -3,15 +3,22 @@
 import { useState } from 'react';
 import type { GroceryPriceData, GroceryItem } from '@/lib/fetchers/grocery';
 
-// SVG chart dimensions
+// SVG chart dimensions. MR is generous (44px) so the latest-price label
+// can sit beyond the rightmost data point instead of overlapping the
+// line — labels printed inline were colliding with the curve whenever
+// the last segment trended toward the top-right of the chart.
 const W = 560;
 const H = 140;
 const ML = 46;
-const MR = 10;
+const MR = 44;
 const MT = 10;
 const MB = 24;
 const CW = W - ML - MR;
 const CH = H - MT - MB;
+
+// 1 lb in kg — used to render the supplementary "$/lb" hint for items
+// the source publishes by the kilogram.
+const KG_TO_LB = 0.453592;
 
 function niceStep(range: number): number {
   if (range <= 1) return 0.25;
@@ -138,9 +145,14 @@ function GroceryChart({ item }: { item: GroceryItem }) {
       ))}
 
       <circle cx={lastX} cy={lastY} r="4" fill="rgb(16,185,129)" />
+      {/* Latest-price label sits to the RIGHT of the last data point,
+          outside the chart's plotted area (we reserved MR=44 for this).
+          Vertically centred on the point so a steep last-segment slope
+          doesn't push the label into the line above or below. */}
       <text
-        x={lastX - 6} y={lastY - 8}
-        textAnchor="end" fontSize="10" fontWeight="700"
+        x={lastX + 6} y={lastY}
+        textAnchor="start" dominantBaseline="middle"
+        fontSize="10" fontWeight="700"
         fill="rgb(5,150,105)"
       >
         ${lastPt.value.toFixed(2)}
@@ -195,12 +207,19 @@ export default function GroceryPriceCard({ data }: { data: GroceryPriceData }) {
         </div>
 
         {/* Current price + change — translate="no" so Google Translate
-            can't wrap these text nodes and break React re-renders on tab switch */}
+            can't wrap these text nodes and break React re-renders on tab switch.
+            For $/kg items we also surface an "≈ $X.XX /lb" hint, since most
+            shoppers here still think in pounds at the meat counter. */}
         <div className="flex items-baseline gap-2 mt-3 flex-wrap" translate="no">
           <span className="text-3xl font-bold tracking-tight tabular-nums">
             ${latest.value.toFixed(2)}
           </span>
           <span className="text-sm text-foreground/50">{item.unit}</span>
+          {item.unit === '$/kg' && (
+            <span className="text-xs text-foreground/40 tabular-nums">
+              ≈ ${(latest.value * KG_TO_LB).toFixed(2)} /lb
+            </span>
+          )}
           {diff !== null && pct !== null && (
             <span className={`text-xs font-semibold ml-auto ${diff > 0 ? 'text-red-500' : diff < 0 ? 'text-emerald-500' : 'text-foreground/40'}`}>
               {diff > 0 ? '▲' : diff < 0 ? '▼' : '—'}&nbsp;${Math.abs(diff).toFixed(2)} ({Math.abs(parseFloat(pct))}%) vs prev mo

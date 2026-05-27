@@ -61,7 +61,10 @@ export async function fetchHrfeIncidents(): Promise<HrmItem[]> {
     const feed = await parser.parseURL(
       'https://www.halifax.ca/safety-security/fire-emergency/hrfe-incident-feed/rss.xml',
     );
-    const cutoff = new Date(Date.now() - 6 * 60 * 60 * 1000);
+    // 90 minutes back: the dashboard surfaces incidents that are still
+    // plausibly in-progress. Older calls have almost always concluded and
+    // become news rather than live information.
+    const cutoff = new Date(Date.now() - 90 * 60 * 1000);
     return (feed.items || [])
       .filter((item) => {
         const d = item.pubDate || item.isoDate;
