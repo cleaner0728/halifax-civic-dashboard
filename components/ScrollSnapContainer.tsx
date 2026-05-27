@@ -159,6 +159,13 @@ export default function ScrollSnapContainer({ children, tabs, topBar }: ScrollSn
     const onStart = (e: TouchEvent) => {
       if (e.touches.length !== 1) return;
       if (window.scrollY > 2) return;
+      // Same opt-out the swipe handler uses. Without this, iOS Safari
+      // forwards iframe touches up to window listeners and arms PTR
+      // when the user scrolls inside an embedded widget (Google Calendar,
+      // etc.). The accidental router.refresh() that followed was making
+      // the iframe reload, which iOS rendered as a flicker.
+      const target = e.target as HTMLElement | null;
+      if (target?.closest("[data-no-tab-swipe]")) return;
       startY = e.touches[0].clientY;
       pulling = true;
     };

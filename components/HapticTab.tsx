@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, KeyboardEvent, ReactNode, useRef } from "react";
+import { forwardRef, KeyboardEvent, MouseEvent, ReactNode, useRef } from "react";
 
 type HapticTabProps = {
   onPress: () => void;
@@ -20,11 +20,13 @@ type HapticTabProps = {
 //   - Android: navigator.vibrate([15, 40, 15]) emits two short pulses
 //     ~40ms apart, which the body perceives as one strong tap rather
 //     than two separate buzzes.
-//   - iOS: we re-dispatch a synthetic click on the switch input ~30ms
-//     after the native toggle. Some iOS builds fire a second taptic
-//     for the re-toggle; the worst case is silent (cost-free).
-//   - navigator.vibrate is a no-op on iOS Safari (the API is blocked),
-//     so the two paths don't double-trigger each other.
+//   - iOS: 30ms after the native toggle we re-dispatch a click on the
+//     switch input. Some iOS builds emit a second taptic for the
+//     re-toggle. CRITICAL: that programmatic click bubbles back up to
+//     the label's onClick, so we MUST ignore non-trusted events there
+//     or every real tap becomes a runaway 33-times-per-second loop
+//     that pegs the main thread and makes iframe-heavy tabs (e.g.
+//     Google Calendar in Events) flicker.
 const HapticTab = forwardRef<HTMLLabelElement, HapticTabProps>(function HapticTab(
   { onPress, className, children, tabIndex = 0, role, ...aria },
   ref,
@@ -35,16 +37,16 @@ const HapticTab = forwardRef<HTMLLabelElement, HapticTabProps>(function HapticTa
     if (typeof navigator !== "undefined" && typeof navigator.vibrate === "function") {
       navigator.vibrate([15, 40, 15]);
     }
-    // Re-toggle the switch shortly after the native click landed.
-    // iOS treats the input's `click()` as a fresh interaction in
-    // some builds and emits a second taptic.
     const el = inputRef.current;
     if (el) {
       window.setTimeout(() => { el.click(); }, 30);
     }
   };
 
-  const handlePress = () => {
+  const handlePress = (e?: MouseEvent<HTMLLabelElement>) => {
+    // Ignore our own programmatic re-toggle bubbling up. isTrusted is
+    // true only for genuine user input; false for `el.click()` etc.
+    if (e && e.isTrusted === false) return;
     triggerHaptic();
     onPress();
   };
