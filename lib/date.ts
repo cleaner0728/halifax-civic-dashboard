@@ -44,6 +44,20 @@ export function formatTime(iso: string): string {
   return `${h12}:${m[2]} ${period}`;
 }
 
+// Format a UTC ISO string as Halifax local time ("8:42 PM").
+// Used for ECCC sunrise/sunset which are proper UTC timestamps.
+export function formatUtcAsHfxTime(iso: string): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: HFX_TZ,
+  });
+}
+
 // Unified timestamp formatter for feed-style content. Tuned so the same
 // rule reads naturally regardless of how recent the item is:
 //   - first minute    → "just now"

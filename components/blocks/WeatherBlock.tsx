@@ -1,6 +1,6 @@
 import React from 'react';
 import LiveClock from '@/components/LiveClock';
-import { HFX_TZ, getDayName, formatTime } from '@/lib/date';
+import { HFX_TZ, getDayName, formatUtcAsHfxTime } from '@/lib/date';
 import { getWeatherInfo } from '@/lib/weather-theme';
 import type { WeatherData } from '@/lib/fetchers/weather';
 import type { TideGraphData } from '@/lib/fetchers/tides';
@@ -220,11 +220,11 @@ export default function WeatherBlock({ weather, tideGraph, airQuality, burnStatu
             <>
               <div>
                 <p className="text-[10px] uppercase tracking-widest opacity-60">Sunrise</p>
-                <p className="text-sm font-semibold mt-0.5">{formatTime(weather.daily[0].sunrise)}</p>
+                <p className="text-sm font-semibold mt-0.5">{formatUtcAsHfxTime(weather.daily[0].sunrise)}</p>
               </div>
               <div>
                 <p className="text-[10px] uppercase tracking-widest opacity-60">Sunset</p>
-                <p className="text-sm font-semibold mt-0.5">{formatTime(weather.daily[0].sunset)}</p>
+                <p className="text-sm font-semibold mt-0.5">{formatUtcAsHfxTime(weather.daily[0].sunset)}</p>
               </div>
             </>
           )}
