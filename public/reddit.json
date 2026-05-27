@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-27T19:16:14.840Z",
+  "fetchedAt": "2026-05-27T19:46:13.865Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -74,15 +74,6 @@
       "createdUtc": 1779893341
     },
     {
-      "title": "My submission for the r/Halifax dog competition",
-      "score": 0,
-      "numComments": 0,
-      "author": "Turbulent-Employer93",
-      "url": "https://www.reddit.com/r/halifax/comments/1ton61d/my_submission_for_the_rhalifax_dog_competition/",
-      "flair": null,
-      "createdUtc": 1779836123
-    },
-    {
       "title": "Has anyone in Halifax had someone approach their home about taking an unused vehicle for free?",
       "score": 0,
       "numComments": 0,
@@ -92,13 +83,13 @@
       "createdUtc": 1779900054
     },
     {
-      "title": "YHZ airport to downtown Halifax transportation options - 6 people including senior",
+      "title": "My submission for the r/Halifax dog competition",
       "score": 0,
       "numComments": 0,
-      "author": "sfernan",
-      "url": "https://www.reddit.com/r/halifax/comments/1tpcf2x/yhz_airport_to_downtown_halifax_transportation/",
+      "author": "Turbulent-Employer93",
+      "url": "https://www.reddit.com/r/halifax/comments/1ton61d/my_submission_for_the_rhalifax_dog_competition/",
       "flair": null,
-      "createdUtc": 1779902870
+      "createdUtc": 1779836123
     },
     {
       "title": "Where can I go to get my PC deep cleaned?",
@@ -110,6 +101,24 @@
       "createdUtc": 1779899092
     },
     {
+      "title": "YHZ airport to downtown Halifax transportation options - 6 people including senior",
+      "score": 0,
+      "numComments": 0,
+      "author": "sfernan",
+      "url": "https://www.reddit.com/r/halifax/comments/1tpcf2x/yhz_airport_to_downtown_halifax_transportation/",
+      "flair": null,
+      "createdUtc": 1779902870
+    },
+    {
+      "title": "Casino Nova Scotia move inches forward as waterfront property is up for sale",
+      "score": 0,
+      "numComments": 0,
+      "author": "NotABoyGenius45",
+      "url": "https://www.reddit.com/r/halifax/comments/1tpfgev/casino_nova_scotia_move_inches_forward_as/",
+      "flair": null,
+      "createdUtc": 1779909097
+    },
+    {
       "title": "Today’s point pleasant park",
       "score": 0,
       "numComments": 0,
@@ -117,6 +126,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1toio8q/todays_point_pleasant_park/",
       "flair": null,
       "createdUtc": 1779826231
+    },
+    {
+      "title": "Dental work",
+      "score": 0,
+      "numComments": 0,
+      "author": "TheUnusalBritt",
+      "url": "https://www.reddit.com/r/halifax/comments/1tpfv3o/dental_work/",
+      "flair": null,
+      "createdUtc": 1779909952
     },
     {
       "title": "Bike trails?",
@@ -180,15 +198,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1torwuo/rehoming_tankraised_electric_blue_crayfish/",
       "flair": null,
       "createdUtc": 1779848131
-    },
-    {
-      "title": "Casino Nova Scotia move inches forward as waterfront property is up for sale",
-      "score": 0,
-      "numComments": 0,
-      "author": "NotABoyGenius45",
-      "url": "https://www.reddit.com/r/halifax/comments/1tpfgev/casino_nova_scotia_move_inches_forward_as/",
-      "flair": null,
-      "createdUtc": 1779909097
     },
     {
       "title": "3 intimidation cases against N.S. lobster dealer collapse when witnesses don't show",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tokrl7/province_extends_funding_for_mental_health_clinic/",
       "flair": null,
       "createdUtc": 1779830663
-    },
-    {
-      "title": "Outbound at Robie x North",
-      "score": 0,
-      "numComments": 0,
-      "author": "big_nuut",
-      "url": "https://www.reddit.com/r/halifax/comments/1tomoc4/outbound_at_robie_x_north/",
-      "flair": null,
-      "createdUtc": 1779834956
     }
   ]
 }
