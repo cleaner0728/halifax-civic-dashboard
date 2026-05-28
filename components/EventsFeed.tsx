@@ -1,0 +1,279 @@
+'use client';
+
+import { useState } from 'react';
+import type { HalifaxEvent } from '@/lib/fetchers/events';
+import { HFX_TZ, toHfxDateStr } from '@/lib/date';
+
+// ── Category styling ────────────────────────────────────────────────────────
+
+const CAT_COLORS: Record<string, string> = {
+  'Free':               'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+  'Music':              'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+  'Arts & Culture':     'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300',
+  'Food & Drink':       'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
+  'Family-Friendly':    'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
+  'Comedy':             'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
+  'Nightlife':          'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
+  'Sports & Recreation':'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300',
+  '2SLGBTQIA':          'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
+  'History':            'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+};
+const CAT_DEFAULT = 'bg-foreground/8 text-foreground/60';
+
+function catClass(cat: string) {
+  return CAT_COLORS[cat] ?? CAT_DEFAULT;
+}
+
+// ── Time helpers ─────────────────────────────────────────────────────────────
+
+function formatEventTime(timeText: string | null): string {
+  if (!timeText) return '';
+  if (timeText.replace(/\s/g, '') === '12:00am-12:00am') return 'All Day';
+  return timeText;
+}
+
+function formatEndDate(startAt: string, endAt: string | null): string | null {
+  if (!endAt) return null;
+  const startDay = toHfxDateStr(startAt);
+  const endDay   = toHfxDateStr(endAt);
+  if (endDay === startDay) return null; // same day — time_text already covers it
+  const d = new Date(endDay + 'T12:00:00');
+  return 'Ends ' + d.toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric', timeZone: HFX_TZ,
+  });
+}
+
+function formatDateHeader(dateStr: string): string {
+  const now   = new Date();
+  const today = toHfxDateStr(now);
+  const tmrw  = toHfxDateStr(new Date(now.getTime() + 86_400_000));
+  const d     = new Date(dateStr + 'T12:00:00');
+  const long  = d.toLocaleDateString('en-US', {
+    weekday: 'long', month: 'long', day: 'numeric', timeZone: HFX_TZ,
+  });
+  if (dateStr === today) return `Today · ${long}`;
+  if (dateStr === tmrw)  return `Tomorrow · ${long}`;
+  return long;
+}
+
+// ── Derived category list (from events, sorted by count) ────────────────────
+
+function topCategories(events: HalifaxEvent[]): string[] {
+  const counts = new Map<string, number>();
+  for (const ev of events) {
+    for (const c of ev.categories ?? []) {
+      counts.set(c, (counts.get(c) ?? 0) + 1);
+    }
+  }
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([c]) => c)
+    .slice(0, 9);
+}
+
+// ── Single event card ─────────────────────────────────────────────────────────
+
+function EventCard({ ev }: { ev: HalifaxEvent }) {
+  const timeDisplay = formatEventTime(ev.time_text);
+  const endDisplay  = formatEndDate(ev.start_at, ev.end_at);
+  const hasSocials  = ev.facebook_url || ev.instagram_url || ev.twitter_url;
+
+  return (
+    <article className="bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+      <div className="p-4 space-y-2">
+
+        {/* Time + End date */}
+        {(timeDisplay || endDisplay) && (
+          <p className="text-xs font-mono text-foreground/50 uppercase tracking-wide flex items-center gap-2">
+            {timeDisplay && <span>{timeDisplay}</span>}
+            {endDisplay  && <span className="text-foreground/40">{endDisplay}</span>}
+          </p>
+        )}
+
+        {/* Title */}
+        <h3 className="text-base font-semibold text-foreground leading-snug">
+          {ev.title}
+        </h3>
+
+        {/* Organizer */}
+        {ev.organizer_name && (
+          <p className="text-xs text-foreground/50">{ev.organizer_name}</p>
+        )}
+
+        {/* Venue */}
+        {ev.venue_name && (
+          <p className="text-sm text-foreground/70 flex items-start gap-1">
+            <span className="shrink-0 mt-px">📍</span>
+            <span>{ev.venue_name}{ev.venue_address ? ` · ${ev.venue_address.split(',').slice(0, 2).join(',')}` : ''}</span>
+          </p>
+        )}
+
+        {/* Summary */}
+        {ev.summary && (
+          <p className="text-sm text-foreground/60 line-clamp-2">{ev.summary}</p>
+        )}
+
+        {/* Category chips */}
+        {ev.categories?.length > 0 && (
+          <div className="flex flex-wrap gap-1 pt-1">
+            {ev.categories.map(cat => (
+              <span
+                key={cat}
+                className={`text-xs font-medium px-2 py-0.5 rounded-full ${catClass(cat)}`}
+              >
+                {cat}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Action row */}
+      <div className="border-t border-border px-4 py-2.5 flex items-center gap-2 flex-wrap">
+        {ev.tickets_url && (
+          <a
+            href={ev.tickets_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-medium px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white transition-colors"
+          >
+            Get Tickets ↗
+          </a>
+        )}
+        {ev.website && (
+          <a
+            href={ev.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-medium px-3 py-1.5 rounded-lg border border-border hover:bg-foreground/5 text-foreground/70 transition-colors"
+          >
+            Website ↗
+          </a>
+        )}
+
+        {/* Social icons — right side */}
+        {hasSocials && (
+          <div className="ml-auto flex items-center gap-2">
+            {ev.facebook_url && (
+              <a href={ev.facebook_url} target="_blank" rel="noopener noreferrer"
+                className="text-foreground/40 hover:text-blue-500 transition-colors text-sm"
+                aria-label="Facebook">
+                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+              </a>
+            )}
+            {ev.instagram_url && (
+              <a href={ev.instagram_url} target="_blank" rel="noopener noreferrer"
+                className="text-foreground/40 hover:text-pink-500 transition-colors"
+                aria-label="Instagram">
+                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                </svg>
+              </a>
+            )}
+            {ev.twitter_url && (
+              <a href={ev.twitter_url} target="_blank" rel="noopener noreferrer"
+                className="text-foreground/40 hover:text-foreground transition-colors"
+                aria-label="X / Twitter">
+                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.727-8.826L1.254 2.25H8.08l4.261 5.638 5.904-5.638zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+    </article>
+  );
+}
+
+// ── Main exported component ──────────────────────────────────────────────────
+
+type Props = { events: HalifaxEvent[] };
+
+export default function EventsFeed({ events }: Props) {
+  const [activeCat, setActiveCat] = useState<string | null>(null);
+
+  const cats = topCategories(events);
+
+  const filtered = activeCat
+    ? events.filter(ev => ev.categories?.includes(activeCat))
+    : events;
+
+  // Group by Halifax date string
+  const groups = new Map<string, HalifaxEvent[]>();
+  for (const ev of filtered) {
+    const d = toHfxDateStr(ev.start_at);
+    if (!groups.has(d)) groups.set(d, []);
+    groups.get(d)!.push(ev);
+  }
+
+  if (events.length === 0) {
+    return (
+      <div className="text-center py-16 text-foreground/40">
+        <p className="text-4xl mb-3">📭</p>
+        <p className="text-base font-medium">No upcoming events found.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {/* Category filter pills */}
+      <div className="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-hide">
+        <button
+          onClick={() => setActiveCat(null)}
+          className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
+            activeCat === null
+              ? 'bg-violet-600 text-white border-violet-600'
+              : 'border-border text-foreground/60 hover:bg-foreground/5'
+          }`}
+        >
+          All
+        </button>
+        {cats.map(cat => (
+          <button
+            key={cat}
+            onClick={() => setActiveCat(activeCat === cat ? null : cat)}
+            className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
+              activeCat === cat
+                ? `${catClass(cat)} border-transparent`
+                : 'border-border text-foreground/60 hover:bg-foreground/5'
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Count */}
+      <p className="text-xs text-foreground/40 mb-4">
+        {filtered.length} event{filtered.length !== 1 ? 's' : ''}
+        {activeCat ? ` · ${activeCat}` : ''}
+      </p>
+
+      {/* Date-grouped event list */}
+      {filtered.length === 0 ? (
+        <div className="text-center py-10 text-foreground/40">
+          <p className="text-base">No events in this category.</p>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {[...groups.entries()].map(([dateStr, dayEvents]) => (
+            <section key={dateStr}>
+              <h4 className="text-xs font-semibold text-foreground/40 uppercase tracking-widest mb-2 px-1">
+                {formatDateHeader(dateStr)}
+              </h4>
+              <div className="space-y-3">
+                {dayEvents.map(ev => (
+                  <EventCard key={ev.url} ev={ev} />
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

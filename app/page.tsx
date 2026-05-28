@@ -24,6 +24,7 @@ import { fetchMarineForecast } from '@/lib/fetchers/marine-forecast';
 import { fetchRedditPosts } from '@/lib/fetchers/reddit';
 import { fetchGasPrices } from '@/lib/fetchers/gas';
 import { fetchGroceryPrices } from '@/lib/fetchers/grocery';
+import { fetchEvents } from '@/lib/fetchers/events';
 import { safe } from '@/lib/safe';
 
 const TABS: TabSpec[] = [
@@ -53,6 +54,7 @@ export default async function Home() {
     groceryPrices,
     buoy,
     marineForecast,
+    events,
   ] = await Promise.all([
     safe(fetchWeather(), null, 'weather'),
     safe(fetchNews(), { items: [] }, 'news'),
@@ -70,6 +72,7 @@ export default async function Home() {
     safe(fetchGroceryPrices(), { items: [] }, 'grocery-prices'),
     safe(fetchBuoy(), null, 'buoy'),
     safe(fetchMarineForecast(), null, 'marine-forecast'),
+    safe(fetchEvents(), [], 'events'),
   ]);
 
   const tideGraph = computeTideGraph(tides);
@@ -108,7 +111,7 @@ export default async function Home() {
           redditPosts={redditData.posts}
           redditFetchedAt={redditData.fetchedAt}
         />
-        <EventsCalendarScreen renderedAt={renderedAt} />
+        <EventsCalendarScreen renderedAt={renderedAt} events={events} />
         <StatsScreen gasPrices={gasPrices} groceryPrices={groceryPrices} />
       </ScrollSnapContainer>
       <MenuFab />
