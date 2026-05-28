@@ -18,8 +18,47 @@ import { useEffect } from "react";
 const WIDGET_SCRIPT_ID = "gt-widget-script";
 export const WIDGET_ROOT_ID = "google_translate_element";
 
+// Google Translate rewrites the live DOM, wrapping text nodes in <font> tags
+// and relocating them. When React later tries to reconcile a list (e.g. the
+// user re-filters the events feed), it calls removeChild/insertBefore against
+// the node positions it remembers — but Translate has since moved those nodes,
+// so the browser throws "NotFoundError: node is not a child of this node" and
+// the whole subtree crashes. This is the long-standing React + Google Translate
+// conflict (facebook/react#11538). Since this app intentionally ships Translate
+// across the entire UI, we install the community-standard guard: make
+// removeChild/insertBefore no-op gracefully when the node isn't where React
+// thinks it is, instead of throwing. React's virtual DOM stays the source of
+// truth; the orphaned <font> wrappers Translate left behind are simply ignored.
+type GuardedWindow = Window & { __gtDomGuards?: boolean };
+
+function installTranslateDomGuards() {
+  const w = window as GuardedWindow;
+  if (w.__gtDomGuards) return;
+  w.__gtDomGuards = true;
+
+  const originalRemoveChild = Node.prototype.removeChild;
+  Node.prototype.removeChild = function <T extends Node>(this: Node, child: T): T {
+    if (child.parentNode !== this) return child;
+    return originalRemoveChild.call(this, child) as T;
+  };
+
+  const originalInsertBefore = Node.prototype.insertBefore;
+  Node.prototype.insertBefore = function <T extends Node>(
+    this: Node,
+    newNode: T,
+    referenceNode: Node | null,
+  ): T {
+    if (referenceNode && referenceNode.parentNode !== this) return newNode;
+    return originalInsertBefore.call(this, newNode, referenceNode) as T;
+  };
+}
+
 export default function GoogleTranslateMount() {
   useEffect(() => {
+    // Install the DOM guards before anything can trigger a translated-node
+    // reconciliation, regardless of whether the widget script is already loaded.
+    installTranslateDomGuards();
+
     if (document.getElementById(WIDGET_SCRIPT_ID)) return;
 
     type GTWindow = Window & {
