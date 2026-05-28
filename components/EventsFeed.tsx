@@ -219,14 +219,17 @@ export default function EventsFeed({ events }: Props) {
 
   const _now        = new Date();
   const todayStr    = toHfxDateStr(_now);
-  const _3d         = new Date(_now); _3d.setDate(_now.getDate() + 2);
+  const _3d         = new Date(_now); _3d.setDate(_now.getDate() + 3);
   const in3DaysStr  = toHfxDateStr(_3d);
 
   const filtered = events.filter(ev => {
-    const dayStr = toHfxDateStr(ev.start_at);
-    if (dateFilter === 'today'  && dayStr !== todayStr)   return false;
-    if (dateFilter === '3days'  && dayStr > in3DaysStr)   return false;
-    if (activeCat && !ev.categories?.includes(activeCat)) return false;
+    const startStr = toHfxDateStr(ev.start_at);
+    const endStr   = ev.end_at ? toHfxDateStr(ev.end_at) : startStr;
+    if (dateFilter === 'today'  && startStr !== todayStr)  return false;
+    // "Next 3 days": event must end (end_at, or start_at if no end) by midnight
+    // of today+3, i.e. the end date falls within the next 3 days window.
+    if (dateFilter === '3days'  && endStr > in3DaysStr)    return false;
+    if (activeCat && !ev.categories?.includes(activeCat))  return false;
     return true;
   });
 
