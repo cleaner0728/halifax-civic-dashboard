@@ -169,22 +169,28 @@ export default function WeatherBlock({ weather, tideGraph, airQuality, burnStatu
                   hour12: true,
                   timeZone: HFX_TZ,
                 });
-                const info = getWeatherInfo(h.weatherCode, false);
+                // The "Now" slot is ECCC's next-hour forecast, not a current
+                // observation. Replace it with the live observed temperature
+                // and weather code so it matches the big number above.
+                const isNow = i === 0;
+                const displayTemp = isNow ? weather.temperature : h.temp;
+                const displayCode = isNow ? weather.weatherCode : h.weatherCode;
+                const info = getWeatherInfo(displayCode, isNow ? !weather.isDay : false);
                 return (
                   <div
                     key={h.timestamp}
                     className={`flex flex-col items-center gap-0.5 px-2 py-2 rounded-lg min-w-[52px] text-center ${
-                      i === 0
+                      isNow
                         ? 'bg-white/20 dark:bg-white/15'
                         : 'bg-white/10 dark:bg-white/8'
                     }`}
                   >
                     <span className={`text-[11px] font-medium ${currentWeather.theme.textSecondary}`}>
-                      {i === 0 ? 'Now' : localHour}
+                      {isNow ? 'Now' : localHour}
                     </span>
                     <span className="text-xl leading-none">{info.emoji}</span>
-                    <span className="text-sm font-semibold">{Math.round(h.temp)}°</span>
-                    {h.pop > 0 && (
+                    <span className="text-sm font-semibold">{Math.round(displayTemp)}°</span>
+                    {!isNow && h.pop > 0 && (
                       <span className={`text-[10px] ${currentWeather.theme.textSecondary}`}>
                         {h.pop}%
                       </span>
@@ -305,6 +311,15 @@ export default function WeatherBlock({ weather, tideGraph, airQuality, burnStatu
             })}
           </div>
         </div>
+        <a
+          href="https://weather.gc.ca/city/pages/ns-19_metric_e.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`group block mt-3 text-[11px] ${currentWeather.theme.textSecondary} hover:opacity-100 opacity-70`}
+        >
+          Source: Environment Canada (weather.gc.ca/ns-19)
+          <span aria-hidden className="inline-block ml-1 transition-transform group-hover:translate-x-0.5">↗</span>
+        </a>
       </div>
     </section>
   );

@@ -96,6 +96,44 @@ function ecccIconToWmo(code: number | null | undefined): number {
   return ECCC_TO_WMO[code] ?? 3;
 }
 
+// ECCC's numeric iconCode is unreliable (e.g. code 28 returns "Light Drizzle"
+// but the published table says "Blowing snow"). The human-readable `condition`
+// string is consistently accurate, so we parse it directly and only fall back
+// to the iconCode when no condition text is provided.
+function conditionTextToWmo(text: string | null | undefined): number | null {
+  if (!text) return null;
+  const t = text.toLowerCase().trim();
+  if (/thunderstorm|thunder/.test(t)) return /hail/.test(t) ? 99 : 95;
+  if (/blizzard|blowing snow/.test(t)) return 75;
+  if (/snow|flurr/.test(t)) {
+    if (/heavy/.test(t)) return 75;
+    if (/light/.test(t)) return 71;
+    if (/shower/.test(t)) return 85;
+    return 73;
+  }
+  if (/ice pellet|sleet|hail/.test(t)) return 77;
+  if (/freezing drizzle/.test(t)) return 56;
+  if (/freezing rain/.test(t)) return 66;
+  if (/drizzle/.test(t)) {
+    if (/heavy/.test(t)) return 55;
+    if (/light/.test(t)) return 51;
+    return 53;
+  }
+  if (/shower/.test(t)) return /heavy/.test(t) ? 81 : 80;
+  if (/rain/.test(t)) {
+    if (/heavy/.test(t)) return 65;
+    if (/light/.test(t)) return 61;
+    return 63;
+  }
+  if (/fog|mist|haze|smoke/.test(t)) return 45;
+  if (/overcast|cloud/.test(t)) {
+    if (/partly|mix/.test(t)) return 2;
+    return 3;
+  }
+  if (/sunny|clear|fair/.test(t)) return /mainly|mostly/.test(t) ? 1 : 0;
+  return null;
+}
+
 export async function fetchWeather(): Promise<WeatherData | null> {
   try {
     const res = await fetch(ECCC_URL, {
@@ -129,7 +167,7 @@ export async function fetchWeather(): Promise<WeatherData | null> {
     const apparentTemp =
       typeof humidex === 'number' && temperature >= 25 && humidex > temperature
         ? humidex
-        : typeof windChill === 'number' && temperature <= 10 && windChill < temperature
+        : typeof windChill === 'number' && temperature <= 0 && windChill < temperature
         ? windChill
         : temperature;
 
@@ -164,6 +202,20 @@ export async function fetchWeather(): Promise<WeatherData | null> {
       weatherCode: ecccIconToWmo(h.iconCode?.value),
       pop: h.lop?.value?.en ?? 0,
     }));
+
+    // Prefer ECCC's `condition` string over the unreliable numeric iconCode.
+    // If the text gives nothing, fall back to the iconCode mapping. Finally,
+    // if anything still claims snow above ~3 °C (physically implausible),
+    // defer to the first hourly forecast icon.
+    const conditionText: string | undefined =
+      typeof cc.condition === 'string' ? cc.condition : cc.condition?.en;
+    const SNOW_CODES = new Set([71, 73, 75, 77, 85, 86]);
+    const rawCurrentCode =
+      conditionTextToWmo(conditionText) ?? ecccIconToWmo(cc.iconCode?.value);
+    const currentWeatherCode =
+      SNOW_CODES.has(rawCurrentCode) && temperature > 3
+        ? (hourly[0]?.weatherCode ?? 3)
+        : rawCurrentCode;
 
     // Build 5-day daily forecast. ECCC delivers alternating day/night periods:
     // [0] Today (high), [1] Tonight (low), [2] Wednesday (high), [3] Wed night (low), ...
@@ -200,24 +252,30 @@ export async function fetchWeather(): Promise<WeatherData | null> {
       const dayTemps = dayFc?.temperatures?.temperature ?? [];
       const nightTemps = nightFc?.temperatures?.temperature ?? [];
 
-      const maxTemp =
+      const rawMaxTemp =
         dayTemps.find((t) => t.class?.en === 'high')?.value?.en ??
-        dayTemps[0]?.value?.en ??
-        0;
-      const minTemp =
+        dayTemps[0]?.value?.en;
+      const rawMinTemp =
         nightTemps.find((t) => t.class?.en === 'low')?.value?.en ??
-        nightTemps[0]?.value?.en ??
-        maxTemp;
+        nightTemps[0]?.value?.en;
+      // If today's day-period is gone (evening fetch), fall back to the
+      // warmest remaining hourly temp for that calendar day so the card
+      // doesn't render a misleading "0° / 7°" pair.
+      const dayDate = new Date(today);
+      dayDate.setDate(today.getDate() + i);
+      const dayDateStr = dayDate.toISOString().split('T')[0];
+      const hourlyForDay = hourly
+        .filter((h) => h.timestamp.startsWith(dayDateStr))
+        .map((h) => h.temp);
+      const hourlyMax = hourlyForDay.length ? Math.max(...hourlyForDay) : undefined;
+      const minTemp = rawMinTemp ?? rawMaxTemp ?? hourlyMax ?? 0;
+      const maxTemp = rawMaxTemp ?? hourlyMax ?? minTemp;
 
       const iconCode = (dayFc ?? nightFc)?.abbreviatedForecast?.icon?.value;
       const textSummary = (dayFc ?? nightFc)?.abbreviatedForecast?.textSummary?.en ?? '';
 
-      const d = new Date(today);
-      d.setDate(today.getDate() + i);
-      const dateStr = d.toISOString().split('T')[0];
-
       daily.push({
-        date: dateStr,
+        date: dayDateStr,
         weatherCode: ecccIconToWmo(iconCode),
         maxTemp,
         minTemp,
@@ -230,7 +288,7 @@ export async function fetchWeather(): Promise<WeatherData | null> {
     return {
       temperature,
       apparentTemp,
-      weatherCode: ecccIconToWmo(cc.iconCode?.value),
+      weatherCode: currentWeatherCode,
       windSpeed: cc.wind?.speed?.value?.en ?? 0,
       windDirection: cc.wind?.bearing?.value?.en ?? 0,
       humidity: cc.relativeHumidity?.value?.en ?? 0,
