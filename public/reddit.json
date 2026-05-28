@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-28T09:16:14.405Z",
+  "fetchedAt": "2026-05-28T09:42:24.102Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -83,15 +83,6 @@
       "createdUtc": 1779886724
     },
     {
-      "title": "Province Strengthens Bar Safety, Introduces New Rules for Security Staff",
-      "score": 0,
-      "numComments": 0,
-      "author": "sjmorris",
-      "url": "https://www.reddit.com/r/halifax/comments/1tpbsox/province_strengthens_bar_safety_introduces_new/",
-      "flair": null,
-      "createdUtc": 1779901574
-    },
-    {
       "title": "Psychotherapists for chronic pain (migraines specifically)",
       "score": 0,
       "numComments": 0,
@@ -99,6 +90,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tpkein/psychotherapists_for_chronic_pain_migraines/",
       "flair": null,
       "createdUtc": 1779919924
+    },
+    {
+      "title": "Province Strengthens Bar Safety, Introduces New Rules for Security Staff",
+      "score": 0,
+      "numComments": 0,
+      "author": "sjmorris",
+      "url": "https://www.reddit.com/r/halifax/comments/1tpbsox/province_strengthens_bar_safety_introduces_new/",
+      "flair": null,
+      "createdUtc": 1779901574
     },
     {
       "title": "Has anyone in Halifax had someone approach their home about taking an unused vehicle for free?",
@@ -110,6 +110,15 @@
       "createdUtc": 1779900054
     },
     {
+      "title": "Where can I go to get my PC deep cleaned?",
+      "score": 0,
+      "numComments": 0,
+      "author": "10HungryGhosts",
+      "url": "https://www.reddit.com/r/halifax/comments/1tpalcq/where_can_i_go_to_get_my_pc_deep_cleaned/",
+      "flair": null,
+      "createdUtc": 1779899092
+    },
+    {
       "title": "Prawn toast?",
       "score": 0,
       "numComments": 0,
@@ -119,13 +128,13 @@
       "createdUtc": 1779929614
     },
     {
-      "title": "Where can I go to get my PC deep cleaned?",
+      "title": "Halifax planning changes highlight tension between good design and creating density",
       "score": 0,
       "numComments": 0,
-      "author": "10HungryGhosts",
-      "url": "https://www.reddit.com/r/halifax/comments/1tpalcq/where_can_i_go_to_get_my_pc_deep_cleaned/",
+      "author": "Bean_Tiger",
+      "url": "https://www.reddit.com/r/halifax/comments/1tpygls/halifax_planning_changes_highlight_tension/",
       "flair": null,
-      "createdUtc": 1779899092
+      "createdUtc": 1779960426
     },
     {
       "title": "Dental work",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tpvirc/time_for_halifax_to_adopt_this_bylaw/",
       "flair": null,
       "createdUtc": 1779950372
-    },
-    {
-      "title": "Uncertainty swirls around pitch for Halifax stadium",
-      "score": 0,
-      "numComments": 0,
-      "author": "Bean_Tiger",
-      "url": "https://www.reddit.com/r/halifax/comments/1tp166o/uncertainty_swirls_around_pitch_for_halifax/",
-      "flair": null,
-      "createdUtc": 1779876538
     }
   ]
 }
