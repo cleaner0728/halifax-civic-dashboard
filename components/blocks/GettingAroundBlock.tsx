@@ -6,6 +6,8 @@ type Props = {
   detours: TransitDetour[];
   ferryAlerts: FerryAlert[];
   adjustments: TransitAdjustment | null;
+  emptyMessage?: string;
+  emptySubMessage?: string;
 };
 
 function RoutePill({ route }: { route: string }) {
@@ -41,11 +43,7 @@ function highlightRoutes(text: string): React.ReactNode {
   return <>{nodes}</>;
 }
 
-// Reusable collapsible card. Native <details>/<summary> for free a11y
-// (keyboard, screen reader expand/collapse semantics) — no React state.
-// Default closed: dashboard users should be able to scan section titles
-// without being walled in by long detour descriptions.
-function CollapsibleCard({
+function Card({
   icon,
   title,
   headerBgClass,
@@ -59,25 +57,13 @@ function CollapsibleCard({
   children: React.ReactNode;
 }) {
   return (
-    <details className="group bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-      <summary
-        className={`list-none cursor-pointer px-4 py-3 ${headerBgClass} border-b ${headerBorderClass} flex items-center gap-2 [&::-webkit-details-marker]:hidden`}
-      >
+    <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+      <div className={`px-4 py-3 ${headerBgClass} border-b ${headerBorderClass} flex items-center gap-2`}>
         <span className="text-xl shrink-0" aria-hidden>{icon}</span>
         <h3 className="font-bold text-foreground leading-snug flex-1 min-w-0">{title}</h3>
-        <svg
-          className="w-4 h-4 text-foreground/50 shrink-0 transition-transform duration-200 group-open:rotate-180"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2.5}
-          aria-hidden
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
-      </summary>
-      <div className="p-4 space-y-3 border-t border-transparent">{children}</div>
-    </details>
+      </div>
+      <div className="p-4 space-y-3">{children}</div>
+    </div>
   );
 }
 
@@ -103,12 +89,12 @@ function SourceLink({
   );
 }
 
-export default function GettingAroundBlock({ detours, ferryAlerts, adjustments }: Props) {
+export default function GettingAroundBlock({ detours, ferryAlerts, adjustments, emptyMessage, emptySubMessage }: Props) {
   const empty = !adjustments && ferryAlerts.length === 0 && detours.length === 0;
   return (
     <div className="space-y-3">
       {adjustments && (
-        <CollapsibleCard
+        <Card
           icon="📅"
           title={<>Upcoming Service Changes · {adjustments.dateLabel}</>}
           headerBgClass="bg-amber-500/10"
@@ -131,13 +117,13 @@ export default function GettingAroundBlock({ detours, ferryAlerts, adjustments }
             label="Full route-by-route details on halifax.ca"
             colorClass="text-amber-600 dark:text-amber-400"
           />
-        </CollapsibleCard>
+        </Card>
       )}
 
       {ferryAlerts.map((alert, i) => {
         const href = alert.moreDetailsUrl ?? DISRUPTIONS_URL;
         return (
-          <CollapsibleCard
+          <Card
             key={alert.moreDetailsUrl ?? `ferry-${i}`}
             icon="⛴️"
             title={alert.title}
@@ -154,12 +140,12 @@ export default function GettingAroundBlock({ detours, ferryAlerts, adjustments }
               label={alert.moreDetailsUrl ? 'More details on halifax.ca' : 'Source: halifax.ca'}
               colorClass="text-sky-600 dark:text-sky-400"
             />
-          </CollapsibleCard>
+          </Card>
         );
       })}
 
       {detours.map((detour, index) => (
-        <CollapsibleCard
+        <Card
           key={`${detour.title}-${index}`}
           icon="🚌"
           title={detour.title}
@@ -226,14 +212,14 @@ export default function GettingAroundBlock({ detours, ferryAlerts, adjustments }
             label="Source: halifax.ca"
             colorClass="text-amber-600 dark:text-amber-400"
           />
-        </CollapsibleCard>
+        </Card>
       ))}
 
       {empty && (
         <div className="text-center py-10 text-foreground/40">
           <p className="text-3xl mb-2">✅</p>
-          <p className="text-base font-medium">No active transit disruptions.</p>
-          <p className="text-sm mt-1">Halifax Transit is running on regular routes.</p>
+          <p className="text-base font-medium">{emptyMessage ?? 'No active transit disruptions.'}</p>
+          <p className="text-sm mt-1">{emptySubMessage ?? 'Halifax Transit is running on regular routes.'}</p>
         </div>
       )}
     </div>

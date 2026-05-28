@@ -109,11 +109,12 @@ function Field({ label, value, sub }: { label: string; value: string; sub?: stri
 type Props = {
   buoy: BuoyObservation | null;
   marineForecast: MarineForecast | null;
+  headless?: boolean;
 };
 
-export default function WindyMapBlock({ buoy, marineForecast }: Props) {
-  const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+export default function WindyMapBlock({ buoy, marineForecast, headless = false }: Props) {
+  const [open, setOpen] = useState(headless);
+  const [mounted, setMounted] = useState(headless);
   const [overlay, setOverlay] = useState<Overlay>('wind');
 
   function toggle() {
@@ -137,6 +138,185 @@ export default function WindyMapBlock({ buoy, marineForecast }: Props) {
         day: 'numeric',
       })
     : '';
+
+  const body = (
+    <div className="space-y-3">
+      {marineForecast && marineForecast.warnings.length > 0 && (
+        <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-3">
+          <p className="text-[10px] uppercase tracking-widest text-amber-700 dark:text-amber-300 mb-1">
+            Marine warnings in effect
+          </p>
+          <ul className="space-y-0.5">
+            {marineForecast.warnings.map((w, i) => (
+              <li key={i} className="text-sm font-semibold text-foreground">
+                {w.name}
+                <span className="text-xs font-normal text-foreground/60 ml-2">· {w.status}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div data-no-tab-swipe className="flex gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-1">
+        {OVERLAYS.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            onClick={() => setOverlay(o.id)}
+            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+              overlay === o.id
+                ? 'bg-foreground text-background'
+                : 'bg-foreground/10 text-foreground/70 hover:bg-foreground/15'
+            }`}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+      <div
+        data-no-tab-swipe
+        className="relative rounded-xl overflow-hidden border border-foreground/10"
+        style={{ aspectRatio: '4 / 3' }}
+      >
+        {mounted && (
+          <iframe
+            key={overlay}
+            src={buildSrc(overlay)}
+            title="Windy weather map for Halifax"
+            loading="lazy"
+            allow="fullscreen"
+            className="absolute inset-0 w-full h-full"
+          />
+        )}
+      </div>
+      <a
+        href={`https://www.windy.com/?${overlay},${HFX_LAT},${HFX_LON},${DEFAULT_ZOOM}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block text-xs text-foreground/50 hover:text-foreground/80 px-1"
+      >
+        open on windy.com ↗
+      </a>
+
+      <div className="rounded-2xl border border-foreground/10 bg-foreground/5 p-4">
+        {!buoy ? (
+          <p className="text-sm text-foreground/60">
+            Buoy data unavailable. The SmartAtlantic Herring Cove buoy may be offline.
+          </p>
+        ) : (
+          <>
+            <div className="flex items-baseline justify-between mb-3 gap-2 flex-wrap">
+              <p className="text-[11px] uppercase tracking-widest text-foreground/50">Observed</p>
+              <p className={`text-xs font-mono ${stale ? 'text-amber-700 dark:text-amber-300' : 'text-foreground/60'}`}>
+                {fresh!.label}
+                {stale && ' · stale'}
+              </p>
+            </div>
+            <div className={`grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-4 ${stale ? 'opacity-60' : ''}`}>
+              <Field
+                label="Wind"
+                value={
+                  buoy.windSpeed === null
+                    ? '—'
+                    : `${buoy.windDirection !== null ? degreesToCompass(buoy.windDirection) + ' ' : ''}${buoy.windSpeed} km/h`
+                }
+                sub={
+                  [
+                    buoy.windGust !== null ? `gust ${buoy.windGust} km/h` : null,
+                    windB ? `F${windB.force} ${windB.name}` : null,
+                  ]
+                    .filter(Boolean)
+                    .join(' · ') || undefined
+                }
+              />
+              <Field
+                label="Waves (sig.)"
+                value={buoy.waveHeightSig === null ? '—' : `${buoy.waveHeightSig.toFixed(1)} m`}
+                sub={buoy.waveHeightMax !== null ? `max ${buoy.waveHeightMax.toFixed(1)} m` : undefined}
+              />
+              <Field
+                label="Wave period"
+                value={buoy.wavePeriodMax === null ? '—' : `${buoy.wavePeriodMax.toFixed(1)} s`}
+                sub={
+                  [
+                    buoy.waveDirection !== null ? `from ${degreesToCompass(buoy.waveDirection)}` : null,
+                    buoy.waveSpread !== null ? `spread ${Math.round(buoy.waveSpread)}°` : null,
+                  ]
+                    .filter(Boolean)
+                    .join(' · ') || undefined
+                }
+              />
+              <Field
+                label="Water temp"
+                value={buoy.waterTemp === null ? '—' : `${buoy.waterTemp.toFixed(1)} °C`}
+              />
+              <Field
+                label="Surface current"
+                value={buoy.currentSpeed === null ? '—' : `${buoy.currentSpeed.toFixed(2)} m/s`}
+                sub={
+                  buoy.currentDirection !== null
+                    ? `toward ${degreesToCompass(buoy.currentDirection)}`
+                    : undefined
+                }
+              />
+              <Field
+                label="Pressure"
+                value={buoy.pressure === null ? '—' : `${buoy.pressure.toFixed(1)} mbar`}
+              />
+            </div>
+          </>
+        )}
+      </div>
+
+      {marineForecast && (marineForecast.wind || marineForecast.visibility || marineForecast.airTemperature) && (
+        <div className="rounded-2xl border border-foreground/10 bg-foreground/5 p-4">
+          <div className="flex items-baseline justify-between mb-2 gap-2 flex-wrap">
+            <p className="text-[11px] uppercase tracking-widest text-foreground/50">
+              ECCC marine forecast
+            </p>
+            {forecastIssued && (
+              <p className="text-xs font-mono text-foreground/60">issued {forecastIssued}</p>
+            )}
+          </div>
+          {marineForecast.periodOfCoverage && (
+            <p className="text-xs text-foreground/60 italic mb-2">{marineForecast.periodOfCoverage}</p>
+          )}
+          <dl className="space-y-1.5 text-sm">
+            {marineForecast.wind && (
+              <div>
+                <dt className="text-[10px] uppercase tracking-widest text-foreground/50">Wind</dt>
+                <dd className="text-foreground/90">{marineForecast.wind}</dd>
+              </div>
+            )}
+            {marineForecast.visibility && (
+              <div>
+                <dt className="text-[10px] uppercase tracking-widest text-foreground/50">Weather & visibility</dt>
+                <dd className="text-foreground/90">{marineForecast.visibility}</dd>
+              </div>
+            )}
+            {marineForecast.airTemperature && (
+              <div>
+                <dt className="text-[10px] uppercase tracking-widest text-foreground/50">Air temperature</dt>
+                <dd className="text-foreground/90">{marineForecast.airTemperature}</dd>
+              </div>
+            )}
+          </dl>
+        </div>
+      )}
+
+      <p className="text-[10px] text-foreground/40 px-1 leading-snug">
+        Sources: SmartAtlantic Halifax (Herring Cove) buoy via CIOOS Atlantic; ECCC marine
+        forecast for Halifax Harbour and Approaches; Windy.com map tiles & overlays. Buoy
+        values are point measurements and may differ elsewhere in the harbour or on exposed
+        coasts. No safety judgement is provided — verify with an official marine forecast
+        before going out.
+      </p>
+    </div>
+  );
+
+  if (headless) {
+    return <div className="mt-4">{body}</div>;
+  }
 
   return (
     <section className="mt-8">
@@ -162,187 +342,7 @@ export default function WindyMapBlock({ buoy, marineForecast }: Props) {
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
-
-      {open && (
-        <div className="space-y-3">
-          {/* Active marine warnings — surfaced first; they override any
-              "looks calm" reading further down. Amber (not red) because
-              severity varies per warning type. */}
-          {marineForecast && marineForecast.warnings.length > 0 && (
-            <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-3">
-              <p className="text-[10px] uppercase tracking-widest text-amber-700 dark:text-amber-300 mb-1">
-                Marine warnings in effect
-              </p>
-              <ul className="space-y-0.5">
-                {marineForecast.warnings.map((w, i) => (
-                  <li key={i} className="text-sm font-semibold text-foreground">
-                    {w.name}
-                    <span className="text-xs font-normal text-foreground/60 ml-2">· {w.status}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Windy interactive map */}
-          <div data-no-tab-swipe className="flex gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-1">
-            {OVERLAYS.map((o) => (
-              <button
-                key={o.id}
-                type="button"
-                onClick={() => setOverlay(o.id)}
-                className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
-                  overlay === o.id
-                    ? 'bg-foreground text-background'
-                    : 'bg-foreground/10 text-foreground/70 hover:bg-foreground/15'
-                }`}
-              >
-                {o.label}
-              </button>
-            ))}
-          </div>
-          <div
-            data-no-tab-swipe
-            className="relative rounded-xl overflow-hidden border border-foreground/10"
-            style={{ aspectRatio: '4 / 3' }}
-          >
-            {mounted && (
-              <iframe
-                key={overlay}
-                src={buildSrc(overlay)}
-                title="Windy weather map for Halifax"
-                loading="lazy"
-                allow="fullscreen"
-                className="absolute inset-0 w-full h-full"
-              />
-            )}
-          </div>
-          <a
-            href={`https://www.windy.com/?${overlay},${HFX_LAT},${HFX_LON},${DEFAULT_ZOOM}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block text-xs text-foreground/50 hover:text-foreground/80 px-1"
-          >
-            open on windy.com ↗
-          </a>
-
-          {/* Buoy observations */}
-          <div className="rounded-2xl border border-foreground/10 bg-foreground/5 p-4">
-            {!buoy ? (
-              <p className="text-sm text-foreground/60">
-                Buoy data unavailable. The SmartAtlantic Herring Cove buoy may be offline.
-              </p>
-            ) : (
-              <>
-                <div className="flex items-baseline justify-between mb-3 gap-2 flex-wrap">
-                  <p className="text-[11px] uppercase tracking-widest text-foreground/50">Observed</p>
-                  <p className={`text-xs font-mono ${stale ? 'text-amber-700 dark:text-amber-300' : 'text-foreground/60'}`}>
-                    {fresh!.label}
-                    {stale && ' · stale'}
-                  </p>
-                </div>
-                <div className={`grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-4 ${stale ? 'opacity-60' : ''}`}>
-                  <Field
-                    label="Wind"
-                    value={
-                      buoy.windSpeed === null
-                        ? '—'
-                        : `${buoy.windDirection !== null ? degreesToCompass(buoy.windDirection) + ' ' : ''}${buoy.windSpeed} km/h`
-                    }
-                    sub={
-                      [
-                        buoy.windGust !== null ? `gust ${buoy.windGust} km/h` : null,
-                        windB ? `F${windB.force} ${windB.name}` : null,
-                      ]
-                        .filter(Boolean)
-                        .join(' · ') || undefined
-                    }
-                  />
-                  <Field
-                    label="Waves (sig.)"
-                    value={buoy.waveHeightSig === null ? '—' : `${buoy.waveHeightSig.toFixed(1)} m`}
-                    sub={buoy.waveHeightMax !== null ? `max ${buoy.waveHeightMax.toFixed(1)} m` : undefined}
-                  />
-                  <Field
-                    label="Wave period"
-                    value={buoy.wavePeriodMax === null ? '—' : `${buoy.wavePeriodMax.toFixed(1)} s`}
-                    sub={
-                      [
-                        buoy.waveDirection !== null ? `from ${degreesToCompass(buoy.waveDirection)}` : null,
-                        buoy.waveSpread !== null ? `spread ${Math.round(buoy.waveSpread)}°` : null,
-                      ]
-                        .filter(Boolean)
-                        .join(' · ') || undefined
-                    }
-                  />
-                  <Field
-                    label="Water temp"
-                    value={buoy.waterTemp === null ? '—' : `${buoy.waterTemp.toFixed(1)} °C`}
-                  />
-                  <Field
-                    label="Surface current"
-                    value={buoy.currentSpeed === null ? '—' : `${buoy.currentSpeed.toFixed(2)} m/s`}
-                    sub={
-                      buoy.currentDirection !== null
-                        ? `toward ${degreesToCompass(buoy.currentDirection)}`
-                        : undefined
-                    }
-                  />
-                  <Field
-                    label="Pressure"
-                    value={buoy.pressure === null ? '—' : `${buoy.pressure.toFixed(1)} mbar`}
-                  />
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* ECCC marine forecast text */}
-          {marineForecast && (marineForecast.wind || marineForecast.visibility || marineForecast.airTemperature) && (
-            <div className="rounded-2xl border border-foreground/10 bg-foreground/5 p-4">
-              <div className="flex items-baseline justify-between mb-2 gap-2 flex-wrap">
-                <p className="text-[11px] uppercase tracking-widest text-foreground/50">
-                  ECCC marine forecast
-                </p>
-                {forecastIssued && (
-                  <p className="text-xs font-mono text-foreground/60">issued {forecastIssued}</p>
-                )}
-              </div>
-              {marineForecast.periodOfCoverage && (
-                <p className="text-xs text-foreground/60 italic mb-2">{marineForecast.periodOfCoverage}</p>
-              )}
-              <dl className="space-y-1.5 text-sm">
-                {marineForecast.wind && (
-                  <div>
-                    <dt className="text-[10px] uppercase tracking-widest text-foreground/50">Wind</dt>
-                    <dd className="text-foreground/90">{marineForecast.wind}</dd>
-                  </div>
-                )}
-                {marineForecast.visibility && (
-                  <div>
-                    <dt className="text-[10px] uppercase tracking-widest text-foreground/50">Weather & visibility</dt>
-                    <dd className="text-foreground/90">{marineForecast.visibility}</dd>
-                  </div>
-                )}
-                {marineForecast.airTemperature && (
-                  <div>
-                    <dt className="text-[10px] uppercase tracking-widest text-foreground/50">Air temperature</dt>
-                    <dd className="text-foreground/90">{marineForecast.airTemperature}</dd>
-                  </div>
-                )}
-              </dl>
-            </div>
-          )}
-
-          <p className="text-[10px] text-foreground/40 px-1 leading-snug">
-            Sources: SmartAtlantic Halifax (Herring Cove) buoy via CIOOS Atlantic; ECCC marine
-            forecast for Halifax Harbour and Approaches; Windy.com map tiles & overlays. Buoy
-            values are point measurements and may differ elsewhere in the harbour or on exposed
-            coasts. No safety judgement is provided — verify with an official marine forecast
-            before going out.
-          </p>
-        </div>
-      )}
+      {open && body}
     </section>
   );
 }

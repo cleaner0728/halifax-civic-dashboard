@@ -31,40 +31,6 @@ type Props = {
   marineForecast: MarineForecast | null;
 };
 
-function SectionHeader({
-  icon,
-  title,
-  meta,
-  href,
-  linkLabel,
-}: {
-  icon: string;
-  title: string;
-  meta?: string;
-  href?: string;
-  linkLabel?: string;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-3 mt-8 mb-3 px-1">
-      <div className="flex items-center gap-2 min-w-0">
-        <span className="text-xl" aria-hidden>{icon}</span>
-        <h2 className="text-lg font-bold text-foreground truncate">{title}</h2>
-        {meta && <span className="text-xs text-foreground/40 truncate">· {meta}</span>}
-      </div>
-      {href && (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-foreground/50 hover:text-foreground/80 whitespace-nowrap"
-        >
-          {linkLabel ?? 'source'} ↗
-        </a>
-      )}
-    </div>
-  );
-}
-
 // Section that folds its body behind its header. Default closed —
 // keeps long, less-time-sensitive lists (city press releases, fire
 // incidents) from pushing more urgent content off-screen on first
@@ -149,34 +115,56 @@ export default function CityLiveScreen({
       <div className="max-w-5xl mx-auto px-2 mt-2">
         <AlertsBlock alerts={alerts} />
 
-        <WindyMapBlock buoy={buoy} marineForecast={marineForecast} />
-
-        {/* Right Now — weather card already packs tides, AQ, burn, UV, etc.
-            into its own grid. Webcams sit directly under per spec. */}
-        <WeatherBlock
-          weather={weather}
-          tideGraph={tideGraph}
-          airQuality={airQuality}
-          burnStatus={burnStatus}
-        />
         <HalifaxWebcams />
 
-        <SectionHeader
-          icon="🚌"
-          title="Getting Around"
+        <CollapsibleSection
+          icon="🌦️"
+          title="Weather & Marine"
+          meta="Halifax"
+        >
+          <WeatherBlock
+            weather={weather}
+            tideGraph={tideGraph}
+            airQuality={airQuality}
+            burnStatus={burnStatus}
+          />
+          <WindyMapBlock headless buoy={buoy} marineForecast={marineForecast} />
+        </CollapsibleSection>
+
+        <CollapsibleSection
+          icon="⛴️"
+          title="Ferry"
           href="https://www.halifax.ca/transportation/halifax-transit/service-disruptions"
           linkLabel="halifax.ca"
-        />
-        <GettingAroundBlock
-          detours={detours}
-          ferryAlerts={ferryAlerts}
-          adjustments={adjustments}
-        />
+        >
+          <GettingAroundBlock
+            detours={[]}
+            ferryAlerts={ferryAlerts}
+            adjustments={null}
+            emptyMessage="No active ferry alerts."
+            emptySubMessage="Alderney and Woodside ferries running on regular schedule."
+          />
+        </CollapsibleSection>
+
+        <CollapsibleSection
+          icon="🚌"
+          title="Transit"
+          href="https://www.halifax.ca/transportation/halifax-transit/service-disruptions"
+          linkLabel="halifax.ca"
+        >
+          <GettingAroundBlock
+            detours={detours}
+            ferryAlerts={[]}
+            adjustments={adjustments}
+            emptyMessage="No active transit disruptions."
+            emptySubMessage="Halifax Transit is running on regular routes."
+          />
+        </CollapsibleSection>
 
         <CollapsibleSection
           icon="🚒"
           title="Active Incidents"
-          meta="past 90 min"
+          meta="past 60 min"
           href="https://www.halifax.ca/safety-security/fire-emergency/hrfe-incident-feed"
           linkLabel="HRFE feed"
         >
@@ -185,7 +173,7 @@ export default function CityLiveScreen({
 
         <CollapsibleSection
           icon="🏛️"
-          title="City News"
+          title="HRM News"
           meta={hrmDateLabel}
           href="https://www.halifax.ca/home/news"
           linkLabel="halifax.ca"

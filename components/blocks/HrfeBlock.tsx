@@ -39,7 +39,7 @@ export default function HrfeBlock({ incidents }: { incidents: HrmItem[] }) {
     return (
       <div className="rounded-xl border border-border bg-card/60 text-center py-10 text-foreground/50">
         <p className="text-3xl mb-2">✅</p>
-        <p className="text-base font-medium">No active incidents in the past 90 minutes.</p>
+        <p className="text-base font-medium">No active incidents in the past 60 minutes.</p>
         <p className="text-sm mt-1 text-foreground/40">All clear in the Halifax region.</p>
       </div>
     );
