@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-28T13:00:51.662Z",
+  "fetchedAt": "2026-05-28T13:16:17.407Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -47,15 +47,6 @@
       "createdUtc": 1779963887
     },
     {
-      "title": "Napalm Death Live at The Marquee",
-      "score": 0,
-      "numComments": 0,
-      "author": "guywithnolefthand",
-      "url": "https://www.reddit.com/r/halifax/comments/1tps8fb/napalm_death_live_at_the_marquee/",
-      "flair": null,
-      "createdUtc": 1779940273
-    },
-    {
       "title": "Three years after the Tantallon wildfires, we are still waiting for a way out.",
       "score": 0,
       "numComments": 0,
@@ -63,6 +54,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tq2813/three_years_after_the_tantallon_wildfires_we_are/",
       "flair": null,
       "createdUtc": 1779971518
+    },
+    {
+      "title": "Napalm Death Live at The Marquee",
+      "score": 0,
+      "numComments": 0,
+      "author": "guywithnolefthand",
+      "url": "https://www.reddit.com/r/halifax/comments/1tps8fb/napalm_death_live_at_the_marquee/",
+      "flair": null,
+      "createdUtc": 1779940273
     },
     {
       "title": "Any one see this last night",
@@ -119,24 +119,6 @@
       "createdUtc": 1779923854
     },
     {
-      "title": "Man facing charges after theft at Halifax mall: police",
-      "score": 0,
-      "numComments": 0,
-      "author": "Street_Anon",
-      "url": "https://www.reddit.com/r/halifax/comments/1tpzx05/man_facing_charges_after_theft_at_halifax_mall/",
-      "flair": null,
-      "createdUtc": 1779965120
-    },
-    {
-      "title": "Casino Nova Scotia move inches forward as waterfront property is up for sale",
-      "score": 0,
-      "numComments": 0,
-      "author": "NotABoyGenius45",
-      "url": "https://www.reddit.com/r/halifax/comments/1tpfgev/casino_nova_scotia_move_inches_forward_as/",
-      "flair": null,
-      "createdUtc": 1779909097
-    },
-    {
       "title": "N.S. to relocate bird colony away from dangers of highway",
       "score": 0,
       "numComments": 0,
@@ -153,6 +135,24 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tq221v/any_good_restaurants_have_a_large_selection_of/",
       "flair": null,
       "createdUtc": 1779971090
+    },
+    {
+      "title": "Casino Nova Scotia move inches forward as waterfront property is up for sale",
+      "score": 0,
+      "numComments": 0,
+      "author": "NotABoyGenius45",
+      "url": "https://www.reddit.com/r/halifax/comments/1tpfgev/casino_nova_scotia_move_inches_forward_as/",
+      "flair": null,
+      "createdUtc": 1779909097
+    },
+    {
+      "title": "Man facing charges after theft at Halifax mall: police",
+      "score": 0,
+      "numComments": 0,
+      "author": "Street_Anon",
+      "url": "https://www.reddit.com/r/halifax/comments/1tpzx05/man_facing_charges_after_theft_at_halifax_mall/",
+      "flair": null,
+      "createdUtc": 1779965120
     },
     {
       "title": "Calling on Nova Scotia sailors",
