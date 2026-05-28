@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-28T08:16:15.872Z",
+  "fetchedAt": "2026-05-28T08:46:15.035Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -209,6 +209,15 @@
       "createdUtc": 1779892158
     },
     {
+      "title": "Time for Halifax to adopt this bylaw?",
+      "score": 0,
+      "numComments": 0,
+      "author": "leMaverique",
+      "url": "https://www.reddit.com/r/halifax/comments/1tpvirc/time_for_halifax_to_adopt_this_bylaw/",
+      "flair": null,
+      "createdUtc": 1779950372
+    },
+    {
       "title": "Today’s point pleasant park",
       "score": 0,
       "numComments": 0,
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tp166o/uncertainty_swirls_around_pitch_for_halifax/",
       "flair": null,
       "createdUtc": 1779876538
-    },
-    {
-      "title": "Realistically, what else could we do to stop people from going straight when in the right hand lane here? Three times in the past two months I’ve almost been side swiped.",
-      "score": 0,
-      "numComments": 0,
-      "author": "Simba_Rah",
-      "url": "https://www.reddit.com/r/halifax/comments/1tojxt1/realistically_what_else_could_we_do_to_stop/",
-      "flair": null,
-      "createdUtc": 1779828868
     }
   ]
 }
