@@ -26,6 +26,15 @@ function catClass(cat: string) {
 
 // ── Time helpers ─────────────────────────────────────────────────────────────
 
+// Build a cross-platform maps link. The Google Maps universal URL opens the
+// native Maps app on mobile (Google Maps on Android; Google Maps or the
+// browser → Apple Maps on iOS) and the web map on desktop. We query by
+// venue name + full address for the most accurate pin.
+function venueMapUrl(name: string | null, address: string | null): string {
+  const query = [name, address].filter(Boolean).join(', ');
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+}
+
 function formatEventTime(timeText: string | null): string {
   if (!timeText) return '';
   if (timeText.replace(/\s/g, '') === '12:00am-12:00am') return 'All Day';
@@ -100,12 +109,20 @@ function EventCard({ ev }: { ev: HalifaxEvent }) {
           <p className="text-xs text-foreground/50">{ev.organizer_name}</p>
         )}
 
-        {/* Venue */}
+        {/* Venue — tap to open in Maps */}
         {ev.venue_name && (
-          <p className="text-sm text-foreground/70 flex items-start gap-1">
+          <a
+            href={venueMapUrl(ev.venue_name, ev.venue_address)}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${ev.venue_name} in Maps`}
+            className="text-sm text-foreground/70 hover:text-violet-500 transition-colors flex items-start gap-1 group"
+          >
             <span className="shrink-0 mt-px">📍</span>
-            <span>{ev.venue_name}{ev.venue_address ? ` · ${ev.venue_address.split(',').slice(0, 2).join(',')}` : ''}</span>
-          </p>
+            <span className="group-hover:underline">
+              {ev.venue_name}{ev.venue_address ? ` · ${ev.venue_address.split(',').slice(0, 2).join(',')}` : ''}
+            </span>
+          </a>
         )}
 
         {/* Summary */}
@@ -221,7 +238,7 @@ export default function EventsFeed({ events }: Props) {
   return (
     <div>
       {/* Category filter pills */}
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-hide">
+      <div className="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-hide" data-no-tab-swipe>
         <button
           onClick={() => setActiveCat(null)}
           className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
