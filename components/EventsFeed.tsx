@@ -213,7 +213,7 @@ type DateFilter = 'today' | '3days' | null;
 
 export default function EventsFeed({ events }: Props) {
   const [activeCat, setActiveCat]   = useState<string | null>(null);
-  const [dateFilter, setDateFilter] = useState<DateFilter>(null);
+  const [dateFilter, setDateFilter] = useState<DateFilter>('today');
 
   const cats = topCategories(events);
 
@@ -320,7 +320,7 @@ export default function EventsFeed({ events }: Props) {
         <div className="space-y-6">
           {[...groups.entries()].map(([dateStr, dayEvents]) => (
             <section key={dateStr}>
-              <h4 className="text-xs font-semibold text-foreground/40 uppercase tracking-widest mb-2 px-1">
+              <h4 className="text-base font-semibold text-foreground/50 uppercase tracking-widest mb-2 px-1">
                 {formatDateHeader(dateStr)}
               </h4>
               <div className="space-y-3">
