@@ -14,15 +14,7 @@ export default function EventsCalendarScreen({ renderedAt, events }: Props) {
               <p className="text-sm font-medium text-white/70 uppercase tracking-widest">Events</p>
               <h2 className="text-3xl font-bold tracking-tight mt-1">What&apos;s On</h2>
               <p className="text-base text-white/70 mt-1">
-                Upcoming events · Halifax, NS ·{' '}
-                <a
-                  href="https://discoverhalifaxns.com/events/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline hover:text-white"
-                >
-                  discoverhalifaxns.com
-                </a>
+                Upcoming events · Halifax, NS
               </p>
             </div>
             <div className="text-5xl">🎟️</div>
