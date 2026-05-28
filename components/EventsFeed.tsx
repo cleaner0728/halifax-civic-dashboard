@@ -209,14 +209,26 @@ function EventCard({ ev }: { ev: HalifaxEvent }) {
 
 type Props = { events: HalifaxEvent[] };
 
+type DateFilter = 'today' | '3days' | null;
+
 export default function EventsFeed({ events }: Props) {
-  const [activeCat, setActiveCat] = useState<string | null>(null);
+  const [activeCat, setActiveCat]   = useState<string | null>(null);
+  const [dateFilter, setDateFilter] = useState<DateFilter>(null);
 
   const cats = topCategories(events);
 
-  const filtered = activeCat
-    ? events.filter(ev => ev.categories?.includes(activeCat))
-    : events;
+  const _now        = new Date();
+  const todayStr    = toHfxDateStr(_now);
+  const _3d         = new Date(_now); _3d.setDate(_now.getDate() + 2);
+  const in3DaysStr  = toHfxDateStr(_3d);
+
+  const filtered = events.filter(ev => {
+    const dayStr = toHfxDateStr(ev.start_at);
+    if (dateFilter === 'today'  && dayStr !== todayStr)   return false;
+    if (dateFilter === '3days'  && dayStr > in3DaysStr)   return false;
+    if (activeCat && !ev.categories?.includes(activeCat)) return false;
+    return true;
+  });
 
   // Group by Halifax date string
   const groups = new Map<string, HalifaxEvent[]>();
@@ -238,17 +250,45 @@ export default function EventsFeed({ events }: Props) {
   return (
     <div>
       {/* Category filter pills */}
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-hide" data-no-tab-swipe>
+      <div
+        className="flex gap-2 overflow-x-auto pb-2 mb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        data-no-tab-swipe
+      >
+        {/* Date-range presets — left of All */}
         <button
-          onClick={() => setActiveCat(null)}
+          onClick={() => setDateFilter(dateFilter === 'today' ? null : 'today')}
           className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
-            activeCat === null
+            dateFilter === 'today'
+              ? 'bg-amber-500 text-white border-amber-500'
+              : 'border-border text-foreground/60 hover:bg-foreground/5'
+          }`}
+        >
+          Today only
+        </button>
+        <button
+          onClick={() => setDateFilter(dateFilter === '3days' ? null : '3days')}
+          className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
+            dateFilter === '3days'
+              ? 'bg-sky-500 text-white border-sky-500'
+              : 'border-border text-foreground/60 hover:bg-foreground/5'
+          }`}
+        >
+          Next 3 days
+        </button>
+
+        {/* All — clears both date and category */}
+        <button
+          onClick={() => { setActiveCat(null); setDateFilter(null); }}
+          className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
+            activeCat === null && dateFilter === null
               ? 'bg-violet-600 text-white border-violet-600'
               : 'border-border text-foreground/60 hover:bg-foreground/5'
           }`}
         >
           All
         </button>
+
+        {/* Category pills */}
         {cats.map(cat => (
           <button
             key={cat}
@@ -267,6 +307,7 @@ export default function EventsFeed({ events }: Props) {
       {/* Count */}
       <p className="text-xs text-foreground/40 mb-4">
         {filtered.length} event{filtered.length !== 1 ? 's' : ''}
+        {dateFilter === 'today' ? ' · Today only' : dateFilter === '3days' ? ' · Next 3 days' : ''}
         {activeCat ? ` · ${activeCat}` : ''}
       </p>
 
