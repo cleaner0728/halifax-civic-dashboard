@@ -223,14 +223,11 @@ export async function fetchWeather(): Promise<WeatherData | null> {
     const daily: WeatherData['daily'] = [];
     const today = new Date();
 
-    // Find the first day-period index (may be 0="Today" or could start at a
-    // different period if the request is made late at night and ECCC has
-    // already dropped "Today").
-    let firstDayIdx = 0;
+    // Detect whether the feed starts on a night period (e.g. the request is
+    // made late at night and ECCC has already dropped "Today"), which shifts
+    // the day/night pairing by one slot.
     const firstName = (forecasts[0]?.period?.textForecastName?.en ?? '').toLowerCase();
-    // If the first period is a night period, shift pairing by one slot.
     const firstIsNight = /night$|tonight/.test(firstName);
-    if (firstIsNight) firstDayIdx = -1; // day period is "missing"; use night's low as min only
 
     for (let i = 0; i < 7; i++) {
       let dayFcIdx: number;

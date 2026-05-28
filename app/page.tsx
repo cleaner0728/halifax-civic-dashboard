@@ -35,6 +35,10 @@ const TABS: TabSpec[] = [
 ];
 
 export default async function Home() {
+  // Server components render once per request, so capturing wall-clock render
+  // time here is intentional and deterministic for this response — it drives
+  // the "refreshed X ago" footer label.
+  // eslint-disable-next-line react-hooks/purity
   const renderedAt = Date.now();
 
   const [
@@ -75,7 +79,15 @@ export default async function Home() {
     safe(fetchEvents(), [], 'events'),
   ]);
 
-  const tideGraph = computeTideGraph(tides);
+  // computeTideGraph is pure but defensive: malformed tide data shouldn't be
+  // able to 500 the whole page. Returns null on bad input (same as its normal
+  // "not enough points" fallback), which CityLiveScreen already handles.
+  let tideGraph: ReturnType<typeof computeTideGraph> = null;
+  try {
+    tideGraph = computeTideGraph(tides);
+  } catch (e) {
+    console.error('[page] computeTideGraph threw:', e);
+  }
 
   return (
     <main className="bg-background text-foreground select-none [-webkit-user-select:none]">

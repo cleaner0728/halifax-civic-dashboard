@@ -18,17 +18,16 @@ import { formatRelative } from "@/lib/date";
 // Re-ticked every 30s on the client so the "Xm ago" string stays fresh
 // even when the user lingers without refreshing.
 export default function EndOfDashboardFooter({ renderedAt }: { renderedAt: number }) {
-  const [now, setNow] = useState(renderedAt);
+  // Re-render every 30s so the "Xm ago" label recomputes against the current
+  // clock (formatRelative reads Date.now() each call). A bare tick counter
+  // avoids storing a Date.now() value in state and the set-state-in-effect
+  // lint rule — the interval setter runs in a callback, not synchronously.
+  const [, setTick] = useState(0);
   useEffect(() => {
-    setNow(Date.now());
-    const id = window.setInterval(() => setNow(Date.now()), 30_000);
+    const id = window.setInterval(() => setTick((t) => t + 1), 30_000);
     return () => window.clearInterval(id);
   }, []);
   const ageLabel = formatRelative(renderedAt) || "just now";
-  // formatRelative needs `now` in closure to recompute; the state above
-  // re-renders this component every 30s with a fresh Date.now(), and
-  // formatRelative internally reads Date.now() each call.
-  void now;
 
   const scrollToSectionTop = (e: React.MouseEvent<HTMLButtonElement>) => {
     // Walk up to the enclosing <section data-snap-section="…"> rather than

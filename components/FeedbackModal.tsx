@@ -21,13 +21,19 @@ export default function FeedbackModal({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const messageRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
+  // Reset the form when the sheet closes so the next open starts fresh.
+  // Done with the "adjust state during render" pattern (tracking the previous
+  // `open`) rather than an effect — this is React's recommended approach and
+  // sidesteps the set-state-in-effect rule.
+  const [wasOpen, setWasOpen] = useState(open);
+  if (wasOpen !== open) {
+    setWasOpen(open);
     if (!open) {
       setStatus("idle");
       setErrorMsg(null);
       setMessage("");
     }
-  }, [open]);
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -127,7 +133,7 @@ export default function FeedbackModal({
               <span className="text-5xl">💌</span>
               <p className="text-lg font-semibold">Got it, thanks!</p>
               <p className="text-sm text-foreground/50">
-                I'll read this and get back to you if you left an email.
+                I&apos;ll read this and get back to you if you left an email.
               </p>
             </div>
           ) : (

@@ -12,9 +12,14 @@ const MIN_INTERVAL_MS = 60_000;
 
 export default function RefreshOnVisible() {
   const router = useRouter();
-  const lastRefreshAt = useRef(Date.now());
+  // Initialized lazily inside the effect — calling Date.now() during render is
+  // impure and rejected by react-hooks/purity under React 19. Starting at 0
+  // and stamping the mount time on first effect run keeps the original
+  // behaviour (no refresh fires until MIN_INTERVAL_MS after mount).
+  const lastRefreshAt = useRef(0);
 
   useEffect(() => {
+    if (lastRefreshAt.current === 0) lastRefreshAt.current = Date.now();
     const maybeRefresh = () => {
       if (document.visibilityState !== 'visible') return;
       const now = Date.now();
