@@ -310,7 +310,7 @@ export default function EventsFeed({ events }: Props) {
               : 'border-border text-foreground/60 hover:bg-foreground/5'
           }`}
         >
-          Today only
+          Today
         </button>
         <button
           onClick={() => setDateFilter(dateFilter === '3days' ? null : '3days')}
@@ -354,7 +354,7 @@ export default function EventsFeed({ events }: Props) {
       {/* Count */}
       <p className="text-xs text-foreground/40 mb-4">
         {filtered.length} event{filtered.length !== 1 ? 's' : ''}
-        {dateFilter === 'today' ? ' · Today only' : dateFilter === '3days' ? ' · Next 3 days' : ''}
+        {dateFilter === 'today' ? ' · Today' : dateFilter === '3days' ? ' · Next 3 days' : ''}
         {activeCat ? ` · ${activeCat}` : ''}
       </p>
 
