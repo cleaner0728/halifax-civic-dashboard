@@ -19,7 +19,6 @@ type Cam =
       kind: "image";
       source: string;
       name: string;
-      emoji: string;
       // Returns a cache-buster-stamped URL. Different upstreams use different
       // query-string conventions (`?time=` vs `?t=`); the builder hides that.
       imageUrl: (t: number) => string;
@@ -29,7 +28,6 @@ type Cam =
       kind: "video";
       source: string;
       name: string;
-      emoji: string;
       streamUrl: string;
     };
 
@@ -53,60 +51,52 @@ const CAMS: Cam[] = [
     imageUrl: hhbUrl("macdonald-halifax-bound"),
     refreshMs: 10_000,
     source: "https://www.novascotiawebcams.com/webcams/macdonald-bridge-halifax-bound",
-    name: "MacDonald (Halifax)",
-    emoji: "🌉",
+    name: "MacDonald (Halifax)",
   },
   {
     kind: "image",
     imageUrl: hhbUrl("macdonald-dartmouth-bound"),
     refreshMs: 10_000,
     source: "https://www.novascotiawebcams.com/webcams/macdonald-bridge-dartmouth-bound",
-    name: "MacDonald (Dartmouth)",
-    emoji: "🌉",
+    name: "MacDonald (Dartmouth)",
   },
   {
     kind: "image",
     imageUrl: hhbUrl("mackay-halifax-bound"),
     refreshMs: 10_000,
     source: "https://www.novascotiawebcams.com/webcams/mackay-bridge-halifax-bound",
-    name: "MacKay (Halifax)",
-    emoji: "🌉",
+    name: "MacKay (Halifax)",
   },
   {
     kind: "image",
     imageUrl: hhbUrl("mackay-dartmouth-bound"),
     refreshMs: 10_000,
     source: "https://www.novascotiawebcams.com/webcams/mackay-bridge-dartmouth-bound",
-    name: "MacKay (Dartmouth)",
-    emoji: "🌉",
+    name: "MacKay (Dartmouth)",
   },
   {
     kind: "video",
     streamUrl: "https://streaming-1.novascotiawebcams.com/live/kingswharf/playlist.m3u8",
     source: "https://www.novascotiawebcams.com/webcams/halifax-waterfront",
-    name: "Halifax Waterfront",
-    emoji: "⚓",
+    name: "Halifax Waterfront",
   },
   {
     kind: "video",
     streamUrl: "https://streaming-1.novascotiawebcams.com/live/argylestreet/playlist.m3u8",
     source: "https://www.novascotiawebcams.com/webcams/argyle-street",
-    name: "Argyle Street",
-    emoji: "🍽️",
+    name: "Argyle Street",
   },
   {
     kind: "video",
     streamUrl: "https://streaming-1.novascotiawebcams.com/live/westin/playlist.m3u8",
     source: "https://www.novascotiawebcams.com/webcams/pier-21",
-    name: "Pier 21",
-    emoji: "🛳️",
+    name: "Pier 21",
   },
   {
     kind: "video",
     streamUrl: "https://streaming-1.novascotiawebcams.com/live/armdale2/playlist.m3u8",
     source: "https://www.novascotiawebcams.com/webcams/armdale-roundabout-2",
-    name: "Armdale Roundabout",
-    emoji: "🚥",
+    name: "Armdale Roundabout",
   },
   // Emera Oval moved to the end so traffic / transit cams (which most
   // users hit first) own the leading pills. Oval is a recreational
@@ -117,8 +107,7 @@ const CAMS: Cam[] = [
     refreshMs: 10_000,
     source:
       "https://www.halifax.ca/parks-recreation/programs-activities/outdoor-recreation/emera-oval",
-    name: "Emera Oval",
-    emoji: "⛸️",
+    name: "Emera Oval",
   },
 ];
 
@@ -220,7 +209,7 @@ export default function HalifaxWebcams() {
           stuck on screen. Remounting lets Google's MutationObserver
           translate the new title fresh. */}
       <p key={`title-${active.name}`} className="text-xl font-semibold text-center text-foreground mb-3">
-        {active.emoji} {active.name}
+        {active.name}
       </p>
       <div
         // Re-key on cam switch so the player fully unmounts/remounts. Without

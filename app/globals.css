@@ -3,17 +3,21 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #f8fafc;
+  /* Light: a cool-grey page with a slightly warm "paper" card on top, so
+     cards lift off the background instead of melting into pure white. */
+  --background: #eceef2;
   --foreground: #0f151c;
-  --card: #ffffff;
-  --border: #e2e8f0;
+  --card: #fdfcf8;
+  --border: #e1e4ea;
 }
 
 .dark {
+  /* Dark: keep card and background close so cards read as gentle elevation,
+     not high-contrast panels. The border does the separating. */
   --background: #0b1120;
   --foreground: #f1f5f9;
-  --card: #152036;
-  --border: #1e293b;
+  --card: #0f1829;
+  --border: #1d2840;
 }
 
 @theme inline {
