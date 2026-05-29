@@ -1,6 +1,6 @@
 import BrandTitle from '@/components/BrandTitle';
 import InstallButton from '@/components/InstallButton';
-import MenuFab from '@/components/MenuFab';
+import SettingsMenu from '@/components/SettingsMenu';
 import ScrollSnapContainer, { type TabSpec } from '@/components/ScrollSnapContainer';
 import RefreshOnVisible from '@/components/RefreshOnVisible';
 import CityLiveScreen from '@/components/screens/CityLiveScreen';
@@ -99,6 +99,7 @@ export default async function Home() {
             <BrandTitle />
             <div className="flex items-center gap-2 shrink-0">
               <InstallButton />
+              <SettingsMenu />
             </div>
           </div>
         }
@@ -126,7 +127,6 @@ export default async function Home() {
         <EventsCalendarScreen renderedAt={renderedAt} events={events} />
         <StatsScreen gasPrices={gasPrices} groceryPrices={groceryPrices} />
       </ScrollSnapContainer>
-      <MenuFab />
     </main>
   );
 }

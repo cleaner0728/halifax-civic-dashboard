@@ -32,9 +32,38 @@ export default function ScrollSnapContainer({ children, tabs, topBar }: ScrollSn
   const [activeIndex, setActiveIndex] = useState(0);
   const [pullProgress, setPullProgress] = useState(0);
   const [isPending, startTransition] = useTransition();
+  // Hide the top bar + bottom tab bar when scrolling down, reveal on scroll
+  // up or near the top. Fades (opacity) + slides so it reads as a soft
+  // dismiss rather than a hard cut.
+  const [chromeHidden, setChromeHidden] = useState(false);
 
   const activeIndexRef = useRef(0);
   useEffect(() => { activeIndexRef.current = activeIndex; }, [activeIndex]);
+
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let ticking = false;
+    const THRESHOLD = 8; // ignore jitter; only react to deliberate scrolls
+    const update = () => {
+      const y = window.scrollY;
+      if (y < 40) {
+        setChromeHidden(false);          // always show near the top
+        lastY = y;
+      } else if (y - lastY > THRESHOLD) {
+        setChromeHidden(true);           // scrolling down
+        lastY = y;
+      } else if (lastY - y > THRESHOLD) {
+        setChromeHidden(false);          // scrolling up
+        lastY = y;
+      }
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Tab dwell-time analytics. When activeIndex changes, emit a `tab_view`
   // event for the OUTGOING tab with how long the user spent on it.
@@ -237,7 +266,9 @@ export default function ScrollSnapContainer({ children, tabs, topBar }: ScrollSn
           it also shows the tab bar. Mobile gets a dedicated bottom tab bar
           (see below) for thumb reach. */}
       <div
-        className="fixed top-0 left-0 right-0 z-[60]"
+        className={`fixed top-0 left-0 right-0 z-[60] transition-[opacity,transform] duration-300 ease-out ${
+          chromeHidden ? "opacity-0 -translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
+        }`}
         style={{ viewTransitionName: "tab-header" }}
       >
         {topBar && (
@@ -289,7 +320,9 @@ export default function ScrollSnapContainer({ children, tabs, topBar }: ScrollSn
           home indicator. */}
       <nav
         data-no-tab-swipe
-        className="md:hidden fixed bottom-0 left-0 right-0 z-[60] bg-card/95 backdrop-blur-md border-t border-border"
+        className={`md:hidden fixed bottom-0 left-0 right-0 z-[60] bg-card/95 backdrop-blur-md border-t border-border transition-[opacity,transform] duration-300 ease-out ${
+          chromeHidden ? "opacity-0 translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
+        }`}
         style={{
           paddingBottom: "env(safe-area-inset-bottom)",
           viewTransitionName: "tab-dots",
