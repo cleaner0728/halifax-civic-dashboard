@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-29T11:16:14.572Z",
+  "fetchedAt": "2026-05-29T11:46:13.690Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -29,15 +29,6 @@
       "createdUtc": 1780050451
     },
     {
-      "title": "WTF ? It's almost June.",
-      "score": 0,
-      "numComments": 0,
-      "author": "Bean_Tiger",
-      "url": "https://www.reddit.com/r/halifax/comments/1tqgk1c/wtf_its_almost_june/",
-      "flair": null,
-      "createdUtc": 1780002486
-    },
-    {
       "title": "One of Canada’s largest landlords says it’s pausing new developments in the 'near term'",
       "score": 0,
       "numComments": 0,
@@ -47,6 +38,15 @@
       "createdUtc": 1780049179
     },
     {
+      "title": "WTF ? It's almost June.",
+      "score": 0,
+      "numComments": 0,
+      "author": "Bean_Tiger",
+      "url": "https://www.reddit.com/r/halifax/comments/1tqgk1c/wtf_its_almost_june/",
+      "flair": null,
+      "createdUtc": 1780002486
+    },
+    {
       "title": "Update: Baby’s mother dies in hospital",
       "score": 0,
       "numComments": 0,
@@ -54,6 +54,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tq9sm8/update_babys_mother_dies_in_hospital/",
       "flair": null,
       "createdUtc": 1779988263
+    },
+    {
+      "title": "Positive Vibes Friday",
+      "score": 0,
+      "numComments": 0,
+      "author": "AutoModerator",
+      "url": "https://www.reddit.com/r/halifax/comments/1tqx383/positive_vibes_friday/",
+      "flair": null,
+      "createdUtc": 1780048873
     },
     {
       "title": "New Halifax Forum update video includes 1st views of the new Multipurpose Centre space",
@@ -83,13 +92,13 @@
       "createdUtc": 1779991122
     },
     {
-      "title": "Positive Vibes Friday",
+      "title": "Access-A-Bus – Loss of Repeat Rider",
       "score": 0,
       "numComments": 0,
-      "author": "AutoModerator",
-      "url": "https://www.reddit.com/r/halifax/comments/1tqx383/positive_vibes_friday/",
+      "author": "disfan1987",
+      "url": "https://www.reddit.com/r/halifax/comments/1tql2um/accessabus_loss_of_repeat_rider/",
       "flair": null,
-      "createdUtc": 1780048873
+      "createdUtc": 1780013214
     },
     {
       "title": "Is Theodore The Tugboat still alive????",
@@ -99,15 +108,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tqgags/is_theodore_the_tugboat_still_alive/",
       "flair": null,
       "createdUtc": 1780001926
-    },
-    {
-      "title": "Access-A-Bus – Loss of Repeat Rider",
-      "score": 0,
-      "numComments": 0,
-      "author": "disfan1987",
-      "url": "https://www.reddit.com/r/halifax/comments/1tql2um/accessabus_loss_of_repeat_rider/",
-      "flair": null,
-      "createdUtc": 1780013214
     },
     {
       "title": "Halifax Police Conducting Additional Smoke Shop Raids",
@@ -155,15 +155,6 @@
       "createdUtc": 1779990996
     },
     {
-      "title": "Blast from the past - how to get across the harbour",
-      "score": 0,
-      "numComments": 0,
-      "author": "onomatopo",
-      "url": "https://www.reddit.com/r/halifax/comments/1tqbume/blast_from_the_past_how_to_get_across_the_harbour/",
-      "flair": null,
-      "createdUtc": 1779992545
-    },
-    {
       "title": "Energy board looking into gas pricing ‘emergency,’ but not for the reason you probably expect",
       "score": 0,
       "numComments": 0,
@@ -171,6 +162,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tqyjov/energy_board_looking_into_gas_pricing_emergency/",
       "flair": null,
       "createdUtc": 1780053095
+    },
+    {
+      "title": "Blast from the past - how to get across the harbour",
+      "score": 0,
+      "numComments": 0,
+      "author": "onomatopo",
+      "url": "https://www.reddit.com/r/halifax/comments/1tqbume/blast_from_the_past_how_to_get_across_the_harbour/",
+      "flair": null,
+      "createdUtc": 1779992545
     },
     {
       "title": "Time for Halifax to adopt this bylaw?",
