@@ -299,10 +299,7 @@ export default function EventsFeed({ events }: Props) {
   return (
     <div>
       {/* Category filter pills */}
-      <div
-        className="flex gap-2 overflow-x-auto pb-2 mb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        data-no-tab-swipe
-      >
+      <div className="flex flex-wrap gap-2 mb-4">
         {/* Date-range presets — left of All */}
         <button
           onClick={() => setDateFilter(dateFilter === 'today' ? null : 'today')}

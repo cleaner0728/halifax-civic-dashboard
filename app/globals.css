@@ -38,11 +38,31 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
   /* Suppress iOS Safari's built-in pull-to-refresh (which reloads the
      whole page). ScrollSnapContainer ships its own PTR that just calls
      router.refresh() — keeps client state, refetches server data. */
   overscroll-behavior-y: contain;
+}
+
+/* Color transition is armed one frame after mount (ThemeProvider adds
+   `.theme-ready`) so theme toggles cross-fade smoothly while the initial
+   theme application stays instant — no slow white→dark flash on entry. */
+.theme-ready body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Soft entrance: the dashboard fades up gently on first load instead of
+   snapping in. Runs once per real page load — router.refresh() reconciles
+   in place and doesn't remount <main>, so it never replays on refresh. */
+main {
+  animation: app-enter 0.45s ease-out both;
+}
+@keyframes app-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  main { animation: none; }
 }
 
 /* Hide scrollbar for horizontally scrollable elements but keep functionality */
