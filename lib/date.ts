@@ -3,14 +3,21 @@
 
 export const HFX_TZ = 'America/Halifax';
 
+// Constructing an Intl.DateTimeFormat is expensive (it does locale
+// negotiation up front); `.format()` is cheap. toHfxDateStr is the hottest
+// date helper — EventsFeed alone calls it a few times per event on every
+// filter re-render — so we build the formatter once and reuse it. Reusing a
+// formatter instance for repeated formatting is safe.
+const hfxDateFmt = new Intl.DateTimeFormat('en-CA', {
+  timeZone: HFX_TZ,
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+
 export function toHfxDateStr(date: Date | string): string {
   const d = typeof date === 'string' ? new Date(date) : date;
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: HFX_TZ,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(d);
+  return hfxDateFmt.format(d);
 }
 
 export function isSameDay(dateStr: string, target: Date): boolean {
