@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-29T12:16:15.198Z",
+  "fetchedAt": "2026-05-29T12:39:17.505Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -65,6 +65,15 @@
       "createdUtc": 1780048873
     },
     {
+      "title": "Who's visiting?",
+      "score": 0,
+      "numComments": 0,
+      "author": "knifeshoes24",
+      "url": "https://www.reddit.com/r/halifax/comments/1tr07ai/whos_visiting/",
+      "flair": null,
+      "createdUtc": 1780057381
+    },
+    {
       "title": "New Halifax Forum update video includes 1st views of the new Multipurpose Centre space",
       "score": 0,
       "numComments": 0,
@@ -72,6 +81,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tqgdxk/new_halifax_forum_update_video_includes_1st_views/",
       "flair": null,
       "createdUtc": 1780002124
+    },
+    {
+      "title": "Woodlawn Blood Collection Closing",
+      "score": 0,
+      "numComments": 0,
+      "author": "InvestigatorOk6222",
+      "url": "https://www.reddit.com/r/halifax/comments/1tqzptl/woodlawn_blood_collection_closing/",
+      "flair": null,
+      "createdUtc": 1780056177
     },
     {
       "title": "Cheap flight to Spain from YHZ",
@@ -99,15 +117,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tqgags/is_theodore_the_tugboat_still_alive/",
       "flair": null,
       "createdUtc": 1780001926
-    },
-    {
-      "title": "Woodlawn Blood Collection Closing",
-      "score": 0,
-      "numComments": 0,
-      "author": "InvestigatorOk6222",
-      "url": "https://www.reddit.com/r/halifax/comments/1tqzptl/woodlawn_blood_collection_closing/",
-      "flair": null,
-      "createdUtc": 1780056177
     },
     {
       "title": "Access-A-Bus – Loss of Repeat Rider",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tps8fb/napalm_death_live_at_the_marquee/",
       "flair": null,
       "createdUtc": 1779940273
-    },
-    {
-      "title": "Dartmouth radio club bridges community and emergency communications",
-      "score": 0,
-      "numComments": 0,
-      "author": "SouthDartmouthPost",
-      "url": "https://www.reddit.com/r/halifax/comments/1tq4sq1/dartmouth_radio_club_bridges_community_and/",
-      "flair": null,
-      "createdUtc": 1779977447
     }
   ]
 }
