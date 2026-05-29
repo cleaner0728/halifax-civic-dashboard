@@ -261,7 +261,7 @@ export default function HalifaxWebcams() {
           href={active.source}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-violet-500 hover:underline"
+          className="text-blue-600 dark:text-blue-400 hover:underline"
         >
           View live stream on novascotiawebcams.com →
         </a>

@@ -1,5 +1,6 @@
 import type { HrmItem } from '@/lib/fetchers/hrm';
 import { formatRelative } from '@/lib/date';
+import { IconCheck } from '@/components/icons';
 
 type IconSpec = { icon: string; bg: string };
 
@@ -37,8 +38,8 @@ export default function HrfeBlock({ incidents }: { incidents: HrmItem[] }) {
     // Per design spec: show explicit placeholder rather than hiding the
     // section. "Quiet right now" is information; an empty space is not.
     return (
-      <div className="rounded-xl border border-border bg-card/60 text-center py-10 text-foreground/50">
-        <p className="text-3xl mb-2">✅</p>
+      <div className="flex flex-col items-center rounded-xl border border-border bg-card/60 text-center py-10 text-foreground/50">
+        <IconCheck className="w-8 h-8 mb-2 text-emerald-500/70" />
         <p className="text-base font-medium">No active incidents in the past 60 minutes.</p>
         <p className="text-sm mt-1 text-foreground/40">All clear in the Halifax region.</p>
       </div>

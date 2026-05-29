@@ -4,8 +4,18 @@ import { useRef, useState, useEffect, useCallback, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { track } from "@vercel/analytics";
 import HapticTab from "./HapticTab";
+import { IconCity, IconNews, IconTicket, IconChart } from "./icons";
 
-export type TabSpec = { label: string; icon: string };
+// `icon` is a stable key (strings cross the server→client prop boundary fine;
+// component functions do not). ScrollSnapContainer resolves it to a line icon.
+export type TabSpec = { label: string; icon: "city" | "feed" | "events" | "stats" };
+
+const TAB_ICONS: Record<TabSpec["icon"], React.FC<React.SVGProps<SVGSVGElement>>> = {
+  city: IconCity,
+  feed: IconNews,
+  events: IconTicket,
+  stats: IconChart,
+};
 
 interface ScrollSnapContainerProps {
   children: React.ReactNode[];
@@ -243,21 +253,24 @@ export default function ScrollSnapContainer({ children, tabs, topBar }: ScrollSn
             data-no-tab-swipe
             className="max-w-5xl mx-auto flex justify-center"
           >
-            {tabs.map((tab, i) => (
-              <HapticTab
-                key={tab.label}
-                onPress={() => switchTo(i)}
-                role="tab"
-                className={`my-1.5 mx-0.5 px-4 py-1.5 rounded-full text-center text-sm whitespace-nowrap cursor-pointer transition-all duration-200 flex items-center gap-1.5 ${
-                  activeIndex === i
-                    ? "bg-blue-500/15 dark:bg-blue-500/20 text-blue-500 font-semibold"
-                    : "text-foreground/60 hover:text-foreground hover:bg-foreground/5 font-medium"
-                }`}
-              >
-                <span aria-hidden>{tab.icon}</span>
-                <span>{tab.label}</span>
-              </HapticTab>
-            ))}
+            {tabs.map((tab, i) => {
+              const Icon = TAB_ICONS[tab.icon];
+              return (
+                <HapticTab
+                  key={tab.label}
+                  onPress={() => switchTo(i)}
+                  role="tab"
+                  className={`my-1.5 mx-0.5 px-4 py-1.5 rounded-lg text-center text-sm whitespace-nowrap cursor-pointer transition-all duration-200 flex items-center gap-2 ${
+                    activeIndex === i
+                      ? "bg-blue-500/10 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 font-semibold"
+                      : "text-foreground/60 hover:text-foreground hover:bg-foreground/5 font-medium"
+                  }`}
+                >
+                  <Icon className="w-[18px] h-[18px]" />
+                  <span>{tab.label}</span>
+                </HapticTab>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -286,22 +299,20 @@ export default function ScrollSnapContainer({ children, tabs, topBar }: ScrollSn
         <div className="flex">
           {tabs.map((tab, i) => {
             const active = activeIndex === i;
+            const Icon = TAB_ICONS[tab.icon];
             return (
               <HapticTab
                 key={tab.label}
                 onPress={() => switchTo(i)}
                 aria-label={`Switch to ${tab.label}`}
-                // Roughly 1.5× the previous touch target. Mobile users
-                // (especially with cases / one-handed use) were missing
-                // the small targets — bigger icon + label + padding makes
-                // the bar comfortably thumb-sized.
-                className={`flex-1 flex flex-col items-center justify-center gap-1 py-3.5 transition-colors duration-150 ${
+                // Comfortable thumb-sized target: line icon + label + padding.
+                className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 transition-colors duration-150 ${
                   active
-                    ? "text-blue-500"
+                    ? "text-blue-600 dark:text-blue-400"
                     : "text-foreground/50 hover:text-foreground/80"
                 }`}
               >
-                <span className="text-3xl leading-none" aria-hidden>{tab.icon}</span>
+                <Icon className="w-6 h-6" strokeWidth={active ? 2.25 : 2} />
                 <span className={`text-xs ${active ? "font-semibold" : "font-medium"}`}>
                   {tab.label}
                 </span>

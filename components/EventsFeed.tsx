@@ -3,25 +3,29 @@
 import { useState } from 'react';
 import type { HalifaxEvent } from '@/lib/fetchers/events';
 import { HFX_TZ, toHfxDateStr } from '@/lib/date';
+import { IconPin, IconInbox } from '@/components/icons';
 
 // ── Category styling ────────────────────────────────────────────────────────
 
-const CAT_COLORS: Record<string, string> = {
-  'Free':               'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
-  'Music':              'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-  'Arts & Culture':     'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300',
-  'Food & Drink':       'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
-  'Family-Friendly':    'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
-  'Comedy':             'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
-  'Nightlife':          'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
-  'Sports & Recreation':'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300',
-  '2SLGBTQIA':          'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
-  'History':            'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+// Chips are neutral now; the only colour is a small per-category dot for
+// at-a-glance scanning. Keeps the feed calm instead of a rainbow of filled
+// pills.
+const CAT_DOT: Record<string, string> = {
+  'Free':                'bg-emerald-500',
+  'Music':               'bg-blue-500',
+  'Arts & Culture':      'bg-violet-500',
+  'Food & Drink':        'bg-orange-500',
+  'Family-Friendly':     'bg-green-500',
+  'Comedy':              'bg-yellow-500',
+  'Nightlife':           'bg-indigo-500',
+  'Sports & Recreation': 'bg-sky-500',
+  '2SLGBTQIA':           'bg-pink-500',
+  'History':             'bg-amber-500',
 };
-const CAT_DEFAULT = 'bg-foreground/8 text-foreground/60';
+const CAT_DOT_DEFAULT = 'bg-foreground/30';
 
-function catClass(cat: string) {
-  return CAT_COLORS[cat] ?? CAT_DEFAULT;
+function catDot(cat: string) {
+  return CAT_DOT[cat] ?? CAT_DOT_DEFAULT;
 }
 
 // A "duration" event runs across multiple days. The scraper records this in
@@ -107,7 +111,7 @@ function EventCard({ ev }: { ev: HalifaxEvent }) {
       <div className="p-4 space-y-2">
 
         {/* Date — always shown, top-left first position */}
-        <p className="text-xs font-semibold text-violet-600 dark:text-violet-300 uppercase tracking-wide">
+        <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">
           {dateDisplay}
         </p>
 
@@ -136,9 +140,9 @@ function EventCard({ ev }: { ev: HalifaxEvent }) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Open ${ev.venue_name} in Maps`}
-            className="text-sm text-foreground/70 hover:text-violet-500 transition-colors flex items-start gap-1 group"
+            className="text-sm text-foreground/70 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-start gap-1.5 group"
           >
-            <span className="shrink-0 mt-px">📍</span>
+            <IconPin className="w-4 h-4 shrink-0 mt-0.5 text-foreground/40" />
             <span className="group-hover:underline">
               {ev.venue_name}{ev.venue_address ? ` · ${ev.venue_address.split(',').slice(0, 2).join(',')}` : ''}
             </span>
@@ -147,10 +151,7 @@ function EventCard({ ev }: { ev: HalifaxEvent }) {
 
         {/* Price */}
         {ev.price_range && (
-          <p className="text-sm text-foreground/70 flex items-center gap-1">
-            <span aria-hidden>💵</span>
-            <span>{ev.price_range}</span>
-          </p>
+          <p className="text-sm text-foreground/70">{ev.price_range}</p>
         )}
 
         {/* Summary */}
@@ -158,14 +159,15 @@ function EventCard({ ev }: { ev: HalifaxEvent }) {
           <p className="text-sm text-foreground/60 line-clamp-2">{ev.summary}</p>
         )}
 
-        {/* Category chips */}
+        {/* Category chips — neutral with a small per-category dot */}
         {ev.categories?.length > 0 && (
-          <div className="flex flex-wrap gap-1 pt-1">
+          <div className="flex flex-wrap gap-1.5 pt-1">
             {ev.categories.map(cat => (
               <span
                 key={cat}
-                className={`text-xs font-medium px-2 py-0.5 rounded-full ${catClass(cat)}`}
+                className="inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-md bg-foreground/[0.06] text-foreground/60"
               >
+                <span className={`w-1.5 h-1.5 rounded-full ${catDot(cat)}`} />
                 {cat}
               </span>
             ))}
@@ -180,7 +182,7 @@ function EventCard({ ev }: { ev: HalifaxEvent }) {
             href={ev.tickets_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-medium px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white transition-colors"
+            className="text-xs font-medium px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
           >
             Get Tickets ↗
           </a>
@@ -287,8 +289,8 @@ export default function EventsFeed({ events }: Props) {
 
   if (events.length === 0) {
     return (
-      <div className="text-center py-16 text-foreground/40">
-        <p className="text-4xl mb-3">📭</p>
+      <div className="flex flex-col items-center text-center py-16 text-foreground/40">
+        <IconInbox className="w-9 h-9 mb-3 text-foreground/25" />
         <p className="text-base font-medium">No upcoming events found.</p>
       </div>
     );
@@ -304,9 +306,9 @@ export default function EventsFeed({ events }: Props) {
         {/* Date-range presets — left of All */}
         <button
           onClick={() => setDateFilter(dateFilter === 'today' ? null : 'today')}
-          className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
+          className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors ${
             dateFilter === 'today'
-              ? 'bg-amber-500 text-white border-amber-500'
+              ? 'bg-blue-600 text-white border-blue-600'
               : 'border-border text-foreground/60 hover:bg-foreground/5'
           }`}
         >
@@ -314,9 +316,9 @@ export default function EventsFeed({ events }: Props) {
         </button>
         <button
           onClick={() => setDateFilter(dateFilter === '3days' ? null : '3days')}
-          className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
+          className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors ${
             dateFilter === '3days'
-              ? 'bg-sky-500 text-white border-sky-500'
+              ? 'bg-blue-600 text-white border-blue-600'
               : 'border-border text-foreground/60 hover:bg-foreground/5'
           }`}
         >
@@ -326,9 +328,9 @@ export default function EventsFeed({ events }: Props) {
         {/* All — clears both date and category */}
         <button
           onClick={() => { setActiveCat(null); setDateFilter(null); }}
-          className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
+          className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors ${
             activeCat === null && dateFilter === null
-              ? 'bg-violet-600 text-white border-violet-600'
+              ? 'bg-blue-600 text-white border-blue-600'
               : 'border-border text-foreground/60 hover:bg-foreground/5'
           }`}
         >
@@ -340,9 +342,9 @@ export default function EventsFeed({ events }: Props) {
           <button
             key={cat}
             onClick={() => setActiveCat(activeCat === cat ? null : cat)}
-            className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
+            className={`shrink-0 text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors ${
               activeCat === cat
-                ? `${catClass(cat)} border-transparent`
+                ? 'bg-blue-600 text-white border-blue-600'
                 : 'border-border text-foreground/60 hover:bg-foreground/5'
             }`}
           >

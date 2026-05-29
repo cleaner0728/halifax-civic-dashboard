@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { track } from "@vercel/analytics";
+import { IconMail } from "@/components/icons";
 
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/xaqkjngq";
 
@@ -113,7 +114,7 @@ export default function FeedbackModal({
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-3 shrink-0">
             <span id="feedback-title" className="text-base font-semibold">
-              Say something 👋
+              Say something
             </span>
             <button
               type="button"
@@ -130,7 +131,7 @@ export default function FeedbackModal({
           {status === "sent" ? (
             /* ── Success state ── */
             <div className="flex-1 flex flex-col items-center justify-center gap-3 px-6 py-10 text-center">
-              <span className="text-5xl">💌</span>
+              <IconMail className="w-12 h-12 text-blue-500/70" />
               <p className="text-lg font-semibold">Got it, thanks!</p>
               <p className="text-sm text-foreground/50">
                 I&apos;ll read this and get back to you if you left an email.

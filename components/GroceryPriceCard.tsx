@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { GroceryPriceData, GroceryItem } from '@/lib/fetchers/grocery';
+import { IconCart } from '@/components/icons';
 
 // SVG chart dimensions. MR is generous (44px) so the latest-price label
 // can sit beyond the rightmost data point instead of overlapping the
@@ -183,7 +184,7 @@ export default function GroceryPriceCard({ data }: { data: GroceryPriceData }) {
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-foreground/50 font-medium">🛒 Grocery Prices</p>
+            <p className="text-[10px] uppercase tracking-widest text-foreground/50 font-medium flex items-center gap-1.5"><IconCart className="w-3.5 h-3.5" />Grocery Prices</p>
             <p className="text-[10px] text-foreground/40 mt-0.5">Nova Scotia avg · Stats Canada · monthly</p>
           </div>
           <p className="text-[10px] text-foreground/35" translate="no">{latestDate}</p>

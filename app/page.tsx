@@ -28,10 +28,10 @@ import { fetchEvents } from '@/lib/fetchers/events';
 import { safe } from '@/lib/safe';
 
 const TABS: TabSpec[] = [
-  { label: 'City Live', icon: '🏙️' },
-  { label: 'Feed', icon: '📰' },
-  { label: 'Events', icon: '🎟️' },
-  { label: 'Stats', icon: '📊' },
+  { label: 'City Live', icon: 'city' },
+  { label: 'Feed', icon: 'feed' },
+  { label: 'Events', icon: 'events' },
+  { label: 'Stats', icon: 'stats' },
 ];
 
 export default async function Home() {

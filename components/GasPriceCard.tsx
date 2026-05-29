@@ -1,4 +1,5 @@
 import type { GasPriceData } from '@/lib/fetchers/gas';
+import { IconFuel } from '@/components/icons';
 
 type Props = {
   data: GasPriceData;
@@ -182,7 +183,7 @@ export default function GasPriceCard({ data }: Props) {
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-foreground/50 font-medium">⛽ Gas Price</p>
+            <p className="text-[10px] uppercase tracking-widest text-foreground/50 font-medium flex items-center gap-1.5"><IconFuel className="w-3.5 h-3.5" />Gas Price</p>
             <p className="text-[10px] text-foreground/40 mt-0.5">Zone 1 · Halifax · max regulated</p>
           </div>
           <p className="text-[10px] text-foreground/35 mt-0.5">eff. {effectiveDate}</p>

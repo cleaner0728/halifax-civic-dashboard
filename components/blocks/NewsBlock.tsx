@@ -1,5 +1,6 @@
 import type { NewsItem } from '@/lib/fetchers/news';
 import { formatRelative } from '@/lib/date';
+import { IconInbox } from '@/components/icons';
 
 type Props = {
   items: NewsItem[];
@@ -8,8 +9,8 @@ type Props = {
 export default function NewsBlock({ items }: Props) {
   if (items.length === 0) {
     return (
-      <div className="text-center py-10 text-foreground/40">
-        <p className="text-3xl mb-2">📭</p>
+      <div className="flex flex-col items-center text-center py-10 text-foreground/40">
+        <IconInbox className="w-8 h-8 mb-2 text-foreground/25" />
         <p className="text-base font-medium">No news in the past 8 hours.</p>
       </div>
     );

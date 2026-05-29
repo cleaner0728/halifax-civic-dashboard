@@ -1,5 +1,6 @@
 import { formatRelative } from '@/lib/date';
 import type { RedditPost } from '@/lib/fetchers/reddit';
+import { IconMessages } from '@/components/icons';
 
 type Props = {
   posts: RedditPost[];
@@ -8,8 +9,8 @@ type Props = {
 export default function RedditBlock({ posts }: Props) {
   if (posts.length === 0) {
     return (
-      <div className="text-center py-10 text-foreground/40">
-        <p className="text-3xl mb-2">💬</p>
+      <div className="flex flex-col items-center text-center py-10 text-foreground/40">
+        <IconMessages className="w-8 h-8 mb-2 text-foreground/25" />
         <p className="text-base font-medium">Unable to load posts.</p>
       </div>
     );
@@ -40,7 +41,11 @@ export default function RedditBlock({ posts }: Props) {
                 )}
                 <p className="text-base font-semibold text-foreground leading-snug">{post.title}</p>
                 <div className="flex items-center gap-3 mt-1.5 text-xs text-foreground/40">
-                  {post.numComments > 0 && <span>💬 {post.numComments}</span>}
+                  {post.numComments > 0 && (
+                    <span className="inline-flex items-center gap-1">
+                      <IconMessages className="w-3.5 h-3.5" />{post.numComments}
+                    </span>
+                  )}
                   <span>u/{post.author}</span>
                   <span>{formatRelative(post.createdUtc * 1000)}</span>
                 </div>

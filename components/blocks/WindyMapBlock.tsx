@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { HFX_TZ } from '@/lib/date';
+import { IconWaves } from '@/components/icons';
 import type { BuoyObservation } from '@/lib/fetchers/buoy';
 import type { MarineForecast } from '@/lib/fetchers/marine-forecast';
 
@@ -327,7 +328,7 @@ export default function WindyMapBlock({ buoy, marineForecast, headless = false }
         className="w-full flex items-center justify-between gap-3 mb-3 px-1 cursor-pointer"
       >
         <div className="flex items-center gap-2 min-w-0">
-          <span className="text-xl" aria-hidden>🌊</span>
+          <span className="text-foreground/55 shrink-0"><IconWaves className="w-5 h-5" /></span>
           <h2 className="text-lg font-bold text-foreground truncate">Marine & Wind Map</h2>
           <span className="text-xs text-foreground/40 truncate">· Halifax Harbour</span>
         </div>

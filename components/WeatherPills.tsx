@@ -5,6 +5,7 @@
 
 import type { AirQuality } from '@/lib/fetchers/air-quality';
 import type { BurnStatus } from '@/lib/fetchers/burn-status';
+import { IconSun, IconWind, IconFlame } from '@/components/icons';
 
 type Bucket = { label: string; text: string };
 
@@ -78,17 +79,17 @@ export default function WeatherPills({ uvIndex, uvIndexMaxToday, airQuality, bur
               : undefined
           }
         >
-          ☀️ UV {Math.round(uvIndex)} · {uv.label}
+          <IconSun className="w-4 h-4" />UV {Math.round(uvIndex)} · {uv.label}
         </span>
       )}
       {aqi && airQuality && (
         <span className={`${itemClass} ${aqi.text}`} title={`PM2.5 ${airQuality.pm25} µg/m³`}>
-          🌫️ AQI {airQuality.aqi} · {aqi.label}
+          <IconWind className="w-4 h-4" />AQI {airQuality.aqi} · {aqi.label}
         </span>
       )}
       {burn && burnStatus && (
         <span className={`${itemClass} ${burn.text}`} title={burnStatus.text}>
-          🔥 {burn.label}
+          <IconFlame className="w-4 h-4" />{burn.label}
         </span>
       )}
     </div>

@@ -5,6 +5,7 @@ import WindyMapBlock from '@/components/blocks/WindyMapBlock';
 import GettingAroundBlock from '@/components/blocks/GettingAroundBlock';
 import HrfeBlock from '@/components/blocks/HrfeBlock';
 import HrmNewsBlock from '@/components/blocks/HrmNewsBlock';
+import { IconCloudSun, IconFerry, IconBus, IconFlame, IconLandmark, IconCalendar } from '@/components/icons';
 import type { WeatherData } from '@/lib/fetchers/weather';
 import type { TideGraphData } from '@/lib/fetchers/tides';
 import type { AirQuality } from '@/lib/fetchers/air-quality';
@@ -71,7 +72,7 @@ function CollapsibleSection({
   linkLabel,
   children,
 }: {
-  icon: string;
+  icon: React.ReactNode;
   title: string;
   meta?: string;
   href?: string;
@@ -84,7 +85,7 @@ function CollapsibleSection({
         className="list-none cursor-pointer flex items-center justify-between gap-3 mb-3 px-1 [&::-webkit-details-marker]:hidden"
       >
         <div className="flex items-center gap-2 min-w-0">
-          <span className="text-xl" aria-hidden>{icon}</span>
+          <span className="text-foreground/55 shrink-0">{icon}</span>
           <h2 className="text-lg font-bold text-foreground truncate">{title}</h2>
           {meta && <span className="text-xs text-foreground/40 truncate">· {meta}</span>}
         </div>
@@ -139,7 +140,7 @@ export default function CityLiveScreen({
         <HalifaxWebcams />
 
         <CollapsibleSection
-          icon="🌦️"
+          icon={<IconCloudSun className="w-5 h-5" />}
           title="Weather & Marine"
           meta="Halifax"
         >
@@ -153,7 +154,7 @@ export default function CityLiveScreen({
         </CollapsibleSection>
 
         <CollapsibleSection
-          icon="⛴️"
+          icon={<IconFerry className="w-5 h-5" />}
           title="Ferry"
           href="https://www.halifax.ca/transportation/halifax-transit/service-disruptions"
           linkLabel="halifax.ca"
@@ -168,7 +169,7 @@ export default function CityLiveScreen({
         </CollapsibleSection>
 
         <CollapsibleSection
-          icon="🚌"
+          icon={<IconBus className="w-5 h-5" />}
           title="Transit"
           href="https://www.halifax.ca/transportation/halifax-transit/service-disruptions"
           linkLabel="halifax.ca"
@@ -183,7 +184,7 @@ export default function CityLiveScreen({
         </CollapsibleSection>
 
         <CollapsibleSection
-          icon="🚒"
+          icon={<IconFlame className="w-5 h-5" />}
           title="Active Incidents"
           meta="past 60 min"
           href="https://www.halifax.ca/safety-security/fire-emergency/hrfe-incident-feed"
@@ -193,7 +194,7 @@ export default function CityLiveScreen({
         </CollapsibleSection>
 
         <CollapsibleSection
-          icon="🏛️"
+          icon={<IconLandmark className="w-5 h-5" />}
           title="HRM News"
           meta={hrmDateLabel}
           href="https://www.halifax.ca/home/news"
@@ -203,7 +204,7 @@ export default function CityLiveScreen({
         </CollapsibleSection>
 
         <CollapsibleSection
-          icon="📅"
+          icon={<IconCalendar className="w-5 h-5" />}
           title="HRM Events"
           href="https://www.halifax.ca/home/events-calendar"
           linkLabel="halifax.ca"

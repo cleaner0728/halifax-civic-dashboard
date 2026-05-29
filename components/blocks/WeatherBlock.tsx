@@ -2,6 +2,7 @@ import React from 'react';
 import LiveClock from '@/components/LiveClock';
 import { HFX_TZ, getDayName, formatUtcAsHfxTime } from '@/lib/date';
 import { getWeatherInfo } from '@/lib/weather-theme';
+import { IconWaves } from '@/components/icons';
 import type { WeatherData } from '@/lib/fetchers/weather';
 import type { TideGraphData } from '@/lib/fetchers/tides';
 import type { AirQuality } from '@/lib/fetchers/air-quality';
@@ -72,7 +73,7 @@ export default function WeatherBlock({ weather, tideGraph, airQuality, burnStatu
           <div className="mb-4">
             <div className={`grid grid-cols-3 gap-x-3 text-xs sm:text-sm mb-2 ${currentWeather.theme.textSecondary}`}>
               <div>
-                <div className="opacity-80">🌊 Now</div>
+                <div className="opacity-80 flex items-center gap-1"><IconWaves className="w-3.5 h-3.5" /> Now</div>
                 <div className="font-semibold text-sm sm:text-base">
                   {tideGraph.currentLevel.toFixed(2)} m
                 </div>

@@ -1,4 +1,5 @@
 import type { TransitDetour, FerryAlert, TransitAdjustment } from '@/lib/fetchers/transit';
+import { IconPin, IconCalendar, IconClock, IconFerry, IconBus, IconCheck } from '@/components/icons';
 
 const DISRUPTIONS_URL = 'https://www.halifax.ca/transportation/halifax-transit/service-disruptions';
 
@@ -50,7 +51,7 @@ function Card({
   headerBorderClass,
   children,
 }: {
-  icon: string;
+  icon: React.ReactNode;
   title: React.ReactNode;
   headerBgClass: string;
   headerBorderClass: string;
@@ -59,7 +60,7 @@ function Card({
   return (
     <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
       <div className={`px-4 py-3 ${headerBgClass} border-b ${headerBorderClass} flex items-center gap-2`}>
-        <span className="text-xl shrink-0" aria-hidden>{icon}</span>
+        <span className="shrink-0 text-foreground/55">{icon}</span>
         <h3 className="font-bold text-foreground leading-snug flex-1 min-w-0">{title}</h3>
       </div>
       <div className="p-4 space-y-3">{children}</div>
@@ -95,7 +96,7 @@ export default function GettingAroundBlock({ detours, ferryAlerts, adjustments, 
     <div className="space-y-3">
       {adjustments && (
         <Card
-          icon="📅"
+          icon={<IconCalendar className="w-5 h-5" />}
           title={<>Upcoming Service Changes · {adjustments.dateLabel}</>}
           headerBgClass="bg-amber-500/10"
           headerBorderClass="border-amber-500/20"
@@ -125,7 +126,7 @@ export default function GettingAroundBlock({ detours, ferryAlerts, adjustments, 
         return (
           <Card
             key={alert.moreDetailsUrl ?? `ferry-${i}`}
-            icon="⛴️"
+            icon={<IconFerry className="w-5 h-5" />}
             title={alert.title}
             headerBgClass="bg-sky-500/10"
             headerBorderClass="border-sky-500/20"
@@ -147,7 +148,7 @@ export default function GettingAroundBlock({ detours, ferryAlerts, adjustments, 
       {detours.map((detour, index) => (
         <Card
           key={`${detour.title}-${index}`}
-          icon="🚌"
+          icon={<IconBus className="w-5 h-5" />}
           title={detour.title}
           headerBgClass="bg-amber-500/10"
           headerBorderClass="border-amber-500/20"
@@ -158,8 +159,9 @@ export default function GettingAroundBlock({ detours, ferryAlerts, adjustments, 
                 <div className="text-[11px] font-semibold uppercase tracking-widest text-foreground/40 mb-0.5">
                   {detour.startDate ? 'Start Date' : 'Date'}
                 </div>
-                <div className="text-xl font-bold text-foreground">
-                  📅 {detour.startDate ?? detour.date}
+                <div className="text-xl font-bold text-foreground flex items-center gap-1.5">
+                  <IconCalendar className="w-4 h-4 text-foreground/40" />
+                  {detour.startDate ?? detour.date}
                 </div>
               </div>
             )}
@@ -168,7 +170,10 @@ export default function GettingAroundBlock({ detours, ferryAlerts, adjustments, 
                 <div className="text-[11px] font-semibold uppercase tracking-widest text-foreground/40 mb-0.5">
                   End Date
                 </div>
-                <div className="text-xl font-bold text-foreground">📅 {detour.endDate}</div>
+                <div className="text-xl font-bold text-foreground flex items-center gap-1.5">
+                  <IconCalendar className="w-4 h-4 text-foreground/40" />
+                  {detour.endDate}
+                </div>
               </div>
             )}
             {detour.time && (
@@ -176,11 +181,19 @@ export default function GettingAroundBlock({ detours, ferryAlerts, adjustments, 
                 <div className="text-[11px] font-semibold uppercase tracking-widest text-foreground/40 mb-0.5">
                   Time
                 </div>
-                <div className="text-xl font-bold text-amber-500 dark:text-amber-400">⏰ {detour.time}</div>
+                <div className="text-xl font-bold text-foreground flex items-center gap-1.5">
+                  <IconClock className="w-4 h-4 text-foreground/40" />
+                  {detour.time}
+                </div>
               </div>
             )}
           </div>
-          {detour.location && <p className="text-sm text-foreground/60">📍 {detour.location}</p>}
+          {detour.location && (
+            <p className="text-sm text-foreground/60 flex items-start gap-1.5">
+              <IconPin className="w-4 h-4 shrink-0 mt-0.5 text-foreground/40" />
+              <span>{detour.location}</span>
+            </p>
+          )}
           {detour.routes && (
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-widest text-foreground/40 mb-2">
@@ -216,8 +229,8 @@ export default function GettingAroundBlock({ detours, ferryAlerts, adjustments, 
       ))}
 
       {empty && (
-        <div className="text-center py-10 text-foreground/40">
-          <p className="text-3xl mb-2">✅</p>
+        <div className="flex flex-col items-center text-center py-10 text-foreground/40">
+          <IconCheck className="w-8 h-8 mb-2 text-emerald-500/70" />
           <p className="text-base font-medium">{emptyMessage ?? 'No active transit disruptions.'}</p>
           <p className="text-sm mt-1">{emptySubMessage ?? 'Halifax Transit is running on regular routes.'}</p>
         </div>
