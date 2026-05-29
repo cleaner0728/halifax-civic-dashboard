@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-29T16:46:29.272Z",
+  "fetchedAt": "2026-05-29T17:16:17.809Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -20,6 +20,15 @@
       "createdUtc": 1777629714
     },
     {
+      "title": "These posters are being used by NSH during OPOR implementation - AI generated and so juvenile that it’s insulting",
+      "score": 0,
+      "numComments": 0,
+      "author": "catsnpole",
+      "url": "https://www.reddit.com/r/halifax/comments/1tr3msf/these_posters_are_being_used_by_nsh_during_opor/",
+      "flair": null,
+      "createdUtc": 1780065018
+    },
+    {
       "title": "Alderney Ferry back to full service",
       "score": 0,
       "numComments": 0,
@@ -36,15 +45,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tqxmge/ai_deepfakes_of_dozens_of_canadian_women_in/",
       "flair": null,
       "createdUtc": 1780050451
-    },
-    {
-      "title": "These posters are being used by NSH during OPOR implementation - AI generated and so juvenile that it’s insulting",
-      "score": 0,
-      "numComments": 0,
-      "author": "catsnpole",
-      "url": "https://www.reddit.com/r/halifax/comments/1tr3msf/these_posters_are_being_used_by_nsh_during_opor/",
-      "flair": null,
-      "createdUtc": 1780065018
     },
     {
       "title": "Who's visiting?",
@@ -173,13 +173,13 @@
       "createdUtc": 1779992879
     },
     {
-      "title": "What happened on the MacDonald bridge?",
+      "title": "Nine Locks Brewing Company rides wave of popularity to new location in Bedford",
       "score": 0,
       "numComments": 0,
-      "author": "EastmanLaude",
-      "url": "https://www.reddit.com/r/halifax/comments/1tr7pnm/what_happened_on_the_macdonald_bridge/",
+      "author": "Dartmouthguy2026",
+      "url": "https://www.reddit.com/r/halifax/comments/1tr8pe6/nine_locks_brewing_company_rides_wave_of/",
       "flair": null,
-      "createdUtc": 1780072935
+      "createdUtc": 1780074881
     },
     {
       "title": "Charges expected after youths discharge airsoft guns in Halifax McDonald's",
@@ -245,15 +245,6 @@
       "createdUtc": 1780061627
     },
     {
-      "title": "Shop Recommendations for Truck Lift Kit",
-      "score": 0,
-      "numComments": 0,
-      "author": "Lizard_InTheWild",
-      "url": "https://www.reddit.com/r/halifax/comments/1tr7kvp/shop_recommendations_for_truck_lift_kit/",
-      "flair": null,
-      "createdUtc": 1780072668
-    },
-    {
       "title": "Energy board looking into gas pricing ‘emergency,’ but not for the reason you probably expect",
       "score": 0,
       "numComments": 0,
@@ -270,6 +261,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tpvirc/time_for_halifax_to_adopt_this_bylaw/",
       "flair": null,
       "createdUtc": 1779950372
+    },
+    {
+      "title": "Where to dispose of tires on rims?",
+      "score": 0,
+      "numComments": 0,
+      "author": "creamycolslaw",
+      "url": "https://www.reddit.com/r/halifax/comments/1tqe7ij/where_to_dispose_of_tires_on_rims/",
+      "flair": null,
+      "createdUtc": 1779997576
     }
   ]
 }
