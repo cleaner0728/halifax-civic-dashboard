@@ -34,21 +34,53 @@ export async function GET(req: NextRequest) {
     return new Response("host not allowed", { status: 403 });
   }
 
+  // Follow redirects manually, re-checking the allowlist on every hop.
+  // With the default `redirect: "follow"`, an allowlisted host could 302 us
+  // to an internal address (e.g. cloud metadata at 169.254.169.254) and the
+  // proxy would dutifully fetch it — the up-front hostname check only guards
+  // the first URL. Validating each Location keeps this an image proxy, not
+  // an SSRF primitive.
   let upstream: Response;
-  try {
-    upstream = await fetch(target.toString(), {
-      // Some CDNs return a small HTML "blocked" body when no UA is set.
-      // A generic browser-ish UA gets the actual image.
-      headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; HalifaxDashboardImageProxy)",
-        Accept: "image/*,*/*;q=0.8",
-      },
-      // Hard upper bound so a slow upstream can't tie up a Function slot
-      // for minutes. 10s is plenty for any reasonable image.
-      signal: AbortSignal.timeout(10_000),
-    });
-  } catch {
-    return new Response("upstream fetch failed", { status: 502 });
+  let current = target;
+  for (let hop = 0; ; hop++) {
+    if (hop >= 4) return new Response("too many redirects", { status: 502 });
+
+    let res: Response;
+    try {
+      res = await fetch(current.toString(), {
+        // Some CDNs return a small HTML "blocked" body when no UA is set.
+        // A generic browser-ish UA gets the actual image.
+        headers: {
+          "User-Agent": "Mozilla/5.0 (compatible; HalifaxDashboardImageProxy)",
+          Accept: "image/*,*/*;q=0.8",
+        },
+        redirect: "manual",
+        // Hard upper bound so a slow upstream can't tie up a Function slot
+        // for minutes. 10s is plenty for any reasonable image.
+        signal: AbortSignal.timeout(10_000),
+      });
+    } catch {
+      return new Response("upstream fetch failed", { status: 502 });
+    }
+
+    if (res.status < 300 || res.status >= 400) {
+      upstream = res;
+      break;
+    }
+
+    const location = res.headers.get("location");
+    if (!location) return new Response("redirect without location", { status: 502 });
+    let next: URL;
+    try {
+      next = new URL(location, current);
+    } catch {
+      return new Response("invalid redirect target", { status: 502 });
+    }
+    if (next.protocol !== "https:") return new Response("redirect to non-https", { status: 403 });
+    if (!ALLOWED_HOST.test(next.hostname)) {
+      return new Response("redirect host not allowed", { status: 403 });
+    }
+    current = next;
   }
 
   if (!upstream.ok || !upstream.body) {
