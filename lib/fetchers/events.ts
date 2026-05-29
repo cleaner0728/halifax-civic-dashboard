@@ -11,7 +11,9 @@ export type HalifaxEvent = {
   summary: string | null;
   start_at: string;         // ISO timestamptz string
   end_at: string | null;
+  date_text: string | null; // human-readable date; a range ("X - Y") = multi-day
   time_text: string | null;
+  price_range: string | null;
   categories: string[];
   venue_name: string | null;
   venue_address: string | null;
@@ -27,7 +29,7 @@ async function _fetchEvents(): Promise<HalifaxEvent[]> {
   const rows = await sql<HalifaxEvent[]>`
     SELECT
       url, title, summary,
-      start_at, end_at, time_text,
+      start_at, end_at, date_text, time_text, price_range,
       categories,
       venue_name, venue_address,
       organizer_name,

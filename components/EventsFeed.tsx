@@ -24,6 +24,15 @@ function catClass(cat: string) {
   return CAT_COLORS[cat] ?? CAT_DEFAULT;
 }
 
+// A "duration" event runs across multiple days. The scraper records this in
+// date_text as a range ("Dec 31, 2025 - Dec 31, 2027"); a single day has no
+// " - ". Fall back to comparing start/end calendar days if date_text is
+// missing.
+function isDurationEvent(ev: { date_text: string | null; start_at: string; end_at: string | null }): boolean {
+  if (ev.date_text) return ev.date_text.includes(' - ');
+  return ev.end_at ? toHfxDateStr(ev.end_at) !== toHfxDateStr(ev.start_at) : false;
+}
+
 // ── Time helpers ─────────────────────────────────────────────────────────────
 
 // Build a cross-platform maps link. The Google Maps universal URL opens the
@@ -83,6 +92,12 @@ function topCategories(events: HalifaxEvent[]): string[] {
 // ── Single event card ─────────────────────────────────────────────────────────
 
 function EventCard({ ev }: { ev: HalifaxEvent }) {
+  // Multi-day runs show their full date_text range ("Dec 31, 2025 - Dec 31,
+  // 2027"); single-day events get the friendly relative header ("Today ·
+  // Friday, May 29").
+  const dateDisplay = isDurationEvent(ev) && ev.date_text
+    ? ev.date_text
+    : formatDateHeader(toHfxDateStr(ev.start_at));
   const timeDisplay = formatEventTime(ev.time_text);
   const endDisplay  = formatEndDate(ev.start_at, ev.end_at);
   const hasSocials  = ev.facebook_url || ev.instagram_url || ev.twitter_url;
@@ -90,6 +105,11 @@ function EventCard({ ev }: { ev: HalifaxEvent }) {
   return (
     <article className="bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow overflow-hidden">
       <div className="p-4 space-y-2">
+
+        {/* Date — always shown, top-left first position */}
+        <p className="text-xs font-semibold text-violet-600 dark:text-violet-300 uppercase tracking-wide">
+          {dateDisplay}
+        </p>
 
         {/* Time + End date */}
         {(timeDisplay || endDisplay) && (
@@ -123,6 +143,14 @@ function EventCard({ ev }: { ev: HalifaxEvent }) {
               {ev.venue_name}{ev.venue_address ? ` · ${ev.venue_address.split(',').slice(0, 2).join(',')}` : ''}
             </span>
           </a>
+        )}
+
+        {/* Price */}
+        {ev.price_range && (
+          <p className="text-sm text-foreground/70 flex items-center gap-1">
+            <span aria-hidden>💵</span>
+            <span>{ev.price_range}</span>
+          </p>
         )}
 
         {/* Summary */}
@@ -219,27 +247,43 @@ export default function EventsFeed({ events }: Props) {
 
   const _now        = new Date();
   const todayStr    = toHfxDateStr(_now);
+  const _1d         = new Date(_now); _1d.setDate(_now.getDate() + 1);
+  const tomorrowStr = toHfxDateStr(_1d);
   const _3d         = new Date(_now); _3d.setDate(_now.getDate() + 3);
   const in3DaysStr  = toHfxDateStr(_3d);
 
   const filtered = events.filter(ev => {
     const startStr = toHfxDateStr(ev.start_at);
     const endStr   = ev.end_at ? toHfxDateStr(ev.end_at) : startStr;
-    if (dateFilter === 'today'  && startStr !== todayStr)  return false;
-    // "Next 3 days": event must end (end_at, or start_at if no end) by midnight
-    // of today+3, i.e. the end date falls within the next 3 days window.
-    if (dateFilter === '3days'  && endStr > in3DaysStr)    return false;
+    // "Today only": event is on today — it started on/before today and
+    // ends on/after today. Catches multi-day runs (exhibits, festivals)
+    // that opened earlier but are still on, not just events starting today.
+    if (dateFilter === 'today'  && (startStr > todayStr || endStr < todayStr)) return false;
+    // "Next 3 days": the window is tomorrow .. today+3 (today itself is the
+    // "Today only" filter's job). Show an event if it overlaps that window —
+    // starts on/before today+3 AND ends on/after tomorrow. The end>=tomorrow
+    // half drops anything that's already over by the end of today.
+    if (dateFilter === '3days'  && (startStr > in3DaysStr || endStr < tomorrowStr)) return false;
     if (activeCat && !ev.categories?.includes(activeCat))  return false;
     return true;
   });
 
-  // Group by Halifax date string
-  const groups = new Map<string, HalifaxEvent[]>();
-  for (const ev of filtered) {
-    const d = toHfxDateStr(ev.start_at);
-    if (!groups.has(d)) groups.set(d, []);
-    groups.get(d)!.push(ev);
-  }
+  // Order: single-day events first (by start time), then multi-day
+  // "duration" events (exhibits, festival runs) below them, sorted by
+  // when they end. Without this, a months-long run sorts by its early
+  // start date and floats to the very top, burying the events that are
+  // actually happening today.
+  const ordered = filtered
+    .map((ev) => {
+      const startMs = new Date(ev.start_at).getTime();
+      const endMs = ev.end_at ? new Date(ev.end_at).getTime() : startMs;
+      return { ev, isDuration: isDurationEvent(ev), startMs, endMs };
+    })
+    .sort((a, b) => {
+      if (a.isDuration !== b.isDuration) return a.isDuration ? 1 : -1;
+      return a.isDuration ? a.endMs - b.endMs : a.startMs - b.startMs;
+    })
+    .map((d) => d.ev);
 
   if (events.length === 0) {
     return (
@@ -314,24 +358,15 @@ export default function EventsFeed({ events }: Props) {
         {activeCat ? ` · ${activeCat}` : ''}
       </p>
 
-      {/* Date-grouped event list */}
+      {/* Flat event list — each card carries its own date (top-left) */}
       {filtered.length === 0 ? (
         <div className="text-center py-10 text-foreground/40">
           <p className="text-base">No events in this category.</p>
         </div>
       ) : (
-        <div className="space-y-6">
-          {[...groups.entries()].map(([dateStr, dayEvents]) => (
-            <section key={dateStr}>
-              <h4 className="text-base font-semibold text-foreground/50 uppercase tracking-widest mb-2 px-1">
-                {formatDateHeader(dateStr)}
-              </h4>
-              <div className="space-y-3">
-                {dayEvents.map(ev => (
-                  <EventCard key={ev.url} ev={ev} />
-                ))}
-              </div>
-            </section>
+        <div className="space-y-3">
+          {ordered.map(ev => (
+            <EventCard key={ev.url} ev={ev} />
           ))}
         </div>
       )}
