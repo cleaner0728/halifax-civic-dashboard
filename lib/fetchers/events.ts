@@ -37,10 +37,18 @@ async function _fetchEvents(): Promise<HalifaxEvent[]> {
       facebook_url, instagram_url, twitter_url
     FROM events
     WHERE
-      -- not yet expired: still running or starts in the future
-      (end_at   IS NOT NULL AND end_at   > now())
+      -- All-day events are stored with end_at = start_at at local midnight, so
+      -- a plain end_at > now() would drop them at 00:00 of their own day. Keep
+      -- them visible through the whole day by comparing the Halifax calendar
+      -- date instead.
+      (end_at IS NOT NULL AND end_at = start_at
+        AND (end_at AT TIME ZONE 'America/Halifax')::date
+            >= (now() AT TIME ZONE 'America/Halifax')::date)
       OR
-      (end_at   IS NULL     AND start_at > now() - INTERVAL '2 days')
+      -- Timed events: not yet expired (still running or starts in the future).
+      (end_at IS NOT NULL AND end_at <> start_at AND end_at > now())
+      OR
+      (end_at IS NULL AND start_at > now() - INTERVAL '2 days')
     ORDER BY start_at ASC
   `;
   return rows;
