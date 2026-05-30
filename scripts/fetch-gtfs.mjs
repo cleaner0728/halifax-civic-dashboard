@@ -54,7 +54,10 @@ async function main() {
   const stopsTxt = zip.readAsText('stops.txt');
   const routesTxt = zip.readAsText('routes.txt');
   const tripsTxt = zip.readAsText('trips.txt');
-  if (!stopsTxt || !routesTxt || !tripsTxt) throw new Error('zip missing stops/routes/trips');
+  const shapesTxt = zip.readAsText('shapes.txt');
+  if (!stopsTxt || !routesTxt || !tripsTxt || !shapesTxt) {
+    throw new Error('zip missing stops/routes/trips/shapes');
+  }
 
   const stopsRaw = parseCsv(stopsTxt);
   const routesRaw = parseCsv(routesTxt);
@@ -96,11 +99,63 @@ async function main() {
   const routeShortById = new Map(routes.map((r) => [r.id, r.short]));
   const tripsRaw = parseCsv(tripsTxt);
   const trips = {};
+  // Mapping the client needs to snap each vehicle to its route's geometry.
+  // Kept tiny by only emitting the trip_id => shape_id pair (no headsigns,
+  // no route ids — server-only consumers read trips.json instead).
+  const tripShape = {};
   for (const t of tripsRaw) {
     const id = t.trip_id;
     if (!id) continue;
     const head = cleanHeadsign(t.trip_headsign, routeShortById.get(t.route_id));
     if (head) trips[id] = head;
+    if (t.shape_id) tripShape[id] = t.shape_id;
+  }
+
+  // shapes.txt is one row per (shape, point, sequence). Re-group into
+  // ordered [[lon, lat], ...] polylines, then Google-polyline-encode each
+  // to ship efficiently. Encoded shapes for Halifax: ~150 KB total
+  // (vs. ~12 MB raw CSV).
+  const shapesRaw = parseCsv(shapesTxt);
+  const shapeBuckets = new Map();
+  for (const r of shapesRaw) {
+    const id = r.shape_id;
+    if (!id) continue;
+    const lat = Number(r.shape_pt_lat);
+    const lon = Number(r.shape_pt_lon);
+    const seq = Number(r.shape_pt_sequence);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) || !Number.isFinite(seq)) continue;
+    let bucket = shapeBuckets.get(id);
+    if (!bucket) { bucket = []; shapeBuckets.set(id, bucket); }
+    bucket.push([seq, lat, lon]);
+  }
+  function encodePolyline(latLonPairs) {
+    // Standard Google polyline algorithm: signed varints in base-64 ASCII,
+    // each value delta-encoded against the previous point.
+    let out = '';
+    let prevLat = 0, prevLon = 0;
+    const encVal = (v) => {
+      let n = v < 0 ? ~(v << 1) : (v << 1);
+      let s = '';
+      while (n >= 0x20) {
+        s += String.fromCharCode((0x20 | (n & 0x1f)) + 63);
+        n >>>= 5;
+      }
+      s += String.fromCharCode(n + 63);
+      return s;
+    };
+    for (const [lat, lon] of latLonPairs) {
+      const latE5 = Math.round(lat * 1e5);
+      const lonE5 = Math.round(lon * 1e5);
+      out += encVal(latE5 - prevLat);
+      out += encVal(lonE5 - prevLon);
+      prevLat = latE5; prevLon = lonE5;
+    }
+    return out;
+  }
+  const shapes = {};
+  for (const [id, pts] of shapeBuckets) {
+    pts.sort((a, b) => a[0] - b[0]);
+    shapes[id] = encodePolyline(pts.map(([, lat, lon]) => [lat, lon]));
   }
 
   await fs.mkdir(OUT_DIR, { recursive: true });
@@ -116,8 +171,17 @@ async function main() {
     path.join(OUT_DIR, 'trips.json'),
     JSON.stringify({ updated: new Date().toISOString(), trips }),
   );
+  await fs.writeFile(
+    path.join(OUT_DIR, 'shapes.json'),
+    JSON.stringify({ updated: new Date().toISOString(), shapes, tripShape }),
+  );
 
-  console.log(`Wrote ${stops.length} stops, ${routes.length} routes, ${Object.keys(trips).length} trip headsigns`);
+  const shapesJsonSize = JSON.stringify({ shapes, tripShape }).length;
+  console.log(
+    `Wrote ${stops.length} stops, ${routes.length} routes, ` +
+    `${Object.keys(trips).length} trip headsigns, ` +
+    `${Object.keys(shapes).length} shapes (${(shapesJsonSize / 1024).toFixed(0)} KB)`,
+  );
 }
 
 main().catch((e) => {

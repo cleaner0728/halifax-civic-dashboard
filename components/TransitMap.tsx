@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import maplibregl, { Map as MlMap, GeoJSONSource, MapGeoJSONFeature } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { decodePolyline, buildShape, projectArc, sampleAt, type DecodedShape } from '@/lib/shapes';
 
 type Stop = { id: string; code?: string; name: string; lat: number; lon: number };
 type Route = { id: string; short: string; long: string; color?: string; text?: string };
@@ -94,12 +95,22 @@ function stopsToGeoJSON(stops: Stop[]): GeoJSON.FeatureCollection {
   };
 }
 
-// Per-vehicle interpolation state. Drawn position is lerp(start, target, t)
-// where t ramps from 0 → 1 over VEHICLE_INTERP_MS once a new sample lands.
+// Per-vehicle interpolation state. Two interpolation modes:
+//   - shape mode (preferred): startArc/targetArc are distances along the
+//     trip's GTFS polyline; drawn position comes from sampleAt() so the
+//     marker stays on the road.
+//   - straight-line fallback: startLat/Lon and targetLat/Lon are used when
+//     the trip has no shape (unscheduled service) or the sample is far off
+//     the polyline (real-world detour).
 type AnimVehicle = {
   id: string;
+  // Straight-line fallback (always populated; used when shape is null).
   startLat: number; startLon: number;
   targetLat: number; targetLon: number;
+  // Shape-following path (optional).
+  shape: DecodedShape | null;
+  startArc: number;
+  targetArc: number;
   startedAt: number; // performance.now() in ms
   routeShort: string;
 };
@@ -109,8 +120,15 @@ function animVehiclesToGeoJSON(byId: Map<string, AnimVehicle>, now: number): Geo
   for (const v of byId.values()) {
     const raw = (now - v.startedAt) / VEHICLE_INTERP_MS;
     const t = raw < 0 ? 0 : raw > 1 ? 1 : raw;
-    const lat = v.startLat + (v.targetLat - v.startLat) * t;
-    const lon = v.startLon + (v.targetLon - v.startLon) * t;
+    let lat: number, lon: number;
+    if (v.shape) {
+      const arc = v.startArc + (v.targetArc - v.startArc) * t;
+      const p = sampleAt(v.shape, arc);
+      lat = p[0]; lon = p[1];
+    } else {
+      lat = v.startLat + (v.targetLat - v.startLat) * t;
+      lon = v.startLon + (v.targetLon - v.startLon) * t;
+    }
     features.push({
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [lon, lat] },
@@ -172,6 +190,44 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
   // animation frame so we never re-render the whole tree just to nudge a
   // bus by a few pixels.
   const animVehiclesRef = useRef<Map<string, AnimVehicle>>(new Map());
+  // tripId → shapeId map; shapeId → decoded shape with cumulative arc
+  // lengths. Loaded once on mount from public/transit/shapes.json and
+  // decoded lazily on first lookup to keep startup cheap on weak phones.
+  const tripShapeRef = useRef<Record<string, string>>({});
+  const shapesEncodedRef = useRef<Record<string, string>>({});
+  const shapesDecodedRef = useRef<Map<string, DecodedShape>>(new Map());
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch('/transit/shapes.json', { cache: 'force-cache' });
+        if (!r.ok) return;
+        const data = (await r.json()) as {
+          shapes: Record<string, string>;
+          tripShape: Record<string, string>;
+        };
+        if (cancelled) return;
+        shapesEncodedRef.current = data.shapes ?? {};
+        tripShapeRef.current = data.tripShape ?? {};
+      } catch {/* shapes are an enhancement — straight-line LERP is the fallback */}
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Lazy-decode a shape on first use, then cache the decoded form. ~150
+  // shapes total, each takes <2 ms to decode + arc-length on a modern phone.
+  const getShape = useCallback((shapeId: string | undefined): DecodedShape | null => {
+    if (!shapeId) return null;
+    const cached = shapesDecodedRef.current.get(shapeId);
+    if (cached) return cached;
+    const encoded = shapesEncodedRef.current[shapeId];
+    if (!encoded) return null;
+    const built = buildShape(decodePolyline(encoded));
+    shapesDecodedRef.current.set(shapeId, built);
+    return built;
+  }, []);
+
   const panelRef = useRef<HTMLDivElement | null>(null);
   const dragRef = useRef<{
     active: boolean;
@@ -660,31 +716,53 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
       const next = new Map<string, AnimVehicle>();
       for (const v of vehicles) {
         const existing = prev.get(v.id);
+        const shapeId = v.tripId ? tripShapeRef.current[v.tripId] : undefined;
+        const shape = getShape(shapeId);
+
+        // Project the fresh sample onto the trip's shape. A null result
+        // means the sample is far off the polyline (real-world detour), so
+        // we fall back to a straight-line LERP just for this segment.
+        const targetArc = shape ? projectArc(shape, v.lat, v.lon) : null;
+        const useShape = shape !== null && targetArc !== null;
+
+        // Compute where the marker is RIGHT NOW so the next animation
+        // segment starts from there — without this, swapping start/target
+        // mid-glide would visually rewind the bus to its last sample.
+        let curLat = v.lat, curLon = v.lon, curArc = 0;
         if (existing) {
-          // Snapshot where the marker is RIGHT NOW (mid-interpolation) and
-          // treat that as the new animation start. Without this, restarting
-          // mid-glide would visually rewind the bus to its last sample.
           const raw = (now - existing.startedAt) / VEHICLE_INTERP_MS;
           const t = raw < 0 ? 0 : raw > 1 ? 1 : raw;
-          const curLat = existing.startLat + (existing.targetLat - existing.startLat) * t;
-          const curLon = existing.startLon + (existing.targetLon - existing.startLon) * t;
-          next.set(v.id, {
-            id: v.id,
-            startLat: curLat, startLon: curLon,
-            targetLat: v.lat, targetLon: v.lon,
-            startedAt: now,
-            routeShort: v.routeId ? routesById.get(v.routeId)?.short ?? '' : '',
-          });
-        } else {
-          // Brand-new vehicle — drop it straight at its current position.
-          next.set(v.id, {
-            id: v.id,
-            startLat: v.lat, startLon: v.lon,
-            targetLat: v.lat, targetLon: v.lon,
-            startedAt: now - VEHICLE_INTERP_MS,
-            routeShort: v.routeId ? routesById.get(v.routeId)?.short ?? '' : '',
-          });
+          if (existing.shape && existing.shape === shape) {
+            curArc = existing.startArc + (existing.targetArc - existing.startArc) * t;
+            const p = sampleAt(existing.shape, curArc);
+            curLat = p[0]; curLon = p[1];
+          } else {
+            curLat = existing.startLat + (existing.targetLat - existing.startLat) * t;
+            curLon = existing.startLon + (existing.targetLon - existing.startLon) * t;
+            // Shape changed (or appeared) mid-trip — project the current
+            // position so the new arc-mode segment starts from where the
+            // marker actually is, not from coords[0].
+            if (useShape) {
+              const newCur = projectArc(shape!, curLat, curLon);
+              if (newCur != null) curArc = newCur;
+            }
+          }
+        } else if (useShape) {
+          // Brand-new vehicle with a shape — start at the projected arc and
+          // skip the animation (no prior sample to glide from).
+          curArc = targetArc!;
         }
+
+        next.set(v.id, {
+          id: v.id,
+          startLat: curLat, startLon: curLon,
+          targetLat: v.lat, targetLon: v.lon,
+          shape: useShape ? shape : null,
+          startArc: curArc,
+          targetArc: useShape ? targetArc! : 0,
+          startedAt: existing ? now : now - VEHICLE_INTERP_MS,
+          routeShort: v.routeId ? routesById.get(v.routeId)?.short ?? '' : '',
+        });
       }
       animVehiclesRef.current = next;
     }
@@ -716,6 +794,7 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
     }
     tick();
     if (rafId == null) rafId = requestAnimationFrame(pushFrame);
+    void getShape; // keep the lazy decoder referenced for HMR closures
 
     const onVis = () => {
       if (document.visibilityState === 'visible') {
@@ -733,7 +812,7 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
       if (rafId != null) cancelAnimationFrame(rafId);
       document.removeEventListener('visibilitychange', onVis);
     };
-  }, [routesById]);
+  }, [routesById, getShape]);
 
   // ----- Arrivals fetch + poll while popover open -----
   useEffect(() => {
@@ -873,7 +952,10 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
                                 const dest = a.headsign ?? r?.long ?? '';
                                 return (
                                   <li
-                                    key={`${a.tripId ?? i}-${a.time}`}
+                                    // include index — Halifax's feed
+                                    // occasionally emits duplicate predictions
+                                    // with the same trip+time at one stop.
+                                    key={`${a.tripId ?? '?'}-${a.time}-${i}`}
                                     className="flex items-center gap-2 text-[11px]"
                                   >
                                     <span
@@ -1012,7 +1094,9 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
                   const r = a.routeId ? routesById.get(a.routeId) : undefined;
                   return (
                     <li
-                      key={`${a.tripId ?? i}-${a.stopId}-${a.time}`}
+                      // index disambiguates duplicate (tripId, time) pairs
+                      // that Halifax's feed sometimes emits per stop.
+                      key={`${a.tripId ?? '?'}-${a.stopId}-${a.time}-${i}`}
                       className="flex items-center gap-2.5 py-2 text-sm"
                     >
                       <span
