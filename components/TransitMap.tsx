@@ -227,14 +227,18 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
     d.active = false;
     try { panel.releasePointerCapture(d.pointerId); } catch {}
 
-    // If the user barely moved, treat this as a tap and let the header
-    // button's onClick toggle the panel. We need to RESTORE the transition
-    // (we suppressed it on pointerdown) before React's next render fires,
-    // and leave `transform` untouched so its current value matches what
-    // React last rendered — no flash on the way back.
+    try { panel.releasePointerCapture(d.pointerId); } catch {}
+
+    // Tap (no significant movement): toggle here directly. We used to let
+    // the button's onClick handle it, but on real mobile the synthesized
+    // click fires unreliably after pointerup with capture/touch — sometimes
+    // not at all, sometimes twice — which caused "tap to close, reopens".
+    // Driving the state from pointer events eliminates both failure modes.
     if (!d.moved) {
       panel.style.transition = 'transform 350ms cubic-bezier(0.32, 0.72, 0, 1)';
+      suppressClickUntilRef.current = performance.now() + 500;
       dragRef.current = null;
+      setPanelOpen((v) => !v);
       return;
     }
 
