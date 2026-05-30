@@ -570,8 +570,21 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
             is ignored. */}
       {!showPrompt && !selectedStop && visibleStops.length > 0 && (
         <div
-          className="absolute bottom-0 left-0 right-0 sm:left-2 sm:right-auto sm:top-2 sm:bottom-2 sm:w-[34rem] bg-card/95 backdrop-blur text-foreground rounded-t-2xl sm:rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden"
-          style={{ maxHeight: isDesktop ? 'none' : panelOpen ? '75vh' : '3.5rem' }}
+          className="absolute left-0 right-0 bottom-0 sm:left-2 sm:right-auto sm:top-2 sm:bottom-2 sm:w-[34rem] bg-card/95 backdrop-blur text-foreground rounded-t-2xl sm:rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden will-change-transform"
+          style={
+            isDesktop
+              ? undefined
+              : {
+                  // iOS-style bottom sheet: the panel is always 75vh tall,
+                  // and slides down via translateY when collapsed so only the
+                  // ~3.5rem header peeks above the screen edge. translate is
+                  // GPU-accelerated and the easing curve mirrors UIKit's
+                  // standard sheet animation.
+                  height: '75vh',
+                  transform: panelOpen ? 'translateY(0)' : 'translateY(calc(75vh - 3.5rem))',
+                  transition: 'transform 350ms cubic-bezier(0.32, 0.72, 0, 1)',
+                }
+          }
         >
             <button
               onClick={() => setPanelOpen((v) => !v)}
