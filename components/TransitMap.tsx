@@ -145,6 +145,123 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
     mq.addEventListener('change', sync);
     return () => mq.removeEventListener('change', sync);
   }, []);
+
+  // ----- Drag-to-resize for the mobile bottom sheet -----
+  // The panel always sits at translateY(0) when open and translateY(peek)
+  // when collapsed; during a drag we mutate the element's transform
+  // directly (skipping React) so the motion follows the finger at 60fps,
+  // then snap to a target state on release based on position + velocity.
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const dragRef = useRef<{
+    active: boolean;
+    pointerId: number;
+    startY: number;
+    startTranslate: number;
+    samples: Array<{ y: number; t: number }>;
+    moved: boolean;
+  } | null>(null);
+  // Tracks the moment a drag-snap resolved, so the synthetic click that
+  // fires right after a touch release on the same button can be ignored
+  // (otherwise drag + auto-click would double-toggle panelOpen).
+  const suppressClickUntilRef = useRef(0);
+
+  // Peek offset = how far down we have to push the sheet so only the
+  // 3.5rem header remains visible. Recomputed per drag since vh / root
+  // font-size can change (rotate, browser-zoom).
+  const computePeekOffset = useCallback(() => {
+    if (typeof window === 'undefined') return 0;
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    return window.innerHeight * 0.75 - 3.5 * rem;
+  }, []);
+
+  const onSheetPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (isDesktop) return;
+    // Only initiate drag from the header strip — let the list area scroll
+    // normally. The header button has data-sheet-handle for this check.
+    if (!(e.target as HTMLElement).closest('[data-sheet-handle]')) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+    const startTranslate = panelOpen ? 0 : computePeekOffset();
+    dragRef.current = {
+      active: true,
+      pointerId: e.pointerId,
+      startY: e.clientY,
+      startTranslate,
+      samples: [{ y: e.clientY, t: performance.now() }],
+      moved: false,
+    };
+    panel.setPointerCapture(e.pointerId);
+    panel.style.transition = 'none';
+  }, [isDesktop, panelOpen, computePeekOffset]);
+
+  const onSheetPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    const d = dragRef.current;
+    const panel = panelRef.current;
+    if (!d || !d.active || !panel || e.pointerId !== d.pointerId) return;
+    const dy = e.clientY - d.startY;
+    if (Math.abs(dy) > 4) d.moved = true;
+    const peek = computePeekOffset();
+    // Small overscroll buffer at both ends keeps the gesture feeling alive
+    // without ever revealing the page behind the sheet.
+    const next = Math.max(-32, Math.min(peek + 32, d.startTranslate + dy));
+    panel.style.transform = `translateY(${next}px)`;
+    d.samples.push({ y: e.clientY, t: performance.now() });
+    if (d.samples.length > 6) d.samples.shift();
+  }, [computePeekOffset]);
+
+  const onSheetPointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    const d = dragRef.current;
+    const panel = panelRef.current;
+    if (!d || !d.active || !panel) return;
+    d.active = false;
+    try { panel.releasePointerCapture(d.pointerId); } catch {}
+
+    // If the user barely moved, treat this as a tap and let the header
+    // button's onClick toggle the panel — clear our inline overrides so
+    // React's style takes back over.
+    if (!d.moved) {
+      panel.style.transition = '';
+      panel.style.transform = '';
+      dragRef.current = null;
+      return;
+    }
+
+    // Velocity from the last few samples (px/ms; positive = downward).
+    let vy = 0;
+    const s = d.samples;
+    if (s.length >= 2) {
+      const a = s[0], b = s[s.length - 1];
+      const dt = b.t - a.t;
+      if (dt > 0) vy = (b.y - a.y) / dt;
+    }
+    const peek = computePeekOffset();
+    const currentTranslate = Math.max(0, Math.min(peek, d.startTranslate + (e.clientY - d.startY)));
+
+    // Snap decision: a clear flick wins; otherwise pick the nearer half.
+    let openTarget: boolean;
+    if (vy > 0.6) openTarget = false;
+    else if (vy < -0.6) openTarget = true;
+    else openTarget = currentTranslate < peek / 2;
+
+    // Animate from the current finger position to the target ourselves
+    // before handing the style back to React. If we cleared the inline
+    // transform first, React's next render briefly puts the sheet at its
+    // panelOpen=true position before re-rendering with the new state,
+    // which flashes upward for a frame.
+    panel.style.transition = 'transform 350ms cubic-bezier(0.32, 0.72, 0, 1)';
+    panel.style.transform = openTarget ? 'translateY(0)' : `translateY(${peek}px)`;
+    suppressClickUntilRef.current = performance.now() + 400;
+    dragRef.current = null;
+    setPanelOpen(openTarget);
+    // After the transition completes, clear our inline overrides so the
+    // React-driven style (which holds the same value) is back in charge.
+    window.setTimeout(() => {
+      if (!dragRef.current) {
+        panel.style.transition = '';
+        panel.style.transform = '';
+      }
+    }, 380);
+  }, [computePeekOffset]);
   const [locError, setLocError] = useState<string | null>(null);
   // Viewport changes as the user pans/zooms. We re-derive the visible stops
   // and the panel from this — so zooming out exposes more stops and the
@@ -570,7 +687,12 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
             is ignored. */}
       {!showPrompt && !selectedStop && visibleStops.length > 0 && (
         <div
-          className="absolute left-0 right-0 bottom-0 sm:left-2 sm:right-auto sm:top-2 sm:bottom-2 sm:w-[34rem] bg-card/95 backdrop-blur text-foreground rounded-t-2xl sm:rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden will-change-transform"
+          ref={panelRef}
+          onPointerDown={onSheetPointerDown}
+          onPointerMove={onSheetPointerMove}
+          onPointerUp={onSheetPointerUp}
+          onPointerCancel={onSheetPointerUp}
+          className="absolute left-0 right-0 bottom-0 sm:left-2 sm:right-auto sm:top-2 sm:bottom-2 sm:w-[34rem] bg-card/95 backdrop-blur text-foreground rounded-t-2xl sm:rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden will-change-transform touch-pan-y"
           style={
             isDesktop
               ? undefined
@@ -579,7 +701,9 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
                   // and slides down via translateY when collapsed so only the
                   // ~3.5rem header peeks above the screen edge. translate is
                   // GPU-accelerated and the easing curve mirrors UIKit's
-                  // standard sheet animation.
+                  // standard sheet animation. During a drag, the inline
+                  // transform is overwritten directly via panelRef and the
+                  // transition is suppressed — see onSheetPointer* above.
                   height: '75vh',
                   transform: panelOpen ? 'translateY(0)' : 'translateY(calc(75vh - 3.5rem))',
                   transition: 'transform 350ms cubic-bezier(0.32, 0.72, 0, 1)',
@@ -587,8 +711,12 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
           }
         >
             <button
-              onClick={() => setPanelOpen((v) => !v)}
-              className="relative flex items-center gap-2 px-4 pt-3 pb-3 sm:pt-3 border-b border-border text-left hover:bg-sky-50 dark:hover:bg-sky-950/30 transition-colors shrink-0"
+              data-sheet-handle
+              onClick={() => {
+                if (performance.now() < suppressClickUntilRef.current) return;
+                setPanelOpen((v) => !v);
+              }}
+              className="relative flex items-center gap-2 px-4 pt-3 pb-3 sm:pt-3 border-b border-border text-left hover:bg-sky-50 dark:hover:bg-sky-950/30 transition-colors shrink-0 touch-none"
               aria-expanded={panelOpen}
               aria-controls="nearby-list"
             >
