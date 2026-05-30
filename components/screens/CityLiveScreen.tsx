@@ -5,6 +5,7 @@ import WindyMapBlock from '@/components/blocks/WindyMapBlock';
 import GettingAroundBlock from '@/components/blocks/GettingAroundBlock';
 import HrfeBlock from '@/components/blocks/HrfeBlock';
 import HrmNewsBlock from '@/components/blocks/HrmNewsBlock';
+import WasteCollectionBlock from '@/components/blocks/WasteCollectionBlock';
 import { IconCloudSun, IconFerry, IconBus, IconFlame, IconLandmark, IconCalendar } from '@/components/icons';
 import type { WeatherData } from '@/lib/fetchers/weather';
 import type { TideGraphData } from '@/lib/fetchers/tides';
@@ -202,6 +203,8 @@ export default function CityLiveScreen({
         >
           <HrmNewsBlock items={hrmNews} />
         </CollapsibleSection>
+
+        <WasteCollectionBlock />
 
         <CollapsibleSection
           icon={<IconCalendar className="w-5 h-5" />}
