@@ -131,6 +131,10 @@ function animVehiclesToGeoJSON(
 ): GeoJSON.FeatureCollection {
   const features: GeoJSON.Feature[] = [];
   for (const v of byId.values()) {
+    // Follow mode = only the tracked bus on the map. The route's polyline
+    // is already telling the user the full path; hiding everyone else
+    // keeps the map focused on the one vehicle they care about.
+    if (followedTripId && v.tripId !== followedTripId) continue;
     const raw = (now - v.startedAt) / VEHICLE_INTERP_MS;
     const t = raw < 0 ? 0 : raw > 1 ? 1 : raw;
     let lat: number, lon: number;
@@ -151,11 +155,8 @@ function animVehiclesToGeoJSON(
         routeColor: ROUTE_PILL_BG,
         routeText: ROUTE_PILL_TEXT,
         // 1 when this vehicle is the one the user tapped to follow, else 0.
-        // Drives map paint expressions to highlight it and dim the rest.
+        // Drives the highlight paint expressions on the vehicle layers.
         followed: followedTripId && v.tripId === followedTripId ? 1 : 0,
-        // Only present while a follow is active and this isn't the target —
-        // tells the paint expression to fade this marker.
-        dim: followedTripId && v.tripId !== followedTripId ? 1 : 0,
       },
     });
   }
@@ -634,15 +635,7 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
             'case', ['==', ['get', 'followed'], 1],
             3, 2,
           ],
-          // When something is being followed, fade every other vehicle so
-          // the user's eye locks onto the highlighted one. `dim` is set on
-          // each non-followed feature only while follow mode is active.
-          'circle-opacity': [
-            'case',
-            ['==', ['get', 'followed'], 1], 1,
-            ['==', ['get', 'dim'], 1], 0.35,
-            1,
-          ],
+          'circle-opacity': 1,
         },
       });
       map.addLayer({
