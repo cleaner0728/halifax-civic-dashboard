@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-30T17:56:21.257Z",
+  "fetchedAt": "2026-05-30T18:16:13.094Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -110,6 +110,15 @@
       "createdUtc": 1780156215
     },
     {
+      "title": "Car accident",
+      "score": 0,
+      "numComments": 0,
+      "author": "mcmolloy",
+      "url": "https://www.reddit.com/r/halifax/comments/1ts5lsx/car_accident/",
+      "flair": null,
+      "createdUtc": 1780161146
+    },
+    {
       "title": "Great Place to Recover and Revisit, Natura Wilderness Campground Resort.",
       "score": 0,
       "numComments": 0,
@@ -144,15 +153,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1trensy/canadas_premier_naval_aviation_museum_shearwater/",
       "flair": null,
       "createdUtc": 1780086571
-    },
-    {
-      "title": "Car accident",
-      "score": 0,
-      "numComments": 0,
-      "author": "mcmolloy",
-      "url": "https://www.reddit.com/r/halifax/comments/1ts5lsx/car_accident/",
-      "flair": null,
-      "createdUtc": 1780161146
     },
     {
       "title": "These posters are being used by NSH during OPOR implementation - AI generated and so juvenile that it’s insulting",
