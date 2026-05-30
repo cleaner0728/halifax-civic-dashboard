@@ -16,7 +16,7 @@ type Arrival = {
 };
 type LocStatus = 'prompt' | 'requesting' | 'granted' | 'denied' | 'unavailable';
 
-const RADIUS_METERS = 1000;
+const RADIUS_METERS = 800;
 // Light-green palette for route number pills + vehicle markers — overrides
 // the agency-supplied color so every bus reads with the same fresh look.
 const ROUTE_PILL_BG = '#86efac';   // emerald-300
@@ -131,7 +131,20 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
   const [vehicleCount, setVehicleCount] = useState(0);
   const [lastUpdated, setLastUpdated] = useState<number | null>(null);
   const [nearbyArrivals, setNearbyArrivals] = useState<Record<string, Arrival[]>>({});
-  const [panelOpen, setPanelOpen] = useState(true);
+  // Mobile default: collapsed to a peek bar so the map owns the screen.
+  // Desktop always shows the full panel (panelOpen is forced true at sm+).
+  const [panelOpen, setPanelOpen] = useState(false);
+  // Tailwind sm: breakpoint = 640px. Tracked in JS so we can apply an
+  // inline max-height conditionally — using arbitrary-value Tailwind
+  // classes in a dynamic string proved unreliable in this v4 setup.
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 640px)');
+    const sync = () => setIsDesktop(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
   const [locError, setLocError] = useState<string | null>(null);
   // Viewport changes as the user pans/zooms. We re-derive the visible stops
   // and the panel from this — so zooming out exposes more stops and the
@@ -549,26 +562,42 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
         </div>
       )}
 
-      {/* Nearby-arrivals panel — answers "what's coming near me?" without
-          forcing the user to click stops on the map one by one. */}
+      {/* Nearby-arrivals panel.
+          Mobile: bottom sheet with peek/expanded states. Default peek (just
+            the header strip) so the map owns the screen. Tap header to expand
+            to 75vh; tap again to collapse.
+          Desktop: always-on side panel pinned top-to-bottom, panelOpen flag
+            is ignored. */}
       {!showPrompt && !selectedStop && visibleStops.length > 0 && (
-        <div className="absolute bottom-0 left-0 right-0 max-h-[55vh] sm:left-2 sm:right-auto sm:top-2 sm:bottom-2 sm:w-[34rem] sm:max-h-none bg-card/95 backdrop-blur text-foreground rounded-t-2xl sm:rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden">
+        <div
+          className="absolute bottom-0 left-0 right-0 sm:left-2 sm:right-auto sm:top-2 sm:bottom-2 sm:w-[34rem] bg-card/95 backdrop-blur text-foreground rounded-t-2xl sm:rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden"
+          style={{ maxHeight: isDesktop ? 'none' : panelOpen ? '75vh' : '3.5rem' }}
+        >
             <button
               onClick={() => setPanelOpen((v) => !v)}
-              className="flex items-center gap-2 px-4 py-3 border-b border-border text-left hover:bg-sky-50 dark:hover:bg-sky-950/30 transition-colors"
+              className="relative flex items-center gap-2 px-4 pt-3 pb-3 sm:pt-3 border-b border-border text-left hover:bg-sky-50 dark:hover:bg-sky-950/30 transition-colors shrink-0"
               aria-expanded={panelOpen}
+              aria-controls="nearby-list"
             >
+              {/* Grabber affordance — visible only on mobile, signals the
+                  header is a draggable/tappable sheet handle. */}
+              <span
+                aria-hidden
+                className="sm:hidden absolute top-1.5 left-1/2 -translate-x-1/2 w-10 h-1 rounded-full bg-foreground/20"
+              />
               <span className="text-sky-500">🚌</span>
               <span className="text-sm font-semibold">Nearby — next buses</span>
-              {/* Stats here only on desktop — mobile shows the chip above. */}
-              <span className="hidden sm:inline ml-auto text-[11px] text-foreground/50">
+              {/* Mobile: live preview in the header so the peek bar still has
+                  value. Desktop: full stats — same line. */}
+              <span className="ml-auto text-[11px] text-foreground/50 tabular-nums">
                 <span className="font-semibold text-sky-600 dark:text-sky-400">{visibleStops.length}</span> stops ·{' '}
                 <span className="font-semibold text-sky-600 dark:text-sky-400">{vehicleCount}</span> buses
               </span>
-              <span className="sm:hidden ml-auto text-[11px] text-foreground/40">{panelOpen ? '▾' : '▸'}</span>
+              <span className="sm:hidden text-[11px] text-foreground/40 ml-1">{panelOpen ? '▾' : '▴'}</span>
             </button>
-            {panelOpen && (
-              <ul className="overflow-y-auto divide-y divide-border/60">
+            {/* List always mounted; collapsed by the outer max-height clip so
+                the slide animation stays smooth. */}
+              <ul id="nearby-list" className="overflow-y-auto divide-y divide-border/60 overscroll-contain">
                 {visibleStops.map((stop) => {
                   const list = nearbyArrivals[stop.id] ?? [];
                   return (
@@ -627,7 +656,6 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
                   );
                 })}
               </ul>
-            )}
         </div>
       )}
 
@@ -648,9 +676,9 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
             </div>
             <h2 className="text-lg font-semibold mb-1.5">Show buses near you</h2>
             <p className="text-xs text-foreground/60 mb-5 leading-relaxed">
-              We'll show every Halifax Transit stop within{' '}
-              <span className="font-semibold text-sky-600 dark:text-sky-400">1 km</span> of where you are,
-              with live next-bus times. Your location stays on your device.
+              We'll center the map on you and show every Halifax Transit stop within{' '}
+              <span className="font-semibold text-sky-600 dark:text-sky-400">800 m</span>.
+              Pan or zoom to see more. Your location stays on your device.
             </p>
             {locStatus === 'requesting' ? (
               <div className="text-xs text-foreground/60 py-3">Getting your location…</div>
