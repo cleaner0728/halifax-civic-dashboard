@@ -166,13 +166,24 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
   const suppressClickUntilRef = useRef(0);
 
   // Peek offset = how far down we have to push the sheet so only the
-  // 3.5rem header remains visible. Recomputed per drag since vh / root
-  // font-size can change (rotate, browser-zoom).
+  // 3.5rem header remains visible. Recomputed on resize so the calc stays
+  // accurate after rotation, browser-zoom, or virtual-keyboard show/hide.
   const computePeekOffset = useCallback(() => {
     if (typeof window === 'undefined') return 0;
     const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
     return window.innerHeight * 0.75 - 3.5 * rem;
   }, []);
+  // Tracked in state so React's inline `transform` uses a plain px value
+  // matching the px values we set during drag. Mixing calc(...) with px
+  // breaks transform's interpolation on Chrome — the animation just snaps
+  // — even though both are length values per spec.
+  const [peekPx, setPeekPx] = useState(0);
+  useEffect(() => {
+    const update = () => setPeekPx(computePeekOffset());
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [computePeekOffset]);
 
   const onSheetPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (isDesktop) return;
@@ -217,11 +228,12 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
     try { panel.releasePointerCapture(d.pointerId); } catch {}
 
     // If the user barely moved, treat this as a tap and let the header
-    // button's onClick toggle the panel — clear our inline overrides so
-    // React's style takes back over.
+    // button's onClick toggle the panel. We need to RESTORE the transition
+    // (we suppressed it on pointerdown) before React's next render fires,
+    // and leave `transform` untouched so its current value matches what
+    // React last rendered — no flash on the way back.
     if (!d.moved) {
-      panel.style.transition = '';
-      panel.style.transform = '';
+      panel.style.transition = 'transform 350ms cubic-bezier(0.32, 0.72, 0, 1)';
       dragRef.current = null;
       return;
     }
@@ -248,19 +260,16 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
     // transform first, React's next render briefly puts the sheet at its
     // panelOpen=true position before re-rendering with the new state,
     // which flashes upward for a frame.
+    // Set the target inline so the in-flight animation continues smoothly
+    // from the finger's release point to the snap target. React's next
+    // render produces the same `transform` value (derived from panelOpen),
+    // so the reconciler is a no-op for this element — no flash and no
+    // post-animation cleanup needed.
     panel.style.transition = 'transform 350ms cubic-bezier(0.32, 0.72, 0, 1)';
     panel.style.transform = openTarget ? 'translateY(0)' : `translateY(${peek}px)`;
     suppressClickUntilRef.current = performance.now() + 400;
     dragRef.current = null;
     setPanelOpen(openTarget);
-    // After the transition completes, clear our inline overrides so the
-    // React-driven style (which holds the same value) is back in charge.
-    window.setTimeout(() => {
-      if (!dragRef.current) {
-        panel.style.transition = '';
-        panel.style.transform = '';
-      }
-    }, 380);
   }, [computePeekOffset]);
   const [locError, setLocError] = useState<string | null>(null);
   // Viewport changes as the user pans/zooms. We re-derive the visible stops
@@ -701,12 +710,16 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
                   // and slides down via translateY when collapsed so only the
                   // ~3.5rem header peeks above the screen edge. translate is
                   // GPU-accelerated and the easing curve mirrors UIKit's
-                  // standard sheet animation. During a drag, the inline
-                  // transform is overwritten directly via panelRef and the
-                  // transition is suppressed — see onSheetPointer* above.
+                  // standard sheet animation.
+                  //
+                  // Property order matters: React applies inline style props
+                  // in object-iteration order via `element.style.setProperty`.
+                  // We list `transition` BEFORE `transform` so the browser
+                  // has a transition rule set when the new transform value
+                  // arrives — otherwise the change snaps without animating.
                   height: '75vh',
-                  transform: panelOpen ? 'translateY(0)' : 'translateY(calc(75vh - 3.5rem))',
                   transition: 'transform 350ms cubic-bezier(0.32, 0.72, 0, 1)',
+                  transform: `translateY(${panelOpen ? 0 : peekPx}px)`,
                 }
           }
         >
