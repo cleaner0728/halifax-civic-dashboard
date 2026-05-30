@@ -22,6 +22,11 @@ const RADIUS_METERS = 800;
 const ROUTE_PILL_BG = '#86efac';   // emerald-300
 const ROUTE_PILL_TEXT = '#064e3b'; // emerald-900
 const VEHICLE_POLL_MS = 15_000;
+// How long it takes a vehicle marker to glide from its previous known
+// position to the freshly polled one. Match the poll interval so the slide
+// completes right when new data arrives — the bus appears to move
+// continuously instead of teleporting every 15s.
+const VEHICLE_INTERP_MS = 15_000;
 const ARRIVAL_POLL_MS = 20_000;
 // Cap the batch arrival request to the N closest stops. 30 keeps the URL
 // short and the upstream parse work bounded — arrivals beyond the first
@@ -89,23 +94,35 @@ function stopsToGeoJSON(stops: Stop[]): GeoJSON.FeatureCollection {
   };
 }
 
-function vehiclesToGeoJSON(vs: Vehicle[], routes: Map<string, Route>): GeoJSON.FeatureCollection {
-  return {
-    type: 'FeatureCollection',
-    features: vs.map((v) => {
-      const r = v.routeId ? routes.get(v.routeId) : undefined;
-      return {
-        type: 'Feature',
-        geometry: { type: 'Point', coordinates: [v.lon, v.lat] },
-        properties: {
-          id: v.id,
-          routeShort: r?.short ?? '',
-          routeColor: ROUTE_PILL_BG,
-          routeText: ROUTE_PILL_TEXT,
-        },
-      };
-    }),
-  };
+// Per-vehicle interpolation state. Drawn position is lerp(start, target, t)
+// where t ramps from 0 → 1 over VEHICLE_INTERP_MS once a new sample lands.
+type AnimVehicle = {
+  id: string;
+  startLat: number; startLon: number;
+  targetLat: number; targetLon: number;
+  startedAt: number; // performance.now() in ms
+  routeShort: string;
+};
+
+function animVehiclesToGeoJSON(byId: Map<string, AnimVehicle>, now: number): GeoJSON.FeatureCollection {
+  const features: GeoJSON.Feature[] = [];
+  for (const v of byId.values()) {
+    const raw = (now - v.startedAt) / VEHICLE_INTERP_MS;
+    const t = raw < 0 ? 0 : raw > 1 ? 1 : raw;
+    const lat = v.startLat + (v.targetLat - v.startLat) * t;
+    const lon = v.startLon + (v.targetLon - v.startLon) * t;
+    features.push({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [lon, lat] },
+      properties: {
+        id: v.id,
+        routeShort: v.routeShort,
+        routeColor: ROUTE_PILL_BG,
+        routeText: ROUTE_PILL_TEXT,
+      },
+    });
+  }
+  return { type: 'FeatureCollection', features };
 }
 
 function formatEta(epochSeconds: number): string {
@@ -151,6 +168,10 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
   // when collapsed; during a drag we mutate the element's transform
   // directly (skipping React) so the motion follows the finger at 60fps,
   // then snap to a target state on release based on position + velocity.
+  // Interpolation state for vehicles — mutated outside React on every
+  // animation frame so we never re-render the whole tree just to nudge a
+  // bus by a few pixels.
+  const animVehiclesRef = useRef<Map<string, AnimVehicle>>(new Map());
   const panelRef = useRef<HTMLDivElement | null>(null);
   const dragRef = useRef<{
     active: boolean;
@@ -623,13 +644,60 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
     setSelectedStop(stop);
   }, []);
 
-  // ----- Vehicle polling (always; users want to see buses approaching) -----
-  // Stops scheduling new ticks while the tab is hidden, and resumes
-  // immediately when the user returns — so a backgrounded tab incurs zero
-  // ongoing cost (no skipped-fetch timers, no setState churn).
+  // ----- Vehicle polling + interpolation -----
+  // Poll every VEHICLE_POLL_MS; in between, a requestAnimationFrame loop
+  // lerps each marker from its previous known position to the freshest one
+  // over VEHICLE_INTERP_MS so the bus appears to glide instead of teleport.
+  // Both the poll timer and the rAF loop pause while the tab is hidden.
   useEffect(() => {
     let alive = true;
     let timer: ReturnType<typeof setTimeout> | null = null;
+    let rafId: number | null = null;
+
+    function applyNewSample(vehicles: Vehicle[]) {
+      const now = performance.now();
+      const prev = animVehiclesRef.current;
+      const next = new Map<string, AnimVehicle>();
+      for (const v of vehicles) {
+        const existing = prev.get(v.id);
+        if (existing) {
+          // Snapshot where the marker is RIGHT NOW (mid-interpolation) and
+          // treat that as the new animation start. Without this, restarting
+          // mid-glide would visually rewind the bus to its last sample.
+          const raw = (now - existing.startedAt) / VEHICLE_INTERP_MS;
+          const t = raw < 0 ? 0 : raw > 1 ? 1 : raw;
+          const curLat = existing.startLat + (existing.targetLat - existing.startLat) * t;
+          const curLon = existing.startLon + (existing.targetLon - existing.startLon) * t;
+          next.set(v.id, {
+            id: v.id,
+            startLat: curLat, startLon: curLon,
+            targetLat: v.lat, targetLon: v.lon,
+            startedAt: now,
+            routeShort: v.routeId ? routesById.get(v.routeId)?.short ?? '' : '',
+          });
+        } else {
+          // Brand-new vehicle — drop it straight at its current position.
+          next.set(v.id, {
+            id: v.id,
+            startLat: v.lat, startLon: v.lon,
+            targetLat: v.lat, targetLon: v.lon,
+            startedAt: now - VEHICLE_INTERP_MS,
+            routeShort: v.routeId ? routesById.get(v.routeId)?.short ?? '' : '',
+          });
+        }
+      }
+      animVehiclesRef.current = next;
+    }
+
+    function pushFrame() {
+      if (!alive || document.visibilityState !== 'visible') {
+        rafId = null;
+        return;
+      }
+      const src = mapRef.current?.getSource('vehicles') as GeoJSONSource | undefined;
+      if (src) src.setData(animVehiclesToGeoJSON(animVehiclesRef.current, performance.now()));
+      rafId = requestAnimationFrame(pushFrame);
+    }
 
     async function tick() {
       if (!alive || document.visibilityState !== 'visible') return;
@@ -637,8 +705,7 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
         const r = await fetch('/api/transit/vehicles', { cache: 'no-store' });
         const data = (await r.json()) as { vehicles: Vehicle[] };
         if (alive && mapRef.current) {
-          const src = mapRef.current.getSource('vehicles') as GeoJSONSource | undefined;
-          if (src) src.setData(vehiclesToGeoJSON(data.vehicles ?? [], routesById));
+          applyNewSample(data.vehicles ?? []);
           setVehicleCount(data.vehicles?.length ?? 0);
           setLastUpdated(Date.now());
         }
@@ -648,17 +715,22 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
       }
     }
     tick();
+    if (rafId == null) rafId = requestAnimationFrame(pushFrame);
+
     const onVis = () => {
-      if (document.visibilityState === 'visible' && !timer) tick();
-      if (document.visibilityState !== 'visible' && timer) {
-        clearTimeout(timer);
-        timer = null;
+      if (document.visibilityState === 'visible') {
+        if (!timer) tick();
+        if (rafId == null) rafId = requestAnimationFrame(pushFrame);
+      } else {
+        if (timer) { clearTimeout(timer); timer = null; }
+        if (rafId != null) { cancelAnimationFrame(rafId); rafId = null; }
       }
     };
     document.addEventListener('visibilitychange', onVis);
     return () => {
       alive = false;
       if (timer) clearTimeout(timer);
+      if (rafId != null) cancelAnimationFrame(rafId);
       document.removeEventListener('visibilitychange', onVis);
     };
   }, [routesById]);
