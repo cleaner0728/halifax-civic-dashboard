@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import HalifaxWebcams from '@/components/HalifaxWebcams';
 import AlertsBlock from '@/components/blocks/AlertsBlock';
 import WeatherBlock from '@/components/blocks/WeatherBlock';
@@ -168,6 +169,21 @@ export default function CityLiveScreen({
             emptySubMessage="Alderney and Woodside ferries running on regular schedule."
           />
         </CollapsibleSection>
+
+        {/* Standalone, never-collapsed entry into the live transit map.
+            Sits above the Transit disruptions section so it's the first
+            thing a rider sees in this part of the screen. */}
+        <Link
+          href="/transit"
+          className="flex items-center gap-3 px-4 py-3 bg-sky-500/10 hover:bg-sky-500/15 border border-sky-500/30 rounded-xl transition-colors"
+        >
+          <span className="text-2xl shrink-0">🚌</span>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-bold text-foreground">Open live transit map</div>
+            <div className="text-xs text-foreground/60">Buses near you · next-bus times at every stop</div>
+          </div>
+          <span aria-hidden className="text-sky-600 dark:text-sky-400 text-lg">→</span>
+        </Link>
 
         <CollapsibleSection
           icon={<IconBus className="w-5 h-5" />}

@@ -1,0 +1,41 @@
+name: Fetch GTFS static (Halifax Transit)
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'   # weekly, Monday 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-gtfs
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install adm-zip
+        run: npm install --no-save adm-zip
+
+      - name: Fetch GTFS static
+        run: node scripts/fetch-gtfs.mjs
+
+      - name: Commit if changed
+        run: |
+          if [[ -n "$(git status --porcelain public/transit/)" ]]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add public/transit/
+            git commit -m "chore: refresh Halifax GTFS static [skip ci]"
+            git push
+          else
+            echo "No changes to commit"
+          fi
