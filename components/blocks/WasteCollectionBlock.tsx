@@ -388,9 +388,19 @@ function MiniMonth({
 
   return (
     <div className="mt-4 border-t border-border pt-3">
-      <p className="text-[10px] uppercase tracking-widest text-foreground/50 font-medium mb-2">
-        Next 6 weeks
-      </p>
+      <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
+        <p className="text-[10px] uppercase tracking-widest text-foreground/50 font-medium">
+          Next 6 weeks
+        </p>
+        <div className="flex items-center gap-2.5 text-[10px] text-foreground/50">
+          {(['organics', 'recycling', 'garbage'] as Stream[]).map(s => (
+            <span key={s} className="inline-flex items-center gap-1">
+              <span className={`w-1.5 h-1.5 rounded-full ${STREAM_CHIP[s].dot}`} aria-hidden />
+              {STREAM_CHIP[s].label}
+            </span>
+          ))}
+        </div>
+      </div>
       <div className="grid grid-cols-7 text-center text-[10px] text-foreground/40 mb-1">
         {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => (
           <div key={d}>{d}</div>
