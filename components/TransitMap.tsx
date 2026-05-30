@@ -104,6 +104,7 @@ function stopsToGeoJSON(stops: Stop[]): GeoJSON.FeatureCollection {
 //     the polyline (real-world detour).
 type AnimVehicle = {
   id: string;
+  tripId?: string;
   // Straight-line fallback (always populated; used when shape is null).
   startLat: number; startLon: number;
   targetLat: number; targetLon: number;
@@ -115,7 +116,19 @@ type AnimVehicle = {
   routeShort: string;
 };
 
-function animVehiclesToGeoJSON(byId: Map<string, AnimVehicle>, now: number): GeoJSON.FeatureCollection {
+type Followed = {
+  tripId: string;
+  routeId?: string;
+  stopId: string;        // user's stop of interest, for ETA copy
+  stopName: string;
+  headsign?: string;
+};
+
+function animVehiclesToGeoJSON(
+  byId: Map<string, AnimVehicle>,
+  now: number,
+  followedTripId?: string,
+): GeoJSON.FeatureCollection {
   const features: GeoJSON.Feature[] = [];
   for (const v of byId.values()) {
     const raw = (now - v.startedAt) / VEHICLE_INTERP_MS;
@@ -137,6 +150,12 @@ function animVehiclesToGeoJSON(byId: Map<string, AnimVehicle>, now: number): Geo
         routeShort: v.routeShort,
         routeColor: ROUTE_PILL_BG,
         routeText: ROUTE_PILL_TEXT,
+        // 1 when this vehicle is the one the user tapped to follow, else 0.
+        // Drives map paint expressions to highlight it and dim the rest.
+        followed: followedTripId && v.tripId === followedTripId ? 1 : 0,
+        // Only present while a follow is active and this isn't the target —
+        // tells the paint expression to fade this marker.
+        dim: followedTripId && v.tripId !== followedTripId ? 1 : 0,
       },
     });
   }
@@ -353,6 +372,12 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
     setPanelOpen(openTarget);
   }, [computePeekOffset]);
   const [locError, setLocError] = useState<string | null>(null);
+  // "Follow this bus" state — set when the user taps a route pill in the
+  // nearby panel. Tracks the trip + the user's stop of interest so the
+  // follow bar can show ETA copy ("at YOUR stop").
+  const [followed, setFollowed] = useState<Followed | null>(null);
+  const followedRef = useRef<Followed | null>(null);
+  useEffect(() => { followedRef.current = followed; }, [followed]);
   // Viewport changes as the user pans/zooms. We re-derive the visible stops
   // and the panel from this — so zooming out exposes more stops and the
   // next-bus list grows accordingly.
@@ -568,16 +593,56 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
         },
       });
 
+      // Followed-trip shape layer. Sits under the vehicle markers so the
+      // glowing line is visible behind the bus circle. Empty data until
+      // the user picks a bus to follow.
+      map.addSource('followed-shape', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      map.addLayer({
+        id: 'followed-shape-halo',
+        type: 'line',
+        source: 'followed-shape',
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: { 'line-color': '#0ea5e9', 'line-width': 9, 'line-opacity': 0.18 },
+      });
+      map.addLayer({
+        id: 'followed-shape-line',
+        type: 'line',
+        source: 'followed-shape',
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: { 'line-color': '#0284c7', 'line-width': 4, 'line-opacity': 0.9 },
+      });
+
       map.addSource('vehicles', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
       map.addLayer({
         id: 'vehicles-circle',
         type: 'circle',
         source: 'vehicles',
         paint: {
-          'circle-color': ['get', 'routeColor'],
-          'circle-radius': 16,
+          // Followed bus gets a sky-blue background instead of green so it
+          // stands apart from the others at a glance.
+          'circle-color': [
+            'case', ['==', ['get', 'followed'], 1],
+            '#0ea5e9',
+            ['get', 'routeColor'],
+          ],
+          'circle-radius': [
+            'case', ['==', ['get', 'followed'], 1],
+            20, 16,
+          ],
           'circle-stroke-color': '#fff',
-          'circle-stroke-width': 2,
+          'circle-stroke-width': [
+            'case', ['==', ['get', 'followed'], 1],
+            3, 2,
+          ],
+          // When something is being followed, fade every other vehicle so
+          // the user's eye locks onto the highlighted one. `dim` is set on
+          // each non-followed feature only while follow mode is active.
+          'circle-opacity': [
+            'case',
+            ['==', ['get', 'followed'], 1], 1,
+            ['==', ['get', 'dim'], 1], 0.35,
+            1,
+          ],
         },
       });
       map.addLayer({
@@ -586,11 +651,19 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
         source: 'vehicles',
         layout: {
           'text-field': ['get', 'routeShort'],
-          'text-size': 15,
+          'text-size': [
+            'case', ['==', ['get', 'followed'], 1], 17, 15,
+          ],
           'text-font': ['Noto Sans Bold', 'Open Sans Bold', 'Arial Unicode MS Bold'],
           'text-allow-overlap': true,
         },
-        paint: { 'text-color': ['get', 'routeText'] },
+        paint: {
+          'text-color': [
+            'case', ['==', ['get', 'followed'], 1],
+            '#ffffff',
+            ['get', 'routeText'],
+          ],
+        },
       });
 
       map.on('click', 'stops-point', (e) => {
@@ -694,6 +767,55 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
     return () => { alive = false; if (timer) clearTimeout(timer); };
   }, [visibleStopsKey]);
 
+  // ----- Follow-a-bus map sync -----
+  // Push the followed trip's shape onto the highlight layer, and pan the
+  // camera to wherever that bus currently is. Re-runs whenever the user
+  // taps a different bus to follow.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const apply = () => {
+      const shapeSrc = map.getSource('followed-shape') as GeoJSONSource | undefined;
+      if (!followed) {
+        if (shapeSrc) shapeSrc.setData({ type: 'FeatureCollection', features: [] });
+        return;
+      }
+      const shapeId = tripShapeRef.current[followed.tripId];
+      const decoded = getShape(shapeId);
+      if (shapeSrc && decoded) {
+        // GeoJSON wants [lon, lat] pairs; decoded is [lat, lon].
+        const coords = decoded.coords.map(([lat, lon]) => [lon, lat] as [number, number]);
+        shapeSrc.setData({
+          type: 'FeatureCollection',
+          features: [{ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: coords } }],
+        });
+      }
+      // Pan to whichever animated marker matches this trip — that's the
+      // user's actual bus, mid-interpolation.
+      let busLat: number | null = null, busLon: number | null = null;
+      for (const v of animVehiclesRef.current.values()) {
+        if (v.tripId !== followed.tripId) continue;
+        const raw = (performance.now() - v.startedAt) / VEHICLE_INTERP_MS;
+        const t = raw < 0 ? 0 : raw > 1 ? 1 : raw;
+        if (v.shape) {
+          const arc = v.startArc + (v.targetArc - v.startArc) * t;
+          const p = sampleAt(v.shape, arc);
+          busLat = p[0]; busLon = p[1];
+        } else {
+          busLat = v.startLat + (v.targetLat - v.startLat) * t;
+          busLon = v.startLon + (v.targetLon - v.startLon) * t;
+        }
+        break;
+      }
+      if (busLat != null && busLon != null) {
+        map.easeTo({ center: [busLon, busLat], zoom: Math.max(map.getZoom(), 15.5), duration: 700 });
+      }
+    };
+    if (mapReadyRef.current) apply();
+    else map.once('app:ready', apply);
+    return () => { map.off('app:ready', apply); };
+  }, [followed, getShape]);
+
   const focusStop = useCallback((stop: Stop) => {
     const map = mapRef.current;
     if (map) map.easeTo({ center: [stop.lon, stop.lat], zoom: Math.max(map.getZoom(), 16), duration: 400 });
@@ -755,6 +877,7 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
 
         next.set(v.id, {
           id: v.id,
+          tripId: v.tripId,
           startLat: curLat, startLon: curLon,
           targetLat: v.lat, targetLon: v.lon,
           shape: useShape ? shape : null,
@@ -773,7 +896,7 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
         return;
       }
       const src = mapRef.current?.getSource('vehicles') as GeoJSONSource | undefined;
-      if (src) src.setData(animVehiclesToGeoJSON(animVehiclesRef.current, performance.now()));
+      if (src) src.setData(animVehiclesToGeoJSON(animVehiclesRef.current, performance.now(), followedRef.current?.tripId));
       rafId = requestAnimationFrame(pushFrame);
     }
 
@@ -845,10 +968,46 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
     <>
       <div ref={containerRef} className="absolute inset-0 w-full h-full" />
 
+      {/* Follow-a-bus bar — sits across the top of the map when a bus is
+          being tracked. Tells the user WHICH bus they're following and to
+          which stop the ETA refers, with a clear "Stop following" affordance.
+          On desktop it's left-anchored so it doesn't collide with the side
+          panel. */}
+      {followed && (() => {
+        const arrivalsAtStop = nearbyArrivals[followed.stopId] ?? [];
+        const matched = arrivalsAtStop.find((a) => a.tripId === followed.tripId);
+        const route = followed.routeId ? routesById.get(followed.routeId) : undefined;
+        return (
+          <div className="absolute top-2 left-2 right-2 sm:left-[35rem] sm:right-2 z-10 flex items-center gap-3 bg-sky-500 text-white rounded-xl shadow-lg px-3 py-2.5">
+            <span
+              className="shrink-0 inline-block min-w-[2.5rem] text-center text-base font-extrabold py-1 px-2 rounded-md bg-white text-sky-900"
+            >
+              {route?.short ?? followed.routeId ?? '?'}
+            </span>
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-semibold truncate">
+                → {followed.headsign ?? route?.long ?? 'this trip'}
+              </div>
+              <div className="text-[11px] text-white/85 truncate">
+                {matched
+                  ? <>arrives at <span className="font-semibold">{followed.stopName.replace(/\s*\(\d+\)\s*$/, '')}</span> in <span className="font-semibold tabular-nums">{formatEta(matched.time)}</span></>
+                  : <>tracking on the map · ETA at your stop unavailable</>}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setFollowed(null)}
+              aria-label="Stop following"
+              className="shrink-0 w-7 h-7 grid place-items-center rounded-full bg-white/15 hover:bg-white/25 text-lg leading-none"
+            >×</button>
+          </div>
+        );
+      })()}
+
       {/* On mobile, the stat chip sits on top of the map (above the bottom
           sheet). On desktop it disappears here and is shown inside the
           panel header instead — see the header strip below. */}
-      {!showPrompt && (
+      {!showPrompt && !followed && (
         <div className="sm:hidden absolute top-2 left-2 bg-card/95 backdrop-blur px-3 py-1.5 rounded-full text-[11px] text-foreground shadow-md border border-border pointer-events-none">
           <span className="font-semibold text-sky-600 dark:text-sky-400">{visibleStops.length}</span>
           <span className="opacity-60"> stops · </span>
@@ -924,10 +1083,11 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
                 {visibleStops.map((stop) => {
                   const list = nearbyArrivals[stop.id] ?? [];
                   return (
-                    <li key={stop.id}>
+                    <li key={stop.id} className="px-4 py-2.5 hover:bg-sky-50 dark:hover:bg-sky-950/30 transition-colors">
                       <button
+                        type="button"
                         onClick={() => focusStop(stop)}
-                        className="w-full text-left px-4 py-2.5 hover:bg-sky-50 dark:hover:bg-sky-950/30 active:bg-sky-100 dark:active:bg-sky-900/40 flex items-start gap-3 transition-colors"
+                        className="w-full text-left flex items-start gap-3"
                       >
                         <span className="shrink-0 text-xl tabular-nums font-semibold text-sky-600 dark:text-sky-400 mt-0.5 w-16">
                           {stop.distance < 1000 ? `${Math.round(stop.distance)} m` : `${(stop.distance / 1000).toFixed(1)} km`}
@@ -943,41 +1103,61 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
                                 that since the code is now shown up front. */}
                             {stop.name.replace(/\s*\(\d+\)\s*$/, '')}
                           </div>
-                          {list.length === 0 ? (
-                            <div className="text-[11px] text-foreground/40 mt-0.5 italic">No upcoming buses</div>
-                          ) : (
-                            <ul className="mt-1.5 space-y-1">
+                        </div>
+                      </button>
+                      {list.length === 0 ? (
+                        <div className="ml-[5rem] text-[11px] text-foreground/40 mt-0.5 italic">No upcoming buses</div>
+                      ) : (
+                            <ul className="mt-1.5 space-y-1 ml-[5rem]">
                               {list.slice(0, 3).map((a, i) => {
                                 const r = a.routeId ? routesById.get(a.routeId) : undefined;
                                 const dest = a.headsign ?? r?.long ?? '';
+                                const canFollow = !!a.tripId;
                                 return (
                                   <li
                                     // include index — Halifax's feed
                                     // occasionally emits duplicate predictions
                                     // with the same trip+time at one stop.
                                     key={`${a.tripId ?? '?'}-${a.time}-${i}`}
-                                    className="flex items-center gap-2 text-[11px]"
                                   >
-                                    <span
-                                      className="inline-block shrink-0 min-w-[2.25rem] text-center text-base font-extrabold py-0.5 px-1.5 rounded-md"
-                                      style={{ background: ROUTE_PILL_BG, color: ROUTE_PILL_TEXT }}
+                                    <button
+                                      type="button"
+                                      disabled={!canFollow}
+                                      onClick={(e) => {
+                                        // Don't bubble to the stop-row button
+                                        // (which would refocus the map on the
+                                        // stop instead of following the bus).
+                                        e.stopPropagation();
+                                        if (!canFollow) return;
+                                        setFollowed({
+                                          tripId: a.tripId!,
+                                          routeId: a.routeId,
+                                          stopId: stop.id,
+                                          stopName: stop.name,
+                                          headsign: a.headsign,
+                                        });
+                                      }}
+                                      className="w-full flex items-center gap-2 text-[11px] py-0.5 px-1 -mx-1 rounded-md hover:bg-sky-100/60 dark:hover:bg-sky-900/30 disabled:hover:bg-transparent transition-colors text-left"
                                     >
-                                      {r?.short ?? a.routeId ?? '?'}
-                                    </span>
-                                    <span className="flex-1 min-w-0 truncate text-sm leading-snug text-foreground/85">
-                                      <span className="opacity-50 mr-1">→</span>
-                                      {dest || <span className="italic opacity-50">unknown destination</span>}
-                                    </span>
-                                    <span className="shrink-0 tabular-nums font-semibold text-foreground">
-                                      {formatEta(a.time)}
-                                    </span>
+                                      <span
+                                        className="inline-block shrink-0 min-w-[2.25rem] text-center text-base font-extrabold py-0.5 px-1.5 rounded-md"
+                                        style={{ background: ROUTE_PILL_BG, color: ROUTE_PILL_TEXT }}
+                                      >
+                                        {r?.short ?? a.routeId ?? '?'}
+                                      </span>
+                                      <span className="flex-1 min-w-0 truncate text-sm leading-snug text-foreground/85">
+                                        <span className="opacity-50 mr-1">→</span>
+                                        {dest || <span className="italic opacity-50">unknown destination</span>}
+                                      </span>
+                                      <span className="shrink-0 tabular-nums font-semibold text-foreground">
+                                        {formatEta(a.time)}
+                                      </span>
+                                    </button>
                                   </li>
                                 );
                               })}
-                            </ul>
-                          )}
-                        </div>
-                      </button>
+                        </ul>
+                      )}
                     </li>
                   );
                 })}
