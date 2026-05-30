@@ -155,21 +155,6 @@ export default function CityLiveScreen({
           <WindyMapBlock headless buoy={buoy} marineForecast={marineForecast} />
         </CollapsibleSection>
 
-        {/* Standalone, never-collapsed entry into the live transit map.
-            Pinned above the Ferry + Transit collapsibles so it's the first
-            mobility surface a rider sees on this screen. */}
-        <Link
-          href="/transit"
-          className="flex items-center gap-3 px-4 py-3 bg-sky-500/10 hover:bg-sky-500/15 border border-sky-500/30 rounded-xl transition-colors"
-        >
-          <span className="text-2xl shrink-0">🚌</span>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-bold text-foreground">Open live transit map</div>
-            <div className="text-xs text-foreground/60">Buses near you · next-bus times at every stop</div>
-          </div>
-          <span aria-hidden className="text-sky-600 dark:text-sky-400 text-lg">→</span>
-        </Link>
-
         <CollapsibleSection
           icon={<IconFerry className="w-5 h-5" />}
           title="Ferry"
@@ -191,6 +176,27 @@ export default function CityLiveScreen({
           href="https://www.halifax.ca/transportation/halifax-transit/service-disruptions"
           linkLabel="halifax.ca"
         >
+          {/* Live-map entry — pinned above Upcoming Service Changes so it's
+              the first thing a rider sees when they expand Transit. The big
+              circular icon is meant to read as a tap target, not just an
+              icon. Gradient + scale hover keeps it from blending into the
+              card chrome around it. */}
+          <Link
+            href="/transit"
+            className="group flex items-center gap-4 px-4 py-3 bg-gradient-to-r from-sky-500/15 to-emerald-500/10 hover:from-sky-500/25 hover:to-emerald-500/20 border border-sky-500/40 rounded-2xl transition-colors mb-3"
+          >
+            <span className="shrink-0 w-14 h-14 grid place-items-center rounded-full bg-sky-500 text-white text-2xl shadow-md group-hover:scale-105 transition-transform">
+              🗺️
+            </span>
+            <div className="flex-1 min-w-0">
+              <div className="text-base font-bold text-foreground leading-tight">Live transit map</div>
+              <div className="text-xs text-foreground/65 mt-0.5">
+                Buses near you · next-bus times · stop search
+              </div>
+            </div>
+            <span aria-hidden className="text-sky-600 dark:text-sky-400 text-xl">→</span>
+          </Link>
+
           <GettingAroundBlock
             detours={detours}
             ferryAlerts={[]}

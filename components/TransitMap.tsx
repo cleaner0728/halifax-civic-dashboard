@@ -375,6 +375,20 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
     if (locStatus === 'prompt') setLocStatus('denied'); // skip path also lands here
   }, [locStatus]);
 
+  // Mobile: skip the modal entirely and drop straight onto the map at the
+  // downtown fallback. The big "📍 Use my location" button (top-right) and
+  // the circular locate button (bottom-right) are still one tap away — but
+  // a full-screen permission gate on first paint is heavy-handed for a
+  // map that's perfectly usable without geolocation.
+  useEffect(() => {
+    if (origin) return;
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(max-width: 639px)').matches) {
+      setOrigin(FALLBACK_ORIGIN);
+    }
+    // Desktop keeps the prompt — it's a calmer intro to a full-screen map.
+  }, [origin]);
+
   // ----- Map init (runs once) -----
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -823,6 +837,35 @@ export default function TransitMap({ stops, routes }: { stops: Stop[]; routes: R
           className="absolute top-2 right-14 bg-sky-500 hover:bg-sky-600 active:bg-sky-700 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-md transition-colors"
         >
           📍 Use my location
+        </button>
+      )}
+
+      {/* Recenter / re-acquire location — sits bottom-right of the map,
+          clear of the MapLibre attribution (compact icon, bottom-right) and
+          the zoom controls (top-right). Always visible so the user can snap
+          back to their location after panning around. */}
+      {!showPrompt && (
+        <button
+          onClick={() => {
+            requestLocation();
+            // If we already have an origin, also pan there immediately so
+            // there's instant feedback even before the geolocation API
+            // returns a fresh fix.
+            const map = mapRef.current;
+            if (map && origin) {
+              map.easeTo({ center: [origin.lon, origin.lat], zoom: Math.max(map.getZoom(), 15), duration: 400 });
+            }
+          }}
+          aria-label="Center map on my location"
+          className="absolute bottom-10 right-2 w-11 h-11 grid place-items-center rounded-full bg-card/95 backdrop-blur border border-border shadow-lg text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950/40 active:scale-95 transition-all"
+        >
+          <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <circle cx="12" cy="12" r="3" />
+            <line x1="12" y1="2" x2="12" y2="5" />
+            <line x1="12" y1="19" x2="12" y2="22" />
+            <line x1="2" y1="12" x2="5" y2="12" />
+            <line x1="19" y1="12" x2="22" y2="12" />
+          </svg>
         </button>
       )}
 
