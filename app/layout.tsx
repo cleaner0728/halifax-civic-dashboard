@@ -21,12 +21,23 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: "Made in Halifax",
-    statusBarStyle: "default",
+    // "default" renders a light/white status bar with dark text — jarring
+    // against the dark dashboard when launched from the iOS home screen.
+    // "black" gives a dark bar with light glyphs that blends into the
+    // near-black background. (Content still starts below the status bar, so
+    // no safe-area work is needed.)
+    statusBarStyle: "black",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#3b82f6",
+  // Match the page background in each scheme so Safari's browser chrome (and
+  // the PWA splash) blend with the app instead of showing a bright accent.
+  // Values mirror --background in globals.css (light #eceef2 / dark #0b1120).
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#eceef2" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b1120" },
+  ],
 };
 
 export default function RootLayout({
