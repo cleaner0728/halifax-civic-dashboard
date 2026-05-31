@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { CATEGORIES, TOTAL_4YR, TOTAL_2627, PDF_URL, type CategoryDetail } from '@/lib/capital-budget-data';
 
 function fmtM(thousands: number) {
@@ -107,9 +107,24 @@ function DetailPanel({ cat }: { cat: CategoryDetail }) {
 // ── Main component ────────────────────────────────────────────────────────────
 export default function CapitalBudgetBlock() {
   const [selected, setSelected] = useState<string | null>(null);
+  // One ref per category row — used to scroll the newly-opened row into view
+  // after the previous panel collapses and the new one expands.
+  const rowRefs = useRef<Record<string, HTMLLIElement | null>>({});
 
-  const toggle = (key: string) =>
-    setSelected(prev => (prev === key ? null : key));
+  const toggle = useCallback((key: string) => {
+    setSelected(prev => {
+      const next = prev === key ? null : key;
+      if (next) {
+        // Wait one frame so React has painted the new panel before scrolling.
+        // `block: 'nearest'` only scrolls if the row is already off-screen,
+        // preventing jarring jumps when it's already visible.
+        requestAnimationFrame(() => {
+          rowRefs.current[next]?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+      }
+      return next;
+    });
+  }, []);
 
   return (
     <div className="rounded-2xl border border-border bg-card overflow-hidden">
@@ -176,7 +191,7 @@ export default function CapitalBudgetBlock() {
           const pct = (cat.total / TOTAL_4YR) * 100;
           const isSelected = selected === cat.key;
           return (
-            <li key={cat.key}>
+            <li key={cat.key} ref={el => { rowRefs.current[cat.key] = el; }}>
               {/* Row button */}
               <button
                 onClick={() => toggle(cat.key)}
