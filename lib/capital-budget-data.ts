@@ -126,7 +126,46 @@ export const CATEGORIES: CategoryDetail[] = [
     textColor: 'text-violet-600 dark:text-violet-400',
     ringColor: 'ring-violet-400',
     bgSelected: 'bg-violet-500/8 dark:bg-violet-500/12',
-    detailPending: true,
+    sections: [
+      {
+        title: 'Vehicles (Transit & Fleet)',
+        projects: [
+          { id: 'Transit24', name: 'Articulated Conventional Bus Replacement', amount: 18_820 },
+          { id: 'CV240004', name: 'Fire Fleet Replacement', amount: 7_422 },
+          { id: 'CV240002', name: 'Municipal Fleet Replacement', amount: 4_415 },
+          { id: 'CM200004', name: 'Mid-Life Bus Rebuild', amount: 2_580 },
+          { id: 'CV240003', name: 'Fire Fleet Expansion', amount: 1_480 },
+          { id: 'CM200001', name: 'Access-A-Bus Replacement', amount: 1_050 },
+          { id: 'CV250003', name: 'Fire Light Fleet Replacement', amount: 970 },
+          { id: 'CV240001', name: 'Municipal Fleet Expansion', amount: 360 },
+          { id: 'CV250002', name: 'Fire Light Fleet Expansion', amount: 135 },
+          { id: 'CV240005', name: 'Police Fleet Expansion', amount: 22 },
+        ],
+      },
+      {
+        title: 'Equipment & Machinery',
+        projects: [
+          { id: 'CE200004', name: 'Fire Services Equipment Replacement', amount: 2_639 },
+          { id: 'CE250001', name: 'Emergency Back-Up Radio System', amount: 850 },
+          { id: 'CE190002', name: 'Police Services Equipment Replacement', amount: 848 },
+          { id: 'CM200005', name: 'Bus Maintenance Equipment Replacement', amount: 450 },
+          { id: 'Recreation2', name: 'Recreation Centre Fitness Equipment Replacement', amount: 450 },
+          { id: 'CE240002', name: 'Wildland Urban Interface Initiatives', amount: 1_148 },
+          { id: 'CE240006', name: 'Security Equipment Replacements', amount: 300 },
+          { id: 'CE190005', name: 'Ice Resurfacer Replacement', amount: 80 },
+          { id: 'CW190001', name: 'New/Replacement Green Carts', amount: 90 },
+          { id: 'CE190001', name: 'Fire Services Water Supply', amount: 150 },
+          { id: 'CE200005', name: 'Heavy Urban Search & Rescue Equipment', amount: 200 },
+        ],
+      },
+      {
+        title: 'Vessels',
+        projects: [
+          { id: 'CM200007', name: 'Ferry Overhaul and Capital Upgrades', amount: 1_266 },
+          { id: 'CV240007', name: 'Mid Life Ferry Rebuild', amount: 700 },
+        ],
+      },
+    ],
   },
 
   // ─── Outdoor Recreation ───────────────────────────────────────────────────
@@ -211,9 +250,12 @@ export const CATEGORIES: CategoryDetail[] = [
     ],
   },
 
-  // ─── Other ────────────────────────────────────────────────────────────────
-  // Rolls up: District Capital ($1,504k) + Other Assets ($7,553k) +
-  // Significant Projects ($4,600k) + HalifACT ($810k)
+  // ─── Other Programs ───────────────────────────────────────────────────────
+  // Rolls up: Other Assets ($7,553k) + HalifACT ($810k) +
+  // District Capital ($1,504k) + Significant Projects ($4,600k)
+  // Other Assets breakdown from detailed table total = $9,867k, but the overview
+  // figure of $7,553k excludes HalifACT ($810k) and District Capital ($1,504k)
+  // which appear as separate overview line items.
   {
     key: 'other',
     label: 'Other Programs',
@@ -222,11 +264,46 @@ export const CATEGORIES: CategoryDetail[] = [
     textColor: 'text-foreground/50',
     ringColor: 'ring-foreground/30',
     bgSelected: 'bg-foreground/5',
-    projects: [
-      { id: 'Strategic', name: 'Significant Capital Projects (Strategic)', amount: 4_600 },
-      { id: 'OtherAssets', name: 'Other Assets', amount: 7_553 },
-      { id: 'District', name: 'District Capital Funds', amount: 1_504 },
-      { id: 'HalifACT', name: 'HalifACT Climate Action Projects', amount: 810 },
+    sections: [
+      {
+        title: 'Strategic – Significant Projects',
+        projects: [
+          { id: 'Strategic', name: 'Significant Capital Projects', amount: 4_600, note: 'large city-building projects (detail in full PDF)' },
+        ],
+      },
+      {
+        title: 'Business Parks',
+        projects: [
+          { id: 'CQ220002', name: 'Burnside & City of Lakes Industrial Park', amount: 4_900 },
+          { id: 'BusPark1', name: 'Phase 14 Burnside Development', amount: 270 },
+        ],
+      },
+      {
+        title: 'Natural & Environmental Assets',
+        projects: [
+          { id: 'CA250001', name: 'Urban Forest Management Plan Implementation', amount: 1_558 },
+          { id: 'CW190004', name: 'Environmental Monitoring – Landfill', amount: 180 },
+        ],
+      },
+      {
+        title: 'HalifACT Climate Action',
+        projects: [
+          { id: 'CZ230301', name: 'EV Corporate Fleet Vehicle Replacements', amount: 810 },
+        ],
+      },
+      {
+        title: 'Art & Cultural Assets',
+        projects: [
+          { id: 'CP190001', name: 'Cultural Assets', amount: 395 },
+          { id: 'Recreation1', name: 'SL100 Events Mobile Stage', amount: 250 },
+        ],
+      },
+      {
+        title: 'District Capital & Other',
+        projects: [
+          { id: 'CCV03001', name: 'District Capital Accounts', amount: 1_504, note: 'CCV03001–CCV03016' },
+        ],
+      },
     ],
   },
 ];
