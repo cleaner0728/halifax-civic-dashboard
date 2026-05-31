@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import BetaOnly from '@/components/BetaOnly';
+import CalendarEmbed from '@/components/CalendarEmbed';
 import HalifaxWebcams from '@/components/HalifaxWebcams';
 import AlertsBlock from '@/components/blocks/AlertsBlock';
 import WeatherBlock from '@/components/blocks/WeatherBlock';
@@ -239,24 +240,11 @@ export default function CityLiveScreen({
           href="https://www.halifax.ca/home/events-calendar"
           linkLabel="halifax.ca"
         >
-          {/* data-no-tab-swipe on BOTH wrapper and iframe: iOS Safari forwards
-              touches from inside iframes to the parent, which would arm the
-              swipe-to-switch-tab / pull-to-refresh gestures and reload the
-              embed (visible flicker). The opt-out is read off whichever node
-              iOS reports as the touch target. */}
-          <div
-            data-no-tab-swipe
-            className="rounded-xl overflow-hidden border border-border shadow-sm bg-white p-2"
-          >
-            <iframe
-              data-no-tab-swipe
-              src={HRM_CALENDAR_SRC}
-              style={{ border: 0 }}
-              width="100%"
-              height="480"
-              title="HRM Events Calendar"
-            />
-          </div>
+          {/* CalendarEmbed is a client component so it can read resolvedTheme
+              and apply invert(1) hue-rotate(180deg) in dark mode.
+              data-no-tab-swipe is forwarded inside it to prevent iOS Safari
+              from arming swipe / PTR gestures on iframe touches. */}
+          <CalendarEmbed src={HRM_CALENDAR_SRC} />
         </CollapsibleSection>
       </div>
     </div>
