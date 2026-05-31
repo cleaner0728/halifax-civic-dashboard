@@ -116,10 +116,11 @@ export default function CapitalBudgetBlock() {
       const next = prev === key ? null : key;
       if (next) {
         // Wait one frame so React has painted the new panel before scrolling.
-        // `block: 'nearest'` only scrolls if the row is already off-screen,
-        // preventing jarring jumps when it's already visible.
+        // `block: 'start'` ensures the category header row (top of the <li>)
+        // is always visible. scrollMarginTop on the <li> adds clearance for
+        // the fixed top navigation bar (~60px mobile / ~100px desktop).
         requestAnimationFrame(() => {
-          rowRefs.current[next]?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          rowRefs.current[next]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
       }
       return next;
@@ -191,7 +192,7 @@ export default function CapitalBudgetBlock() {
           const pct = (cat.total / TOTAL_4YR) * 100;
           const isSelected = selected === cat.key;
           return (
-            <li key={cat.key} ref={el => { rowRefs.current[cat.key] = el; }}>
+            <li key={cat.key} ref={el => { rowRefs.current[cat.key] = el; }} style={{ scrollMarginTop: '5rem' }}>
               {/* Row button */}
               <button
                 onClick={() => toggle(cat.key)}
