@@ -1,73 +1,120 @@
-// 2026/27 HRM Draft Capital Budget data, sourced from:
-// https://cdn.halifax.ca/sites/default/files/documents/city-hall/budget-finances/2026-27-draft-capital-budget-book-digital-version.pdf
-//
-// Figures are in thousands of CAD (as published). The component formats
-// them as millions for readability.
+"use client";
 
-const PDF_URL =
-  'https://cdn.halifax.ca/sites/default/files/documents/city-hall/budget-finances/2026-27-draft-capital-budget-book-digital-version.pdf';
+import { useState } from 'react';
+import { CATEGORIES, TOTAL_2627, PDF_URL, type CategoryDetail } from '@/lib/capital-budget-data';
 
-// 2026/27 single-year capital plan breakdown (Base + Strategic combined).
-// "Other" rolls up Business Systems, Traffic & Streetlights, District
-// Capital Funds, and HalifACT Projects.
-const CATEGORIES = [
-  {
-    label: 'Roads & Active Transport',
-    amount: 76_404 + 74_760, // Base Roads + Strategic Integrated Mobility
-    color: 'bg-blue-500',
-    textColor: 'text-blue-600 dark:text-blue-400',
-    note: 'includes Integrated Mobility Plan',
-  },
-  {
-    label: 'Buildings & Facilities',
-    amount: 63_596,
-    color: 'bg-amber-500',
-    textColor: 'text-amber-600 dark:text-amber-400',
-    note: undefined,
-  },
-  {
-    label: 'Vehicles & Equipment',
-    amount: 46_425,
-    color: 'bg-violet-500',
-    textColor: 'text-violet-600 dark:text-violet-400',
-    note: undefined,
-  },
-  {
-    label: 'Outdoor Recreation',
-    amount: 18_300,
-    color: 'bg-emerald-500',
-    textColor: 'text-emerald-600 dark:text-emerald-400',
-    note: undefined,
-  },
-  {
-    label: 'Significant Projects',
-    amount: 4_600,
-    color: 'bg-rose-500',
-    textColor: 'text-rose-600 dark:text-rose-400',
-    note: undefined,
-  },
-  {
-    label: 'Other',
-    amount: 1_504 + 5_525 + 4_525 + 7_553 + 810, // District + Traffic + Biz Sys + Other Assets + HalifACT
-    color: 'bg-foreground/25',
-    textColor: 'text-foreground/50',
-    note: 'Traffic, IT systems, HalifACT, etc.',
-  },
-] as const;
-
-const TOTAL = CATEGORIES.reduce((s, c) => s + c.amount, 0); // 303,002
-
-function fmt(thousands: number) {
+function fmtM(thousands: number) {
   const m = thousands / 1000;
-  return m >= 100
-    ? `$${Math.round(m)}M`
-    : `$${m.toFixed(1)}M`;
+  return m >= 100 ? `$${Math.round(m)}M` : `$${m.toFixed(1)}M`;
 }
 
+function fmtK(thousands: number) {
+  if (thousands >= 1000) {
+    const m = thousands / 1000;
+    return m % 1 === 0 ? `$${m}M` : `$${m.toFixed(1)}M`;
+  }
+  return `$${thousands.toLocaleString()}k`;
+}
+
+// ── Project drill-down panel ─────────────────────────────────────────────────
+function DetailPanel({ cat }: { cat: CategoryDetail }) {
+  if (cat.detailPending) {
+    return (
+      <div className="px-4 py-5 text-center">
+        <p className="text-sm text-foreground/40">Project detail coming soon.</p>
+        <a
+          href={PDF_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 inline-block text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
+        >
+          View full budget PDF ↗
+        </a>
+      </div>
+    );
+  }
+
+  // Flatten all projects from sections + flat projects list
+  const sections = cat.sections ?? (cat.projects ? [{ title: '', projects: cat.projects }] : []);
+  const allProjects = sections.flatMap(s => s.projects);
+  const catTotal = allProjects.reduce((s, p) => s + p.amount, 0);
+  const maxAmt = Math.max(...allProjects.map(p => p.amount));
+
+  return (
+    <div>
+      {sections.map((section, si) => (
+        <div key={si}>
+          {section.title && (
+            <div className="px-4 pt-3 pb-1.5">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-foreground/35">
+                {section.title}
+              </p>
+            </div>
+          )}
+          <ul>
+            {section.projects
+              .slice()
+              .sort((a, b) => b.amount - a.amount)
+              .map(project => {
+                const pct = (project.amount / maxAmt) * 100;
+                return (
+                  <li key={project.id} className="px-4 py-2 hover:bg-foreground/3 transition-colors">
+                    <div className="flex items-center justify-between gap-3 mb-1">
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium text-foreground leading-snug truncate">
+                          {project.name}
+                        </p>
+                        {project.note && (
+                          <p className="text-[10px] text-foreground/40 leading-snug">{project.note}</p>
+                        )}
+                      </div>
+                      <span className={`text-xs font-semibold shrink-0 tabular-nums ${cat.textColor}`}>
+                        {fmtK(project.amount)}
+                      </span>
+                    </div>
+                    <div className="h-1 rounded-full bg-foreground/8 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${cat.color} opacity-60`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </li>
+                );
+              })}
+          </ul>
+          {si < sections.length - 1 && <div className="mx-4 border-t border-border my-1" />}
+        </div>
+      ))}
+
+      {/* Panel footer */}
+      <div className="flex items-center justify-between px-4 py-3 mt-1 border-t border-border bg-foreground/2">
+        <p className="text-[11px] text-foreground/40">
+          {allProjects.length} projects shown · {fmtM(catTotal)} displayed of {fmtM(cat.total)} total
+        </p>
+        <a
+          href={PDF_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline shrink-0"
+        >
+          Full PDF ↗
+        </a>
+      </div>
+    </div>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
 export default function CapitalBudgetBlock() {
+  const [selected, setSelected] = useState<string | null>(null);
+
+  const toggle = (key: string) =>
+    setSelected(prev => (prev === key ? null : key));
+
   return (
     <div className="rounded-2xl border border-border bg-card overflow-hidden">
-      {/* Header */}
+
+      {/* ── Header ── */}
       <div className="px-4 pt-4 pb-3 border-b border-border">
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -75,10 +122,11 @@ export default function CapitalBudgetBlock() {
               2026/27 Draft Capital Budget
             </p>
             <p className="text-2xl font-bold text-foreground mt-0.5">
-              $303M
+              {fmtM(TOTAL_2627)}
             </p>
             <p className="text-xs text-foreground/50 mt-0.5">
-              226 active capital projects · Halifax Regional Municipality
+              226 active projects · Halifax Regional Municipality ·{' '}
+              <span className="text-foreground/35">tap a category for details</span>
             </p>
           </div>
           <a
@@ -91,59 +139,102 @@ export default function CapitalBudgetBlock() {
           </a>
         </div>
 
-        {/* Stacked bar — proportional widths */}
-        <div className="mt-3 flex h-3 rounded-full overflow-hidden gap-px">
-          {CATEGORIES.map((c) => (
-            <div
-              key={c.label}
-              className={`${c.color} transition-all`}
-              style={{ width: `${(c.amount / TOTAL) * 100}%` }}
-              title={`${c.label}: ${fmt(c.amount)}`}
+        {/* Stacked proportional bar */}
+        <div className="mt-3 flex h-2.5 rounded-full overflow-hidden gap-px">
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat.key}
+              onClick={() => toggle(cat.key)}
+              title={`${cat.label}: ${fmtM(cat.total)}`}
+              className={`${cat.color} transition-opacity hover:opacity-80 focus-visible:outline-none ${
+                selected && selected !== cat.key ? 'opacity-30' : 'opacity-100'
+              }`}
+              style={{ width: `${(cat.total / TOTAL_2627) * 100}%` }}
             />
+          ))}
+        </div>
+        {/* Legend chips */}
+        <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2">
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat.key}
+              onClick={() => toggle(cat.key)}
+              className={`flex items-center gap-1 text-[10px] font-medium transition-opacity ${
+                selected && selected !== cat.key ? 'opacity-30' : 'opacity-100'
+              } ${cat.textColor}`}
+            >
+              <span className={`inline-block w-2 h-2 rounded-sm ${cat.color}`} />
+              {cat.label.split(' ')[0]}
+            </button>
           ))}
         </div>
       </div>
 
-      {/* Category rows */}
+      {/* ── Category rows ── */}
       <ul className="divide-y divide-border">
-        {CATEGORIES.map((c) => {
-          const pct = (c.amount / TOTAL) * 100;
+        {CATEGORIES.map(cat => {
+          const pct = (cat.total / TOTAL_2627) * 100;
+          const isSelected = selected === cat.key;
           return (
-            <li key={c.label} className="px-4 py-2.5">
-              <div className="flex items-center justify-between gap-3 mb-1.5">
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className={`inline-block w-2.5 h-2.5 rounded-sm shrink-0 ${c.color}`} />
-                  <span className="text-sm font-medium text-foreground truncate">
-                    {c.label}
-                  </span>
-                  {c.note && (
-                    <span className="hidden sm:inline text-[11px] text-foreground/35 truncate">
-                      · {c.note}
+            <li key={cat.key}>
+              {/* Row button */}
+              <button
+                onClick={() => toggle(cat.key)}
+                className={`w-full text-left px-4 py-2.5 transition-colors ${
+                  isSelected ? cat.bgSelected : 'hover:bg-foreground/3'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3 mb-1.5">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className={`inline-block w-2.5 h-2.5 rounded-sm shrink-0 ${cat.color}`} />
+                    <span className="text-sm font-medium text-foreground truncate">
+                      {cat.label}
                     </span>
-                  )}
+                    {cat.detailPending && (
+                      <span className="text-[10px] text-foreground/30 hidden sm:inline">
+                        · detail pending
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className={`text-sm font-semibold ${cat.textColor}`}>
+                      {fmtM(cat.total)}
+                    </span>
+                    <svg
+                      className={`w-3.5 h-3.5 text-foreground/30 transition-transform duration-200 ${
+                        isSelected ? 'rotate-180' : ''
+                      }`}
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
                 </div>
-                <span className={`text-sm font-semibold shrink-0 ${c.textColor}`}>
-                  {fmt(c.amount)}
-                </span>
-              </div>
-              {/* Per-row bar */}
-              <div className="h-1.5 rounded-full bg-foreground/8 overflow-hidden">
-                <div
-                  className={`h-full rounded-full ${c.color} opacity-70`}
-                  style={{ width: `${pct}%` }}
-                />
-              </div>
+                {/* Per-row proportion bar */}
+                <div className="h-1.5 rounded-full bg-foreground/8 overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${cat.color} ${isSelected ? 'opacity-80' : 'opacity-50'} transition-opacity`}
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              </button>
+
+              {/* Expandable detail panel */}
+              {isSelected && (
+                <div className="border-t border-border bg-card animate-in slide-in-from-top-1 duration-150">
+                  <DetailPanel cat={cat} />
+                </div>
+              )}
             </li>
           );
         })}
       </ul>
 
-      {/* Footer note */}
+      {/* ── Footer ── */}
       <div className="px-4 py-2.5 border-t border-border">
         <p className="text-[11px] text-foreground/35 leading-snug">
-          Base Capital $224M + Strategic Initiatives $80M.
-          Figures in thousands as published; displayed in millions.
-          4-Year plan total: $2.18B (2026/27–2029/30).
+          Base Capital $224M + Strategic Initiatives $80M = $303M.
+          4-year plan (2026/27–2029/30): $2.18B. Figures in thousands as published.
         </p>
       </div>
     </div>
