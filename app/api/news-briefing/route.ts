@@ -56,7 +56,8 @@ export async function GET(req: NextRequest) {
   // has at least one row.
   console.log('[briefing] DB empty — generating on-demand (cold start)');
 
-  const { items } = await fetchNews();
+  // Match the generator's 24h window so cold-start and cron produce the same hash.
+  const { items } = await fetchNews(24);
   if (items.length === 0) {
     return Response.json({ error: 'briefing_unavailable' }, { status: 503 });
   }

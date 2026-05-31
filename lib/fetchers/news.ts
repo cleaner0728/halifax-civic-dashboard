@@ -10,7 +10,10 @@ export type NewsItem = {
   source?: string;
 };
 
-export async function fetchNews(): Promise<{ items: NewsItem[] }> {
+// `windowHours` controls how far back to include stories. The Feed uses the
+// default 8h; the AI briefing passes 24h so it has enough material for a
+// ~3-minute summary even on a slow news day.
+export async function fetchNews(windowHours = 8): Promise<{ items: NewsItem[] }> {
   const parser = new Parser();
 
   const sources = [
@@ -28,7 +31,7 @@ export async function fetchNews(): Promise<{ items: NewsItem[] }> {
     { url: 'https://www.thecoast.ca/feed/', name: 'The Coast' },
   ];
 
-  const cutoff = new Date(Date.now() - 8 * 60 * 60 * 1000);
+  const cutoff = new Date(Date.now() - windowHours * 60 * 60 * 1000);
 
   const SOURCE_TIMEOUT_MS = 8_000;
 

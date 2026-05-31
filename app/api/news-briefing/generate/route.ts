@@ -21,17 +21,19 @@ import { sql } from '@/lib/db';
 // (Vercel Hobby caps at 60s; Pro allows up to 300s.)
 export const maxDuration = 60;
 
-// Relaxed limits for background generation — users aren't waiting.
+// Background generation. Capped at 12 articles: that's ~3 minutes of briefing,
+// and keeps total runtime under Vercel Hobby's 60s function limit. Higher
+// concurrency shrinks the Jina-fetch phase (the main time cost).
 const CRON_CONFIG = {
-  maxArticles:       25,    // cover all available articles (rarely this many)
+  maxArticles:       12,
   timeoutMs:         15_000,
   maxParagraphs:     25,
   maxChars:          3_500, // ~875 tokens of body text per article
-  concurrency:       5,
+  concurrency:       8,
 };
 
 const SUMMARIZE_CONFIG = {
-  maxArticles:        25,
+  maxArticles:        12,
   maxCharsPerArticle: 3_500,
   // ~3-minute briefing. Range is wide so Gemini can scale to the day's volume:
   // a slow news day stays ~320 words, a busy one stretches toward 450.
@@ -56,8 +58,8 @@ export async function POST(req: NextRequest) {
   const t0 = Date.now();
   console.log('[cron] briefing generation started');
 
-  // ── 1. Fetch current news ──────────────────────────────────────────────────
-  const { items } = await fetchNews();
+  // ── 1. Fetch current news (24h window for more material than the 8h Feed) ──
+  const { items } = await fetchNews(24);
   if (items.length === 0) {
     console.log('[cron] no news items, skipping');
     return Response.json({ skipped: true, reason: 'no_items' });
