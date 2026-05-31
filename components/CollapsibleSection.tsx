@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useEffect } from "react";
 import { useAccordion } from "@/components/AccordionGroup";
 
 type Props = {
@@ -23,9 +24,21 @@ export default function CollapsibleSection({
 }: Props) {
   const { openId, toggle } = useAccordion();
   const isOpen = openId === id;
+  const ref = useRef<HTMLDivElement>(null);
+
+  // When this section opens, scroll its header to just below the fixed top bar.
+  useEffect(() => {
+    if (!isOpen || !ref.current) return;
+    // One frame delay so the previous section's panel has collapsed and the
+    // DOM heights have settled before we calculate scroll position.
+    const raf = requestAnimationFrame(() => {
+      ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [isOpen]);
 
   return (
-    <div className="mt-8">
+    <div ref={ref} className="mt-8" style={{ scrollMarginTop: "5rem" }}>
       <button
         type="button"
         onClick={() => toggle(id)}
