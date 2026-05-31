@@ -1,7 +1,9 @@
 // 2026/27 HRM Draft Capital Budget — project-level detail
 // Source: https://cdn.halifax.ca/sites/default/files/documents/city-hall/budget-finances/2026-27-draft-capital-budget-book-digital-version.pdf
-// Figures in thousands of CAD. Only projects with 2026/27 > 0 are listed.
-// Categories match the budget book; combined totals from the overview table.
+// Figures in thousands of CAD.
+// `total`  = 4-year total (2026/27–2029/30) from the overview tables.
+// `total1` = 2026/27 single-year planned spend (same source).
+// Project-level `amount` = 2026/27 single-year spend (projects with > 0 only).
 
 export type Project = {
   id: string;    // project code from budget book
@@ -13,8 +15,10 @@ export type Project = {
 export type CategoryDetail = {
   key: string;
   label: string;
-  /** 2026/27 total in thousands (from overview table) */
+  /** 4-year total 2026/27–2029/30, thousands CAD (from overview table) */
   total: number;
+  /** 2026/27 single-year spend, thousands CAD */
+  total1: number;
   color: string;       // Tailwind bg class
   textColor: string;   // Tailwind text class
   ringColor: string;   // Tailwind ring class for selected state
@@ -32,11 +36,13 @@ export type CategoryDetail = {
 
 export const CATEGORIES: CategoryDetail[] = [
   // ─── Roads, Active Transportation & Bridges ───────────────────────────────
-  // Base Capital $76,404k + Strategic Integrated Mobility $74,760k = $151,164k
+  // Base 4-yr $511,881k + Strategic Integrated Mobility 4-yr $540,635k = $1,052,516k
+  // 2026/27: Base $76,404k + Strategic $74,760k = $151,164k
   {
     key: 'roads',
     label: 'Roads & Active Transport',
-    total: 151_164,
+    total: 1_052_516,
+    total1: 151_164,
     color: 'bg-blue-500',
     textColor: 'text-blue-600 dark:text-blue-400',
     ringColor: 'ring-blue-400',
@@ -80,7 +86,8 @@ export const CATEGORIES: CategoryDetail[] = [
   {
     key: 'buildings',
     label: 'Buildings & Facilities',
-    total: 63_596,
+    total: 327_806,
+    total1: 63_596,
     color: 'bg-amber-500',
     textColor: 'text-amber-600 dark:text-amber-400',
     ringColor: 'ring-amber-400',
@@ -121,7 +128,8 @@ export const CATEGORIES: CategoryDetail[] = [
   {
     key: 'vehicles',
     label: 'Vehicles & Equipment',
-    total: 46_425,
+    total: 377_844,
+    total1: 46_425,
     color: 'bg-violet-500',
     textColor: 'text-violet-600 dark:text-violet-400',
     ringColor: 'ring-violet-400',
@@ -172,7 +180,8 @@ export const CATEGORIES: CategoryDetail[] = [
   {
     key: 'outdoor',
     label: 'Outdoor Recreation',
-    total: 18_300,
+    total: 77_050,
+    total1: 18_300,
     color: 'bg-emerald-500',
     textColor: 'text-emerald-600 dark:text-emerald-400',
     ringColor: 'ring-emerald-400',
@@ -202,7 +211,8 @@ export const CATEGORIES: CategoryDetail[] = [
   {
     key: 'business',
     label: 'Business Systems (IT)',
-    total: 4_525,
+    total: 35_562,
+    total1: 4_525,
     color: 'bg-sky-500',
     textColor: 'text-sky-600 dark:text-sky-400',
     ringColor: 'ring-sky-400',
@@ -223,10 +233,12 @@ export const CATEGORIES: CategoryDetail[] = [
   },
 
   // ─── Traffic & Streetlights ───────────────────────────────────────────────
+  // Base 4-yr $27,101k
   {
     key: 'traffic',
     label: 'Traffic & Streetlights',
-    total: 5_525,
+    total: 27_101,
+    total1: 5_525,
     color: 'bg-orange-500',
     textColor: 'text-orange-600 dark:text-orange-400',
     ringColor: 'ring-orange-400',
@@ -251,15 +263,14 @@ export const CATEGORIES: CategoryDetail[] = [
   },
 
   // ─── Other Programs ───────────────────────────────────────────────────────
-  // Rolls up: Other Assets ($7,553k) + HalifACT ($810k) +
-  // District Capital ($1,504k) + Significant Projects ($4,600k)
-  // Other Assets breakdown from detailed table total = $9,867k, but the overview
-  // figure of $7,553k excludes HalifACT ($810k) and District Capital ($1,504k)
-  // which appear as separate overview line items.
+  // 4-yr: Other Assets $75,931k + HalifACT $80,910k + District Capital $6,016k
+  //       + Significant Projects $117,900k = $280,757k
+  // 2026/27: $7,553k + $810k + $1,504k + $4,600k = $14,467k
   {
     key: 'other',
     label: 'Other Programs',
-    total: 14_467,
+    total: 280_757,
+    total1: 14_467,
     color: 'bg-foreground/25',
     textColor: 'text-foreground/50',
     ringColor: 'ring-foreground/30',
@@ -308,7 +319,10 @@ export const CATEGORIES: CategoryDetail[] = [
   },
 ];
 
-export const TOTAL_2627 = CATEGORIES.reduce((s, c) => s + c.total, 0);
+/** 4-year total across all categories (2026/27–2029/30) */
+export const TOTAL_4YR = CATEGORIES.reduce((s, c) => s + c.total, 0);
+/** 2026/27 single-year total */
+export const TOTAL_2627 = CATEGORIES.reduce((s, c) => s + c.total1, 0);
 
 export const PDF_URL =
   'https://cdn.halifax.ca/sites/default/files/documents/city-hall/budget-finances/2026-27-draft-capital-budget-book-digital-version.pdf';

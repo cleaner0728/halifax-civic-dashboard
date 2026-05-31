@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { CATEGORIES, TOTAL_2627, PDF_URL, type CategoryDetail } from '@/lib/capital-budget-data';
+import { CATEGORIES, TOTAL_4YR, TOTAL_2627, PDF_URL, type CategoryDetail } from '@/lib/capital-budget-data';
 
 function fmtM(thousands: number) {
   const m = thousands / 1000;
@@ -89,7 +89,7 @@ function DetailPanel({ cat }: { cat: CategoryDetail }) {
       {/* Panel footer */}
       <div className="flex items-center justify-between px-4 py-3 mt-1 border-t border-border bg-foreground/2">
         <p className="text-[11px] text-foreground/40">
-          {allProjects.length} projects shown · {fmtM(catTotal)} displayed of {fmtM(cat.total)} total
+          Project amounts = 2026/27 spend · 4-yr category total: {fmtM(cat.total)}
         </p>
         <a
           href={PDF_URL}
@@ -119,14 +119,14 @@ export default function CapitalBudgetBlock() {
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-widest text-foreground/40">
-              2026/27 Draft Capital Budget
+              2026/27–2029/30 Capital Plan · HRM
             </p>
             <p className="text-2xl font-bold text-foreground mt-0.5">
-              {fmtM(TOTAL_2627)}
+              {fmtM(TOTAL_4YR)}
             </p>
             <p className="text-xs text-foreground/50 mt-0.5">
-              226 active projects · Halifax Regional Municipality ·{' '}
-              <span className="text-foreground/35">tap a category for details</span>
+              4-year plan · 226 active projects ·{' '}
+              <span className="text-foreground/35">{fmtM(TOTAL_2627)} in 2026/27 alone</span>
             </p>
           </div>
           <a
@@ -139,17 +139,17 @@ export default function CapitalBudgetBlock() {
           </a>
         </div>
 
-        {/* Stacked proportional bar */}
+        {/* Stacked proportional bar — widths based on 4-year totals */}
         <div className="mt-3 flex h-2.5 rounded-full overflow-hidden gap-px">
           {CATEGORIES.map(cat => (
             <button
               key={cat.key}
               onClick={() => toggle(cat.key)}
-              title={`${cat.label}: ${fmtM(cat.total)}`}
+              title={`${cat.label}: ${fmtM(cat.total)} over 4 years`}
               className={`${cat.color} transition-opacity hover:opacity-80 focus-visible:outline-none ${
                 selected && selected !== cat.key ? 'opacity-30' : 'opacity-100'
               }`}
-              style={{ width: `${(cat.total / TOTAL_2627) * 100}%` }}
+              style={{ width: `${(cat.total / TOTAL_4YR) * 100}%` }}
             />
           ))}
         </div>
@@ -173,7 +173,7 @@ export default function CapitalBudgetBlock() {
       {/* ── Category rows ── */}
       <ul className="divide-y divide-border">
         {CATEGORIES.map(cat => {
-          const pct = (cat.total / TOTAL_2627) * 100;
+          const pct = (cat.total / TOTAL_4YR) * 100;
           const isSelected = selected === cat.key;
           return (
             <li key={cat.key}>
@@ -190,16 +190,16 @@ export default function CapitalBudgetBlock() {
                     <span className="text-sm font-medium text-foreground truncate">
                       {cat.label}
                     </span>
-                    {cat.detailPending && (
-                      <span className="text-[10px] text-foreground/30 hidden sm:inline">
-                        · detail pending
-                      </span>
-                    )}
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className={`text-sm font-semibold ${cat.textColor}`}>
-                      {fmtM(cat.total)}
-                    </span>
+                    <div className="text-right">
+                      <div className={`text-sm font-semibold ${cat.textColor}`}>
+                        {fmtM(cat.total)}
+                      </div>
+                      <div className="text-[10px] text-foreground/35 leading-none">
+                        {fmtM(cat.total1)} this yr
+                      </div>
+                    </div>
                     <svg
                       className={`w-3.5 h-3.5 text-foreground/30 transition-transform duration-200 ${
                         isSelected ? 'rotate-180' : ''
@@ -233,8 +233,8 @@ export default function CapitalBudgetBlock() {
       {/* ── Footer ── */}
       <div className="px-4 py-2.5 border-t border-border">
         <p className="text-[11px] text-foreground/35 leading-snug">
-          Base Capital $224M + Strategic Initiatives $80M = $303M.
-          4-year plan (2026/27–2029/30): $2.18B. Figures in thousands as published.
+          Base Capital Plan $1.44B + Strategic Initiatives $739M = $2.18B (4-year total).
+          2026/27 year-one spend: {fmtM(TOTAL_2627)}. Figures from HRM draft budget book.
         </p>
       </div>
     </div>
