@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-31T02:46:12.210Z",
+  "fetchedAt": "2026-05-31T03:16:12.387Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -56,15 +56,6 @@
       "createdUtc": 1780179851
     },
     {
-      "title": "Saturday night, what are you doing tonight?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Wahrk_Gallows",
-      "url": "https://www.reddit.com/r/halifax/comments/1tse4wr/saturday_night_what_are_you_doing_tonight/",
-      "flair": null,
-      "createdUtc": 1780181773
-    },
-    {
       "title": "Where’s the dog?",
       "score": 0,
       "numComments": 0,
@@ -72,6 +63,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tsfbzp/wheres_the_dog/",
       "flair": null,
       "createdUtc": 1780184945
+    },
+    {
+      "title": "Saturday night, what are you doing tonight?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Wahrk_Gallows",
+      "url": "https://www.reddit.com/r/halifax/comments/1tse4wr/saturday_night_what_are_you_doing_tonight/",
+      "flair": null,
+      "createdUtc": 1780181773
     },
     {
       "title": "One shot parking",
