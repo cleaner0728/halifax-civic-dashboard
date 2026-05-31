@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-31T13:46:12.811Z",
+  "fetchedAt": "2026-05-31T14:16:13.788Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -83,15 +83,6 @@
       "createdUtc": 1780179851
     },
     {
-      "title": "Where’s the dog?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Training-Baker-2900",
-      "url": "https://www.reddit.com/r/halifax/comments/1tsfbzp/wheres_the_dog/",
-      "flair": null,
-      "createdUtc": 1780184945
-    },
-    {
       "title": "Bell Aliant Internet 3GB Service ?",
       "score": 0,
       "numComments": 0,
@@ -99,6 +90,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tssunk/bell_aliant_internet_3gb_service/",
       "flair": null,
       "createdUtc": 1780227191
+    },
+    {
+      "title": "Where’s the dog?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Training-Baker-2900",
+      "url": "https://www.reddit.com/r/halifax/comments/1tsfbzp/wheres_the_dog/",
+      "flair": null,
+      "createdUtc": 1780184945
     },
     {
       "title": "Saturday night, what are you doing tonight?",
@@ -128,13 +128,13 @@
       "createdUtc": 1780233514
     },
     {
-      "title": "One shot parking",
+      "title": "Why was the Clayton Park Canadian Tire torn down?",
       "score": 0,
       "numComments": 0,
-      "author": "GuidanceFrosty2955",
-      "url": "https://www.reddit.com/r/halifax/comments/1tsa06v/one_shot_parking/",
+      "author": "Desmaad",
+      "url": "https://www.reddit.com/r/halifax/comments/1tsmu5g/why_was_the_clayton_park_canadian_tire_torn_down/",
       "flair": null,
-      "createdUtc": 1780171536
+      "createdUtc": 1780207020
     },
     {
       "title": "Protesters in overpass Larry Utek - Anyone know what for?",
@@ -153,15 +153,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tsh81j/pulling_no_punches_a_closer_look_at_south_paw/",
       "flair": null,
       "createdUtc": 1780190268
-    },
-    {
-      "title": "Why was the Clayton Park Canadian Tire torn down?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Desmaad",
-      "url": "https://www.reddit.com/r/halifax/comments/1tsmu5g/why_was_the_clayton_park_canadian_tire_torn_down/",
-      "flair": null,
-      "createdUtc": 1780207020
     },
     {
       "title": "'He was a changed person': Clinton Ellison, survivor of Portapique mass shooting, dies",
@@ -270,6 +261,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1trj0st/theatre_experiences_have_been_miserable_lately/",
       "flair": null,
       "createdUtc": 1780096750
+    },
+    {
+      "title": "Reliability of Uber back from suburban/rural coastal communities?",
+      "score": 0,
+      "numComments": 0,
+      "author": "ProfessionalHome3544",
+      "url": "https://www.reddit.com/r/halifax/comments/1tsdn6g/reliability_of_uber_back_from_suburbanrural/",
+      "flair": null,
+      "createdUtc": 1780180455
     }
   ]
 }
