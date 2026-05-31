@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import BetaOnly from '@/components/BetaOnly';
 import CalendarEmbed from '@/components/CalendarEmbed';
+import CapitalBudgetBlock from '@/components/blocks/CapitalBudgetBlock';
 import HalifaxWebcams from '@/components/HalifaxWebcams';
 import AlertsBlock from '@/components/blocks/AlertsBlock';
 import WeatherBlock from '@/components/blocks/WeatherBlock';
@@ -231,6 +232,27 @@ export default function CityLiveScreen({
         >
           <HrmNewsBlock items={hrmNews} />
         </CollapsibleSection>
+
+        <details className="group mt-8">
+          <summary className="list-none cursor-pointer flex items-center justify-between gap-3 mb-3 px-1 [&::-webkit-details-marker]:hidden">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-foreground/55 shrink-0">
+                {/* dollar / city-hall icon */}
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 2L3 7h18L12 2zM5 7v13M19 7v13M3 20h18M9 11v5m6-5v5" />
+                </svg>
+              </span>
+              <h2 className="text-lg font-bold text-foreground truncate">Capital Budget</h2>
+              <span className="text-xs text-foreground/40 truncate">· 2026/27</span>
+            </div>
+            <svg className="w-4 h-4 text-foreground/50 shrink-0 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </summary>
+          <div className="space-y-3">
+            <CapitalBudgetBlock />
+          </div>
+        </details>
 
         <WasteCollectionBlock />
 
