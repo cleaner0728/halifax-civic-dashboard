@@ -44,10 +44,11 @@ export async function GET() {
     return Response.json({ error: 'briefing_unavailable' }, { status: 503 });
   }
 
-  const mp3 = await synthesizeSpeech(text);
+  const wav = await synthesizeSpeech(text);
   // Inline the audio as a data URI: avoids needing blob storage and keeps the
   // summary text + audio atomically in sync (same hash, one response).
-  const audio = mp3 ? `data:audio/mp3;base64,${mp3.toString('base64')}` : null;
+  // Gemini TTS yields PCM wrapped as WAV.
+  const audio = wav ? `data:audio/wav;base64,${wav.toString('base64')}` : null;
 
   if (!audio) {
     return Response.json({ error: 'tts_unavailable' }, { status: 503 });
