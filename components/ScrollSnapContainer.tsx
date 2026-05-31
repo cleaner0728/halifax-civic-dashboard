@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { track } from "@vercel/analytics";
 import HapticTab from "./HapticTab";
 import { IconCity, IconNews, IconTicket, IconChart } from "./icons";
+import { useBetaFeatures } from "@/lib/useBetaFeatures";
 
 // `icon` is a stable key (strings cross the server→client prop boundary fine;
 // component functions do not). ScrollSnapContainer resolves it to a line icon.
@@ -27,8 +28,23 @@ interface ScrollSnapContainerProps {
 // Switching tabs scrolls back to 0 (per design: each tab is a fresh page).
 // No vertical stacking, so scrolling to the bottom of one tab does NOT
 // continue into the next — users must tap a tab to change context.
-export default function ScrollSnapContainer({ children, tabs, topBar }: ScrollSnapContainerProps) {
+export default function ScrollSnapContainer({ children, tabs: tabsProp, topBar }: ScrollSnapContainerProps) {
   const router = useRouter();
+  const betaEnabled = useBetaFeatures();
+  // Beta-gated tabs (currently just "stats") are filtered out when the flag
+  // is off. Both the tab list and the matching children are filtered together
+  // so the indices stay aligned.
+  const { tabs, children: visibleChildren } = (() => {
+    if (betaEnabled) return { tabs: tabsProp, children: children };
+    const keptTabs: TabSpec[] = [];
+    const keptChildren: React.ReactNode[] = [];
+    tabsProp.forEach((tab, i) => {
+      if (tab.icon === "stats") return;
+      keptTabs.push(tab);
+      keptChildren.push(children[i]);
+    });
+    return { tabs: keptTabs, children: keptChildren };
+  })();
   const [activeIndex, setActiveIndex] = useState(0);
   const [pullProgress, setPullProgress] = useState(0);
   const [isPending, startTransition] = useTransition();
@@ -39,6 +55,14 @@ export default function ScrollSnapContainer({ children, tabs, topBar }: ScrollSn
 
   const activeIndexRef = useRef(0);
   useEffect(() => { activeIndexRef.current = activeIndex; }, [activeIndex]);
+
+  // If the visible tab count shrinks (e.g. user disables beta while on
+  // Stats), clamp the active index back into range.
+  useEffect(() => {
+    if (activeIndex >= visibleChildren.length) {
+      setActiveIndex(0);
+    }
+  }, [visibleChildren.length, activeIndex]);
 
   useEffect(() => {
     let lastY = window.scrollY;
@@ -86,7 +110,7 @@ export default function ScrollSnapContainer({ children, tabs, topBar }: ScrollSn
   // supports it, otherwise instant. Always scrolls to the top of the new
   // tab — tabs are independent fresh pages.
   const switchTo = useCallback((index: number) => {
-    if (index < 0 || index >= children.length) return;
+    if (index < 0 || index >= visibleChildren.length) return;
     const oldIdx = activeIndexRef.current;
     if (index === oldIdx) return;
 
@@ -110,7 +134,7 @@ export default function ScrollSnapContainer({ children, tabs, topBar }: ScrollSn
       return;
     }
     doNavigate();
-  }, [children.length, tabs]);
+  }, [visibleChildren.length, tabs]);
 
   // Double-click any blank surface (title, card background, page void) →
   // jump to the very top. With only one tab in the DOM at a time, "top" is
@@ -311,7 +335,7 @@ export default function ScrollSnapContainer({ children, tabs, topBar }: ScrollSn
           polling automatically. Scroll position resets on switch by
           design. */}
       <div key={activeIndex} className="min-h-dvh">
-        {children[activeIndex]}
+        {visibleChildren[activeIndex] ?? visibleChildren[0]}
       </div>
 
       {/* Mobile bottom tab bar — full-width with icon+label per tab, sits

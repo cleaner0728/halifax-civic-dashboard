@@ -6,6 +6,7 @@ import { track } from "@vercel/analytics";
 import FeedbackModal from "@/components/FeedbackModal";
 import LanguageModal, { type Language } from "@/components/LanguageModal";
 import { IconSettings, IconGlobe, IconMail } from "@/components/icons";
+import { useBetaFeatures, writeBetaFeatures } from "@/lib/useBetaFeatures";
 
 // French first (Canada's other official language); rest ordered roughly
 // east → west by region. `code` matches Google Translate's `tl=` values.
@@ -70,6 +71,7 @@ export default function SettingsMenu() {
   const [currentLang, setCurrentLang] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const { resolvedTheme, setTheme } = useTheme();
+  const beta = useBetaFeatures();
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); setCurrentLang(readGoogTransCookie()); }, []);
@@ -202,6 +204,32 @@ export default function SettingsMenu() {
           </button>
 
           <div className="border-t border-border" />
+
+          <button
+            onClick={() => { writeBetaFeatures(!beta); track("beta_toggle", { enabled: !beta ? 1 : 0 }); }}
+            role="menuitemcheckbox"
+            aria-checked={beta}
+            className={itemClass}
+          >
+            <span className="flex items-center gap-2">
+              Beta features
+              <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-600 dark:text-amber-400">
+                Beta
+              </span>
+            </span>
+            <span
+              aria-hidden
+              className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
+                beta ? "bg-blue-500" : "bg-foreground/20"
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${
+                  beta ? "translate-x-[18px]" : "translate-x-0.5"
+                }`}
+              />
+            </span>
+          </button>
 
           <button
             onClick={() => { setOpen(false); setLangOpen(true); }}
