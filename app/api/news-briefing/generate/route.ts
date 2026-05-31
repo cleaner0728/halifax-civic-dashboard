@@ -23,18 +23,20 @@ export const maxDuration = 60;
 
 // Relaxed limits for background generation — users aren't waiting.
 const CRON_CONFIG = {
-  maxArticles:       15,    // all available articles
+  maxArticles:       25,    // cover all available articles (rarely this many)
   timeoutMs:         15_000,
-  maxParagraphs:     20,
-  maxChars:          3_000, // ~750 tokens of body text per article
+  maxParagraphs:     25,
+  maxChars:          3_500, // ~875 tokens of body text per article
   concurrency:       5,
 };
 
 const SUMMARIZE_CONFIG = {
-  maxArticles:        15,
-  maxCharsPerArticle: 3_000,
-  wordRange:          '180-240',
-  duration:           '70-90 seconds',
+  maxArticles:        25,
+  maxCharsPerArticle: 3_500,
+  // ~3-minute briefing. Range is wide so Gemini can scale to the day's volume:
+  // a slow news day stays ~320 words, a busy one stretches toward 450.
+  wordRange:          '320-450',
+  duration:           'roughly 2.5 to 3 minutes',
 };
 
 function hashHeadlines(titles: string[]): string {

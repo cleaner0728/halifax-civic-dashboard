@@ -53,13 +53,15 @@ export async function summarizeNews(
   const fullCount = used.filter((it) => it.articleText).length;
   console.log(`[briefing] summarizing ${used.length} articles (${fullCount} with full text, ${maxCharsPerArticle} chars each)`);
 
-  const prompt = `You are a local radio news anchor for Halifax, Nova Scotia. Below are the latest news articles from the past few hours, some with full article text. Write a natural, spoken-word news briefing as continuous prose for a text-to-speech voice.
+  const prompt = `You are a local radio news anchor for Halifax, Nova Scotia. Below are the latest news articles from the past few hours, most with full article text. Write a natural, spoken-word news briefing as continuous prose for a text-to-speech voice.
 
 Rules:
 - Open with a short greeting such as "Here's your Halifax news update."
-- Lead with the most important stories; group related ones together.
-- Draw from the article body text, not just the title — include key facts, numbers, names.
-- Conversational and concise: ${wordRange} words (about ${duration} spoken).
+- COVER EVERY ARTICLE provided — do not omit or skip any story. Each distinct article must get its own clear mention.
+- Lead with the most important stories, and group closely related ones together, but still touch on all of them.
+- Draw from the article body text, not just the title — include key facts, numbers, names, quotes, and context for each story.
+- Spend more time on bigger stories and a sentence or two on smaller ones, but include them all.
+- Natural and flowing: ${wordRange} words (about ${duration} spoken).
 - Plain text ONLY. No markdown, no bullet points, no emoji, no headings, no URLs, no source names.
 - Do not invent facts beyond what is provided.
 - End with a brief sign-off such as "That's the latest for now."
@@ -75,7 +77,8 @@ ${articleBlocks}`;
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
           temperature: 0.7,
-          maxOutputTokens: 900,
+          // Headroom for a ~3-minute briefing (~450 words ≈ 600 tokens).
+          maxOutputTokens: 1_800,
           // Disable thinking — summarization needs no reasoning, and thinking
           // tokens eat the output budget causing truncation.
           thinkingConfig: { thinkingBudget: 0 },
