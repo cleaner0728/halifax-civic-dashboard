@@ -25,6 +25,7 @@ import { fetchRedditPosts } from '@/lib/fetchers/reddit';
 import { fetchGasPrices } from '@/lib/fetchers/gas';
 import { fetchGroceryPrices } from '@/lib/fetchers/grocery';
 import { fetchEvents } from '@/lib/fetchers/events';
+import { fetchWinterParkingBan } from '@/lib/fetchers/winter-parking';
 import { safe } from '@/lib/safe';
 
 const TABS: TabSpec[] = [
@@ -59,6 +60,7 @@ export default async function Home() {
     buoy,
     marineForecast,
     events,
+    winterParkingBan,
   ] = await Promise.all([
     safe(fetchWeather(), null, 'weather'),
     safe(fetchNews(), { items: [] }, 'news'),
@@ -77,6 +79,7 @@ export default async function Home() {
     safe(fetchBuoy(), null, 'buoy'),
     safe(fetchMarineForecast(), null, 'marine-forecast'),
     safe(fetchEvents(), [], 'events'),
+    safe(fetchWinterParkingBan(), null, 'winter-parking'),
   ]);
 
   // computeTideGraph is pure but defensive: malformed tide data shouldn't be
@@ -118,6 +121,7 @@ export default async function Home() {
           hrmDateLabel={hrmResult.dateLabel}
           buoy={buoy}
           marineForecast={marineForecast}
+          winterParkingBan={winterParkingBan}
         />
         <FeedScreen
           news={news.items}

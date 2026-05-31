@@ -10,7 +10,9 @@ import GettingAroundBlock from '@/components/blocks/GettingAroundBlock';
 import HrfeBlock from '@/components/blocks/HrfeBlock';
 import HrmNewsBlock from '@/components/blocks/HrmNewsBlock';
 import WasteCollectionBlock from '@/components/blocks/WasteCollectionBlock';
+import WinterParkingBanBlock from '@/components/blocks/WinterParkingBanBlock';
 import { IconCloudSun, IconFerry, IconBus, IconFlame, IconLandmark, IconCalendar } from '@/components/icons';
+import type { WinterParkingBan } from '@/lib/fetchers/winter-parking';
 import type { WeatherData } from '@/lib/fetchers/weather';
 import type { TideGraphData } from '@/lib/fetchers/tides';
 import type { AirQuality } from '@/lib/fetchers/air-quality';
@@ -56,6 +58,7 @@ type Props = {
   hrmDateLabel: string;
   buoy: BuoyObservation | null;
   marineForecast: MarineForecast | null;
+  winterParkingBan: WinterParkingBan | null;
 };
 
 // Section that folds its body behind its header. Default closed —
@@ -136,6 +139,7 @@ export default function CityLiveScreen({
   hrmDateLabel,
   buoy,
   marineForecast,
+  winterParkingBan,
 }: Props) {
   return (
     <div className="pt-14 md:pt-24 pb-24 min-h-dvh">
@@ -203,6 +207,8 @@ export default function CityLiveScreen({
               <span aria-hidden className="text-sky-600 dark:text-sky-400 text-xl">→</span>
             </Link>
           </BetaOnly>
+
+          <WinterParkingBanBlock ban={winterParkingBan} />
 
           <GettingAroundBlock
             detours={detours}
