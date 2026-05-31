@@ -11,7 +11,9 @@ import HrfeBlock from '@/components/blocks/HrfeBlock';
 import HrmNewsBlock from '@/components/blocks/HrmNewsBlock';
 import WasteCollectionBlock from '@/components/blocks/WasteCollectionBlock';
 import WinterParkingBanBlock from '@/components/blocks/WinterParkingBanBlock';
-import { IconCloudSun, IconFerry, IconBus, IconFlame, IconLandmark, IconCalendar } from '@/components/icons';
+import { AccordionGroup } from '@/components/AccordionGroup';
+import CollapsibleSection from '@/components/CollapsibleSection';
+import { IconCloudSun, IconFerry, IconBus, IconFlame, IconLandmark, IconCalendar, IconCamera, IconTrash } from '@/components/icons';
 import type { WinterParkingBan } from '@/lib/fetchers/winter-parking';
 import type { WeatherData } from '@/lib/fetchers/weather';
 import type { TideGraphData } from '@/lib/fetchers/tides';
@@ -44,6 +46,15 @@ const HRM_CALENDAR_SRC =
   '&src=2568t0odfpavvip1tnqq4mhvpo%40group.calendar.google.com&color=%23691426' +
   '&ctz=America%2FHalifax';
 
+// City-hall / budget icon (not in icon set yet)
+function IconBudget({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 2L3 7h18L12 2zM5 7v13M19 7v13M3 20h18M9 11v5m6-5v5" />
+    </svg>
+  );
+}
+
 type Props = {
   weather: WeatherData | null;
   tideGraph: TideGraphData | null;
@@ -60,70 +71,6 @@ type Props = {
   marineForecast: MarineForecast | null;
   winterParkingBan: WinterParkingBan | null;
 };
-
-// Section that folds its body behind its header. Default closed —
-// keeps long, less-time-sensitive lists (city press releases, fire
-// incidents) from pushing more urgent content off-screen on first
-// load. Native <details>/<summary> for free a11y.
-//
-// Source link lives INSIDE the body, not in the summary row. Two
-// reasons: (1) tapping a link inside <summary> would also toggle the
-// section, requiring an onClick stopPropagation — which would force
-// this whole file to become a client component. (2) The source link is
-// contextual to the expanded content; showing it only when expanded
-// keeps the collapsed header clean.
-function CollapsibleSection({
-  icon,
-  title,
-  meta,
-  href,
-  linkLabel,
-  children,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  meta?: string;
-  href?: string;
-  linkLabel?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <details className="group mt-8">
-      <summary
-        className="list-none cursor-pointer flex items-center justify-between gap-3 mb-3 px-1 [&::-webkit-details-marker]:hidden"
-      >
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="text-foreground/55 shrink-0">{icon}</span>
-          <h2 className="text-lg font-bold text-foreground truncate">{title}</h2>
-          {meta && <span className="text-xs text-foreground/40 truncate">· {meta}</span>}
-        </div>
-        <svg
-          className="w-4 h-4 text-foreground/50 shrink-0 transition-transform duration-200 group-open:rotate-180"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2.5}
-          aria-hidden
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
-      </summary>
-      <div className="space-y-3">
-        {children}
-        {href && (
-          <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block text-xs text-foreground/50 hover:text-foreground/80 px-1"
-          >
-            {linkLabel ?? 'source'} ↗
-          </a>
-        )}
-      </div>
-    </details>
-  );
-}
 
 export default function CityLiveScreen({
   weather,
@@ -146,134 +93,138 @@ export default function CityLiveScreen({
       <div className="max-w-5xl mx-auto px-2 mt-2">
         <AlertsBlock alerts={alerts} />
 
-        <HalifaxWebcams />
+        {/* All collapsible sections share one AccordionGroup so opening one
+            automatically closes any previously open section. */}
+        <AccordionGroup>
 
-        <BetaOnly>
           <CollapsibleSection
-            icon={<IconCloudSun className="w-5 h-5" />}
-            title="Weather & Marine"
+            id="webcam"
+            icon={<IconCamera className="w-5 h-5" />}
+            title="Webcams"
             meta="Halifax"
           >
-            <WeatherBlock
-              weather={weather}
-              tideGraph={tideGraph}
-              airQuality={airQuality}
-              burnStatus={burnStatus}
-            />
-            <WindyMapBlock headless buoy={buoy} marineForecast={marineForecast} />
+            <HalifaxWebcams />
           </CollapsibleSection>
-        </BetaOnly>
 
-        <CollapsibleSection
-          icon={<IconFerry className="w-5 h-5" />}
-          title="Ferry"
-          href="https://www.halifax.ca/transportation/halifax-transit/service-disruptions"
-          linkLabel="halifax.ca"
-        >
-          <GettingAroundBlock
-            detours={[]}
-            ferryAlerts={ferryAlerts}
-            adjustments={null}
-            emptyMessage="No active ferry alerts."
-            emptySubMessage="Alderney and Woodside ferries running on regular schedule."
-          />
-        </CollapsibleSection>
-
-        <CollapsibleSection
-          icon={<IconBus className="w-5 h-5" />}
-          title="Transit"
-          href="https://www.halifax.ca/transportation/halifax-transit/service-disruptions"
-          linkLabel="halifax.ca"
-        >
-          {/* Live-map entry — pinned above Upcoming Service Changes so it's
-              the first thing a rider sees when they expand Transit. The big
-              circular icon is meant to read as a tap target, not just an
-              icon. Gradient + scale hover keeps it from blending into the
-              card chrome around it. */}
           <BetaOnly>
-            <Link
-              href="/transit"
-              className="group flex items-center gap-4 px-4 py-3 bg-gradient-to-r from-sky-500/15 to-emerald-500/10 hover:from-sky-500/25 hover:to-emerald-500/20 border border-sky-500/40 rounded-2xl transition-colors mb-3"
+            <CollapsibleSection
+              id="weather"
+              icon={<IconCloudSun className="w-5 h-5" />}
+              title="Weather & Marine"
+              meta="Halifax"
             >
-              <span className="shrink-0 w-14 h-14 grid place-items-center rounded-full bg-sky-500 text-white text-2xl shadow-md group-hover:scale-105 transition-transform">
-                🗺️
-              </span>
-              <div className="flex-1 min-w-0">
-                <div className="text-base font-bold text-foreground leading-tight">Live transit map</div>
-                <div className="text-xs text-foreground/65 mt-0.5">
-                  Buses near you · next-bus times · stop search
-                </div>
-              </div>
-              <span aria-hidden className="text-sky-600 dark:text-sky-400 text-xl">→</span>
-            </Link>
+              <WeatherBlock
+                weather={weather}
+                tideGraph={tideGraph}
+                airQuality={airQuality}
+                burnStatus={burnStatus}
+              />
+              <WindyMapBlock headless buoy={buoy} marineForecast={marineForecast} />
+            </CollapsibleSection>
           </BetaOnly>
 
-          <WinterParkingBanBlock ban={winterParkingBan} />
+          <CollapsibleSection
+            id="ferry"
+            icon={<IconFerry className="w-5 h-5" />}
+            title="Ferry"
+            href="https://www.halifax.ca/transportation/halifax-transit/service-disruptions"
+            linkLabel="halifax.ca"
+          >
+            <GettingAroundBlock
+              detours={[]}
+              ferryAlerts={ferryAlerts}
+              adjustments={null}
+              emptyMessage="No active ferry alerts."
+              emptySubMessage="Alderney and Woodside ferries running on regular schedule."
+            />
+          </CollapsibleSection>
 
-          <GettingAroundBlock
-            detours={detours}
-            ferryAlerts={[]}
-            adjustments={adjustments}
-            emptyMessage="No active transit disruptions."
-            emptySubMessage="Halifax Transit is running on regular routes."
-          />
-        </CollapsibleSection>
+          <CollapsibleSection
+            id="transit"
+            icon={<IconBus className="w-5 h-5" />}
+            title="Transit"
+            href="https://www.halifax.ca/transportation/halifax-transit/service-disruptions"
+            linkLabel="halifax.ca"
+          >
+            <BetaOnly>
+              <Link
+                href="/transit"
+                className="group flex items-center gap-4 px-4 py-3 bg-gradient-to-r from-sky-500/15 to-emerald-500/10 hover:from-sky-500/25 hover:to-emerald-500/20 border border-sky-500/40 rounded-2xl transition-colors mb-3"
+              >
+                <span className="shrink-0 w-14 h-14 grid place-items-center rounded-full bg-sky-500 text-white text-2xl shadow-md group-hover:scale-105 transition-transform">
+                  🗺️
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-base font-bold text-foreground leading-tight">Live transit map</div>
+                  <div className="text-xs text-foreground/65 mt-0.5">
+                    Buses near you · next-bus times · stop search
+                  </div>
+                </div>
+                <span aria-hidden className="text-sky-600 dark:text-sky-400 text-xl">→</span>
+              </Link>
+            </BetaOnly>
 
-        <CollapsibleSection
-          icon={<IconFlame className="w-5 h-5" />}
-          title="Active Incidents"
-          meta="past 60 min"
-          href="https://www.halifax.ca/safety-security/fire-emergency/hrfe-incident-feed"
-          linkLabel="HRFE feed"
-        >
-          <HrfeBlock incidents={hrfeIncidents} />
-        </CollapsibleSection>
+            <WinterParkingBanBlock ban={winterParkingBan} />
 
-        <CollapsibleSection
-          icon={<IconLandmark className="w-5 h-5" />}
-          title="HRM News"
-          meta={hrmDateLabel}
-          href="https://www.halifax.ca/home/news"
-          linkLabel="halifax.ca"
-        >
-          <HrmNewsBlock items={hrmNews} />
-        </CollapsibleSection>
+            <GettingAroundBlock
+              detours={detours}
+              ferryAlerts={[]}
+              adjustments={adjustments}
+              emptyMessage="No active transit disruptions."
+              emptySubMessage="Halifax Transit is running on regular routes."
+            />
+          </CollapsibleSection>
 
-        <details className="group mt-8">
-          <summary className="list-none cursor-pointer flex items-center justify-between gap-3 mb-3 px-1 [&::-webkit-details-marker]:hidden">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-foreground/55 shrink-0">
-                {/* dollar / city-hall icon */}
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 2L3 7h18L12 2zM5 7v13M19 7v13M3 20h18M9 11v5m6-5v5" />
-                </svg>
-              </span>
-              <h2 className="text-lg font-bold text-foreground truncate">Capital Budget</h2>
-              <span className="text-xs text-foreground/40 truncate">· 2026–2030</span>
-            </div>
-            <svg className="w-4 h-4 text-foreground/50 shrink-0 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </summary>
-          <div className="space-y-3">
+          <CollapsibleSection
+            id="incidents"
+            icon={<IconFlame className="w-5 h-5" />}
+            title="Active Incidents"
+            meta="past 60 min"
+            href="https://www.halifax.ca/safety-security/fire-emergency/hrfe-incident-feed"
+            linkLabel="HRFE feed"
+          >
+            <HrfeBlock incidents={hrfeIncidents} />
+          </CollapsibleSection>
+
+          <CollapsibleSection
+            id="hrm-news"
+            icon={<IconLandmark className="w-5 h-5" />}
+            title="HRM News"
+            meta={hrmDateLabel}
+            href="https://www.halifax.ca/home/news"
+            linkLabel="halifax.ca"
+          >
+            <HrmNewsBlock items={hrmNews} />
+          </CollapsibleSection>
+
+          <CollapsibleSection
+            id="budget"
+            icon={<IconBudget className="w-5 h-5" />}
+            title="Capital Budget"
+            meta="2026–2030"
+          >
             <CapitalBudgetBlock />
-          </div>
-        </details>
+          </CollapsibleSection>
 
-        <WasteCollectionBlock />
+          <CollapsibleSection
+            id="waste"
+            icon={<IconTrash className="w-5 h-5" />}
+            title="Waste Collection"
+          >
+            <WasteCollectionBlock />
+          </CollapsibleSection>
 
-        <CollapsibleSection
-          icon={<IconCalendar className="w-5 h-5" />}
-          title="HRM Events"
-          href="https://www.halifax.ca/home/events-calendar"
-          linkLabel="halifax.ca"
-        >
-          {/* CalendarEmbed is a client component so it can read resolvedTheme
-              and apply invert(1) hue-rotate(180deg) in dark mode.
-              data-no-tab-swipe is forwarded inside it to prevent iOS Safari
-              from arming swipe / PTR gestures on iframe touches. */}
-          <CalendarEmbed src={HRM_CALENDAR_SRC} />
-        </CollapsibleSection>
+          <CollapsibleSection
+            id="events"
+            icon={<IconCalendar className="w-5 h-5" />}
+            title="HRM Events"
+            href="https://www.halifax.ca/home/events-calendar"
+            linkLabel="halifax.ca"
+          >
+            <CalendarEmbed src={HRM_CALENDAR_SRC} />
+          </CollapsibleSection>
+
+        </AccordionGroup>
       </div>
     </div>
   );
