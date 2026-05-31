@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/news-briefing/generate",
+      "schedule": "*/30 * * * *"
+    }
+  ]
+}

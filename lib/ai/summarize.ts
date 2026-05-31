@@ -9,7 +9,21 @@ const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODE
 
 type EnrichedItem = NewsItem & { articleText?: string };
 
-export async function summarizeNews(items: EnrichedItem[]): Promise<string | null> {
+export type SummarizeConfig = {
+  /** Max articles to include in prompt (default 8) */
+  maxArticles?: number;
+  /** Max chars per article in prompt (default 1200) */
+  maxCharsPerArticle?: number;
+  /** Target word count range for the briefing (default "130-180") */
+  wordRange?: string;
+  /** Target spoken duration description (default "50-65 seconds") */
+  duration?: string;
+};
+
+export async function summarizeNews(
+  items: EnrichedItem[],
+  config: SummarizeConfig = {},
+): Promise<string | null> {
   const key = process.env.GEMINI_API_KEY;
   if (!key) {
     console.warn('[briefing] GEMINI_API_KEY not set — skipping summary');
@@ -17,22 +31,27 @@ export async function summarizeNews(items: EnrichedItem[]): Promise<string | nul
   }
   if (items.length === 0) return null;
 
-  // Build per-article context blocks. If we scraped full body text, include it;
-  // otherwise fall back to the RSS snippet. Cap at 8 articles so the prompt
-  // stays within a sensible token budget (~4K input tokens max).
+  const {
+    maxArticles = 8,
+    maxCharsPerArticle = 1_200,
+    wordRange = '130-180',
+    duration = '50-65 seconds',
+  } = config;
+
   const articleBlocks = items
-    .slice(0, 8)
+    .slice(0, maxArticles)
     .map((it, i) => {
       const title = it.title ?? '(untitled)';
       const body = it.articleText
-        ? it.articleText.slice(0, 1_200) // ~300 tokens per article max
+        ? it.articleText.slice(0, maxCharsPerArticle)
         : it.contentSnippet ?? '(no content available)';
       return `--- Article ${i + 1} ---\nTitle: ${title}\n${body}`;
     })
     .join('\n\n');
 
-  const fullArticleCount = items.slice(0, 8).filter((it) => it.articleText).length;
-  console.log(`[briefing] summarizing ${items.slice(0,8).length} articles (${fullArticleCount} with full text)`);
+  const used = items.slice(0, maxArticles);
+  const fullCount = used.filter((it) => it.articleText).length;
+  console.log(`[briefing] summarizing ${used.length} articles (${fullCount} with full text, ${maxCharsPerArticle} chars each)`);
 
   const prompt = `You are a local radio news anchor for Halifax, Nova Scotia. Below are the latest news articles from the past few hours, some with full article text. Write a natural, spoken-word news briefing as continuous prose for a text-to-speech voice.
 
@@ -40,7 +59,7 @@ Rules:
 - Open with a short greeting such as "Here's your Halifax news update."
 - Lead with the most important stories; group related ones together.
 - Draw from the article body text, not just the title — include key facts, numbers, names.
-- Conversational and concise: 130-180 words (about 50-65 seconds spoken).
+- Conversational and concise: ${wordRange} words (about ${duration} spoken).
 - Plain text ONLY. No markdown, no bullet points, no emoji, no headings, no URLs, no source names.
 - Do not invent facts beyond what is provided.
 - End with a brief sign-off such as "That's the latest for now."
