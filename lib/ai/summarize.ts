@@ -44,7 +44,14 @@ ${headlines}`;
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.7, maxOutputTokens: 500 },
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 800,
+          // Gemini 2.5 Flash "thinks" by default, and those thinking tokens
+          // eat the output budget — which truncated the briefing mid-sentence.
+          // Summarization needs no reasoning, so disable it.
+          thinkingConfig: { thinkingBudget: 0 },
+        },
       }),
     });
     if (!res.ok) {
