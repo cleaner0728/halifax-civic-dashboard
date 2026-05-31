@@ -1,20 +1,21 @@
 import { createHash } from 'node:crypto';
+import type { NextRequest } from 'next/server';
 import { fetchNews } from '@/lib/fetchers/news';
+import { enrichWithArticleText } from '@/lib/ai/fetch-article';
 import { summarizeNews } from '@/lib/ai/summarize';
 import { synthesizeSpeech } from '@/lib/ai/tts';
 
 // AI audio briefing for the News feed.
-//   GET /api/news-briefing  ->  { hash, text, audio }
+//   GET /api/news-briefing           → { hash, text, audio }  (full briefing)
+//   GET /api/news-briefing?mode=text → { hash, text }         (text only, no TTS)
 //
-// `hash` is derived from the current news headlines. The summary + audio are
-// regenerated ONLY when that hash changes — i.e. when the news itself updates.
-// A module-level cache means repeated requests for the same news cost zero
-// LLM/TTS calls within a warm serverless instance; the Cache-Control header
-// adds a CDN layer on top so even cold starts are mostly served from the edge.
+// hash is derived from current headlines. Summary + audio regenerate only when
+// news changes. Module-level caches + Cache-Control headers minimise API calls.
 
 type Briefing = { hash: string; text: string; audio: string | null };
 
-let cached: Briefing | null = null;
+let cachedFull: Briefing | null = null;   // text + audio
+let cachedText: { hash: string; text: string } | null = null; // text only
 
 function hashHeadlines(titles: string[]): string {
   return createHash('sha1').update(titles.join('|')).digest('hex').slice(0, 12);
@@ -24,36 +25,53 @@ const CACHE_HEADERS = {
   'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
 };
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const mode = req.nextUrl.searchParams.get('mode'); // 'text' | null
+  const textOnly = mode === 'text';
+
   const { items } = await fetchNews();
   if (items.length === 0) {
-    return Response.json({ hash: 'empty', text: '', audio: null } satisfies Briefing);
+    return Response.json({ hash: 'empty', text: '' });
   }
 
   const hash = hashHeadlines(items.map((i) => i.title ?? ''));
 
-  // News unchanged since last generation → serve cached, no API calls.
-  if (cached && cached.hash === hash && cached.audio) {
-    return Response.json(cached, { headers: CACHE_HEADERS });
+  // ── Text-only path ────────────────────────────────────────────────────────
+  if (textOnly) {
+    // If we already generated the full briefing for this hash, reuse its text.
+    if (cachedFull?.hash === hash) {
+      return Response.json({ hash, text: cachedFull.text }, { headers: CACHE_HEADERS });
+    }
+    if (cachedText?.hash === hash) {
+      return Response.json(cachedText, { headers: CACHE_HEADERS });
+    }
+    // Fetch article bodies + summarize (no TTS).
+    const enriched = await enrichWithArticleText(items.slice(0, 8));
+    const text = await summarizeNews(enriched);
+    if (!text) return Response.json({ error: 'briefing_unavailable' }, { status: 503 });
+    cachedText = { hash, text };
+    return Response.json(cachedText, { headers: CACHE_HEADERS });
   }
 
-  const text = await summarizeNews(items);
-  if (!text) {
-    // Key missing or LLM failed — signal "unavailable" so the client hides
-    // the player rather than showing a broken control.
-    return Response.json({ error: 'briefing_unavailable' }, { status: 503 });
+  // ── Full briefing path (text + audio) ─────────────────────────────────────
+  if (cachedFull?.hash === hash) {
+    return Response.json(cachedFull, { headers: CACHE_HEADERS });
   }
+
+  // Fetch full article bodies to give Gemini richer context.
+  const enriched = await enrichWithArticleText(items.slice(0, 8));
+  const text = cachedText?.hash === hash
+    ? cachedText.text          // reuse text if we already generated it
+    : await summarizeNews(enriched);
+
+  if (!text) return Response.json({ error: 'briefing_unavailable' }, { status: 503 });
 
   const mp3 = await synthesizeSpeech(text);
-  // Inline the audio as a data URI: avoids needing blob storage and keeps the
-  // summary text + audio atomically in sync (same hash, one response).
-  // Chirp 3 HD returns ready-to-play MP3.
   const audio = mp3 ? `data:audio/mp3;base64,${mp3.toString('base64')}` : null;
 
-  if (!audio) {
-    return Response.json({ error: 'tts_unavailable' }, { status: 503 });
-  }
+  if (!audio) return Response.json({ error: 'tts_unavailable' }, { status: 503 });
 
-  cached = { hash, text, audio };
-  return Response.json(cached, { headers: CACHE_HEADERS });
+  cachedFull = { hash, text, audio };
+  cachedText = { hash, text }; // keep text cache in sync
+  return Response.json(cachedFull, { headers: CACHE_HEADERS });
 }
