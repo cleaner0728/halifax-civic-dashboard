@@ -243,7 +243,7 @@ export default function CityLiveScreen({
                 </svg>
               </span>
               <h2 className="text-lg font-bold text-foreground truncate">Capital Budget</h2>
-              <span className="text-xs text-foreground/40 truncate">· 2026/27</span>
+              <span className="text-xs text-foreground/40 truncate">· 2026–2030</span>
             </div>
             <svg className="w-4 h-4 text-foreground/50 shrink-0 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
