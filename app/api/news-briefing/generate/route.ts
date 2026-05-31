@@ -58,8 +58,8 @@ export async function POST(req: NextRequest) {
   const t0 = Date.now();
   console.log('[cron] briefing generation started');
 
-  // ── 1. Fetch current news (24h window for more material than the 8h Feed) ──
-  const { items } = await fetchNews(24);
+  // ── 1. Fetch current news (8h window — same as the Feed, kept consistent) ──
+  const { items } = await fetchNews();
   if (items.length === 0) {
     console.log('[cron] no news items, skipping');
     return Response.json({ skipped: true, reason: 'no_items' });
