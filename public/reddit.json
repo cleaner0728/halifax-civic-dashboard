@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-05-31T12:16:15.688Z",
+  "fetchedAt": "2026-05-31T12:46:13.012Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - May 2026",
@@ -38,6 +38,15 @@
       "createdUtc": 1780169055
     },
     {
+      "title": "Glass half empty or full? N.S. craft brewers react to Ontario trade deal",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1tsrgau/glass_half_empty_or_full_ns_craft_brewers_react/",
+      "flair": null,
+      "createdUtc": 1780222800
+    },
+    {
       "title": "Thank you Halifax for being so wonderful!",
       "score": 0,
       "numComments": 0,
@@ -56,13 +65,13 @@
       "createdUtc": 1780179851
     },
     {
-      "title": "Glass half empty or full? N.S. craft brewers react to Ontario trade deal",
+      "title": "N.S. seeing an increase in teens with long-lasting psychosis due to high-potency cannabis",
       "score": 0,
       "numComments": 0,
-      "author": "IStillListenToRadio",
-      "url": "https://www.reddit.com/r/halifax/comments/1tsrgau/glass_half_empty_or_full_ns_craft_brewers_react/",
+      "author": "Street_Anon",
+      "url": "https://www.reddit.com/r/halifax/comments/1tstwkp/ns_seeing_an_increase_in_teens_with_longlasting/",
       "flair": null,
-      "createdUtc": 1780222800
+      "createdUtc": 1780230212
     },
     {
       "title": "Where’s the dog?",
@@ -144,6 +153,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tsh81j/pulling_no_punches_a_closer_look_at_south_paw/",
       "flair": null,
       "createdUtc": 1780190268
+    },
+    {
+      "title": "Electric board upgrade",
+      "score": 0,
+      "numComments": 0,
+      "author": "Zlato2000",
+      "url": "https://www.reddit.com/r/halifax/comments/1tsu5qu/electric_board_upgrade/",
+      "flair": null,
+      "createdUtc": 1780230906
     },
     {
       "title": "Geebo's - Dartmouth",
@@ -252,24 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tsc7gv/can_you_please_direct_me_to_your_favourite_pools/",
       "flair": null,
       "createdUtc": 1780176838
-    },
-    {
-      "title": "Hair shop recs for men's flow hairstyle?",
-      "score": 0,
-      "numComments": 0,
-      "author": "runtheplank",
-      "url": "https://www.reddit.com/r/halifax/comments/1ts3ihi/hair_shop_recs_for_mens_flow_hairstyle/",
-      "flair": null,
-      "createdUtc": 1780156215
-    },
-    {
-      "title": "Police warn Halifax bar patrons to be careful with open drinks after suspected drugging incidents",
-      "score": 0,
-      "numComments": 0,
-      "author": "NotABoyGenius45",
-      "url": "https://www.reddit.com/r/halifax/comments/1trghv8/police_warn_halifax_bar_patrons_to_be_careful/",
-      "flair": null,
-      "createdUtc": 1780090646
     }
   ]
 }
