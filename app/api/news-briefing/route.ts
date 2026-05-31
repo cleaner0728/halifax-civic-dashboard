@@ -1,89 +1,57 @@
-// GET /api/news-briefing           → { hash, text, audio }  (full briefing)
-// GET /api/news-briefing?mode=text → { hash, text }         (text only, no audio)
+// GET /api/news-briefing           → { items: [{url,title,source,summary,pubDate,audio}] }
+// GET /api/news-briefing?mode=text → same, but without the audio field
 //
-// Reads the latest pre-generated briefing from Supabase. The Cron job at
-// /api/news-briefing/generate runs every 30 minutes to keep it fresh.
-//
-// Falls back to on-demand generation if the DB is empty (e.g. first deploy
-// before the cron has run). This ensures the feature works immediately.
+// Returns the collection of per-article summaries from the last 8 hours
+// (same window as the Feed), newest first. Each article is summarized once by
+// the generate endpoint and stored in article_summary; this route is a pure,
+// fast read from Supabase. Audio is included only in the full (non-text) mode
+// since the base64 clips are large.
 
 import type { NextRequest } from 'next/server';
 import { sql } from '@/lib/db';
-import { fetchNews } from '@/lib/fetchers/news';
-import { enrichWithArticleText } from '@/lib/ai/fetch-article';
-import { summarizeNews } from '@/lib/ai/summarize';
-import { synthesizeSpeech } from '@/lib/ai/tts';
-import { createHash } from 'node:crypto';
 
 const CACHE_HEADERS = {
-  // CDN: serve fresh for 5 min, then stale while revalidating for up to 1 hr.
-  // Stale-while-revalidate means users always get an instant response.
-  'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+  'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
 };
 
-function hashHeadlines(titles: string[]): string {
-  return createHash('sha1').update(titles.join('|')).digest('hex').slice(0, 12);
-}
+const WINDOW_HOURS = 8; // match the Feed
+
+type Row = {
+  url: string;
+  title: string;
+  source: string | null;
+  summary: string;
+  pub_date: string | null;
+  audio_b64?: string | null;
+};
 
 export async function GET(req: NextRequest) {
   const textOnly = req.nextUrl.searchParams.get('mode') === 'text';
 
-  // ── Read from Supabase ────────────────────────────────────────────────────
-  const rows = await sql<{ hash: string; text: string; audio_b64: string }[]>`
-    SELECT hash, text, audio_b64
-    FROM briefing
-    ORDER BY created_at DESC
-    LIMIT 1
-  `;
+  const rows = textOnly
+    ? await sql<Row[]>`
+        SELECT url, title, source, summary, pub_date
+        FROM article_summary
+        WHERE COALESCE(pub_date, created_at) > NOW() - make_interval(hours => ${WINDOW_HOURS})
+        ORDER BY COALESCE(pub_date, created_at) DESC
+      `
+    : await sql<Row[]>`
+        SELECT url, title, source, summary, pub_date, audio_b64
+        FROM article_summary
+        WHERE COALESCE(pub_date, created_at) > NOW() - make_interval(hours => ${WINDOW_HOURS})
+        ORDER BY COALESCE(pub_date, created_at) DESC
+      `;
 
-  if (rows.length > 0) {
-    const row = rows[0];
-    if (textOnly) {
-      return Response.json({ hash: row.hash, text: row.text }, { headers: CACHE_HEADERS });
-    }
-    return Response.json(
-      {
-        hash: row.hash,
-        text: row.text,
-        audio: `data:audio/mp3;base64,${row.audio_b64}`,
-      },
-      { headers: CACHE_HEADERS },
-    );
-  }
+  const items = rows.map((r) => ({
+    url: r.url,
+    title: r.title,
+    source: r.source,
+    summary: r.summary,
+    pubDate: r.pub_date,
+    ...(textOnly
+      ? {}
+      : { audio: r.audio_b64 ? `data:audio/mp3;base64,${r.audio_b64}` : null }),
+  }));
 
-  // ── Cold start fallback: DB empty, generate on-demand ────────────────────
-  // This only happens before the first cron run. After that the DB always
-  // has at least one row.
-  console.log('[briefing] DB empty — generating on-demand (cold start)');
-
-  // 8h window — same as the Feed and the cron generator, so hashes line up.
-  const { items } = await fetchNews();
-  if (items.length === 0) {
-    return Response.json({ error: 'briefing_unavailable' }, { status: 503 });
-  }
-
-  const hash = hashHeadlines(items.map((i) => i.title ?? ''));
-  const enriched = await enrichWithArticleText(items);
-  const text = await summarizeNews(enriched);
-  if (!text) return Response.json({ error: 'briefing_unavailable' }, { status: 503 });
-
-  if (textOnly) return Response.json({ hash, text });
-
-  const mp3 = await synthesizeSpeech(text);
-  if (!mp3) return Response.json({ error: 'tts_unavailable' }, { status: 503 });
-
-  const audio = `data:audio/mp3;base64,${mp3.toString('base64')}`;
-
-  // Persist the cold-start result so subsequent requests are instant.
-  try {
-    await sql`
-      INSERT INTO briefing (hash, text, audio_b64)
-      VALUES (${hash}, ${text}, ${mp3.toString('base64')})
-      ON CONFLICT (hash) DO NOTHING
-    `;
-  } catch (e) {
-    console.warn('[briefing] failed to persist cold-start result', e);
-  }
-
-  return Response.json({ hash, text, audio });
+  return Response.json({ items }, { headers: CACHE_HEADERS });
 }

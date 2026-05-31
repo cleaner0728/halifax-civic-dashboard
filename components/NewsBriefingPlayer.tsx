@@ -1,213 +1,224 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { track } from "@vercel/analytics";
+import { formatRelative } from "@/lib/date";
 
-type Briefing = { hash: string; text: string; audio: string | null };
-type AudioStatus = "idle" | "loading" | "ready" | "error";
-type TextStatus  = "idle" | "loading" | "ready" | "error";
-
-function fmtTime(s: number) {
-  if (!isFinite(s)) return "0:00";
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return `${m}:${sec.toString().padStart(2, "0")}`;
-}
+type Item = {
+  url: string;
+  title: string;
+  source: string | null;
+  summary: string;
+  pubDate: string | null;
+  audio?: string | null;
+};
+type Status = "idle" | "loading" | "ready" | "error";
 
 export default function NewsBriefingPlayer() {
-  // ── audio state ──
-  const [audioStatus, setAudioStatus] = useState<AudioStatus>("idle");
-  const [briefing, setBriefing] = useState<Briefing | null>(null);
+  const [status, setStatus] = useState<Status>("idle");
+  const [items, setItems] = useState<Item[]>([]);
+  const [listOpen, setListOpen] = useState(false);
+
+  // playlist playback
+  const [current, setCurrent] = useState(-1); // -1 = nothing playing
   const [playing, setPlaying] = useState(false);
-  const [cur, setCur] = useState(0);
-  const [dur, setDur] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const autoplay = useRef(false); // are we in "play through the list" mode?
 
-  // ── text-summary state ──
-  const [textStatus, setTextStatus] = useState<TextStatus>("idle");
-  const [summaryText, setSummaryText] = useState<string | null>(null);
-  const [showSummary, setShowSummary] = useState(false);
+  // When the current index changes (e.g. a clip ended → next), play it.
+  useEffect(() => {
+    if (current < 0) return;
+    if (autoplay.current) requestAnimationFrame(() => void audioRef.current?.play());
+  }, [current]);
 
-  // ── load audio (lazy) ──
-  const loadAudio = async () => {
-    setAudioStatus("loading");
+  const playable = items.filter((i) => i.audio);
+
+  // ── Load audio collection + start playing from the top ──
+  const listen = async () => {
     track("news_briefing_play");
+    if (items.some((i) => i.audio)) {
+      // already loaded with audio — just (re)start
+      startPlaylist();
+      return;
+    }
+    setStatus("loading");
     try {
       const res = await fetch("/api/news-briefing");
       if (!res.ok) throw new Error(String(res.status));
-      const data = (await res.json()) as Briefing;
-      if (!data.audio) throw new Error("no audio");
-      setBriefing(data);
-      setSummaryText(data.text); // reuse text that came with audio
-      setTextStatus("ready");
-      setAudioStatus("ready");
-      requestAnimationFrame(() => void audioRef.current?.play());
+      const data = (await res.json()) as { items: Item[] };
+      if (!data.items?.length) throw new Error("empty");
+      setItems(data.items);
+      setListOpen(true);
+      setStatus("ready");
+      autoplay.current = true;
+      const first = data.items.findIndex((i) => i.audio);
+      setCurrent(first); // effect plays it
     } catch (e) {
-      console.error("[briefing] audio load failed", e);
-      setAudioStatus("error");
+      console.error("[briefing] listen failed", e);
+      setStatus("error");
     }
   };
 
-  // ── load text only (no TTS cost, faster) ──
-  const loadText = async () => {
-    // If audio already loaded, we already have the text.
-    if (summaryText) { setShowSummary(s => !s); return; }
-    setTextStatus("loading");
+  const startPlaylist = () => {
+    autoplay.current = true;
+    const first = items.findIndex((i) => i.audio);
+    if (first < 0) return;
+    if (current === first) void audioRef.current?.play();
+    else setCurrent(first);
+  };
+
+  // ── Load text-only collection (no audio cost) ──
+  const read = async () => {
+    if (items.length) { setListOpen((o) => !o); return; }
     track("news_briefing_read");
+    setStatus("loading");
     try {
       const res = await fetch("/api/news-briefing?mode=text");
       if (!res.ok) throw new Error(String(res.status));
-      const data = (await res.json()) as { text: string };
-      setSummaryText(data.text);
-      setTextStatus("ready");
-      setShowSummary(true);
+      const data = (await res.json()) as { items: Item[] };
+      setItems(data.items ?? []);
+      setListOpen(true);
+      setStatus("ready");
     } catch (e) {
-      console.error("[briefing] text load failed", e);
-      setTextStatus("error");
+      console.error("[briefing] read failed", e);
+      setStatus("error");
     }
   };
 
   const togglePlay = () => {
     const a = audioRef.current;
     if (!a) return;
-    if (a.paused) void a.play();
-    else a.pause();
+    if (a.paused) { autoplay.current = true; void a.play(); }
+    else { autoplay.current = false; a.pause(); }
   };
 
-  const seek = (e: React.MouseEvent<HTMLDivElement>) => {
-    const a = audioRef.current;
-    if (!a || !dur) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    a.currentTime = ((e.clientX - rect.left) / rect.width) * dur;
+  const playItem = (idx: number) => {
+    if (!items[idx]?.audio) return;
+    autoplay.current = true;
+    if (idx === current) void audioRef.current?.play();
+    else setCurrent(idx);
   };
 
-  const pct = dur ? (cur / dur) * 100 : 0;
+  const onEnded = () => {
+    // advance to the next clip that has audio
+    let next = current + 1;
+    while (next < items.length && !items[next].audio) next++;
+    if (next < items.length) setCurrent(next);
+    else { autoplay.current = false; setPlaying(false); }
+  };
+
+  const loading = status === "loading";
+  const curItem = current >= 0 ? items[current] : null;
 
   return (
     <div className="mb-4 space-y-2">
-
-      {/* ── Top row: Listen + Read buttons ── */}
+      {/* ── Buttons ── */}
       <div className="flex gap-2">
-
-        {/* Listen button / player */}
-        {audioStatus === "idle" || audioStatus === "error" ? (
-          <button
-            onClick={audioStatus === "error" ? () => setAudioStatus("idle") : loadAudio}
-            className={`flex-1 flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors ${
-              audioStatus === "error"
-                ? "border-border text-foreground/40 hover:text-foreground/60"
-                : "border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10 text-blue-600 dark:text-blue-400"
-            }`}
-          >
-            {audioStatus === "error" ? (
-              "Audio unavailable · retry"
-            ) : (
-              <>
-                <span className="grid place-items-center w-6 h-6 rounded-full bg-blue-500 text-white shrink-0">
-                  <svg className="w-3 h-3 translate-x-px" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </span>
-                Listen — AI briefing
-                <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-500/15">
-                  Beta
-                </span>
-              </>
-            )}
-          </button>
-        ) : audioStatus === "loading" ? (
-          <div className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-blue-500/20 bg-blue-500/5 px-4 py-2.5">
-            <span className="w-4 h-4 rounded-full border-2 border-blue-500/30 border-t-blue-500 animate-spin" />
-            <span className="text-sm text-blue-600 dark:text-blue-400">Generating audio…</span>
-          </div>
-        ) : (
-          /* Compact inline player */
-          <div className="flex-1 flex items-center gap-3 rounded-xl border border-blue-500/30 bg-blue-500/5 px-3 py-2">
-            <button
-              onClick={togglePlay}
-              aria-label={playing ? "Pause" : "Play"}
-              className="grid place-items-center w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white shrink-0 transition-colors"
-            >
-              {playing ? (
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
-                </svg>
-              ) : (
-                <svg className="w-3.5 h-3.5 translate-x-px" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              )}
-            </button>
-            <div className="flex-1 min-w-0">
-              <div
-                onClick={seek}
-                className="h-1.5 rounded-full bg-foreground/10 cursor-pointer overflow-hidden"
-              >
-                <div className="h-full rounded-full bg-blue-500" style={{ width: `${pct}%` }} />
-              </div>
-            </div>
-            <span className="text-[11px] tabular-nums text-foreground/40 shrink-0">
-              {fmtTime(cur)}/{fmtTime(dur)}
-            </span>
-          </div>
-        )}
-
-        {/* Read summary button */}
         <button
-          onClick={loadText}
-          disabled={textStatus === "loading"}
-          aria-label="Read AI summary"
-          className={`flex items-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-medium transition-colors shrink-0 ${
-            showSummary && textStatus === "ready"
-              ? "border-foreground/20 bg-foreground/8 text-foreground/70"
-              : "border-border hover:border-foreground/20 text-foreground/50 hover:text-foreground/70"
-          } disabled:opacity-50`}
+          onClick={listen}
+          disabled={loading}
+          className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10 px-4 py-2.5 text-sm font-semibold text-blue-600 dark:text-blue-400 transition-colors disabled:opacity-60"
         >
-          {textStatus === "loading" ? (
-            <span className="w-3.5 h-3.5 rounded-full border-2 border-foreground/20 border-t-foreground/60 animate-spin" />
+          {loading ? (
+            <span className="w-4 h-4 rounded-full border-2 border-blue-500/30 border-t-blue-500 animate-spin" />
           ) : (
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+            <span className="grid place-items-center w-6 h-6 rounded-full bg-blue-500 text-white shrink-0">
+              <svg className="w-3 h-3 translate-x-px" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+            </span>
           )}
-          <span className="hidden sm:inline">
-            {textStatus === "error" ? "Retry" : "Read"}
-          </span>
+          Listen — AI briefing
+          <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-500/15">Beta</span>
         </button>
 
+        <button
+          onClick={read}
+          disabled={loading}
+          aria-label="Read summaries"
+          className={`flex items-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-medium transition-colors shrink-0 ${
+            listOpen ? "border-foreground/20 bg-foreground/8 text-foreground/70" : "border-border text-foreground/50 hover:text-foreground/70"
+          } disabled:opacity-50`}
+        >
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span className="hidden sm:inline">Read</span>
+        </button>
       </div>
 
-      {/* ── Expandable summary text ── */}
-      {showSummary && summaryText && (
-        <div className="rounded-xl border border-border bg-card/60 px-4 py-3 animate-in slide-in-from-top-1 duration-150">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-foreground/35">
-              AI-generated summary · based on full article text
+      {status === "error" && (
+        <p className="text-xs text-foreground/40 text-center py-1">Briefing unavailable right now.</p>
+      )}
+
+      {/* ── Now-playing bar ── */}
+      {curItem && (
+        <div className="flex items-center gap-3 rounded-xl border border-blue-500/30 bg-blue-500/5 px-3 py-2">
+          <button
+            onClick={togglePlay}
+            aria-label={playing ? "Pause" : "Play"}
+            className="grid place-items-center w-9 h-9 rounded-full bg-blue-500 hover:bg-blue-600 text-white shrink-0 transition-colors"
+          >
+            {playing ? (
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z" /></svg>
+            ) : (
+              <svg className="w-4 h-4 translate-x-px" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+            )}
+          </button>
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] text-foreground/40">
+              Now playing · {playable.findIndex((p) => p.url === curItem.url) + 1} of {playable.length}
             </p>
-            <button
-              onClick={() => setShowSummary(false)}
-              className="text-foreground/30 hover:text-foreground/60 transition-colors"
-              aria-label="Close summary"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            <p className="text-sm font-medium text-foreground truncate">{curItem.title}</p>
           </div>
-          <p className="text-sm leading-relaxed text-foreground/75">{summaryText}</p>
         </div>
       )}
 
-      {/* Hidden audio element */}
+      {/* ── Article summary list ── */}
+      {listOpen && items.length > 0 && (
+        <ul className="rounded-xl border border-border bg-card/60 divide-y divide-border overflow-hidden">
+          {items.map((item, i) => {
+            const isCur = i === current;
+            return (
+              <li key={item.url} className={isCur ? "bg-blue-500/8" : ""}>
+                <div className="flex items-start gap-3 px-3 py-2.5">
+                  {item.audio ? (
+                    <button
+                      onClick={() => playItem(i)}
+                      aria-label="Play this summary"
+                      className="grid place-items-center w-6 h-6 rounded-full bg-blue-500/15 hover:bg-blue-500 text-blue-600 dark:text-blue-400 hover:text-white shrink-0 mt-0.5 transition-colors"
+                    >
+                      {isCur && playing ? (
+                        <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z" /></svg>
+                      ) : (
+                        <svg className="w-2.5 h-2.5 translate-x-px" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                      )}
+                    </button>
+                  ) : (
+                    <span className="w-6 h-6 shrink-0" />
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <a href={item.url} target="_blank" rel="noopener noreferrer" className="block">
+                      <p className="text-sm font-semibold text-foreground leading-snug">{item.title}</p>
+                    </a>
+                    <p className="text-[11px] text-foreground/40 mt-0.5">
+                      {item.source && <span className="text-blue-500/80 mr-1.5">{item.source}</span>}
+                      {item.pubDate ? formatRelative(item.pubDate) : ""}
+                    </p>
+                    <p className="text-sm text-foreground/70 leading-relaxed mt-1">{item.summary}</p>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
       <audio
         ref={audioRef}
-        src={briefing?.audio ?? undefined}
+        src={curItem?.audio ?? undefined}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
-        onTimeUpdate={(e) => setCur(e.currentTarget.currentTime)}
-        onLoadedMetadata={(e) => setDur(e.currentTarget.duration)}
-        onEnded={() => setPlaying(false)}
-        preload="metadata"
+        onEnded={onEnded}
+        preload="none"
         hidden
       />
     </div>

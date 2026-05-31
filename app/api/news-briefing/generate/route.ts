@@ -1,52 +1,37 @@
 // POST /api/news-briefing/generate
 //
-// Called by Vercel Cron every 30 minutes. Fetches full article text for ALL
-// current news items, summarises with Gemini, synthesises Chirp 3 HD audio,
-// then upserts the result into Supabase so the read route can serve it
-// instantly to users.
+// Incremental, per-article generation. For each story currently in the news
+// feed that we haven't already processed (keyed by URL), fetch its full text,
+// summarize it, synthesize a short audio clip, and store the row. Articles are
+// summarized exactly once and reused forever — new stories add a row, they
+// never trigger reprocessing of existing ones.
 //
-// Security: Vercel Cron passes `Authorization: Bearer <CRON_SECRET>`.
-// Set CRON_SECRET in Vercel env vars (any random string, e.g. openssl rand -hex 32).
-// Local dev: POST with the header manually, or omit CRON_SECRET to skip auth.
+// Called by GitHub Actions on a short interval. Because it's incremental, each
+// run typically processes only the 1-2 newest stories, so it stays well under
+// any timeout.
 
-import { createHash } from 'node:crypto';
 import type { NextRequest } from 'next/server';
 import { fetchNews } from '@/lib/fetchers/news';
 import { enrichWithArticleText } from '@/lib/ai/fetch-article';
-import { summarizeNews } from '@/lib/ai/summarize';
+import { summarizeArticle } from '@/lib/ai/summarize';
 import { synthesizeSpeech } from '@/lib/ai/tts';
 import { sql } from '@/lib/db';
 
-// Allow up to 60s — Jina Reader fallback can take 10-20s per JS-rendered site.
-// (Vercel Hobby caps at 60s; Pro allows up to 300s.)
 export const maxDuration = 60;
 
-// Background generation. Capped at 12 articles: that's ~3 minutes of briefing,
-// and keeps total runtime under Vercel Hobby's 60s function limit. Higher
-// concurrency shrinks the Jina-fetch phase (the main time cost).
-const CRON_CONFIG = {
-  maxArticles:       12,
-  timeoutMs:         15_000,
-  maxParagraphs:     25,
-  maxChars:          3_500, // ~875 tokens of body text per article
-  concurrency:       8,
-};
+// Cap new articles processed per run so a cold start (many fresh rows) can't
+// blow the time budget — leftovers are picked up on the next run.
+const MAX_NEW_PER_RUN = 8;
+const PROCESS_CONCURRENCY = 4;
+const RETENTION_HOURS = 48;
 
-const SUMMARIZE_CONFIG = {
-  maxArticles:        12,
-  maxCharsPerArticle: 3_500,
-  // ~3-minute briefing. Range is wide so Gemini can scale to the day's volume:
-  // a slow news day stays ~320 words, a busy one stretches toward 450.
-  wordRange:          '320-450',
-  duration:           'roughly 2.5 to 3 minutes',
-};
-
-function hashHeadlines(titles: string[]): string {
-  return createHash('sha1').update(titles.join('|')).digest('hex').slice(0, 12);
+function toDate(s: string | undefined): Date | null {
+  if (!s) return null;
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
 }
 
 export async function POST(req: NextRequest) {
-  // Auth check — skip if CRON_SECRET not configured (local dev convenience).
   const secret = process.env.CRON_SECRET;
   if (secret) {
     const auth = req.headers.get('authorization') ?? '';
@@ -56,79 +41,64 @@ export async function POST(req: NextRequest) {
   }
 
   const t0 = Date.now();
-  console.log('[cron] briefing generation started');
-
-  // ── 1. Fetch current news (8h window — same as the Feed, kept consistent) ──
   const { items } = await fetchNews();
   if (items.length === 0) {
-    console.log('[cron] no news items, skipping');
     return Response.json({ skipped: true, reason: 'no_items' });
   }
 
-  const hash = hashHeadlines(items.map((i) => i.title ?? ''));
+  // Which URLs have we already summarized?
+  const urls = items.map((i) => i.link).filter((u): u is string => !!u);
+  const existing = urls.length
+    ? await sql<{ url: string }[]>`SELECT url FROM article_summary WHERE url IN ${sql(urls)}`
+    : [];
+  const seen = new Set(existing.map((r) => r.url));
 
-  // ── 2. Check if we already have this hash in DB ────────────────────────────
-  const force = req.nextUrl.searchParams.get('force') === '1';
-  if (!force) {
-    const existing = await sql`
-      SELECT hash FROM briefing WHERE hash = ${hash} LIMIT 1
+  const fresh = items
+    .filter((i) => i.link && !seen.has(i.link))
+    .slice(0, MAX_NEW_PER_RUN);
+
+  if (fresh.length === 0) {
+    await sql`DELETE FROM article_summary WHERE pub_date < NOW() - make_interval(hours => ${RETENTION_HOURS})`;
+    console.log('[gen] no new articles');
+    return Response.json({ ok: true, added: 0, reason: 'all_current' });
+  }
+
+  console.log(`[gen] ${fresh.length} new article(s) to process`);
+
+  // Fetch full text for the fresh articles (3-tier scraper, parallel internally).
+  const enriched = await enrichWithArticleText(fresh, {
+    maxArticles: fresh.length,
+    timeoutMs: 15_000,
+    maxParagraphs: 25,
+    maxChars: 3_500,
+    concurrency: 8,
+  });
+
+  // Summarize + synthesize + insert, in small parallel batches.
+  let added = 0;
+  const processOne = async (item: (typeof enriched)[number]) => {
+    const summary = await summarizeArticle(item);
+    if (!summary) return;
+    const mp3 = await synthesizeSpeech(summary);
+    const audio = mp3 ? mp3.toString('base64') : null;
+    await sql`
+      INSERT INTO article_summary (url, title, source, summary, audio_b64, pub_date)
+      VALUES (${item.link!}, ${item.title ?? ''}, ${item.source ?? null},
+              ${summary}, ${audio}, ${toDate(item.pubDate)})
+      ON CONFLICT (url) DO NOTHING
     `;
-    if (existing.length > 0) {
-      console.log(`[cron] hash ${hash} already in DB, skipping`);
-      return Response.json({ skipped: true, reason: 'already_current', hash });
-    }
+    added++;
+    console.log(`[gen] + ${(item.title ?? '').slice(0, 60)}`);
+  };
+
+  for (let i = 0; i < enriched.length; i += PROCESS_CONCURRENCY) {
+    await Promise.all(enriched.slice(i, i + PROCESS_CONCURRENCY).map(processOne));
   }
 
-  // ── 3. Fetch full article text ─────────────────────────────────────────────
-  console.log(`[cron] fetching article text for ${Math.min(items.length, CRON_CONFIG.maxArticles)} articles`);
-  const enriched = await enrichWithArticleText(items, CRON_CONFIG);
-  const fullCount = enriched.filter((i) => i.articleText).length;
-  console.log(`[cron] got full text for ${fullCount}/${enriched.length} articles`);
-
-  // ── 4. Summarise ───────────────────────────────────────────────────────────
-  const text = await summarizeNews(enriched, SUMMARIZE_CONFIG);
-  if (!text) {
-    console.error('[cron] summarization failed');
-    return Response.json({ error: 'summarization_failed' }, { status: 500 });
-  }
-  console.log(`[cron] summary: ${text.split(/\s+/).length} words`);
-
-  // ── 5. TTS ─────────────────────────────────────────────────────────────────
-  const mp3 = await synthesizeSpeech(text);
-  if (!mp3) {
-    console.error('[cron] TTS failed');
-    return Response.json({ error: 'tts_failed' }, { status: 500 });
-  }
-  const audiob64 = mp3.toString('base64');
-  console.log(`[cron] audio: ${Math.round(audiob64.length * 0.75 / 1024)} KB`);
-
-  // ── 6. Upsert into Supabase ────────────────────────────────────────────────
-  await sql`
-    INSERT INTO briefing (hash, text, audio_b64)
-    VALUES (${hash}, ${text}, ${audiob64})
-    ON CONFLICT (hash) DO UPDATE
-      SET text      = EXCLUDED.text,
-          audio_b64 = EXCLUDED.audio_b64,
-          created_at = NOW()
-  `;
-
-  // Keep only the 10 most recent rows to avoid unbounded growth.
-  await sql`
-    DELETE FROM briefing
-    WHERE id NOT IN (
-      SELECT id FROM briefing ORDER BY created_at DESC LIMIT 10
-    )
-  `;
+  // Prune old rows so the table doesn't grow unbounded.
+  await sql`DELETE FROM article_summary WHERE pub_date < NOW() - (${RETENTION_HOURS} || ' hours')::interval`;
 
   const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
-  console.log(`[cron] done in ${elapsed}s — hash ${hash}`);
-
-  return Response.json({
-    ok: true,
-    hash,
-    wordCount: text.split(/\s+/).length,
-    audioKb: Math.round(audiob64.length * 0.75 / 1024),
-    elapsedSec: parseFloat(elapsed),
-    fullArticles: fullCount,
-  });
+  console.log(`[gen] done in ${elapsed}s — added ${added}`);
+  return Response.json({ ok: true, added, elapsedSec: parseFloat(elapsed) });
 }
