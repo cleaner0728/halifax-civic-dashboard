@@ -49,7 +49,8 @@ export default function NewsBriefingPlayer() {
       const data = (await res.json()) as { items: Item[] };
       if (!data.items?.length) throw new Error("empty");
       setItems(data.items);
-      setListOpen(true);
+      // Don't open the summary list on Listen — playback shows only the
+      // now-playing bar. The list is revealed only via the Read toggle.
       setStatus("ready");
       autoplay.current = true;
       const first = data.items.findIndex((i) => i.audio);
