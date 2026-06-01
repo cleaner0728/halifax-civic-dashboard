@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-01T14:29:07.902Z",
+  "fetchedAt": "2026-06-01T14:46:18.333Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -9,6 +9,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1ttnjoh/things_to_do_in_hrm_this_month_june_2026/",
       "flair": null,
       "createdUtc": 1780308058
+    },
+    {
+      "title": "Looks like the groundhog at work has 2 babies this year.",
+      "score": 0,
+      "numComments": 0,
+      "author": "crwpitman",
+      "url": "https://www.reddit.com/r/halifax/comments/1tttzfu/looks_like_the_groundhog_at_work_has_2_babies/",
+      "flair": null,
+      "createdUtc": 1780324180
     },
     {
       "title": "‘I would starve to death’: Nova Scotia’s homeless shelters feel the pressure, as donations drop",
@@ -38,6 +47,15 @@
       "createdUtc": 1780305404
     },
     {
+      "title": "‘You really want to go to war with us?’ Lobster dealer intimidation trial hears evidence",
+      "score": 0,
+      "numComments": 0,
+      "author": "MannoSlimmins",
+      "url": "https://www.reddit.com/r/halifax/comments/1ttqz5h/you_really_want_to_go_to_war_with_us_lobster/",
+      "flair": null,
+      "createdUtc": 1780317620
+    },
+    {
       "title": "PSA- Runaway dog!",
       "score": 0,
       "numComments": 0,
@@ -54,15 +72,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1ttqnf7/biker_hit_by_cops_gets_arraigned/",
       "flair": null,
       "createdUtc": 1780316778
-    },
-    {
-      "title": "‘You really want to go to war with us?’ Lobster dealer intimidation trial hears evidence",
-      "score": 0,
-      "numComments": 0,
-      "author": "MannoSlimmins",
-      "url": "https://www.reddit.com/r/halifax/comments/1ttqz5h/you_really_want_to_go_to_war_with_us_lobster/",
-      "flair": null,
-      "createdUtc": 1780317620
     },
     {
       "title": "The lies we tell about development fees",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1ttcxgr/therapist_recomendations/",
       "flair": null,
       "createdUtc": 1780275440
-    },
-    {
-      "title": "N.S creating new nature reserve in Digby County, eyeing 3 more across province | CBC News",
-      "score": 0,
-      "numComments": 0,
-      "author": "Secure_Guess6227",
-      "url": "https://www.reddit.com/r/halifax/comments/1tsut8i/ns_creating_new_nature_reserve_in_digby_county/",
-      "flair": null,
-      "createdUtc": 1780232621
     }
   ]
 }
