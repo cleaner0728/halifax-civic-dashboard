@@ -2,6 +2,7 @@ import Link from 'next/link';
 import BetaOnly from '@/components/BetaOnly';
 import CalendarEmbed from '@/components/CalendarEmbed';
 import CapitalBudgetBlock from '@/components/blocks/CapitalBudgetBlock';
+import CivicEngagementBlock from '@/components/blocks/CivicEngagementBlock';
 import HalifaxWebcams from '@/components/HalifaxWebcams';
 import AlertsBlock from '@/components/blocks/AlertsBlock';
 import WeatherBlock from '@/components/blocks/WeatherBlock';
@@ -51,6 +52,15 @@ function IconBudget({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 2L3 7h18L12 2zM5 7v13M19 7v13M3 20h18M9 11v5m6-5v5" />
+    </svg>
+  );
+}
+
+// Megaphone — civic engagement / "have your say"
+function IconMegaphone({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
     </svg>
   );
 }
@@ -218,6 +228,15 @@ export default function CityLiveScreen({
             meta="2026–2030"
           >
             <CapitalBudgetBlock />
+          </CollapsibleSection>
+
+          <CollapsibleSection
+            id="engage"
+            icon={<IconMegaphone className="w-5 h-5" />}
+            title="Have Your Say"
+            meta="get involved"
+          >
+            <CivicEngagementBlock />
           </CollapsibleSection>
 
         </AccordionGroup>
