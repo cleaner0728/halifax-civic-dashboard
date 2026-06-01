@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-01T10:46:14.093Z",
+  "fetchedAt": "2026-06-01T11:16:15.314Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -20,15 +20,6 @@
       "createdUtc": 1777629714
     },
     {
-      "title": "Record-breaking $9.1 million raised during 42nd annual IWK Telethon",
-      "score": 0,
-      "numComments": 0,
-      "author": "cache_invalidation",
-      "url": "https://www.reddit.com/r/halifax/comments/1tt7jqw/recordbreaking_91_million_raised_during_42nd/",
-      "flair": null,
-      "createdUtc": 1780261735
-    },
-    {
       "title": "HRFE Response Street Closure - Victoria Rd at Inglis St",
       "score": 0,
       "numComments": 0,
@@ -36,6 +27,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1ttmqrx/hrfe_response_street_closure_victoria_rd_at/",
       "flair": null,
       "createdUtc": 1780305404
+    },
+    {
+      "title": "Record-breaking $9.1 million raised during 42nd annual IWK Telethon",
+      "score": 0,
+      "numComments": 0,
+      "author": "cache_invalidation",
+      "url": "https://www.reddit.com/r/halifax/comments/1tt7jqw/recordbreaking_91_million_raised_during_42nd/",
+      "flair": null,
+      "createdUtc": 1780261735
     },
     {
       "title": "Photos from the Halifax Public Gardens",
@@ -63,6 +63,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tt2psr/weird_experience_at_the_highlander_spa/",
       "flair": null,
       "createdUtc": 1780250977
+    },
+    {
+      "title": "Grumblemania Monday",
+      "score": 0,
+      "numComments": 0,
+      "author": "AutoModerator",
+      "url": "https://www.reddit.com/r/halifax/comments/1ttnk18/grumblemania_monday/",
+      "flair": null,
+      "createdUtc": 1780308085
     },
     {
       "title": "New N.S. bouncer rules set to take effect amid criticism they fall short",
@@ -99,15 +108,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tstwkp/ns_seeing_an_increase_in_teens_with_longlasting/",
       "flair": null,
       "createdUtc": 1780230212
-    },
-    {
-      "title": "Grumblemania Monday",
-      "score": 0,
-      "numComments": 0,
-      "author": "AutoModerator",
-      "url": "https://www.reddit.com/r/halifax/comments/1ttnk18/grumblemania_monday/",
-      "flair": null,
-      "createdUtc": 1780308085
     },
     {
       "title": "Colleen Jones Memorial Trophy: Nova Scotia women's provincial curling title renamed in honour of late legend | CBC Sports",
@@ -254,15 +254,6 @@
       "createdUtc": 1780282621
     },
     {
-      "title": "Camp hill",
-      "score": 0,
-      "numComments": 0,
-      "author": "scotiamarie77",
-      "url": "https://www.reddit.com/r/halifax/comments/1tsz5y9/camp_hill/",
-      "flair": null,
-      "createdUtc": 1780243031
-    },
-    {
       "title": "KBBQ IN Quinpool",
       "score": 0,
       "numComments": 0,
@@ -270,6 +261,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tszbwk/kbbq_in_quinpool/",
       "flair": null,
       "createdUtc": 1780243386
+    },
+    {
+      "title": "Camp hill",
+      "score": 0,
+      "numComments": 0,
+      "author": "scotiamarie77",
+      "url": "https://www.reddit.com/r/halifax/comments/1tsz5y9/camp_hill/",
+      "flair": null,
+      "createdUtc": 1780243031
     }
   ]
 }
