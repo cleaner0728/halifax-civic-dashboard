@@ -14,7 +14,9 @@ const CACHE_HEADERS = {
   'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
 };
 
-const WINDOW_HOURS = 8; // match the Feed
+// The collection is scoped to today's Halifax calendar day (matches fetchNews):
+// it accumulates through the day and resets at local midnight. The SQL below
+// uses date_trunc on NOW() AT TIME ZONE 'America/Halifax' to get local midnight.
 
 type Row = {
   url: string;
@@ -32,13 +34,13 @@ export async function GET(req: NextRequest) {
     ? await sql<Row[]>`
         SELECT url, title, source, summary, pub_date
         FROM article_summary
-        WHERE COALESCE(pub_date, created_at) > NOW() - make_interval(hours => ${WINDOW_HOURS})
+        WHERE COALESCE(pub_date, created_at) >= date_trunc('day', NOW() AT TIME ZONE 'America/Halifax') AT TIME ZONE 'America/Halifax'
         ORDER BY COALESCE(pub_date, created_at) DESC
       `
     : await sql<Row[]>`
         SELECT url, title, source, summary, pub_date, audio_b64
         FROM article_summary
-        WHERE COALESCE(pub_date, created_at) > NOW() - make_interval(hours => ${WINDOW_HOURS})
+        WHERE COALESCE(pub_date, created_at) >= date_trunc('day', NOW() AT TIME ZONE 'America/Halifax') AT TIME ZONE 'America/Halifax'
         ORDER BY COALESCE(pub_date, created_at) DESC
       `;
 

@@ -1,6 +1,21 @@
-// Multi-source Nova Scotia news feeds. Last 8h, sorted newest-first.
+// Multi-source Nova Scotia news feeds. Scoped to today's Halifax calendar day
+// (00:00–23:59:59 local), sorted newest-first.
 
 import Parser from 'rss-parser';
+
+const HALIFAX_TZ = 'America/Halifax';
+
+// Midnight (00:00) today in the Halifax timezone, returned as a UTC instant.
+// News resets at local midnight: few stories in the morning, accumulating
+// through the day. Handles AST/ADT via a live offset calculation.
+function startOfTodayHalifax(): Date {
+  const now = new Date();
+  const ymd = now.toLocaleDateString('en-CA', { timeZone: HALIFAX_TZ }); // YYYY-MM-DD
+  const offsetMs =
+    new Date(now.toLocaleString('en-US', { timeZone: 'UTC' })).getTime() -
+    new Date(now.toLocaleString('en-US', { timeZone: HALIFAX_TZ })).getTime();
+  return new Date(new Date(`${ymd}T00:00:00Z`).getTime() + offsetMs);
+}
 
 export type NewsItem = {
   title?: string;
@@ -10,10 +25,7 @@ export type NewsItem = {
   source?: string;
 };
 
-// `windowHours` controls how far back to include stories. The Feed uses the
-// default 8h; the AI briefing passes 24h so it has enough material for a
-// ~3-minute summary even on a slow news day.
-export async function fetchNews(windowHours = 8): Promise<{ items: NewsItem[] }> {
+export async function fetchNews(): Promise<{ items: NewsItem[] }> {
   const parser = new Parser();
 
   const sources = [
@@ -31,7 +43,7 @@ export async function fetchNews(windowHours = 8): Promise<{ items: NewsItem[] }>
     { url: 'https://www.thecoast.ca/feed/', name: 'The Coast' },
   ];
 
-  const cutoff = new Date(Date.now() - windowHours * 60 * 60 * 1000);
+  const cutoff = startOfTodayHalifax();
 
   const SOURCE_TIMEOUT_MS = 8_000;
 
