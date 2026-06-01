@@ -4,16 +4,16 @@ import { useRef, useState, useEffect, useCallback, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { track } from "@vercel/analytics";
 import HapticTab from "./HapticTab";
-import { IconCity, IconNews, IconTicket, IconChart } from "./icons";
+import { IconCity, IconPulse, IconTicket, IconChart } from "./icons";
 import { useBetaFeatures } from "@/lib/useBetaFeatures";
 
 // `icon` is a stable key (strings cross the server→client prop boundary fine;
 // component functions do not). ScrollSnapContainer resolves it to a line icon.
-export type TabSpec = { label: string; icon: "city" | "feed" | "events" | "stats" };
+export type TabSpec = { label: string; icon: "city" | "pulse" | "events" | "stats" };
 
 const TAB_ICONS: Record<TabSpec["icon"], React.FC<React.SVGProps<SVGSVGElement>>> = {
   city: IconCity,
-  feed: IconNews,
+  pulse: IconPulse,
   events: IconTicket,
   stats: IconChart,
 };

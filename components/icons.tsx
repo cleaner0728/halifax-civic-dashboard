@@ -302,3 +302,12 @@ export function IconCamera(props: IconProps) {
     </svg>
   );
 }
+
+// Pulse / heartbeat line (Lucide "activity") — the Pulse tab
+export function IconPulse(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+    </svg>
+  );
+}

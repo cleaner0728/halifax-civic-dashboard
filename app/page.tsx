@@ -30,7 +30,7 @@ import { safe } from '@/lib/safe';
 
 const TABS: TabSpec[] = [
   { label: 'City Live', icon: 'city' },
-  { label: 'Feed', icon: 'feed' },
+  { label: 'Pulse', icon: 'pulse' },
   { label: 'Events', icon: 'events' },
   { label: 'Stats', icon: 'stats' },
 ];
