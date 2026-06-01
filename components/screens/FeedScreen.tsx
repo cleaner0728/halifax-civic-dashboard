@@ -24,7 +24,7 @@ export default function FeedScreen({ news, redditPosts, redditFetchedAt }: Props
             <p className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-widest">News</p>
             <h2 className="text-xl font-semibold tracking-tight text-foreground mt-0.5">Latest Headlines</h2>
             <p className="text-sm text-foreground/50 mt-0.5">
-              {news.length} {news.length === 1 ? 'story' : 'stories'} · past 8 hours
+              {news.length} {news.length === 1 ? 'story' : 'stories'} · today
             </p>
           </div>
           <IconNews className="w-6 h-6 text-foreground/30 shrink-0" />

@@ -11,7 +11,8 @@ export default function NewsBlock({ items }: Props) {
     return (
       <div className="flex flex-col items-center text-center py-10 text-foreground/40">
         <IconInbox className="w-8 h-8 mb-2 text-foreground/25" />
-        <p className="text-base font-medium">No news in the past 8 hours.</p>
+        <p className="text-base font-medium">No news yet today.</p>
+        <p className="text-sm mt-1 text-foreground/35">Check back later — stories build through the day.</p>
       </div>
     );
   }
