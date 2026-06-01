@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 import { track } from "@vercel/analytics";
 import FeedbackModal from "@/components/FeedbackModal";
 import LanguageModal, { type Language } from "@/components/LanguageModal";
-import { IconSettings, IconGlobe, IconMail } from "@/components/icons";
+import { IconSettings, IconGlobe, IconMail, IconLandmark } from "@/components/icons";
 import { useBetaFeatures, writeBetaFeatures } from "@/lib/useBetaFeatures";
 
 // French first (Canada's other official language); rest ordered roughly
@@ -63,6 +63,26 @@ function widgetSelect(): HTMLSelectElement | null {
   return document.querySelector("select.goog-te-combo");
 }
 
+function SunIcon() {
+  return (
+    <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+    </svg>
+  );
+}
+function MoonIcon() {
+  return (
+    <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+    </svg>
+  );
+}
+const THEME_OPTIONS = [
+  { key: "light", label: "Light", Icon: SunIcon },
+  { key: "dark", label: "Dark", Icon: MoonIcon },
+  { key: "halifax", label: "Halifax (HRM)", Icon: () => <IconLandmark className="w-[18px] h-[18px]" /> },
+] as const;
+
 export default function SettingsMenu() {
   const [open, setOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
@@ -70,7 +90,7 @@ export default function SettingsMenu() {
   const [mounted, setMounted] = useState(false);
   const [currentLang, setCurrentLang] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
-  const { resolvedTheme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const beta = useBetaFeatures();
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -89,8 +109,6 @@ export default function SettingsMenu() {
       document.removeEventListener("keydown", onKey);
     };
   }, [open]);
-
-  const isDark = mounted && resolvedTheme === "dark";
 
   const translate = (target: string | null) => {
     setGoogTransCookie(target);
@@ -174,22 +192,30 @@ export default function SettingsMenu() {
             Settings
           </div>
 
-          <button
-            onClick={() => { if (!mounted) return; setTheme(isDark ? "light" : "dark"); setOpen(false); }}
-            role="menuitem"
-            className={itemClass}
-            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-          >
-            <span>{isDark ? "Dark mode" : "Light mode"}</span>
-            <span className="relative w-5 h-5">
-              <svg className={`absolute inset-0 w-5 h-5 transition-all duration-300 ${isDark ? "opacity-0 rotate-90 scale-50" : "opacity-100 text-amber-500"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-              <svg className={`absolute inset-0 w-5 h-5 transition-all duration-300 ${isDark ? "opacity-100 text-blue-400" : "opacity-0 -rotate-90 scale-50"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-              </svg>
-            </span>
-          </button>
+          <div className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-foreground">
+            <span>Theme</span>
+            <div className="flex items-center gap-0.5 rounded-lg bg-foreground/8 p-0.5">
+              {THEME_OPTIONS.map(({ key, label, Icon }) => {
+                const active = mounted && theme === key;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setTheme(key)}
+                    aria-label={label}
+                    aria-pressed={active}
+                    title={label}
+                    className={`grid place-items-center w-8 h-7 rounded-md transition-colors ${
+                      active
+                        ? "bg-card shadow-sm text-blue-600 dark:text-blue-400"
+                        : "text-foreground/40 hover:text-foreground/70"
+                    }`}
+                  >
+                    <Icon />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           <button onClick={onShare} role="menuitem" className={itemClass}>
             <span>Share</span>

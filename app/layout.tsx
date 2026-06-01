@@ -64,7 +64,12 @@ export default function RootLayout({
             the gradient cards + live cam frames read more naturally on a
             dark surface. `enableSystem` is still on, so a user who has
             already picked light/dark in next-themes' storage keeps it. */}
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          themes={["light", "dark", "halifax"]}
+        >
           {children}
           <GoogleTranslateMount />
         </ThemeProvider>
