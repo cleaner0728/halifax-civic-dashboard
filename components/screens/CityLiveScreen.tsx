@@ -197,15 +197,6 @@ export default function CityLiveScreen({
             <HrmNewsBlock items={hrmNews} />
           </CollapsibleSection>
 
-          <CollapsibleSection
-            id="budget"
-            icon={<IconBudget className="w-5 h-5" />}
-            title="Capital Budget"
-            meta="2026–2030"
-          >
-            <CapitalBudgetBlock />
-          </CollapsibleSection>
-
           {/* WasteCollectionBlock renders its own CollapsibleSection (id="waste")
               so it can drive the dynamic "Next: …" meta from localStorage. */}
           <WasteCollectionBlock />
@@ -218,6 +209,15 @@ export default function CityLiveScreen({
             linkLabel="halifax.ca"
           >
             <CalendarEmbed src={HRM_CALENDAR_SRC} />
+          </CollapsibleSection>
+
+          <CollapsibleSection
+            id="budget"
+            icon={<IconBudget className="w-5 h-5" />}
+            title="Capital Budget"
+            meta="2026–2030"
+          >
+            <CapitalBudgetBlock />
           </CollapsibleSection>
 
         </AccordionGroup>
