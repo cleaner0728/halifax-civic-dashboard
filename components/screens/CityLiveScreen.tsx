@@ -13,7 +13,7 @@ import WasteCollectionBlock from '@/components/blocks/WasteCollectionBlock';
 import WinterParkingBanBlock from '@/components/blocks/WinterParkingBanBlock';
 import { AccordionGroup } from '@/components/AccordionGroup';
 import CollapsibleSection from '@/components/CollapsibleSection';
-import { IconCloudSun, IconFerry, IconBus, IconFlame, IconLandmark, IconCalendar, IconCamera, IconTrash } from '@/components/icons';
+import { IconCloudSun, IconFerry, IconBus, IconFlame, IconLandmark, IconCalendar, IconCamera } from '@/components/icons';
 import type { WinterParkingBan } from '@/lib/fetchers/winter-parking';
 import type { WeatherData } from '@/lib/fetchers/weather';
 import type { TideGraphData } from '@/lib/fetchers/tides';
@@ -206,13 +206,9 @@ export default function CityLiveScreen({
             <CapitalBudgetBlock />
           </CollapsibleSection>
 
-          <CollapsibleSection
-            id="waste"
-            icon={<IconTrash className="w-5 h-5" />}
-            title="Waste Collection"
-          >
-            <WasteCollectionBlock />
-          </CollapsibleSection>
+          {/* WasteCollectionBlock renders its own CollapsibleSection (id="waste")
+              so it can drive the dynamic "Next: …" meta from localStorage. */}
+          <WasteCollectionBlock />
 
           <CollapsibleSection
             id="events"

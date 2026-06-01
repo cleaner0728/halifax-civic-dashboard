@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { IconTrash } from '@/components/icons';
+import CollapsibleSection from '@/components/CollapsibleSection';
 import {
   AREAS,
   HOLIDAYS_2026,
@@ -101,53 +102,28 @@ export default function WasteCollectionBlock() {
   })();
 
   return (
-    <details className="group mt-8">
-      <summary className="list-none cursor-pointer flex items-center justify-between gap-3 mb-3 px-1 [&::-webkit-details-marker]:hidden">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="text-foreground/55 shrink-0">
-            <IconTrash className="w-5 h-5" />
-          </span>
-          <h2 className="text-lg font-bold text-foreground truncate">Waste Collection</h2>
-          {metaText && (
-            <span className="text-xs text-foreground/40 truncate">· {metaText}</span>
-          )}
-        </div>
-        <svg
-          className="w-4 h-4 text-foreground/50 shrink-0 transition-transform duration-200 group-open:rotate-180"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2.5}
-          aria-hidden
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
-      </summary>
-
-      <div className="space-y-3">
-        {!hydrated ? (
-          <CardShell>
-            <div className="px-4 py-6 text-xs text-foreground/40">Loading your schedule…</div>
-          </CardShell>
-        ) : prefs && !editing && next ? (
-          <ActiveCard prefs={prefs} onEdit={() => setEditing(true)} />
-        ) : (
-          <SetupCard
-            initial={prefs}
-            onSave={savePrefs}
-            onCancel={prefs ? () => setEditing(false) : undefined}
-          />
-        )}
-        <a
-          href="https://www.halifax.ca/home-property/garbage-recycling-green-cart"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block text-xs text-foreground/50 hover:text-foreground/80 px-1"
-        >
-          halifax.ca/recycle ↗
-        </a>
-      </div>
-    </details>
+    <CollapsibleSection
+      id="waste"
+      icon={<IconTrash className="w-5 h-5" />}
+      title="Waste Collection"
+      meta={metaText ?? undefined}
+      href="https://www.halifax.ca/home-property/garbage-recycling-green-cart"
+      linkLabel="halifax.ca/recycle"
+    >
+      {!hydrated ? (
+        <CardShell>
+          <div className="px-4 py-6 text-xs text-foreground/40">Loading your schedule…</div>
+        </CardShell>
+      ) : prefs && !editing && next ? (
+        <ActiveCard prefs={prefs} onEdit={() => setEditing(true)} />
+      ) : (
+        <SetupCard
+          initial={prefs}
+          onSave={savePrefs}
+          onCancel={prefs ? () => setEditing(false) : undefined}
+        />
+      )}
+    </CollapsibleSection>
   );
 }
 

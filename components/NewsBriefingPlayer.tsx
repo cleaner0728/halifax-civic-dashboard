@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { track } from "@vercel/analytics";
 import { formatRelative } from "@/lib/date";
+import BetaOnly from "@/components/BetaOnly";
 
 type Item = {
   url: string;
@@ -126,23 +127,24 @@ export default function NewsBriefingPlayer() {
               <svg className="w-3 h-3 translate-x-px" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
             </span>
           )}
-          Listen — AI briefing
-          <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-500/15">Beta</span>
+          Listen to briefing
         </button>
 
-        <button
-          onClick={read}
-          disabled={loading}
-          aria-label="Read summaries"
-          className={`flex items-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-medium transition-colors shrink-0 ${
-            listOpen ? "border-foreground/20 bg-foreground/8 text-foreground/70" : "border-border text-foreground/50 hover:text-foreground/70"
-          } disabled:opacity-50`}
-        >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          <span className="hidden sm:inline">Read</span>
-        </button>
+        <BetaOnly>
+          <button
+            onClick={read}
+            disabled={loading}
+            aria-label="Read summaries"
+            className={`flex items-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-medium transition-colors shrink-0 ${
+              listOpen ? "border-foreground/20 bg-foreground/8 text-foreground/70" : "border-border text-foreground/50 hover:text-foreground/70"
+            } disabled:opacity-50`}
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span className="hidden sm:inline">Read</span>
+          </button>
+        </BetaOnly>
       </div>
 
       {status === "error" && (
