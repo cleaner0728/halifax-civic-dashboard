@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-01T19:28:57.775Z",
+  "fetchedAt": "2026-06-01T19:46:14.832Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -108,6 +108,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tts0l9/craft_beer_scene_explorer/",
       "flair": null,
       "createdUtc": 1780319983
+    },
+    {
+      "title": "Clam harbour digging for fun?",
+      "score": 0,
+      "numComments": 0,
+      "author": "meatsauceandbeefball",
+      "url": "https://www.reddit.com/r/halifax/comments/1tu38t1/clam_harbour_digging_for_fun/",
+      "flair": null,
+      "createdUtc": 1780342659
     },
     {
       "title": "Man charged in February 2025 fatal car crash in Lower Sackville",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tstwkp/ns_seeing_an_increase_in_teens_with_longlasting/",
       "flair": null,
       "createdUtc": 1780230212
-    },
-    {
-      "title": "New project aims to preserve Halifax’s skateboard history in public archive",
-      "score": 0,
-      "numComments": 0,
-      "author": "insino93",
-      "url": "https://www.reddit.com/r/halifax/comments/1tt91gw/new_project_aims_to_preserve_halifaxs_skateboard/",
-      "flair": null,
-      "createdUtc": 1780265295
     }
   ]
 }
