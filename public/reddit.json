@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-02T12:16:16.109Z",
+  "fetchedAt": "2026-06-02T12:46:18.599Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -20,15 +20,6 @@
       "createdUtc": 1780392573
     },
     {
-      "title": "Looks like the groundhog at work has 2 babies this year.",
-      "score": 0,
-      "numComments": 0,
-      "author": "crwpitman",
-      "url": "https://www.reddit.com/r/halifax/comments/1tttzfu/looks_like_the_groundhog_at_work_has_2_babies/",
-      "flair": null,
-      "createdUtc": 1780324180
-    },
-    {
       "title": "Annapolis Valley libraries closing 5 branches, cites static provincial funding | CBC News",
       "score": 0,
       "numComments": 0,
@@ -36,6 +27,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tu6uqo/annapolis_valley_libraries_closing_5_branches/",
       "flair": null,
       "createdUtc": 1780350255
+    },
+    {
+      "title": "Looks like the groundhog at work has 2 babies this year.",
+      "score": 0,
+      "numComments": 0,
+      "author": "crwpitman",
+      "url": "https://www.reddit.com/r/halifax/comments/1tttzfu/looks_like_the_groundhog_at_work_has_2_babies/",
+      "flair": null,
+      "createdUtc": 1780324180
     },
     {
       "title": "Hit-and-run leads Halifax police to illegal firearm",
@@ -47,15 +47,6 @@
       "createdUtc": 1780397604
     },
     {
-      "title": "Why this building sandwiched between 2 homes is causing tension",
-      "score": 0,
-      "numComments": 0,
-      "author": "--prism",
-      "url": "https://www.reddit.com/r/halifax/comments/1tu6ug0/why_this_building_sandwiched_between_2_homes_is/",
-      "flair": null,
-      "createdUtc": 1780350237
-    },
-    {
       "title": "Smashing success of Lower Sackville's Casa di Stefano necessitates move to bigger space",
       "score": 0,
       "numComments": 0,
@@ -63,6 +54,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tump4d/smashing_success_of_lower_sackvilles_casa_di/",
       "flair": null,
       "createdUtc": 1780395568
+    },
+    {
+      "title": "Why this building sandwiched between 2 homes is causing tension",
+      "score": 0,
+      "numComments": 0,
+      "author": "--prism",
+      "url": "https://www.reddit.com/r/halifax/comments/1tu6ug0/why_this_building_sandwiched_between_2_homes_is/",
+      "flair": null,
+      "createdUtc": 1780350237
     },
     {
       "title": "Why are these everywhere?",
@@ -92,15 +92,6 @@
       "createdUtc": 1780349060
     },
     {
-      "title": "VIDEO: Maritime provinces get low marks in poverty report",
-      "score": 0,
-      "numComments": 0,
-      "author": "IStillListenToRadio",
-      "url": "https://www.reddit.com/r/halifax/comments/1tu8b1b/video_maritime_provinces_get_low_marks_in_poverty/",
-      "flair": null,
-      "createdUtc": 1780353483
-    },
-    {
       "title": "HRM asks for court order to take back the Khyber from Turret Arts Society",
       "score": 0,
       "numComments": 0,
@@ -108,6 +99,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tu7vyn/hrm_asks_for_court_order_to_take_back_the_khyber/",
       "flair": null,
       "createdUtc": 1780352529
+    },
+    {
+      "title": "VIDEO: Maritime provinces get low marks in poverty report",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1tu8b1b/video_maritime_provinces_get_low_marks_in_poverty/",
+      "flair": null,
+      "createdUtc": 1780353483
     },
     {
       "title": "Has anyone else come across these worm creatures in Halifax?",
@@ -137,6 +137,15 @@
       "createdUtc": 1780372263
     },
     {
+      "title": "Bus App Update?",
+      "score": 0,
+      "numComments": 0,
+      "author": "RosalieCooper",
+      "url": "https://www.reddit.com/r/halifax/comments/1tuonfh/bus_app_update/",
+      "flair": null,
+      "createdUtc": 1780401243
+    },
+    {
       "title": "Library Service Changes Announcement - Annapolis Valley Regional Library",
       "score": 0,
       "numComments": 0,
@@ -164,6 +173,15 @@
       "createdUtc": 1780359903
     },
     {
+      "title": "Petition for a White Rose Yorkshire emoji for keyboards on mobile devices online, sign it and share it to spread Yorkshireness worldwide!",
+      "score": 0,
+      "numComments": 0,
+      "author": "JESPERSENSCYCLEOO",
+      "url": "https://www.reddit.com/r/halifax/comments/1tuptep/petition_for_a_white_rose_yorkshire_emoji_for/",
+      "flair": null,
+      "createdUtc": 1780404167
+    },
+    {
       "title": "MRI in Halifax",
       "score": 0,
       "numComments": 0,
@@ -180,15 +198,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tu2r4g/best_place_to_go_out_on_a_monday/",
       "flair": null,
       "createdUtc": 1780341629
-    },
-    {
-      "title": "Bus App Update?",
-      "score": 0,
-      "numComments": 0,
-      "author": "RosalieCooper",
-      "url": "https://www.reddit.com/r/halifax/comments/1tuonfh/bus_app_update/",
-      "flair": null,
-      "createdUtc": 1780401243
     },
     {
       "title": "Cast Iron Frypan Restoration",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tu51fj/n_on_license_course_suggestions/",
       "flair": null,
       "createdUtc": 1780346331
-    },
-    {
-      "title": "Clam harbour digging for fun?",
-      "score": 0,
-      "numComments": 0,
-      "author": "meatsauceandbeefball",
-      "url": "https://www.reddit.com/r/halifax/comments/1tu38t1/clam_harbour_digging_for_fun/",
-      "flair": null,
-      "createdUtc": 1780342659
     }
   ]
 }
