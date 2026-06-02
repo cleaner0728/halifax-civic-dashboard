@@ -69,6 +69,23 @@ export default function RootLayout({
               "(function(){try{document.documentElement.dataset.vw=window.matchMedia('(min-width:1280px)').matches?'desktop':'mobile';}catch(e){document.documentElement.dataset.vw='mobile';}})();",
           }}
         />
+        {/* Desktop scrollbar styling. Delivered as a raw <style> rather than in
+            globals.css because Tailwind v4's CSS processor (Lightning CSS)
+            strips bare ::-webkit-scrollbar* rules. Scoped to >=1280px so phones
+            keep their native/overlay scrollbars (untouched). The rgba lines are
+            fallbacks; color-mix tints the thumb from the active theme. */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `@media (min-width:1280px){
+  html{scrollbar-width:thin;scrollbar-color:rgba(128,128,128,.4) transparent;scrollbar-color:color-mix(in srgb,var(--foreground) 25%,transparent) transparent;}
+  ::-webkit-scrollbar{width:12px;height:12px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background-color:rgba(128,128,128,.4);background-color:color-mix(in srgb,var(--foreground) 25%,transparent);border-radius:9999px;border:3px solid transparent;background-clip:content-box;}
+  ::-webkit-scrollbar-thumb:hover{background-color:rgba(128,128,128,.6);background-color:color-mix(in srgb,var(--foreground) 45%,transparent);}
+  ::-webkit-scrollbar-corner{background:transparent;}
+}`,
+          }}
+        />
         {/* Dark by default — the dashboard is designed for at-a-glance
             ambient viewing (kitchen iPad, late-evening phone glance), and
             the gradient cards + live cam frames read more naturally on a

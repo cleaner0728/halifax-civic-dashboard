@@ -3,18 +3,11 @@
 import { useState, useEffect, useCallback } from "react";
 import BrandTitle from "@/components/BrandTitle";
 import SettingsMenu from "@/components/SettingsMenu";
-import TodayBoard from "./TodayBoard";
 import CityLiveBoard from "./CityLiveBoard";
-import FeedScreen from "@/components/screens/FeedScreen";
+import PulseBoard from "./PulseBoard";
 import EventsCalendarScreen from "@/components/screens/EventsCalendarScreen";
 import StatsScreen from "@/components/screens/StatsScreen";
-import {
-  IconLayoutGrid,
-  IconCity,
-  IconPulse,
-  IconTicket,
-  IconChart,
-} from "@/components/icons";
+import { IconCity, IconPulse, IconTicket, IconChart } from "@/components/icons";
 import type { WeatherData } from "@/lib/fetchers/weather";
 import type { TideGraphData } from "@/lib/fetchers/tides";
 import type { AirQuality } from "@/lib/fetchers/air-quality";
@@ -59,10 +52,9 @@ export type DashboardData = {
   renderedAt: number;
 };
 
-export type DesktopSection = "today" | "city" | "pulse" | "events" | "stats";
+export type DesktopSection = "city" | "pulse" | "events" | "stats";
 
 const NAV: { id: DesktopSection; label: string; Icon: React.FC<React.SVGProps<SVGSVGElement>> }[] = [
-  { id: "today", label: "Today", Icon: IconLayoutGrid },
   { id: "city", label: "City Live", Icon: IconCity },
   { id: "pulse", label: "Pulse", Icon: IconPulse },
   { id: "events", label: "Events", Icon: IconTicket },
@@ -70,9 +62,9 @@ const NAV: { id: DesktopSection; label: string; Icon: React.FC<React.SVGProps<SV
 ];
 
 export default function DesktopShell({ data }: { data: DashboardData }) {
-  const [active, setActive] = useState<DesktopSection>("today");
+  const [active, setActive] = useState<DesktopSection>("city");
 
-  // Bare 1–5 jumps between sections — conflict-free (unlike ⌘1–5, which the
+  // Bare 1–4 jumps between sections — conflict-free (unlike ⌘1–4, which the
   // browser swallows for tab switching). Ignored while typing in a field.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -125,7 +117,7 @@ export default function DesktopShell({ data }: { data: DashboardData }) {
           })}
         </nav>
         <div className="px-3 py-3 border-t border-border flex items-center justify-between">
-          <span className="text-[11px] text-foreground/35">Press 1–5</span>
+          <span className="text-[11px] text-foreground/35">Press 1–4</span>
           {/* Gear sits at the bottom of the viewport, so open the menu upward. */}
           <SettingsMenu menuPositionClass="bottom-full right-0 mb-2" />
         </div>
@@ -134,10 +126,10 @@ export default function DesktopShell({ data }: { data: DashboardData }) {
       {/* Content — window-scrolled, capped so it doesn't sprawl on huge displays. */}
       <div className="flex-1 min-w-0">
         <div className="max-w-[1600px] mx-auto px-6 py-6">
-          {active === "today" ? (
-            <TodayBoard data={data} onNavigate={go} />
-          ) : active === "city" ? (
+          {active === "city" ? (
             <CityLiveBoard data={data} />
+          ) : active === "pulse" ? (
+            <PulseBoard data={data} />
           ) : (
             <div className="desktop-pane">{renderScreen(active, data)}</div>
           )}
@@ -151,14 +143,6 @@ export default function DesktopShell({ data }: { data: DashboardData }) {
 // own purpose-built desktop board (CityLiveBoard); the rest reuse their screens.
 function renderScreen(section: DesktopSection, data: DashboardData) {
   switch (section) {
-    case "pulse":
-      return (
-        <FeedScreen
-          news={data.news}
-          redditPosts={data.redditPosts}
-          redditFetchedAt={data.redditFetchedAt}
-        />
-      );
     case "events":
       return <EventsCalendarScreen renderedAt={data.renderedAt} events={data.events} />;
     case "stats":
