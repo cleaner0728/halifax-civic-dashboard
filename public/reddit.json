@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-02T02:46:12.926Z",
+  "fetchedAt": "2026-06-02T03:16:15.581Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -254,6 +254,15 @@
       "createdUtc": 1780348784
     },
     {
+      "title": "Cast Iron Frypan Restoration",
+      "score": 0,
+      "numComments": 0,
+      "author": "Live_Law6565",
+      "url": "https://www.reddit.com/r/halifax/comments/1tue6kp/cast_iron_frypan_restoration/",
+      "flair": null,
+      "createdUtc": 1780368624
+    },
+    {
       "title": "How likely is it to get screwed over by a fixed term lease?",
       "score": 0,
       "numComments": 0,
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tu411j/how_likely_is_it_to_get_screwed_over_by_a_fixed/",
       "flair": null,
       "createdUtc": 1780344271
-    },
-    {
-      "title": "Man charged in February 2025 fatal car crash in Lower Sackville",
-      "score": 0,
-      "numComments": 0,
-      "author": "insino93",
-      "url": "https://www.reddit.com/r/halifax/comments/1ttmyxy/man_charged_in_february_2025_fatal_car_crash_in/",
-      "flair": null,
-      "createdUtc": 1780306154
     }
   ]
 }
