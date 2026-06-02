@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-02T08:46:16.195Z",
+  "fetchedAt": "2026-06-02T09:16:17.235Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -155,6 +155,15 @@
       "createdUtc": 1780331038
     },
     {
+      "title": "How good of a person is Sidney Crosby actually?",
+      "score": 0,
+      "numComments": 0,
+      "author": "DoodlePineapple",
+      "url": "https://www.reddit.com/r/halifax/comments/1tulgue/how_good_of_a_person_is_sidney_crosby_actually/",
+      "flair": null,
+      "createdUtc": 1780391534
+    },
+    {
       "title": "underground spots in Halifax",
       "score": 0,
       "numComments": 0,
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tu51fj/n_on_license_course_suggestions/",
       "flair": null,
       "createdUtc": 1780346331
-    },
-    {
-      "title": "How likely is it to get screwed over by a fixed term lease?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Ok_Basket_6651",
-      "url": "https://www.reddit.com/r/halifax/comments/1tu411j/how_likely_is_it_to_get_screwed_over_by_a_fixed/",
-      "flair": null,
-      "createdUtc": 1780344271
     }
   ]
 }
