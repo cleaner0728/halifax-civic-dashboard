@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-02T03:16:15.581Z",
+  "fetchedAt": "2026-06-02T04:16:14.360Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -137,6 +137,15 @@
       "createdUtc": 1780359903
     },
     {
+      "title": "Where can I buy one of these wooden outdoor flowers in/around Halifax?",
+      "score": 0,
+      "numComments": 0,
+      "author": "westernskyqueen",
+      "url": "https://www.reddit.com/r/halifax/comments/1tufgsw/where_can_i_buy_one_of_these_wooden_outdoor/",
+      "flair": null,
+      "createdUtc": 1780372263
+    },
+    {
       "title": "PSA- Runaway dog!",
       "score": 0,
       "numComments": 0,
@@ -245,24 +254,6 @@
       "createdUtc": 1780346331
     },
     {
-      "title": "Reliable bathroom renovation?",
-      "score": 0,
-      "numComments": 0,
-      "author": "dirtybo0ts",
-      "url": "https://www.reddit.com/r/halifax/comments/1tu66fi/reliable_bathroom_renovation/",
-      "flair": null,
-      "createdUtc": 1780348784
-    },
-    {
-      "title": "Cast Iron Frypan Restoration",
-      "score": 0,
-      "numComments": 0,
-      "author": "Live_Law6565",
-      "url": "https://www.reddit.com/r/halifax/comments/1tue6kp/cast_iron_frypan_restoration/",
-      "flair": null,
-      "createdUtc": 1780368624
-    },
-    {
       "title": "How likely is it to get screwed over by a fixed term lease?",
       "score": 0,
       "numComments": 0,
@@ -270,6 +261,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tu411j/how_likely_is_it_to_get_screwed_over_by_a_fixed/",
       "flair": null,
       "createdUtc": 1780344271
+    },
+    {
+      "title": "Reliable bathroom renovation?",
+      "score": 0,
+      "numComments": 0,
+      "author": "dirtybo0ts",
+      "url": "https://www.reddit.com/r/halifax/comments/1tu66fi/reliable_bathroom_renovation/",
+      "flair": null,
+      "createdUtc": 1780348784
     }
   ]
 }
