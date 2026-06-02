@@ -178,3 +178,29 @@ html[data-tab-direction="back"]::view-transition-new(root) {
   from { transform: translateX(-100%); opacity: 0; }
   to   { transform: translateX(0); opacity: 1; }
 }
+
+/* === Desktop dashboard viewport gate ===
+   The mobile tree is always the SSR default; ViewportGate wraps it in
+   [data-mobile-root]. `display:contents` makes that wrapper layout-neutral on
+   phones — the phone UI is byte-for-byte what it was before. On wide screens,
+   the pre-paint script in layout.tsx sets html[data-vw="desktop"]; we then hide
+   the phone tree so desktop users see the page background (then the dashboard
+   shell) instead of a flash of the mobile layout while React mounts the shell
+   client-side. The higher-specificity desktop rule wins over the base one. */
+[data-mobile-root] { display: contents; }
+html[data-vw="desktop"] [data-mobile-root] { display: none; }
+
+/* The reused mobile screens (City Live, Pulse, Events, Stats) carry top
+   padding sized for the phone's fixed top bar (pt-24). Shown as desktop detail
+   panes inside the shell — which has no such bar — that reads as a big empty
+   gap, so trim it. Scoped to .desktop-pane; the phone layout is untouched. */
+.desktop-pane > div { padding-top: 1.25rem; padding-bottom: 1.5rem; }
+
+/* The full weather card (WeatherBlock) is built for full width, but on the
+   Today board it sits in a 1/3-width masonry column. Its condition grid is
+   viewport-responsive (lg:grid-cols-5), which crams to ~40px columns and
+   overflows at this width — relax it to 2 columns. Scoped to .today-weather,
+   so the mobile and City Live weather cards keep their original layout. */
+.today-weather [class~="lg:grid-cols-5"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}

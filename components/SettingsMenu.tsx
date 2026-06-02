@@ -83,7 +83,15 @@ const THEME_OPTIONS = [
   { key: "halifax", label: "Halifax (HRM)", Icon: () => <IconLandmark className="w-[18px] h-[18px]" /> },
 ] as const;
 
-export default function SettingsMenu() {
+// `menuPositionClass` controls where the dropdown opens relative to the gear
+// button. Default drops down/right — correct for the mobile top bar. The
+// desktop sidebar places the gear at the bottom of the viewport, so it passes
+// an upward variant to keep the menu on-screen.
+export default function SettingsMenu({
+  menuPositionClass = "top-full right-0 mt-2",
+}: {
+  menuPositionClass?: string;
+} = {}) {
   const [open, setOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
@@ -185,7 +193,7 @@ export default function SettingsMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute top-full right-0 mt-2 w-60 rounded-2xl border border-border bg-card shadow-2xl overflow-hidden z-[80]"
+          className={`absolute ${menuPositionClass} w-60 rounded-2xl border border-border bg-card shadow-2xl overflow-hidden z-[80]`}
           data-no-tab-swipe
         >
           <div className="px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-foreground/40">

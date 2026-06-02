@@ -59,6 +59,16 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
       <body className="min-h-dvh bg-background text-foreground">
+        {/* Pre-paint viewport tag. Runs before first paint (like the theme
+            script) so CSS can hide the mobile tree on wide screens before the
+            desktop shell mounts — preventing a flash of the phone layout on
+            desktop. Sets data-vw="mobile" on phones, which changes nothing. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{document.documentElement.dataset.vw=window.matchMedia('(min-width:1280px)').matches?'desktop':'mobile';}catch(e){document.documentElement.dataset.vw='mobile';}})();",
+          }}
+        />
         {/* Dark by default — the dashboard is designed for at-a-glance
             ambient viewing (kitchen iPad, late-evening phone glance), and
             the gradient cards + live cam frames read more naturally on a

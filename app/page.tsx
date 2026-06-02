@@ -3,6 +3,8 @@ import InstallButton from '@/components/InstallButton';
 import SettingsMenu from '@/components/SettingsMenu';
 import ScrollSnapContainer, { type TabSpec } from '@/components/ScrollSnapContainer';
 import RefreshOnVisible from '@/components/RefreshOnVisible';
+import ViewportGate from '@/components/ViewportGate';
+import type { DashboardData } from '@/components/desktop/DesktopShell';
 import CityLiveScreen from '@/components/screens/CityLiveScreen';
 import FeedScreen from '@/components/screens/FeedScreen';
 import EventsCalendarScreen from '@/components/screens/EventsCalendarScreen';
@@ -92,45 +94,80 @@ export default async function Home() {
     console.error('[page] computeTideGraph threw:', e);
   }
 
+  // Single source of truth for both trees. The mobile ScrollSnapContainer and
+  // the desktop dashboard consume the same already-fetched data — no second
+  // request, and the desktop board can never drift from the mobile screens.
+  const data: DashboardData = {
+    weather,
+    tideGraph,
+    airQuality,
+    burnStatus,
+    alerts,
+    detours: transitDetours,
+    ferryAlerts,
+    adjustments: transitAdjustments,
+    hrfeIncidents,
+    hrmNews: hrmResult.items,
+    hrmDateLabel: hrmResult.dateLabel,
+    buoy,
+    marineForecast,
+    winterParkingBan,
+    news: news.items,
+    redditPosts: redditData.posts,
+    redditFetchedAt: redditData.fetchedAt,
+    events,
+    gasPrices,
+    groceryPrices,
+    renderedAt,
+  };
+
   return (
     <main className="bg-background text-foreground select-none [-webkit-user-select:none]">
       <RefreshOnVisible />
-      <ScrollSnapContainer
-        tabs={TABS}
-        topBar={
-          <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-2">
-            <BrandTitle />
-            <div className="flex items-center gap-2 shrink-0">
-              <InstallButton />
-              <SettingsMenu />
-            </div>
-          </div>
+      {/* ViewportGate renders the mobile tree below 1280px (unchanged) or the
+          desktop dashboard at/above it. The mobile JSX here is identical to
+          before — it's just been moved into the `mobile` slot. */}
+      <ViewportGate
+        data={data}
+        mobile={
+          <ScrollSnapContainer
+            tabs={TABS}
+            topBar={
+              <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-2">
+                <BrandTitle />
+                <div className="flex items-center gap-2 shrink-0">
+                  <InstallButton />
+                  <SettingsMenu />
+                </div>
+              </div>
+            }
+          >
+            <CityLiveScreen
+              weather={weather}
+              tideGraph={tideGraph}
+              airQuality={airQuality}
+              burnStatus={burnStatus}
+              alerts={alerts}
+              detours={transitDetours}
+              ferryAlerts={ferryAlerts}
+              adjustments={transitAdjustments}
+              hrfeIncidents={hrfeIncidents}
+              hrmNews={hrmResult.items}
+              hrmDateLabel={hrmResult.dateLabel}
+              buoy={buoy}
+              marineForecast={marineForecast}
+              winterParkingBan={winterParkingBan}
+            />
+            <FeedScreen
+              news={news.items}
+              redditPosts={redditData.posts}
+              redditFetchedAt={redditData.fetchedAt}
+            />
+            <EventsCalendarScreen renderedAt={renderedAt} events={events} />
+            <StatsScreen gasPrices={gasPrices} groceryPrices={groceryPrices} />
+          </ScrollSnapContainer>
         }
-      >
-        <CityLiveScreen
-          weather={weather}
-          tideGraph={tideGraph}
-          airQuality={airQuality}
-          burnStatus={burnStatus}
-          alerts={alerts}
-          detours={transitDetours}
-          ferryAlerts={ferryAlerts}
-          adjustments={transitAdjustments}
-          hrfeIncidents={hrfeIncidents}
-          hrmNews={hrmResult.items}
-          hrmDateLabel={hrmResult.dateLabel}
-          buoy={buoy}
-          marineForecast={marineForecast}
-          winterParkingBan={winterParkingBan}
-        />
-        <FeedScreen
-          news={news.items}
-          redditPosts={redditData.posts}
-          redditFetchedAt={redditData.fetchedAt}
-        />
-        <EventsCalendarScreen renderedAt={renderedAt} events={events} />
-        <StatsScreen gasPrices={gasPrices} groceryPrices={groceryPrices} />
-      </ScrollSnapContainer>
+      />
     </main>
   );
 }
