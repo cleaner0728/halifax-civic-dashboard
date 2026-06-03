@@ -26,8 +26,17 @@ jobs:
     steps:
       - name: Trigger briefing generation
         run: |
-          curl -fsS -X POST \
+          # -L follows redirects as a safety net, but BRIEFING_BASE_URL must
+          # point at the canonical domain (e.g. https://dash.halifaxtalk.cc):
+          # a cross-host redirect would make curl drop the Authorization header.
+          resp=$(curl -fsSL -X POST \
             "${{ secrets.BRIEFING_BASE_URL }}/api/news-briefing/generate" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             --max-time 90 \
-            -w "\nHTTP %{http_code}\n"
+            -w "\nHTTP %{http_code}")
+          echo "$resp"
+          # A 200 is not enough — the endpoint returns 200 on no-ops and even
+          # prints a redirect body. Require an explicit ok:true so a silent
+          # no-op turns the check red instead of green.
+          echo "$resp" | grep -q '"ok":true' \
+            || { echo "::error::briefing generate did not return ok:true"; exit 1; }
