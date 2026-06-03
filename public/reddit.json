@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-03T15:11:21.442Z",
+  "fetchedAt": "2026-06-03T15:16:20.096Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -74,6 +74,15 @@
       "createdUtc": 1780439639
     },
     {
+      "title": "Sea Salt Flakes",
+      "score": 0,
+      "numComments": 0,
+      "author": "arotang11",
+      "url": "https://www.reddit.com/r/halifax/comments/1tvraze/sea_salt_flakes/",
+      "flair": null,
+      "createdUtc": 1780497466
+    },
+    {
       "title": "New mobile clinic in Halifax",
       "score": 0,
       "numComments": 0,
@@ -90,15 +99,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tvl0h3/iwk_leans_on_nova_scotia_health_for_radiology/",
       "flair": null,
       "createdUtc": 1780481712
-    },
-    {
-      "title": "Sea Salt Flakes",
-      "score": 0,
-      "numComments": 0,
-      "author": "arotang11",
-      "url": "https://www.reddit.com/r/halifax/comments/1tvraze/sea_salt_flakes/",
-      "flair": null,
-      "createdUtc": 1780497466
     },
     {
       "title": "Mammatus Maximus",
