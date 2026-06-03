@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-03T02:46:15.993Z",
+  "fetchedAt": "2026-06-03T06:16:17.520Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -20,15 +20,6 @@
       "createdUtc": 1780414604
     },
     {
-      "title": "MLA Statement regarding white nationalist demonstration in Bedford South",
-      "score": 0,
-      "numComments": 0,
-      "author": "Evening_Boss_3415",
-      "url": "https://www.reddit.com/r/halifax/comments/1tv6j27/mla_statement_regarding_white_nationalist/",
-      "flair": null,
-      "createdUtc": 1780439639
-    },
-    {
       "title": "Nova Scotia rent cap expires 2027, province yet to decide on temporarily extending",
       "score": 0,
       "numComments": 0,
@@ -36,6 +27,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tv7scp/nova_scotia_rent_cap_expires_2027_province_yet_to/",
       "flair": null,
       "createdUtc": 1780442672
+    },
+    {
+      "title": "MLA Statement regarding white nationalist demonstration in Bedford South",
+      "score": 0,
+      "numComments": 0,
+      "author": "Evening_Boss_3415",
+      "url": "https://www.reddit.com/r/halifax/comments/1tv6j27/mla_statement_regarding_white_nationalist/",
+      "flair": null,
+      "createdUtc": 1780439639
     },
     {
       "title": "Mammatus Maximus",
@@ -56,13 +56,13 @@
       "createdUtc": 1780434646
     },
     {
-      "title": "Thunder in Dartmouth?",
+      "title": "N.S. Health increasing blood collection appointments as patients express frustration",
       "score": 0,
       "numComments": 0,
-      "author": "PerigeeOnThisApogee",
-      "url": "https://www.reddit.com/r/halifax/comments/1tv4j44/thunder_in_dartmouth/",
+      "author": "scotiagirl45",
+      "url": "https://www.reddit.com/r/halifax/comments/1tv5mkg/ns_health_increasing_blood_collection/",
       "flair": null,
-      "createdUtc": 1780435134
+      "createdUtc": 1780437594
     },
     {
       "title": "I love you Nova Scotia",
@@ -74,13 +74,13 @@
       "createdUtc": 1780442639
     },
     {
-      "title": "N.S. Health increasing blood collection appointments as patients express frustration",
+      "title": "Thunder in Dartmouth?",
       "score": 0,
       "numComments": 0,
-      "author": "scotiagirl45",
-      "url": "https://www.reddit.com/r/halifax/comments/1tv5mkg/ns_health_increasing_blood_collection/",
+      "author": "PerigeeOnThisApogee",
+      "url": "https://www.reddit.com/r/halifax/comments/1tv4j44/thunder_in_dartmouth/",
       "flair": null,
-      "createdUtc": 1780437594
+      "createdUtc": 1780435134
     },
     {
       "title": "Today the tourist asked me a question and I didn’t know where to send them.",
@@ -128,6 +128,15 @@
       "createdUtc": 1780392573
     },
     {
+      "title": "Halifax man accused of breaching bail on antisemitism-related charges",
+      "score": 0,
+      "numComments": 0,
+      "author": "Street_Anon",
+      "url": "https://www.reddit.com/r/halifax/comments/1tvba1d/halifax_man_accused_of_breaching_bail_on/",
+      "flair": null,
+      "createdUtc": 1780451747
+    },
+    {
       "title": "Do you love your neighbourhood?",
       "score": 0,
       "numComments": 0,
@@ -135,24 +144,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tupyed/do_you_love_your_neighbourhood/",
       "flair": null,
       "createdUtc": 1780404512
-    },
-    {
-      "title": "Murphy Hospitality Group buys and revives 2 Crows brand and beers",
-      "score": 0,
-      "numComments": 0,
-      "author": "OptimalWhole8926",
-      "url": "https://www.reddit.com/r/halifax/comments/1tuzv36/murphy_hospitality_group_buys_and_revives_2_crows/",
-      "flair": null,
-      "createdUtc": 1780425220
-    },
-    {
-      "title": "Does anyone have any good reading spots?",
-      "score": 0,
-      "numComments": 0,
-      "author": "SilverSniper13",
-      "url": "https://www.reddit.com/r/halifax/comments/1tv95gf/does_anyone_have_any_good_reading_spots/",
-      "flair": null,
-      "createdUtc": 1780446104
     },
     {
       "title": "Racing on the 102",
@@ -164,13 +155,31 @@
       "createdUtc": 1780449771
     },
     {
-      "title": "Question about Halifax Music Fest",
+      "title": "Murphy Hospitality Group buys and revives 2 Crows brand and beers",
       "score": 0,
       "numComments": 0,
-      "author": "Blended_BJuice",
-      "url": "https://www.reddit.com/r/halifax/comments/1tv2121/question_about_halifax_music_fest/",
+      "author": "OptimalWhole8926",
+      "url": "https://www.reddit.com/r/halifax/comments/1tuzv36/murphy_hospitality_group_buys_and_revives_2_crows/",
       "flair": null,
-      "createdUtc": 1780429711
+      "createdUtc": 1780425220
+    },
+    {
+      "title": "Police chase on Shirley street?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Halifax-guy",
+      "url": "https://www.reddit.com/r/halifax/comments/1tvc8px/police_chase_on_shirley_street/",
+      "flair": null,
+      "createdUtc": 1780454191
+    },
+    {
+      "title": "Does anyone have any good reading spots?",
+      "score": 0,
+      "numComments": 0,
+      "author": "SilverSniper13",
+      "url": "https://www.reddit.com/r/halifax/comments/1tv95gf/does_anyone_have_any_good_reading_spots/",
+      "flair": null,
+      "createdUtc": 1780446104
     },
     {
       "title": "Transit Problems (130 Series)",
@@ -191,6 +200,24 @@
       "createdUtc": 1780451350
     },
     {
+      "title": "Question about Halifax Music Fest",
+      "score": 0,
+      "numComments": 0,
+      "author": "Blended_BJuice",
+      "url": "https://www.reddit.com/r/halifax/comments/1tv2121/question_about_halifax_music_fest/",
+      "flair": null,
+      "createdUtc": 1780429711
+    },
+    {
+      "title": "Halifax based Costume maker",
+      "score": 0,
+      "numComments": 0,
+      "author": "OldLeadership1430",
+      "url": "https://www.reddit.com/r/halifax/comments/1tuy091/halifax_based_costume_maker/",
+      "flair": null,
+      "createdUtc": 1780421498
+    },
+    {
       "title": "Hit-and-run leads Halifax police to illegal firearm",
       "score": 0,
       "numComments": 0,
@@ -209,24 +236,6 @@
       "createdUtc": 1780408680
     },
     {
-      "title": "Halifax based Costume maker",
-      "score": 0,
-      "numComments": 0,
-      "author": "OldLeadership1430",
-      "url": "https://www.reddit.com/r/halifax/comments/1tuy091/halifax_based_costume_maker/",
-      "flair": null,
-      "createdUtc": 1780421498
-    },
-    {
-      "title": "Mortar and Pestlt- Looking for a locally made (or at least locally available)",
-      "score": 0,
-      "numComments": 0,
-      "author": "Wise-Lifeguard3740",
-      "url": "https://www.reddit.com/r/halifax/comments/1tuzyiz/mortar_and_pestlt_looking_for_a_locally_made_or/",
-      "flair": null,
-      "createdUtc": 1780425414
-    },
-    {
       "title": "Are there any upcoming car shows or any good events in Halifax?",
       "score": 0,
       "numComments": 0,
@@ -236,13 +245,13 @@
       "createdUtc": 1780423090
     },
     {
-      "title": "Priest says he regrets comments about ‘residential’ school in Honduras during CBU convocation speech",
+      "title": "Mortar and Pestlt- Looking for a locally made (or at least locally available)",
       "score": 0,
       "numComments": 0,
-      "author": "No_Magazine9625",
-      "url": "https://www.reddit.com/r/halifax/comments/1tuvzg5/priest_says_he_regrets_comments_about_residential/",
+      "author": "Wise-Lifeguard3740",
+      "url": "https://www.reddit.com/r/halifax/comments/1tuzyiz/mortar_and_pestlt_looking_for_a_locally_made_or/",
       "flair": null,
-      "createdUtc": 1780417405
+      "createdUtc": 1780425414
     },
     {
       "title": "Smashing success of Lower Sackville's Casa di Stefano necessitates move to bigger space",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tv0yc5/recommendations_for_excavation_company_for/",
       "flair": null,
       "createdUtc": 1780427457
-    },
-    {
-      "title": "ISO maple doughnuts",
-      "score": 0,
-      "numComments": 0,
-      "author": "Faegirl247",
-      "url": "https://www.reddit.com/r/halifax/comments/1turrod/iso_maple_doughnuts/",
-      "flair": null,
-      "createdUtc": 1780408667
     }
   ]
 }
