@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-03T22:46:13.100Z",
+  "fetchedAt": "2026-06-03T23:16:15.725Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -9,6 +9,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1ttnjoh/things_to_do_in_hrm_this_month_june_2026/",
       "flair": null,
       "createdUtc": 1780308058
+    },
+    {
+      "title": "Eastern Passage and Polly’s Cove",
+      "score": 0,
+      "numComments": 0,
+      "author": "fire_carpenter",
+      "url": "https://www.reddit.com/r/halifax/comments/1tw54uo/eastern_passage_and_pollys_cove/",
+      "flair": null,
+      "createdUtc": 1780526304
     },
     {
       "title": "Nova Scotia had the second lowest weekly averages salaries for March 2026",
@@ -74,13 +83,13 @@
       "createdUtc": 1780518996
     },
     {
-      "title": "Eastern Passage and Polly’s Cove",
+      "title": "Bus message: what does this mean?",
       "score": 0,
       "numComments": 0,
-      "author": "fire_carpenter",
-      "url": "https://www.reddit.com/r/halifax/comments/1tw54uo/eastern_passage_and_pollys_cove/",
+      "author": "Rjmmrjmm",
+      "url": "https://www.reddit.com/r/halifax/comments/1tw4760/bus_message_what_does_this_mean/",
       "flair": null,
-      "createdUtc": 1780526304
+      "createdUtc": 1780524137
     },
     {
       "title": "Hammonds Plains residents call for halt to new development over wildfire concerns",
@@ -99,15 +108,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tw08ow/fire_in_sackville/",
       "flair": null,
       "createdUtc": 1780515510
-    },
-    {
-      "title": "Bus message: what does this mean?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Rjmmrjmm",
-      "url": "https://www.reddit.com/r/halifax/comments/1tw4760/bus_message_what_does_this_mean/",
-      "flair": null,
-      "createdUtc": 1780524137
     },
     {
       "title": "Avoid Hollis",
@@ -182,6 +182,15 @@
       "createdUtc": 1780488082
     },
     {
+      "title": "Did something happen or is this training? The 1st plane just flew over my house pretty low.",
+      "score": 0,
+      "numComments": 0,
+      "author": "AmbitiousObligation0",
+      "url": "https://www.reddit.com/r/halifax/comments/1tw635s/did_something_happen_or_is_this_training_the_1st/",
+      "flair": null,
+      "createdUtc": 1780528531
+    },
+    {
       "title": "Pearl couscous",
       "score": 0,
       "numComments": 0,
@@ -218,15 +227,6 @@
       "createdUtc": 1780504467
     },
     {
-      "title": "where to buy local bait stations that you can put snap traps in?",
-      "score": 0,
-      "numComments": 0,
-      "author": "morula2",
-      "url": "https://www.reddit.com/r/halifax/comments/1tvp69u/where_to_buy_local_bait_stations_that_you_can_put/",
-      "flair": null,
-      "createdUtc": 1780492830
-    },
-    {
       "title": "Mammatus Maximus",
       "score": 0,
       "numComments": 0,
@@ -234,6 +234,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tv5j3b/mammatus_maximus/",
       "flair": null,
       "createdUtc": 1780437384
+    },
+    {
+      "title": "where to buy local bait stations that you can put snap traps in?",
+      "score": 0,
+      "numComments": 0,
+      "author": "morula2",
+      "url": "https://www.reddit.com/r/halifax/comments/1tvp69u/where_to_buy_local_bait_stations_that_you_can_put/",
+      "flair": null,
+      "createdUtc": 1780492830
     },
     {
       "title": "N.S. Health increasing blood collection appointments as patients express frustration",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tv7rux/i_love_you_nova_scotia/",
       "flair": null,
       "createdUtc": 1780442639
-    },
-    {
-      "title": "Today the tourist asked me a question and I didn’t know where to send them.",
-      "score": 0,
-      "numComments": 0,
-      "author": "Final_Temporary_7390",
-      "url": "https://www.reddit.com/r/halifax/comments/1tuzdcz/today_the_tourist_asked_me_a_question_and_i_didnt/",
-      "flair": null,
-      "createdUtc": 1780424224
     }
   ]
 }
