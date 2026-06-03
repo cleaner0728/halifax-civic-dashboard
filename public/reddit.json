@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-03T19:46:19.501Z",
+  "fetchedAt": "2026-06-03T20:16:21.091Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -65,15 +65,6 @@
       "createdUtc": 1780487697
     },
     {
-      "title": "Avoid Hollis",
-      "score": 0,
-      "numComments": 0,
-      "author": "9Roll0Tide2Roll",
-      "url": "https://www.reddit.com/r/halifax/comments/1tvujr6/avoid_hollis/",
-      "flair": null,
-      "createdUtc": 1780504033
-    },
-    {
       "title": "Fire in Sackville?",
       "score": 0,
       "numComments": 0,
@@ -81,6 +72,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tw08ow/fire_in_sackville/",
       "flair": null,
       "createdUtc": 1780515510
+    },
+    {
+      "title": "Avoid Hollis",
+      "score": 0,
+      "numComments": 0,
+      "author": "9Roll0Tide2Roll",
+      "url": "https://www.reddit.com/r/halifax/comments/1tvujr6/avoid_hollis/",
+      "flair": null,
+      "createdUtc": 1780504033
     },
     {
       "title": "Nova Scotia rent cap expires 2027, province yet to decide on temporarily extending",
@@ -218,15 +218,6 @@
       "createdUtc": 1780442639
     },
     {
-      "title": "Thunder in Dartmouth?",
-      "score": 0,
-      "numComments": 0,
-      "author": "PerigeeOnThisApogee",
-      "url": "https://www.reddit.com/r/halifax/comments/1tv4j44/thunder_in_dartmouth/",
-      "flair": null,
-      "createdUtc": 1780435134
-    },
-    {
       "title": "Today the tourist asked me a question and I didn’t know where to send them.",
       "score": 0,
       "numComments": 0,
@@ -236,13 +227,13 @@
       "createdUtc": 1780424224
     },
     {
-      "title": "Has anyone used Happipad when looking for rentals/apartments?",
+      "title": "Thunder in Dartmouth?",
       "score": 0,
       "numComments": 0,
-      "author": "1keenhoneybee",
-      "url": "https://www.reddit.com/r/halifax/comments/1tvnycd/has_anyone_used_happipad_when_looking_for/",
+      "author": "PerigeeOnThisApogee",
+      "url": "https://www.reddit.com/r/halifax/comments/1tv4j44/thunder_in_dartmouth/",
       "flair": null,
-      "createdUtc": 1780489951
+      "createdUtc": 1780435134
     },
     {
       "title": "Halifax Regional Police respond to reported white nationalist rally in Bedford",
@@ -252,6 +243,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tv4fm9/halifax_regional_police_respond_to_reported_white/",
       "flair": null,
       "createdUtc": 1780434915
+    },
+    {
+      "title": "Has anyone used Happipad when looking for rentals/apartments?",
+      "score": 0,
+      "numComments": 0,
+      "author": "1keenhoneybee",
+      "url": "https://www.reddit.com/r/halifax/comments/1tvnycd/has_anyone_used_happipad_when_looking_for/",
+      "flair": null,
+      "createdUtc": 1780489951
     },
     {
       "title": "Anyone living at The Pearl?",
