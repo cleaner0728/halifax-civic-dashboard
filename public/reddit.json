@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-03T15:46:17.441Z",
+  "fetchedAt": "2026-06-03T16:16:21.949Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -137,6 +137,15 @@
       "createdUtc": 1780437594
     },
     {
+      "title": "I love you Nova Scotia",
+      "score": 0,
+      "numComments": 0,
+      "author": "ChemicalBark",
+      "url": "https://www.reddit.com/r/halifax/comments/1tv7rux/i_love_you_nova_scotia/",
+      "flair": null,
+      "createdUtc": 1780442639
+    },
+    {
       "title": "Highway construction on the 107 exit 18-20",
       "score": 0,
       "numComments": 0,
@@ -146,13 +155,13 @@
       "createdUtc": 1780494792
     },
     {
-      "title": "I love you Nova Scotia",
+      "title": "Pearl couscous",
       "score": 0,
       "numComments": 0,
-      "author": "ChemicalBark",
-      "url": "https://www.reddit.com/r/halifax/comments/1tv7rux/i_love_you_nova_scotia/",
+      "author": "GettingHygge",
+      "url": "https://www.reddit.com/r/halifax/comments/1tvpfme/pearl_couscous/",
       "flair": null,
-      "createdUtc": 1780442639
+      "createdUtc": 1780493413
     },
     {
       "title": "where to buy local bait stations that you can put snap traps in?",
@@ -182,15 +191,6 @@
       "createdUtc": 1780424224
     },
     {
-      "title": "Police chase on Shirley street?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Halifax-guy",
-      "url": "https://www.reddit.com/r/halifax/comments/1tvc8px/police_chase_on_shirley_street/",
-      "flair": null,
-      "createdUtc": 1780454191
-    },
-    {
       "title": "Halifax Regional Police respond to reported white nationalist rally in Bedford",
       "score": 0,
       "numComments": 0,
@@ -200,13 +200,13 @@
       "createdUtc": 1780434915
     },
     {
-      "title": "Pearl couscous",
+      "title": "Police chase on Shirley street?",
       "score": 0,
       "numComments": 0,
-      "author": "GettingHygge",
-      "url": "https://www.reddit.com/r/halifax/comments/1tvpfme/pearl_couscous/",
+      "author": "Halifax-guy",
+      "url": "https://www.reddit.com/r/halifax/comments/1tvc8px/police_chase_on_shirley_street/",
       "flair": null,
-      "createdUtc": 1780493413
+      "createdUtc": 1780454191
     },
     {
       "title": "Halifax man accused of breaching bail on antisemitism-related charges",
