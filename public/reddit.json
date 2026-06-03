@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-03T22:08:12.260Z",
+  "fetchedAt": "2026-06-03T22:16:17.630Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -65,15 +65,6 @@
       "createdUtc": 1780491771
     },
     {
-      "title": "Hammonds Plains residents call for halt to new development over wildfire concerns",
-      "score": 0,
-      "numComments": 0,
-      "author": "insino93",
-      "url": "https://www.reddit.com/r/halifax/comments/1tvn2id/hammonds_plains_residents_call_for_halt_to_new/",
-      "flair": null,
-      "createdUtc": 1780487697
-    },
-    {
       "title": "Where Do They Sell These in HRM?",
       "score": 0,
       "numComments": 0,
@@ -81,6 +72,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tw1vzz/where_do_they_sell_these_in_hrm/",
       "flair": null,
       "createdUtc": 1780518996
+    },
+    {
+      "title": "Hammonds Plains residents call for halt to new development over wildfire concerns",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1tvn2id/hammonds_plains_residents_call_for_halt_to_new/",
+      "flair": null,
+      "createdUtc": 1780487697
     },
     {
       "title": "Fire in Sackville?",
@@ -101,15 +101,6 @@
       "createdUtc": 1780504033
     },
     {
-      "title": "Looking for Soundproofing Door Covers, Wall Panels, etc. Where should I look?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Master_Sherbet_5707",
-      "url": "https://www.reddit.com/r/halifax/comments/1tw20rl/looking_for_soundproofing_door_covers_wall_panels/",
-      "flair": null,
-      "createdUtc": 1780519278
-    },
-    {
       "title": "Bus message: what does this mean?",
       "score": 0,
       "numComments": 0,
@@ -117,6 +108,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tw4760/bus_message_what_does_this_mean/",
       "flair": null,
       "createdUtc": 1780524137
+    },
+    {
+      "title": "Looking for Soundproofing Door Covers, Wall Panels, etc. Where should I look?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Master_Sherbet_5707",
+      "url": "https://www.reddit.com/r/halifax/comments/1tw20rl/looking_for_soundproofing_door_covers_wall_panels/",
+      "flair": null,
+      "createdUtc": 1780519278
     },
     {
       "title": "New mobile clinic in Halifax",
@@ -263,13 +263,13 @@
       "createdUtc": 1780424224
     },
     {
-      "title": "Thunder in Dartmouth?",
+      "title": "Halifax Regional Police respond to reported white nationalist rally in Bedford",
       "score": 0,
       "numComments": 0,
-      "author": "PerigeeOnThisApogee",
-      "url": "https://www.reddit.com/r/halifax/comments/1tv4j44/thunder_in_dartmouth/",
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1tv4fm9/halifax_regional_police_respond_to_reported_white/",
       "flair": null,
-      "createdUtc": 1780435134
+      "createdUtc": 1780434915
     }
   ]
 }
