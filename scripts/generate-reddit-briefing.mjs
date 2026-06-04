@@ -29,7 +29,7 @@ const GROQ_MODEL = 'llama-3.3-70b-versatile';
 const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
 const TTS_VOICE = 'en-US-AndrewMultilingualNeural';
 const TARGET_WORDS = 450;
-const RETENTION_DAYS = 14;
+const RETENTION_HOURS = 24;
 
 const VALID_SLOTS = ['morning', 'evening', 'late_night'];
 
@@ -185,9 +185,11 @@ async function main() {
       ON CONFLICT (briefing_date, slot) DO NOTHING
     `;
 
+    // Prune anything older than the retention window (24h since creation)
+    // so yesterday's rollups don't linger.
     await sql`
       DELETE FROM reddit_briefing
-      WHERE briefing_date < (CURRENT_DATE - (${RETENTION_DAYS} || ' days')::interval)
+      WHERE created_at < NOW() - (${RETENTION_HOURS} || ' hours')::interval
     `;
 
     console.log(`[reddit-roundup] done in ${((Date.now() - t0) / 1000).toFixed(1)}s`);
