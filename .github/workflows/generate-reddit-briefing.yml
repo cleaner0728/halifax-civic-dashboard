@@ -1,14 +1,15 @@
 name: Generate Reddit briefing
 
-# Twice-daily rollup of r/halifax. POSTs to /api/reddit-briefing/generate,
-# which reads public/reddit.json, asks Groq for a casual conversational
-# summary, synthesizes audio (Edge TTS), and UPSERTs into the
-# reddit_briefing table keyed by (briefing_date, slot).
+# Twice-daily rollup of r/halifax. Runs scripts/generate-reddit-briefing.mjs
+# on the Action runner — Groq summarize, Edge TTS synth, write directly to
+# Supabase. The full synthesis takes a couple of minutes (~3 min of audio),
+# which exceeds Vercel's 60s function timeout on Hobby; running on the
+# Action runner sidesteps that cap entirely.
 #
 # Why four cron times instead of two: GitHub Actions cron is UTC-only, and
 # Halifax shifts between ADT (UTC-3) and AST (UTC-4) twice a year. Running
-# both offsets and letting the server dedupe by (date, slot) is simpler
-# than computing DST in YAML. The endpoint no-ops on the second hit.
+# both offsets and letting the script dedupe by (briefing_date, slot) is
+# simpler than computing DST in YAML.
 #
 # Slot cutoff is 14:00 Halifax local:
 #   14:30 UTC = 11:30 ADT (summer)  → morning
@@ -16,9 +17,9 @@ name: Generate Reddit briefing
 #   21:00 UTC = 18:00 ADT (summer)  → evening
 #   22:00 UTC = 18:00 AST (winter)  → evening
 #
-# Required repo secrets (already set up for generate-briefing):
-#   BRIEFING_BASE_URL  the deployed origin, no trailing slash
-#   CRON_SECRET        same value as in the Vercel project env vars
+# Required repo secrets:
+#   GROQ_API_KEY        Groq Cloud key (same one Vercel uses for news)
+#   SUPABASE_DB_URL     transaction-pooler connection string (port 6543)
 
 on:
   schedule:
@@ -36,16 +37,19 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Reddit briefing generation
-        run: |
-          resp=$(curl -fsSL -X POST \
-            "${{ secrets.BRIEFING_BASE_URL }}/api/reddit-briefing/generate" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-            --max-time 90 \
-            -w "\nHTTP %{http_code}")
-          echo "$resp"
-          # Treat both fresh writes and already-generated no-ops as success.
-          # Anything without ok:true is a real failure (Groq down, TTS down,
-          # auth wrong, etc.) and should turn the run red.
-          echo "$resp" | grep -q '"ok":true' \
-            || { echo "::error::reddit briefing generate did not return ok:true"; exit 1; }
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # Only the two packages the script needs — full install is overkill.
+      - name: Install runtime deps
+        run: npm install --no-save msedge-tts postgres
+
+      - name: Generate rollup
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/generate-reddit-briefing.mjs
