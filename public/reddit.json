@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-04T03:16:16.846Z",
+  "fetchedAt": "2026-06-04T04:16:14.374Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -11,15 +11,6 @@
       "createdUtc": 1780308058
     },
     {
-      "title": "Eastern Passage and Polly’s Cove",
-      "score": 0,
-      "numComments": 0,
-      "author": "fire_carpenter",
-      "url": "https://www.reddit.com/r/halifax/comments/1tw54uo/eastern_passage_and_pollys_cove/",
-      "flair": null,
-      "createdUtc": 1780526304
-    },
-    {
       "title": "Jupiter and Venus from Halifax!",
       "score": 0,
       "numComments": 0,
@@ -27,6 +18,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1twaq33/jupiter_and_venus_from_halifax/",
       "flair": null,
       "createdUtc": 1780540639
+    },
+    {
+      "title": "Eastern Passage and Polly’s Cove",
+      "score": 0,
+      "numComments": 0,
+      "author": "fire_carpenter",
+      "url": "https://www.reddit.com/r/halifax/comments/1tw54uo/eastern_passage_and_pollys_cove/",
+      "flair": null,
+      "createdUtc": 1780526304
     },
     {
       "title": "I've heard of running behind but this is ridiculous",
@@ -146,6 +146,15 @@
       "createdUtc": 1780531434
     },
     {
+      "title": "*Lost key* by Hollis and Lower water street",
+      "score": 0,
+      "numComments": 0,
+      "author": "PairIntelligent7160",
+      "url": "https://www.reddit.com/r/halifax/comments/1twc5qs/lost_key_by_hollis_and_lower_water_street/",
+      "flair": null,
+      "createdUtc": 1780544628
+    },
+    {
       "title": "Looking for Soundproofing Door Covers, Wall Panels, etc. Where should I look?",
       "score": 0,
       "numComments": 0,
@@ -153,6 +162,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tw20rl/looking_for_soundproofing_door_covers_wall_panels/",
       "flair": null,
       "createdUtc": 1780519278
+    },
+    {
+      "title": "VG Hospital Deplorable Conditions",
+      "score": 0,
+      "numComments": 0,
+      "author": "ScotianSweet86",
+      "url": "https://www.reddit.com/r/halifax/comments/1twcmag/vg_hospital_deplorable_conditions/",
+      "flair": null,
+      "createdUtc": 1780545891
     },
     {
       "title": "New mobile clinic in Halifax",
@@ -252,24 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tvp69u/where_to_buy_local_bait_stations_that_you_can_put/",
       "flair": null,
       "createdUtc": 1780492830
-    },
-    {
-      "title": "Mammatus Maximus",
-      "score": 0,
-      "numComments": 0,
-      "author": "Seebeeeseh",
-      "url": "https://www.reddit.com/r/halifax/comments/1tv5j3b/mammatus_maximus/",
-      "flair": null,
-      "createdUtc": 1780437384
-    },
-    {
-      "title": "N.S. Health increasing blood collection appointments as patients express frustration",
-      "score": 0,
-      "numComments": 0,
-      "author": "scotiagirl45",
-      "url": "https://www.reddit.com/r/halifax/comments/1tv5mkg/ns_health_increasing_blood_collection/",
-      "flair": null,
-      "createdUtc": 1780437594
     }
   ]
 }
