@@ -183,7 +183,13 @@ export default function NewsBriefingPlayer() {
     let next = current + 1;
     while (next < items.length && !items[next].audio) next++;
     if (next < items.length) setCurrent(next);
-    else { autoplay.current = false; setPlaying(false); }
+    else {
+      // Playlist done — return to idle. Now-playing card unmounts and the
+      // "Listen to briefing" CTA reappears so the user can restart.
+      autoplay.current = false;
+      setPlaying(false);
+      setCurrent(-1);
+    }
   };
 
   const loading = status === "loading";
@@ -191,22 +197,29 @@ export default function NewsBriefingPlayer() {
 
   return (
     <div className="mb-4 space-y-2">
-      {/* ── Buttons ── */}
+      {/* ── Buttons ──
+          The big "Listen to briefing" CTA is suppressed while a playback
+          session is active — the Now-playing card below already has its own
+          play/pause control, and showing two big blue play buttons stacked is
+          visual noise. The CTA returns once the playlist finishes (onEnded
+          resets current to -1). */}
       <div className="flex gap-2">
-        <button
-          onClick={listen}
-          disabled={loading}
-          className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10 px-4 py-2.5 text-sm font-semibold text-blue-600 dark:text-blue-400 transition-colors disabled:opacity-60"
-        >
-          {loading ? (
-            <span className="w-4 h-4 rounded-full border-2 border-blue-500/30 border-t-blue-500 animate-spin" />
-          ) : (
-            <span className="grid place-items-center w-6 h-6 rounded-full bg-blue-500 text-white shrink-0">
-              <svg className="w-3 h-3 translate-x-px" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-            </span>
-          )}
-          Listen to briefing
-        </button>
+        {current < 0 && (
+          <button
+            onClick={listen}
+            disabled={loading}
+            className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10 px-4 py-2.5 text-sm font-semibold text-blue-600 dark:text-blue-400 transition-colors disabled:opacity-60"
+          >
+            {loading ? (
+              <span className="w-4 h-4 rounded-full border-2 border-blue-500/30 border-t-blue-500 animate-spin" />
+            ) : (
+              <span className="grid place-items-center w-6 h-6 rounded-full bg-blue-500 text-white shrink-0">
+                <svg className="w-3 h-3 translate-x-px" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+              </span>
+            )}
+            Listen to briefing
+          </button>
+        )}
 
         <BetaOnly>
           <button
