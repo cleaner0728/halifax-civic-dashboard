@@ -1,6 +1,7 @@
 import NewsBlock from '@/components/blocks/NewsBlock';
 import RedditBlock from '@/components/blocks/RedditBlock';
 import NewsBriefingPlayer from '@/components/NewsBriefingPlayer';
+import RedditBriefingPlayer from '@/components/RedditBriefingPlayer';
 import { IconNews, IconMessages } from '@/components/icons';
 import { formatRelative } from '@/lib/date';
 import type { NewsItem } from '@/lib/fetchers/news';
@@ -45,6 +46,7 @@ export default function FeedScreen({ news, redditPosts, redditFetchedAt }: Props
           </div>
           <IconMessages className="w-6 h-6 text-foreground/30 shrink-0" />
         </div>
+        {redditPosts.length > 0 && <RedditBriefingPlayer />}
         <RedditBlock posts={redditPosts} />
       </div>
     </div>
