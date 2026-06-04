@@ -1,4 +1,4 @@
-// Twice-daily r/halifax rollup. Runs on a GitHub Actions runner because
+// Thrice-daily r/halifax rollup. Runs on a GitHub Actions runner because
 // the full synthesis (Groq summary + ~3 minutes of TTS audio) exceeds
 // Vercel's 60-second function timeout on Hobby. Action runners have no
 // such cap, so we do everything here and write the row straight to
@@ -10,10 +10,15 @@
 //                       the one Vercel has set, since both write to the
 //                       same article_summary / reddit_briefing tables
 //
-// Slot is inferred from current Halifax local time: anything before 14:00
-// local is "morning", everything later is "evening". The four UTC cron
-// times in generate-reddit-briefing.yml bracket both DST regimes; the
-// PRIMARY KEY (briefing_date, slot) lets the second arrival no-op.
+// Slot resolution (priority):
+//   1. --slot=<name> CLI arg or SLOT env var (set by the workflow when
+//      triggered with an explicit `inputs.slot` value from the VPS cron)
+//   2. fall back to bucketing the current Halifax hour:
+//        hour < 14   → morning      (target cron: 11:30 local)
+//        14 ≤ hour < 21 → evening   (target cron: 18:00 local)
+//        hour ≥ 21   → late_night   (target cron: 23:00 local)
+//
+// The PRIMARY KEY (briefing_date, slot) lets duplicate triggers no-op.
 
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -25,6 +30,8 @@ const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
 const TTS_VOICE = 'en-US-AndrewMultilingualNeural';
 const TARGET_WORDS = 450;
 const RETENTION_DAYS = 14;
+
+const VALID_SLOTS = ['morning', 'evening', 'late_night'];
 
 function halifaxNowParts() {
   const now = new Date();
@@ -39,14 +46,30 @@ function halifaxNowParts() {
   const get = (t) => parts.find((p) => p.type === t)?.value ?? '';
   const date = `${get('year')}-${get('month')}-${get('day')}`;
   const hour = parseInt(get('hour'), 10);
-  const slot = hour < 14 ? 'morning' : 'evening';
+  // Three time buckets aligned with the target cron times:
+  //   11:30 local → hour 11  → morning
+  //   18:00 local → hour 18  → evening
+  //   23:00 local → hour 23  → late_night
+  const slot = hour < 14 ? 'morning' : hour < 21 ? 'evening' : 'late_night';
   return { date, slot, hour };
 }
 
+// Slot resolution: prefer an explicit argument (passed by the workflow when
+// triggered by the VPS cron — exact and unambiguous), fall back to bucketing
+// the current Halifax hour (used when run manually with no input).
+function resolveSlot(explicit) {
+  if (!explicit) return halifaxNowParts();
+  if (!VALID_SLOTS.includes(explicit)) {
+    throw new Error(`invalid slot "${explicit}" — expected one of ${VALID_SLOTS.join(', ')}`);
+  }
+  const { date, hour } = halifaxNowParts();
+  return { date, slot: explicit, hour };
+}
+
 function slotGreeting(slot) {
-  return slot === 'morning'
-    ? 'a midday catch-up on what people are talking about so far today'
-    : 'an evening wrap-up of what people have been buzzing about today';
+  if (slot === 'morning') return 'a midday catch-up on what people are talking about so far today';
+  if (slot === 'evening') return 'an evening wrap-up of what people have been buzzing about today';
+  return 'a late-night recap of how the day played out on the subreddit';
 }
 
 async function summarizeWithGroq(posts, slot) {
@@ -118,8 +141,14 @@ async function main() {
   }
 
   const t0 = Date.now();
-  const { date, slot, hour } = halifaxNowParts();
-  console.log(`[reddit-roundup] target slot: ${date} ${slot} (Halifax hour ${hour})`);
+  // Allow the slot to be passed explicitly via env (set by the workflow
+  // when triggered through workflow_dispatch with an `inputs.slot` value)
+  // or as a CLI arg, e.g. `node generate-reddit-briefing.mjs --slot=evening`.
+  // Falls back to bucketing the current Halifax hour.
+  const argSlot = process.argv.find((a) => a.startsWith('--slot='))?.split('=')[1];
+  const explicit = process.env.SLOT?.trim() || argSlot?.trim() || null;
+  const { date, slot, hour } = resolveSlot(explicit);
+  console.log(`[reddit-roundup] target slot: ${date} ${slot} (Halifax hour ${hour}${explicit ? ', explicit' : ', inferred'})`);
 
   const sql = postgres(dbUrl, { prepare: false, max: 2 });
   try {

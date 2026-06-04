@@ -14,7 +14,7 @@ const CACHE_HEADERS = {
 
 type Row = {
   briefing_date: string;
-  slot: 'morning' | 'evening';
+  slot: 'morning' | 'evening' | 'late_night';
   summary: string;
   audio_b64: string | null;
   post_count: number;
@@ -48,13 +48,13 @@ export async function GET(req: NextRequest) {
           SELECT briefing_date, slot, summary, NULL::text AS audio_b64, post_count, created_at
           FROM reddit_briefing
           WHERE briefing_date = ${today}
-          ORDER BY CASE slot WHEN 'morning' THEN 0 ELSE 1 END
+          ORDER BY CASE slot WHEN 'morning' THEN 0 WHEN 'evening' THEN 1 ELSE 2 END
         `
       : await sql<Row[]>`
           SELECT briefing_date, slot, summary, audio_b64, post_count, created_at
           FROM reddit_briefing
           WHERE briefing_date = ${today}
-          ORDER BY CASE slot WHEN 'morning' THEN 0 ELSE 1 END
+          ORDER BY CASE slot WHEN 'morning' THEN 0 WHEN 'evening' THEN 1 ELSE 2 END
         `;
   } catch (e: unknown) {
     const code = (e as { code?: string } | null)?.code;

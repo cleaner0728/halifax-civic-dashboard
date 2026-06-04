@@ -1,36 +1,34 @@
 name: Generate Reddit briefing
 
-# Twice-daily rollup of r/halifax. Runs scripts/generate-reddit-briefing.mjs
-# on the Action runner — Groq summarize, Edge TTS synth, write directly to
-# Supabase. The full synthesis takes a couple of minutes (~3 min of audio),
-# which exceeds Vercel's 60s function timeout on Hobby; running on the
-# Action runner sidesteps that cap entirely.
+# Triggered by the VPS cron (which curls the workflow_dispatch API) at the
+# exact Halifax local times we want — 11:30, 18:00, 23:00. GitHub Actions
+# cron itself is jittery (5-60 min lag), so we don't use it for the
+# scheduling; the VPS owns the clock, the runner just does the work.
 #
-# Why four cron times instead of two: GitHub Actions cron is UTC-only, and
-# Halifax shifts between ADT (UTC-3) and AST (UTC-4) twice a year. Running
-# both offsets and letting the script dedupe by (briefing_date, slot) is
-# simpler than computing DST in YAML.
-#
-# Slot cutoff is 14:00 Halifax local:
-#   14:30 UTC = 11:30 ADT (summer)  → morning
-#   15:30 UTC = 11:30 AST (winter)  → morning
-#   21:00 UTC = 18:00 ADT (summer)  → evening
-#   22:00 UTC = 18:00 AST (winter)  → evening
+# Manual runs from the GitHub UI show a dropdown for the slot. If the
+# input is left empty, the script infers the slot from current Halifax
+# time — useful for ad-hoc reruns.
 #
 # Required repo secrets:
 #   GROQ_API_KEY        Groq Cloud key (same one Vercel uses for news)
 #   SUPABASE_DB_URL     transaction-pooler connection string (port 6543)
 
 on:
-  schedule:
-    - cron: '30 14 * * *'
-    - cron: '30 15 * * *'
-    - cron: '0 21 * * *'
-    - cron: '0 22 * * *'
   workflow_dispatch:
+    inputs:
+      slot:
+        description: 'Which slot to generate (leave blank to infer from current Halifax time)'
+        required: false
+        type: choice
+        default: ''
+        options:
+          - ''
+          - morning
+          - evening
+          - late_night
 
 concurrency:
-  group: generate-reddit-briefing
+  group: generate-reddit-briefing-${{ github.event.inputs.slot || 'auto' }}
   cancel-in-progress: false
 
 jobs:
@@ -52,4 +50,5 @@ jobs:
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SLOT: ${{ github.event.inputs.slot }}
         run: node scripts/generate-reddit-briefing.mjs

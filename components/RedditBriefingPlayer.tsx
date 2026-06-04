@@ -3,8 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 
+type Slot = "morning" | "evening" | "late_night";
 type Item = {
-  slot: "morning" | "evening";
+  slot: Slot;
   summary: string;
   postCount: number;
   createdAt: string;
@@ -12,9 +13,10 @@ type Item = {
 };
 type Status = "idle" | "loading" | "ready" | "empty" | "error";
 
-const SLOT_LABEL: Record<Item["slot"], string> = {
+const SLOT_LABEL: Record<Slot, string> = {
   morning: "Midday pulse",
   evening: "Evening pulse",
+  late_night: "Late-night pulse",
 };
 
 export default function RedditBriefingPlayer() {
@@ -180,7 +182,7 @@ export default function RedditBriefingPlayer() {
 
       {status === "empty" && (
         <p className="text-xs text-foreground/40 text-center py-1">
-          No Reddit pulse yet — check back after 11:30 AM or 6 PM.
+          No Reddit pulse yet — check back after 11:30 AM, 6 PM or 11 PM.
         </p>
       )}
       {status === "error" && (
