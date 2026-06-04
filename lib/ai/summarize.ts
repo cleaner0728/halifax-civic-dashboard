@@ -1,45 +1,44 @@
-// Per-article summarization via Google Gemini Flash (free tier: 1,500 req/day).
-// Each article is summarized once and cached by URL — never re-summarized.
-// Plain REST, no SDK. Returns null on any failure so callers can degrade.
+// Per-article summarization via Groq's hosted Llama 3.3 70B
+// (free tier: ~1k req/day, very fast). Each article is summarized once and
+// cached by URL — never re-summarized. Plain REST, OpenAI-compatible body,
+// no SDK. Returns null on any failure so callers can degrade.
 
 import type { NewsItem } from '@/lib/fetchers/news';
 
-const MODEL = 'gemini-2.5-flash';
-const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+const MODEL = 'llama-3.3-70b-versatile';
+const ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
 
 type EnrichedItem = NewsItem & { articleText?: string };
 
-async function callGemini(prompt: string, maxOutputTokens: number): Promise<string | null> {
-  const key = process.env.GEMINI_API_KEY;
+async function callGroq(prompt: string, maxTokens: number): Promise<string | null> {
+  const key = process.env.GROQ_API_KEY;
   if (!key) {
-    console.warn('[briefing] GEMINI_API_KEY not set — skipping summary');
+    console.warn('[briefing] GROQ_API_KEY not set — skipping summary');
     return null;
   }
   try {
-    const res = await fetch(`${ENDPOINT}?key=${key}`, {
+    const res = await fetch(ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${key}`,
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens,
-          // Disable thinking — summarization needs no reasoning, and thinking
-          // tokens eat the output budget causing truncation.
-          thinkingConfig: { thinkingBudget: 0 },
-        },
+        model: MODEL,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: maxTokens,
       }),
     });
     if (!res.ok) {
-      console.error('[briefing] Gemini error', res.status, await res.text());
+      console.error('[briefing] Groq error', res.status, await res.text());
       return null;
     }
     const data = await res.json();
-    const parts = data?.candidates?.[0]?.content?.parts as { text?: string }[] | undefined;
-    const text = (parts ?? []).map((p) => p.text ?? '').join('').trim();
+    const text = (data?.choices?.[0]?.message?.content ?? '').trim();
     return text || null;
   } catch (e) {
-    console.error('[briefing] Gemini fetch failed', e);
+    console.error('[briefing] Groq fetch failed', e);
     return null;
   }
 }
@@ -71,6 +70,6 @@ Title: ${title}
 
 ${body}`;
 
-  const summary = await callGemini(prompt, 300);
+  const summary = await callGroq(prompt, 300);
   return summary ?? title;
 }

@@ -1,9 +1,10 @@
 name: Generate news briefing
 
 # Pings the deployed app's generate endpoint, which fetches full article
-# text, summarizes (Gemini), synthesizes audio (Chirp 3 HD), and stores the
-# result in Supabase. Used instead of Vercel Cron because the Hobby plan caps
-# cron at once-per-day; GitHub Actions has no such limit.
+# text, summarizes (Groq Llama 3.3 70B), synthesizes audio (Microsoft Edge
+# Read Aloud / Azure Neural Voice), and stores the result in Supabase. Used
+# instead of Vercel Cron because the Hobby plan caps cron at once-per-day;
+# GitHub Actions has no such limit.
 #
 # Required repo secrets (Settings → Secrets and variables → Actions):
 #   BRIEFING_BASE_URL  the deployed origin, no trailing slash, e.g.
