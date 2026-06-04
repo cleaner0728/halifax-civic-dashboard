@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-04T10:16:17.244Z",
+  "fetchedAt": "2026-06-04T10:46:16.064Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -29,15 +29,6 @@
       "createdUtc": 1780526304
     },
     {
-      "title": "I've heard of running behind but this is ridiculous",
-      "score": 0,
-      "numComments": 0,
-      "author": "zakk5450",
-      "url": "https://www.reddit.com/r/halifax/comments/1tw25vm/ive_heard_of_running_behind_but_this_is_ridiculous/",
-      "flair": null,
-      "createdUtc": 1780519595
-    },
-    {
       "title": "Her husband is accused in an AI deepfake investigation. She’s filing for divorce",
       "score": 0,
       "numComments": 0,
@@ -45,6 +36,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1twihby/her_husband_is_accused_in_an_ai_deepfake/",
       "flair": null,
       "createdUtc": 1780565110
+    },
+    {
+      "title": "I've heard of running behind but this is ridiculous",
+      "score": 0,
+      "numComments": 0,
+      "author": "zakk5450",
+      "url": "https://www.reddit.com/r/halifax/comments/1tw25vm/ive_heard_of_running_behind_but_this_is_ridiculous/",
+      "flair": null,
+      "createdUtc": 1780519595
     },
     {
       "title": "Nova Scotia had the second lowest weekly averages salaries for March 2026",
@@ -155,15 +155,6 @@
       "createdUtc": 1780487697
     },
     {
-      "title": "Help me!!",
-      "score": 0,
-      "numComments": 0,
-      "author": "Deep-Boysenberry-186",
-      "url": "https://www.reddit.com/r/halifax/comments/1twj7cr/help_me/",
-      "flair": null,
-      "createdUtc": 1780567458
-    },
-    {
       "title": "Avoid Hollis",
       "score": 0,
       "numComments": 0,
@@ -236,15 +227,6 @@
       "createdUtc": 1780481712
     },
     {
-      "title": "Highway construction on the 107 exit 18-20",
-      "score": 0,
-      "numComments": 0,
-      "author": "LowHovercraft5636",
-      "url": "https://www.reddit.com/r/halifax/comments/1tvq178/highway_construction_on_the_107_exit_1820/",
-      "flair": null,
-      "createdUtc": 1780494792
-    },
-    {
       "title": "90s/00s Grunge/Nu Metal/Alt Rock events?",
       "score": 0,
       "numComments": 0,
@@ -263,6 +245,15 @@
       "createdUtc": 1780493413
     },
     {
+      "title": "Highway construction on the 107 exit 18-20",
+      "score": 0,
+      "numComments": 0,
+      "author": "LowHovercraft5636",
+      "url": "https://www.reddit.com/r/halifax/comments/1tvq178/highway_construction_on_the_107_exit_1820/",
+      "flair": null,
+      "createdUtc": 1780494792
+    },
+    {
       "title": "trivia nights!",
       "score": 0,
       "numComments": 0,
@@ -270,6 +261,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tvottb/trivia_nights/",
       "flair": null,
       "createdUtc": 1780492041
+    },
+    {
+      "title": "where to buy local bait stations that you can put snap traps in?",
+      "score": 0,
+      "numComments": 0,
+      "author": "morula2",
+      "url": "https://www.reddit.com/r/halifax/comments/1tvp69u/where_to_buy_local_bait_stations_that_you_can_put/",
+      "flair": null,
+      "createdUtc": 1780492830
     }
   ]
 }
