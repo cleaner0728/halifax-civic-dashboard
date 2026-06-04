@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { track } from "@vercel/analytics";
 import { formatRelative } from "@/lib/date";
 import BetaOnly from "@/components/BetaOnly";
@@ -33,6 +33,83 @@ export default function NewsBriefingPlayer() {
   }, [current]);
 
   const playable = items.filter((i) => i.audio);
+
+  // Per-clip durations, learned via a lightweight metadata preload after items
+  // arrive. The base64 data URLs already live in memory, so this is effectively
+  // free — the browser only needs to read each MP3's header.
+  const [durations, setDurations] = useState<Map<string, number>>(new Map());
+  const [currentClipTime, setCurrentClipTime] = useState(0);
+
+  // Pre-resolve durations for every playable clip in one shot.
+  useEffect(() => {
+    const list = items.filter((i) => i.audio);
+    if (list.length === 0) return;
+    let cancelled = false;
+    const next = new Map<string, number>();
+    Promise.all(
+      list.map(
+        (it) =>
+          new Promise<void>((resolve) => {
+            const a = new Audio();
+            a.preload = "metadata";
+            const finish = () => resolve();
+            a.addEventListener(
+              "loadedmetadata",
+              () => {
+                if (!cancelled && Number.isFinite(a.duration)) {
+                  next.set(it.url, a.duration);
+                }
+                finish();
+              },
+              { once: true },
+            );
+            a.addEventListener("error", finish, { once: true });
+            a.src = it.audio!;
+          }),
+      ),
+    ).then(() => {
+      if (!cancelled) setDurations(next);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [items]);
+
+  // Cumulative duration of every clip strictly BEFORE the currently-playing one.
+  const completedBefore = useMemo(() => {
+    if (current < 0) return 0;
+    let sum = 0;
+    for (let i = 0; i < current; i++) {
+      const it = items[i];
+      if (it?.audio) sum += durations.get(it.url) ?? 0;
+    }
+    return sum;
+  }, [items, current, durations]);
+
+  const totalDuration = useMemo(() => {
+    let sum = 0;
+    for (const it of items) {
+      if (it.audio) sum += durations.get(it.url) ?? 0;
+    }
+    return sum;
+  }, [items, durations]);
+
+  const totalProgress = completedBefore + currentClipTime;
+  const progressPct =
+    totalDuration > 0 ? Math.min(100, (totalProgress / totalDuration) * 100) : 0;
+
+  // Tick-mark positions (one per inter-clip boundary). Skip the trailing edge
+  // of the final clip — that's just 100% and needs no tick.
+  const clipBoundaries = useMemo(() => {
+    if (totalDuration <= 0) return [];
+    const out: number[] = [];
+    let cum = 0;
+    for (let i = 0; i < playable.length - 1; i++) {
+      cum += durations.get(playable[i].url) ?? 0;
+      out.push((cum / totalDuration) * 100);
+    }
+    return out;
+  }, [playable, durations, totalDuration]);
 
   // ── Load audio collection + start playing from the top ──
   const listen = async () => {
@@ -154,24 +231,53 @@ export default function NewsBriefingPlayer() {
 
       {/* ── Now-playing bar ── */}
       {curItem && (
-        <div className="flex items-center gap-3 rounded-xl border border-blue-500/30 bg-blue-500/5 px-3 py-2">
-          <button
-            onClick={togglePlay}
-            aria-label={playing ? "Pause" : "Play"}
-            className="grid place-items-center w-9 h-9 rounded-full bg-blue-500 hover:bg-blue-600 text-white shrink-0 transition-colors"
-          >
-            {playing ? (
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z" /></svg>
-            ) : (
-              <svg className="w-4 h-4 translate-x-px" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-            )}
-          </button>
-          <div className="min-w-0 flex-1">
-            <p className="text-[11px] text-foreground/40">
-              Now playing · {playable.findIndex((p) => p.url === curItem.url) + 1} of {playable.length}
-            </p>
-            <p className="text-sm font-medium text-foreground truncate">{curItem.title}</p>
+        <div className="rounded-xl border border-blue-500/30 bg-blue-500/5 px-3 py-2">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={togglePlay}
+              aria-label={playing ? "Pause" : "Play"}
+              className="grid place-items-center w-9 h-9 rounded-full bg-blue-500 hover:bg-blue-600 text-white shrink-0 transition-colors"
+            >
+              {playing ? (
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z" /></svg>
+              ) : (
+                <svg className="w-4 h-4 translate-x-px" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+              )}
+            </button>
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] text-foreground/40">
+                Now playing · {playable.findIndex((p) => p.url === curItem.url) + 1} of {playable.length}
+              </p>
+              <p className="text-sm font-medium text-foreground truncate">{curItem.title}</p>
+            </div>
           </div>
+
+          {/* Total-playlist progress — spans the entire briefing, not just the
+              current clip. Thin ticks mark clip boundaries so the user can see
+              where each article begins/ends. When the bar reaches 100%, every
+              summary has been read. */}
+          {totalDuration > 0 && (
+            <div className="mt-2.5">
+              <div className="relative h-1.5 rounded-full bg-blue-500/15 overflow-hidden">
+                <div
+                  className="absolute inset-y-0 left-0 bg-blue-500 transition-[width] duration-100 ease-linear"
+                  style={{ width: `${progressPct}%` }}
+                />
+                {clipBoundaries.map((pct, i) => (
+                  <span
+                    key={i}
+                    className="absolute inset-y-0 w-px bg-background/70"
+                    style={{ left: `${pct}%` }}
+                    aria-hidden
+                  />
+                ))}
+              </div>
+              <div className="flex justify-between text-[10px] text-foreground/40 mt-1 tabular-nums">
+                <span>{fmtTime(totalProgress)}</span>
+                <span>{fmtTime(totalDuration)}</span>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -221,9 +327,21 @@ export default function NewsBriefingPlayer() {
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onEnded={onEnded}
+        // Reset progress driven by the <audio> element itself, not by a React
+        // effect — the React 19 lint flags setState-in-effect, and the audio's
+        // own loadstart is the right signal anyway (fires when src changes).
+        onLoadStart={() => setCurrentClipTime(0)}
+        onTimeUpdate={() => setCurrentClipTime(audioRef.current?.currentTime ?? 0)}
         preload="none"
         hidden
       />
     </div>
   );
+}
+
+function fmtTime(secs: number): string {
+  if (!Number.isFinite(secs) || secs < 0) return "0:00";
+  const m = Math.floor(secs / 60);
+  const s = Math.floor(secs % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
 }
