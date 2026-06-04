@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-04T14:16:17.798Z",
+  "fetchedAt": "2026-06-04T14:46:20.208Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -74,15 +74,6 @@
       "createdUtc": 1780576094
     },
     {
-      "title": "I've heard of running behind but this is ridiculous",
-      "score": 0,
-      "numComments": 0,
-      "author": "zakk5450",
-      "url": "https://www.reddit.com/r/halifax/comments/1tw25vm/ive_heard_of_running_behind_but_this_is_ridiculous/",
-      "flair": null,
-      "createdUtc": 1780519595
-    },
-    {
       "title": "Last frost is later than usual this year in Nova Scotia, so is it safe to plant your gardens?",
       "score": 0,
       "numComments": 0,
@@ -90,6 +81,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1twncaa/last_frost_is_later_than_usual_this_year_in_nova/",
       "flair": null,
       "createdUtc": 1780578870
+    },
+    {
+      "title": "I've heard of running behind but this is ridiculous",
+      "score": 0,
+      "numComments": 0,
+      "author": "zakk5450",
+      "url": "https://www.reddit.com/r/halifax/comments/1tw25vm/ive_heard_of_running_behind_but_this_is_ridiculous/",
+      "flair": null,
+      "createdUtc": 1780519595
     },
     {
       "title": "Spruce budworm's knocking at Nova Scotia's door; threatening worse wildfires and rekindling spraying debate",
@@ -146,6 +146,15 @@
       "createdUtc": 1780571872
     },
     {
+      "title": "Daycare options?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Current_Star6921",
+      "url": "https://www.reddit.com/r/halifax/comments/1twm10o/daycare_options/",
+      "flair": null,
+      "createdUtc": 1780575661
+    },
+    {
       "title": "Bus message: what does this mean?",
       "score": 0,
       "numComments": 0,
@@ -155,6 +164,15 @@
       "createdUtc": 1780524137
     },
     {
+      "title": "Best place to see northern lights in Halifax?",
+      "score": 0,
+      "numComments": 0,
+      "author": "smellybees",
+      "url": "https://www.reddit.com/r/halifax/comments/1twmynd/best_place_to_see_northern_lights_in_halifax/",
+      "flair": null,
+      "createdUtc": 1780578002
+    },
+    {
       "title": "Where Do They Sell These in HRM?",
       "score": 0,
       "numComments": 0,
@@ -162,15 +180,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tw1vzz/where_do_they_sell_these_in_hrm/",
       "flair": null,
       "createdUtc": 1780518996
-    },
-    {
-      "title": "Daycare options?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Current_Star6921",
-      "url": "https://www.reddit.com/r/halifax/comments/1twm10o/daycare_options/",
-      "flair": null,
-      "createdUtc": 1780575661
     },
     {
       "title": "N.S. long-term care residents, families urge province to raise offer on wages",
@@ -200,15 +209,6 @@
       "createdUtc": 1780534073
     },
     {
-      "title": "Downtown cafe",
-      "score": 0,
-      "numComments": 0,
-      "author": "East-coast-life",
-      "url": "https://www.reddit.com/r/halifax/comments/1twnq6s/downtown_cafe/",
-      "flair": null,
-      "createdUtc": 1780579765
-    },
-    {
       "title": "[‪Claudia Chender‬] Happy 95th birthday to Dartmouth legend Gloria McCluskey! 🎈",
       "score": 0,
       "numComments": 0,
@@ -218,13 +218,13 @@
       "createdUtc": 1780496319
     },
     {
-      "title": "Best place to see northern lights in Halifax?",
+      "title": "Downtown cafe",
       "score": 0,
       "numComments": 0,
-      "author": "smellybees",
-      "url": "https://www.reddit.com/r/halifax/comments/1twmynd/best_place_to_see_northern_lights_in_halifax/",
+      "author": "East-coast-life",
+      "url": "https://www.reddit.com/r/halifax/comments/1twnq6s/downtown_cafe/",
       "flair": null,
-      "createdUtc": 1780578002
+      "createdUtc": 1780579765
     },
     {
       "title": "Transfer data from old computers to hard drives",
