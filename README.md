@@ -51,46 +51,126 @@ launch experience (manifest + offline shell via service worker).
 
 ### Architecture at a glance
 
-Three runtimes, four pieces of state. Everything below answers one question
-each: **what runs where, when, and what gets stored.**
+Everything in one diagram. Read it left-to-right: data sources on the
+left, compute layers in the middle, what the user sees on the right.
+Solid arrows are eager flow (cron tick / RSC request). Dotted arrows are
+direct/lazy/cached connections that don't go through this app's server.
 
+```mermaid
+flowchart LR
+    subgraph U["Upstream sources"]
+      direction TB
+      Gov["Govt APIs<br/>weather · tides · alerts<br/>air quality · burn"]
+      News["News RSS<br/>CBC · Examiner · Global<br/>SaltWire · CTV · Haligonia · Coast"]
+      HRM["HRM feeds<br/>news · HRFE · transit · parking"]
+      RD["Reddit r/halifax"]
+      GTFS["Halifax Transit GTFS<br/>static + realtime"]
+      Cams["Webcams<br/>HHB · novascotiawebcams · Oval"]
+      Money["NSERBT gas<br/>StatCan groceries"]
+      AI["AI services<br/>Groq · Edge TTS · Jina"]
+      Cal["Google Calendar embed<br/>(HRM aggregated)"]
+      ES["External events scraper<br/>(separate repo)"]
+    end
+
+    subgraph CI["GitHub Actions cron"]
+      direction TB
+      WR["fetch-reddit<br/>every 30 min"]
+      WB["generate-briefing<br/>every 30 min"]
+      WG["fetch-gas<br/>weekly Sat"]
+      WT["fetch-gtfs<br/>weekly Mon"]
+    end
+
+    subgraph FS["Static JSON in repo"]
+      direction TB
+      SR["public/reddit.json"]
+      SG["public/gas-prices.json"]
+      ST["public/transit/*.json"]
+    end
+
+    subgraph V["Vercel functions"]
+      direction TB
+      RSC["app/page.tsx (RSC)<br/>18 fetchers in parallel<br/>under safe()"]
+      AB["/api/news-briefing"]
+      AG["/api/news-briefing/generate"]
+      AT["/api/transit/*"]
+    end
+
+    subgraph DB["Supabase Postgres"]
+      direction TB
+      SUM["article_summary"]
+      EV["events"]
+    end
+
+    subgraph BR["User's browser"]
+      direction TB
+      VG["ViewportGate (1280px)"]
+      MOB["Mobile: 4 swipe tabs"]
+      DES["Desktop: sidebar + board"]
+      PLAY["Audio briefing player"]
+      TR["/transit map (beta)"]
+    end
+
+    RD --> WR --> SR
+    Money --> WG --> SG
+    GTFS --> WT --> ST
+
+    News --> WB
+    WB -->|curl POST| AG
+    AI --> AG
+    AG --> SUM
+    ES --> EV
+
+    Gov --> RSC
+    News --> RSC
+    HRM --> RSC
+    Money --> RSC
+    SR --> RSC
+    SG --> RSC
+    ST --> RSC
+    EV -. unstable_cache 1h .-> RSC
+
+    RSC --> VG
+    VG --> MOB
+    VG --> DES
+    MOB --> PLAY
+    DES --> PLAY
+    PLAY -. fetch .-> AB
+    AB --> SUM
+    MOB --> TR
+    DES --> TR
+    TR -. poll 10s .-> AT
+    GTFS -->|realtime proto| AT
+
+    Cams -. direct CDN .-> MOB
+    Cams -. direct CDN .-> DES
+    Cal -. iframe .-> MOB
+    Cal -. iframe .-> DES
+
+    classDef src fill:#f5f5f5,stroke:#888,color:#000
+    classDef ci fill:#fff3e0,stroke:#f57c00,color:#000
+    classDef fs fill:#fafafa,stroke:#999,color:#000
+    classDef fn fill:#e3f2fd,stroke:#1976d2,color:#000
+    classDef db fill:#f3e5f5,stroke:#7b1fa2,color:#000
+    classDef ui fill:#e8f5e9,stroke:#388e3c,color:#000
+
+    class Gov,News,HRM,RD,GTFS,Cams,Money,AI,Cal,ES src
+    class WR,WB,WG,WT ci
+    class SR,SG,ST fs
+    class RSC,AB,AG,AT fn
+    class SUM,EV db
+    class VG,MOB,DES,PLAY,TR ui
 ```
-┌────────────────────────────────────────────────────────────────────────────┐
-│ ① User's browser                                                          │
-│                                                                            │
-│   Mobile (<1280px): ScrollSnapContainer with 4 swipeable tabs              │
-│   Desktop (≥1280px): DesktopShell sidebar + content board (lazy-loaded)    │
-│   Webcams poll PNGs every 10s or play HLS .m3u8 streams                    │
-│   "Listen to briefing" plays base64 MP3 data URLs from /api/news-briefing  │
-│   /transit (beta) polls /api/transit/{vehicles,arrivals} every ~10s        │
-└──────────────────────────────────┬─────────────────────────────────────────┘
-                                   │ initial RSC HTML + on-demand JSON
-                                   ▼
-┌────────────────────────────────────────────────────────────────────────────┐
-│ ② Vercel (serverless functions)                                           │
-│                                                                            │
-│   app/page.tsx — single RSC, fans out 18 fetchers in parallel under       │
-│                  Promise.all([safe(…)]); one HTML response                 │
-│   app/api/news-briefing       GET  read summaries + base64 audio          │
-│   app/api/news-briefing/gen   POST cron-only: writes new rows             │
-│   app/api/transit/vehicles    GET  GTFS-RT vehicle positions              │
-│   app/api/transit/arrivals    GET  GTFS-RT predicted arrivals             │
-│   app/api/img                 GET  same-origin image proxy (CBC ORB fix)  │
-└────────┬────────────────────────────────────────┬──────────────────────────┘
-         │ INSERT / SELECT                        ▲ POST /generate
-         ▼                                        │
-┌──────────────────────┐                ┌─────────┴──────────────────────────┐
-│ ③ Supabase Postgres  │                │ ④ GitHub Actions runners          │
-│                      │                │   (5 workflows)                    │
-│  • article_summary   │                │                                    │
-│    (briefing cron    │                │   Either run scripts/*.mjs locally │
-│     writes here)     │                │   and commit JSON back to repo,    │
-│  • events            │                │   OR curl a Vercel endpoint that   │
-│    (external scraper │                │   writes to Supabase.              │
-│     writes here,     │                │                                    │
-│     not in this repo)│                │                                    │
-└──────────────────────┘                └────────────────────────────────────┘
-```
+
+Three pieces of detail the diagram glosses over (each gets its own
+subsection below):
+- The **briefing cron** does more than the arrow suggests — it fetches
+  each article's body, summarizes with Groq, synthesizes audio with Edge
+  TTS, and writes everything to one row. Failures degrade gracefully.
+- The **`events` table** is read on every dashboard load, but is wrapped
+  in `unstable_cache` 1h — so dashboard loads almost never hit Postgres.
+- The **/api/img** route (not pictured) is a same-origin image proxy
+  that re-emits CBC's CDN bytes under this app's origin, to work around
+  Chrome's Opaque Response Blocking on `i.cbc.ca`.
 
 #### All cron jobs
 
