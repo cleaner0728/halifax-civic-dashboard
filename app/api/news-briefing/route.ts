@@ -9,10 +9,47 @@
 
 import type { NextRequest } from 'next/server';
 import { sql } from '@/lib/db';
+import { synthesizeSpeech } from '@/lib/ai/tts';
 
 const CACHE_HEADERS = {
   'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
 };
+
+const INTRO_URL = 'briefing-intro://welcome';
+
+function fmtUpdated(d: Date): string {
+  // Intl emits "p.m." with a trailing period on en-CA; strip it so the spoken
+  // intro doesn't end in a double dot.
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Halifax',
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  })
+    .format(d)
+    .replace(/\.$/, '');
+}
+
+function introText(latest: Date): string {
+  return `Welcome to your Halifax briefing. These stories were last updated on ${fmtUpdated(latest)}.`;
+}
+
+// Per-instance TTS cache. The spoken intro only changes when a new article
+// arrives (latest pub_date moves), so a warm Lambda re-uses the same MP3
+// across requests instead of re-synthesizing every time.
+let cachedIntroAudio: { key: string; audioB64: string | null } | null = null;
+
+async function getIntroAudio(latest: Date): Promise<string | null> {
+  const key = latest.toISOString();
+  if (cachedIntroAudio?.key === key) return cachedIntroAudio.audioB64;
+  const mp3 = await synthesizeSpeech(introText(latest));
+  const audioB64 = mp3 ? mp3.toString('base64') : null;
+  cachedIntroAudio = { key, audioB64 };
+  return audioB64;
+}
 
 // The collection is scoped to today's Halifax calendar day (matches fetchNews):
 // it accumulates through the day and resets at local midnight. The SQL below
@@ -44,7 +81,7 @@ export async function GET(req: NextRequest) {
         ORDER BY COALESCE(pub_date, created_at) DESC
       `;
 
-  const items = rows.map((r) => ({
+  const items: Array<Record<string, unknown>> = rows.map((r) => ({
     url: r.url,
     title: r.title,
     source: r.source,
@@ -54,6 +91,31 @@ export async function GET(req: NextRequest) {
       ? {}
       : { audio: r.audio_b64 ? `data:audio/mp3;base64,${r.audio_b64}` : null }),
   }));
+
+  // Spoken intro: synthesized on demand from the newest pub_date so the voice
+  // can say "updated as of …". Prepended as a synthetic playlist item so the
+  // player streams it before the first article with no client-side changes.
+  let latest: Date | null = null;
+  for (const r of rows) {
+    if (!r.pub_date) continue;
+    const t = new Date(r.pub_date);
+    if (isNaN(t.getTime())) continue;
+    if (!latest || t > latest) latest = t;
+  }
+  if (latest) {
+    const summary = introText(latest);
+    const audioB64 = textOnly ? null : await getIntroAudio(latest);
+    items.unshift({
+      url: INTRO_URL,
+      title: 'Welcome to your Halifax briefing',
+      source: null,
+      summary,
+      pubDate: null,
+      ...(textOnly
+        ? {}
+        : { audio: audioB64 ? `data:audio/mp3;base64,${audioB64}` : null }),
+    });
+  }
 
   return Response.json({ items }, { headers: CACHE_HEADERS });
 }
