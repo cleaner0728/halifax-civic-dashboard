@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-04T04:16:14.374Z",
+  "fetchedAt": "2026-06-04T04:46:14.107Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -83,15 +83,6 @@
       "createdUtc": 1780518996
     },
     {
-      "title": "Opposition MLAs urge province to help keep Annapolis Valley libraries open",
-      "score": 0,
-      "numComments": 0,
-      "author": "IStillListenToRadio",
-      "url": "https://www.reddit.com/r/halifax/comments/1tvlb7r/opposition_mlas_urge_province_to_help_keep/",
-      "flair": null,
-      "createdUtc": 1780482632
-    },
-    {
       "title": "N.S. long-term care residents, families urge province to raise offer on wages",
       "score": 0,
       "numComments": 0,
@@ -99,6 +90,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tvoplj/ns_longterm_care_residents_families_urge_province/",
       "flair": null,
       "createdUtc": 1780491771
+    },
+    {
+      "title": "Opposition MLAs urge province to help keep Annapolis Valley libraries open",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1tvlb7r/opposition_mlas_urge_province_to_help_keep/",
+      "flair": null,
+      "createdUtc": 1780482632
     },
     {
       "title": "[‪Claudia Chender‬] Happy 95th birthday to Dartmouth legend Gloria McCluskey! 🎈",
@@ -162,15 +162,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tw20rl/looking_for_soundproofing_door_covers_wall_panels/",
       "flair": null,
       "createdUtc": 1780519278
-    },
-    {
-      "title": "VG Hospital Deplorable Conditions",
-      "score": 0,
-      "numComments": 0,
-      "author": "ScotianSweet86",
-      "url": "https://www.reddit.com/r/halifax/comments/1twcmag/vg_hospital_deplorable_conditions/",
-      "flair": null,
-      "createdUtc": 1780545891
     },
     {
       "title": "New mobile clinic in Halifax",
@@ -270,6 +261,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tvp69u/where_to_buy_local_bait_stations_that_you_can_put/",
       "flair": null,
       "createdUtc": 1780492830
+    },
+    {
+      "title": "Mammatus Maximus",
+      "score": 0,
+      "numComments": 0,
+      "author": "Seebeeeseh",
+      "url": "https://www.reddit.com/r/halifax/comments/1tv5j3b/mammatus_maximus/",
+      "flair": null,
+      "createdUtc": 1780437384
     }
   ]
 }
