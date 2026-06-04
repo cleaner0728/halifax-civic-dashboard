@@ -110,11 +110,19 @@ export default function SettingsMenu({
       if (!ref.current?.contains(e.target as Node)) setOpen(false);
     };
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    // Any scroll or touch-drag anywhere on the page closes the menu — even if
+    // the gesture starts inside the menu itself. Scroll uses capture so it
+    // catches inner scrollable containers (scroll events don't bubble).
+    const onDismiss = () => setOpen(false);
     document.addEventListener("mousedown", onClick);
     document.addEventListener("keydown", onKey);
+    document.addEventListener("scroll", onDismiss, { passive: true, capture: true });
+    document.addEventListener("touchmove", onDismiss, { passive: true });
     return () => {
       document.removeEventListener("mousedown", onClick);
       document.removeEventListener("keydown", onKey);
+      document.removeEventListener("scroll", onDismiss, { capture: true });
+      document.removeEventListener("touchmove", onDismiss);
     };
   }, [open]);
 
