@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-04T12:46:16.361Z",
+  "fetchedAt": "2026-06-04T13:16:18.490Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -29,6 +29,15 @@
       "createdUtc": 1780565110
     },
     {
+      "title": "‘I’m scared to go to bed at night’: Halifax residents raise concerns about rampant pest problems",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1twlsrq/im_scared_to_go_to_bed_at_night_halifax_residents/",
+      "flair": null,
+      "createdUtc": 1780575059
+    },
+    {
       "title": "Eastern Passage and Polly’s Cove",
       "score": 0,
       "numComments": 0,
@@ -47,13 +56,13 @@
       "createdUtc": 1780519595
     },
     {
-      "title": "‘I’m scared to go to bed at night’: Halifax residents raise concerns about rampant pest problems",
+      "title": "Recruitment of doctors reaches new high in Nova Scotia",
       "score": 0,
       "numComments": 0,
-      "author": "insino93",
-      "url": "https://www.reddit.com/r/halifax/comments/1twlsrq/im_scared_to_go_to_bed_at_night_halifax_residents/",
+      "author": "NotABoyGenius45",
+      "url": "https://www.reddit.com/r/halifax/comments/1twmoq4/recruitment_of_doctors_reaches_new_high_in_nova/",
       "flair": null,
-      "createdUtc": 1780575059
+      "createdUtc": 1780577332
     },
     {
       "title": "Spruce budworm's knocking at Nova Scotia's door; threatening worse wildfires and rekindling spraying debate",
@@ -83,13 +92,13 @@
       "createdUtc": 1780509407
     },
     {
-      "title": "N.S. removes short story containing N-word from online high school course",
+      "title": "Apparently a local punk band donned ski masks and marched with the Second Sons in Bedford?",
       "score": 0,
       "numComments": 0,
-      "author": "Street_Anon",
-      "url": "https://www.reddit.com/r/halifax/comments/1twkmxx/ns_removes_short_story_containing_nword_from/",
+      "author": "TheOtherSackville",
+      "url": "https://www.reddit.com/r/halifax/comments/1twm766/apparently_a_local_punk_band_donned_ski_masks_and/",
       "flair": null,
-      "createdUtc": 1780571872
+      "createdUtc": 1780576094
     },
     {
       "title": "Feeding the Geese at Sullivan's Pond",
@@ -101,13 +110,13 @@
       "createdUtc": 1780511799
     },
     {
-      "title": "Apparently a local punk band donned ski masks and marched with the Second Sons in Bedford?",
+      "title": "N.S. removes short story containing N-word from online high school course",
       "score": 0,
       "numComments": 0,
-      "author": "TheOtherSackville",
-      "url": "https://www.reddit.com/r/halifax/comments/1twm766/apparently_a_local_punk_band_donned_ski_masks_and/",
+      "author": "Street_Anon",
+      "url": "https://www.reddit.com/r/halifax/comments/1twkmxx/ns_removes_short_story_containing_nword_from/",
       "flair": null,
-      "createdUtc": 1780576094
+      "createdUtc": 1780571872
     },
     {
       "title": "Bus message: what does this mean?",
@@ -117,6 +126,33 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tw4760/bus_message_what_does_this_mean/",
       "flair": null,
       "createdUtc": 1780524137
+    },
+    {
+      "title": "Last frost is later than usual this year in Nova Scotia, so is it safe to plant your gardens?",
+      "score": 0,
+      "numComments": 0,
+      "author": "NotABoyGenius45",
+      "url": "https://www.reddit.com/r/halifax/comments/1twncaa/last_frost_is_later_than_usual_this_year_in_nova/",
+      "flair": null,
+      "createdUtc": 1780578870
+    },
+    {
+      "title": "Best place to see northern lights in Halifax?",
+      "score": 0,
+      "numComments": 0,
+      "author": "smellybees",
+      "url": "https://www.reddit.com/r/halifax/comments/1twmynd/best_place_to_see_northern_lights_in_halifax/",
+      "flair": null,
+      "createdUtc": 1780578002
+    },
+    {
+      "title": "Looking for weekend coworking space/office to rent for the day",
+      "score": 0,
+      "numComments": 0,
+      "author": "brxvehood",
+      "url": "https://www.reddit.com/r/halifax/comments/1twmvb1/looking_for_weekend_coworking_spaceoffice_to_rent/",
+      "flair": null,
+      "createdUtc": 1780577779
     },
     {
       "title": "Where Do They Sell These in HRM?",
@@ -137,15 +173,6 @@
       "createdUtc": 1780491771
     },
     {
-      "title": "Horrible smell around Purdy’s",
-      "score": 0,
-      "numComments": 0,
-      "author": "mrschoweezie",
-      "url": "https://www.reddit.com/r/halifax/comments/1tw89q7/horrible_smell_around_purdys/",
-      "flair": null,
-      "createdUtc": 1780534073
-    },
-    {
       "title": "Opposition MLAs urge province to help keep Annapolis Valley libraries open",
       "score": 0,
       "numComments": 0,
@@ -153,6 +180,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tvlb7r/opposition_mlas_urge_province_to_help_keep/",
       "flair": null,
       "createdUtc": 1780482632
+    },
+    {
+      "title": "Horrible smell around Purdy’s",
+      "score": 0,
+      "numComments": 0,
+      "author": "mrschoweezie",
+      "url": "https://www.reddit.com/r/halifax/comments/1tw89q7/horrible_smell_around_purdys/",
+      "flair": null,
+      "createdUtc": 1780534073
     },
     {
       "title": "[‪Claudia Chender‬] Happy 95th birthday to Dartmouth legend Gloria McCluskey! 🎈",
@@ -234,42 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tv7scp/nova_scotia_rent_cap_expires_2027_province_yet_to/",
       "flair": null,
       "createdUtc": 1780442672
-    },
-    {
-      "title": "Today I saw…",
-      "score": 0,
-      "numComments": 0,
-      "author": "millogorillo",
-      "url": "https://www.reddit.com/r/halifax/comments/1tuulwc/today_i_saw/",
-      "flair": null,
-      "createdUtc": 1780414604
-    },
-    {
-      "title": "MLA Statement regarding white nationalist demonstration in Bedford South",
-      "score": 0,
-      "numComments": 0,
-      "author": "Evening_Boss_3415",
-      "url": "https://www.reddit.com/r/halifax/comments/1tv6j27/mla_statement_regarding_white_nationalist/",
-      "flair": null,
-      "createdUtc": 1780439639
-    },
-    {
-      "title": "Looking for an Honest Handyman in Eastern Passage",
-      "score": 0,
-      "numComments": 0,
-      "author": "Low-Yak2608",
-      "url": "https://www.reddit.com/r/halifax/comments/1tvurd1/looking_for_an_honest_handyman_in_eastern_passage/",
-      "flair": null,
-      "createdUtc": 1780504467
-    },
-    {
-      "title": "IWK leans on Nova Scotia Health for radiology help amid shortage",
-      "score": 0,
-      "numComments": 0,
-      "author": "Street_Anon",
-      "url": "https://www.reddit.com/r/halifax/comments/1tvl0h3/iwk_leans_on_nova_scotia_health_for_radiology/",
-      "flair": null,
-      "createdUtc": 1780481712
     }
   ]
 }
