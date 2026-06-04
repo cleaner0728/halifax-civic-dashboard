@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-04T22:16:14.562Z",
+  "fetchedAt": "2026-06-04T22:46:13.528Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - June 2026",
@@ -38,15 +38,6 @@
       "createdUtc": 1780607812
     },
     {
-      "title": "Weekly Gas Post ⛽⛽",
-      "score": 0,
-      "numComments": 0,
-      "author": "Buckit",
-      "url": "https://www.reddit.com/r/halifax/comments/1twvfxs/weekly_gas_post/",
-      "flair": null,
-      "createdUtc": 1780596158
-    },
-    {
       "title": "Possible Crane Collapse on Dutch Village Road",
       "score": 0,
       "numComments": 0,
@@ -54,6 +45,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1twzc9p/possible_crane_collapse_on_dutch_village_road/",
       "flair": null,
       "createdUtc": 1780604468
+    },
+    {
+      "title": "Weekly Gas Post ⛽⛽",
+      "score": 0,
+      "numComments": 0,
+      "author": "Buckit",
+      "url": "https://www.reddit.com/r/halifax/comments/1twvfxs/weekly_gas_post/",
+      "flair": null,
+      "createdUtc": 1780596158
     },
     {
       "title": "Is the Halifax job market really this bad? Or am I doing something wrong?",
@@ -83,13 +83,13 @@
       "createdUtc": 1780587672
     },
     {
-      "title": "Only moderately unsafe",
+      "title": "Nova Scotia receives failing grade in national poverty report",
       "score": 0,
       "numComments": 0,
-      "author": "Angloriously",
-      "url": "https://www.reddit.com/r/halifax/comments/1twza8x/only_moderately_unsafe/",
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1tx0ei7/nova_scotia_receives_failing_grade_in_national/",
       "flair": null,
-      "createdUtc": 1780604346
+      "createdUtc": 1780606834
     },
     {
       "title": "‘I’m scared to go to bed at night’: Halifax residents raise concerns about rampant pest problems",
@@ -101,22 +101,13 @@
       "createdUtc": 1780575059
     },
     {
-      "title": "Nova Scotia receives failing grade in national poverty report",
+      "title": "Only moderately unsafe",
       "score": 0,
       "numComments": 0,
-      "author": "IStillListenToRadio",
-      "url": "https://www.reddit.com/r/halifax/comments/1tx0ei7/nova_scotia_receives_failing_grade_in_national/",
+      "author": "Angloriously",
+      "url": "https://www.reddit.com/r/halifax/comments/1twza8x/only_moderately_unsafe/",
       "flair": null,
-      "createdUtc": 1780606834
-    },
-    {
-      "title": "Her husband is accused in an AI deepfake investigation. She’s filing for divorce",
-      "score": 0,
-      "numComments": 0,
-      "author": "Bean_Tiger",
-      "url": "https://www.reddit.com/r/halifax/comments/1twihby/her_husband_is_accused_in_an_ai_deepfake/",
-      "flair": null,
-      "createdUtc": 1780565110
+      "createdUtc": 1780604346
     },
     {
       "title": "Woman’s homicide in Dartmouth, N.S., still under investigation 35 years later",
@@ -126,6 +117,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1twspll/womans_homicide_in_dartmouth_ns_still_under/",
       "flair": null,
       "createdUtc": 1780590472
+    },
+    {
+      "title": "Her husband is accused in an AI deepfake investigation. She’s filing for divorce",
+      "score": 0,
+      "numComments": 0,
+      "author": "Bean_Tiger",
+      "url": "https://www.reddit.com/r/halifax/comments/1twihby/her_husband_is_accused_in_an_ai_deepfake/",
+      "flair": null,
+      "createdUtc": 1780565110
     },
     {
       "title": "Recruitment of doctors reaches new high in Nova Scotia",
@@ -146,15 +146,6 @@
       "createdUtc": 1780589664
     },
     {
-      "title": "Jupiter and Venus from Halifax!",
-      "score": 0,
-      "numComments": 0,
-      "author": "0range2782",
-      "url": "https://www.reddit.com/r/halifax/comments/1twaq33/jupiter_and_venus_from_halifax/",
-      "flair": null,
-      "createdUtc": 1780540639
-    },
-    {
       "title": "Sam's Fish & Chips closed in Tacoma, Dartmouth",
       "score": 0,
       "numComments": 0,
@@ -164,13 +155,13 @@
       "createdUtc": 1780608068
     },
     {
-      "title": "Apparently a local punk band donned ski masks and marched with the Second Sons in Bedford?",
+      "title": "Jupiter and Venus from Halifax!",
       "score": 0,
       "numComments": 0,
-      "author": "TheOtherSackville",
-      "url": "https://www.reddit.com/r/halifax/comments/1twm766/apparently_a_local_punk_band_donned_ski_masks_and/",
+      "author": "0range2782",
+      "url": "https://www.reddit.com/r/halifax/comments/1twaq33/jupiter_and_venus_from_halifax/",
       "flair": null,
-      "createdUtc": 1780576094
+      "createdUtc": 1780540639
     },
     {
       "title": "Active School Travel Program Baseline Study",
@@ -180,6 +171,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1twy5x0/active_school_travel_program_baseline_study/",
       "flair": null,
       "createdUtc": 1780601872
+    },
+    {
+      "title": "Apparently a local punk band donned ski masks and marched with the Second Sons in Bedford?",
+      "score": 0,
+      "numComments": 0,
+      "author": "TheOtherSackville",
+      "url": "https://www.reddit.com/r/halifax/comments/1twm766/apparently_a_local_punk_band_donned_ski_masks_and/",
+      "flair": null,
+      "createdUtc": 1780576094
     },
     {
       "title": "Garlic finger preference ?",
@@ -198,6 +198,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1twxg7r/pink_lids/",
       "flair": null,
       "createdUtc": 1780600345
+    },
+    {
+      "title": "Coke flavour lip balm",
+      "score": 0,
+      "numComments": 0,
+      "author": "Ok_Application7756",
+      "url": "https://www.reddit.com/r/halifax/comments/1twxdbw/coke_flavour_lip_balm/",
+      "flair": null,
+      "createdUtc": 1780600173
     },
     {
       "title": "Pilates Studio in Peninsula",
@@ -236,24 +245,6 @@
       "createdUtc": 1780578870
     },
     {
-      "title": "Saltwater taffies",
-      "score": 0,
-      "numComments": 0,
-      "author": "SilverSniper13",
-      "url": "https://www.reddit.com/r/halifax/comments/1twvmrp/saltwater_taffies/",
-      "flair": null,
-      "createdUtc": 1780596554
-    },
-    {
-      "title": "Coke flavour lip balm",
-      "score": 0,
-      "numComments": 0,
-      "author": "Ok_Application7756",
-      "url": "https://www.reddit.com/r/halifax/comments/1twxdbw/coke_flavour_lip_balm/",
-      "flair": null,
-      "createdUtc": 1780600173
-    },
-    {
       "title": "Halifax Common Skate Park will be closed next week for area renewal",
       "score": 0,
       "numComments": 0,
@@ -261,6 +252,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1twyzb5/halifax_common_skate_park_will_be_closed_next/",
       "flair": null,
       "createdUtc": 1780603655
+    },
+    {
+      "title": "Saltwater taffies",
+      "score": 0,
+      "numComments": 0,
+      "author": "SilverSniper13",
+      "url": "https://www.reddit.com/r/halifax/comments/1twvmrp/saltwater_taffies/",
+      "flair": null,
+      "createdUtc": 1780596554
     },
     {
       "title": "Process server",
