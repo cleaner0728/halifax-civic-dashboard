@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-04T15:16:16.821Z",
+  "fetchedAt": "2026-06-04T15:46:20.031Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — June, 2026",
@@ -164,6 +164,15 @@
       "createdUtc": 1780524137
     },
     {
+      "title": "Best place to see northern lights in Halifax?",
+      "score": 0,
+      "numComments": 0,
+      "author": "smellybees",
+      "url": "https://www.reddit.com/r/halifax/comments/1twmynd/best_place_to_see_northern_lights_in_halifax/",
+      "flair": null,
+      "createdUtc": 1780578002
+    },
+    {
       "title": "Where Do They Sell These in HRM?",
       "score": 0,
       "numComments": 0,
@@ -171,6 +180,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tw1vzz/where_do_they_sell_these_in_hrm/",
       "flair": null,
       "createdUtc": 1780518996
+    },
+    {
+      "title": "Out in the Cold, Part 1: Surveillance, smearing and shutdown of a harm-reduction shelter",
+      "score": 0,
+      "numComments": 0,
+      "author": "elsthomson",
+      "url": "https://www.reddit.com/r/halifax/comments/1twrczh/out_in_the_cold_part_1_surveillance_smearing_and/",
+      "flair": null,
+      "createdUtc": 1780587672
     },
     {
       "title": "Disputing BS Power",
@@ -227,15 +245,6 @@
       "createdUtc": 1780579765
     },
     {
-      "title": "Best place to see northern lights in Halifax?",
-      "score": 0,
-      "numComments": 0,
-      "author": "smellybees",
-      "url": "https://www.reddit.com/r/halifax/comments/1twmynd/best_place_to_see_northern_lights_in_halifax/",
-      "flair": null,
-      "createdUtc": 1780578002
-    },
-    {
       "title": "Transfer data from old computers to hard drives",
       "score": 0,
       "numComments": 0,
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tvn2id/hammonds_plains_residents_call_for_halt_to_new/",
       "flair": null,
       "createdUtc": 1780487697
-    },
-    {
-      "title": "Avoid Hollis",
-      "score": 0,
-      "numComments": 0,
-      "author": "9Roll0Tide2Roll",
-      "url": "https://www.reddit.com/r/halifax/comments/1tvujr6/avoid_hollis/",
-      "flair": null,
-      "createdUtc": 1780504033
     }
   ]
 }
