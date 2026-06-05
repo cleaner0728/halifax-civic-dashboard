@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-04T23:46:14.263Z",
+  "fetchedAt": "2026-06-05T00:16:15.260Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - June 2026",
@@ -83,6 +83,15 @@
       "createdUtc": 1780602998
     },
     {
+      "title": "Whatever happened to \"Quiet in the Library\" ?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Wahrk_Gallows",
+      "url": "https://www.reddit.com/r/halifax/comments/1tx3ia4/whatever_happened_to_quiet_in_the_library/",
+      "flair": null,
+      "createdUtc": 1780614127
+    },
+    {
       "title": "Out in the Cold, Part 1: Surveillance, smearing and shutdown of a harm-reduction shelter",
       "score": 0,
       "numComments": 0,
@@ -92,13 +101,13 @@
       "createdUtc": 1780587672
     },
     {
-      "title": "Whatever happened to \"Quiet in the Library\" ?",
+      "title": "Crane evacuation area/road closures to remain in effect until at least tomorrow",
       "score": 0,
       "numComments": 0,
-      "author": "Wahrk_Gallows",
-      "url": "https://www.reddit.com/r/halifax/comments/1tx3ia4/whatever_happened_to_quiet_in_the_library/",
+      "author": "No_Magazine9625",
+      "url": "https://www.reddit.com/r/halifax/comments/1tx4j4h/crane_evacuation_arearoad_closures_to_remain_in/",
       "flair": null,
-      "createdUtc": 1780614127
+      "createdUtc": 1780616794
     },
     {
       "title": "‘I’m scared to go to bed at night’: Halifax residents raise concerns about rampant pest problems",
@@ -128,6 +137,15 @@
       "createdUtc": 1780590472
     },
     {
+      "title": "Sam's Fish & Chips closed in Tacoma, Dartmouth",
+      "score": 0,
+      "numComments": 0,
+      "author": "PatriceBoivin",
+      "url": "https://www.reddit.com/r/halifax/comments/1tx0ypg/sams_fish_chips_closed_in_tacoma_dartmouth/",
+      "flair": null,
+      "createdUtc": 1780608068
+    },
+    {
       "title": "Her husband is accused in an AI deepfake investigation. She’s filing for divorce",
       "score": 0,
       "numComments": 0,
@@ -153,15 +171,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1twsbis/dashcam_footage_shows_man_tailing_erratic_lower/",
       "flair": null,
       "createdUtc": 1780589664
-    },
-    {
-      "title": "Sam's Fish & Chips closed in Tacoma, Dartmouth",
-      "score": 0,
-      "numComments": 0,
-      "author": "PatriceBoivin",
-      "url": "https://www.reddit.com/r/halifax/comments/1tx0ypg/sams_fish_chips_closed_in_tacoma_dartmouth/",
-      "flair": null,
-      "createdUtc": 1780608068
     },
     {
       "title": "Jupiter and Venus from Halifax!",
@@ -209,6 +218,15 @@
       "createdUtc": 1780600173
     },
     {
+      "title": "Can you park overnight at the Giant Tiger on Dutch Village Road?",
+      "score": 0,
+      "numComments": 0,
+      "author": "mjbsmith",
+      "url": "https://www.reddit.com/r/halifax/comments/1tx498q/can_you_park_overnight_at_the_giant_tiger_on/",
+      "flair": null,
+      "createdUtc": 1780616064
+    },
+    {
       "title": "Pink lids",
       "score": 0,
       "numComments": 0,
@@ -252,24 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1twncaa/last_frost_is_later_than_usual_this_year_in_nova/",
       "flair": null,
       "createdUtc": 1780578870
-    },
-    {
-      "title": "Saltwater taffies",
-      "score": 0,
-      "numComments": 0,
-      "author": "SilverSniper13",
-      "url": "https://www.reddit.com/r/halifax/comments/1twvmrp/saltwater_taffies/",
-      "flair": null,
-      "createdUtc": 1780596554
-    },
-    {
-      "title": "Halifax Common Skate Park will be closed next week for area renewal",
-      "score": 0,
-      "numComments": 0,
-      "author": "KitTrailer",
-      "url": "https://www.reddit.com/r/halifax/comments/1twyzb5/halifax_common_skate_park_will_be_closed_next/",
-      "flair": null,
-      "createdUtc": 1780603655
     }
   ]
 }
