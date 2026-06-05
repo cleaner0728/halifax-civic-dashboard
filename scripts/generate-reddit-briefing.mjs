@@ -123,18 +123,31 @@ ${lines}`;
   return text;
 }
 
-async function synthesizeSpeech(text) {
-  const tts = new MsEdgeTTS();
-  try {
-    await tts.setMetadata(TTS_VOICE, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
-    const { audioStream } = tts.toStream(text);
-    const chunks = [];
-    for await (const chunk of audioStream) chunks.push(chunk);
-    if (chunks.length === 0) throw new Error('Edge TTS returned no audio');
-    return Buffer.concat(chunks);
-  } finally {
-    tts.close();
+// The Edge Read-Aloud endpoint is free and unofficial, so it intermittently
+// throttles or drops the websocket — especially from datacenter IPs like the
+// Actions runner — closing the stream cleanly with zero audio chunks. A single
+// drop shouldn't fail the whole job, so retry a few times with backoff, using a
+// fresh instance each attempt (a closed socket can't be reused).
+async function synthesizeSpeech(text, attempts = 3) {
+  let lastErr;
+  for (let i = 1; i <= attempts; i++) {
+    const tts = new MsEdgeTTS();
+    try {
+      await tts.setMetadata(TTS_VOICE, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
+      const { audioStream } = tts.toStream(text);
+      const chunks = [];
+      for await (const chunk of audioStream) chunks.push(chunk);
+      if (chunks.length === 0) throw new Error('Edge TTS returned no audio');
+      return Buffer.concat(chunks);
+    } catch (err) {
+      lastErr = err;
+      console.warn(`[reddit-roundup] TTS attempt ${i}/${attempts} failed: ${err.message}`);
+      if (i < attempts) await new Promise((r) => setTimeout(r, 2000 * i));
+    } finally {
+      tts.close();
+    }
   }
+  throw lastErr;
 }
 
 async function main() {
