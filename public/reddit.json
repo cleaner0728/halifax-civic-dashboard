@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-05T18:19:19.692Z",
+  "fetchedAt": "2026-06-05T18:46:14.201Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - June 2026",
@@ -29,15 +29,6 @@
       "createdUtc": 1780666588
     },
     {
-      "title": "Emergency Alert",
-      "score": 0,
-      "numComments": 0,
-      "author": "sjmorris",
-      "url": "https://www.reddit.com/r/halifax/comments/1txjdlc/emergency_alert/",
-      "flair": null,
-      "createdUtc": 1780662078
-    },
-    {
       "title": "Doctor using AI to diagnose",
       "score": 0,
       "numComments": 0,
@@ -65,6 +56,15 @@
       "createdUtc": 1780670871
     },
     {
+      "title": "Strip mall in Bedford still has this relic from the 90's posted",
+      "score": 0,
+      "numComments": 0,
+      "author": "Mantaur4HOF",
+      "url": "https://www.reddit.com/r/halifax/comments/1txsmin/strip_mall_in_bedford_still_has_this_relic_from/",
+      "flair": null,
+      "createdUtc": 1780682786
+    },
+    {
       "title": "Nearly 40 per cent of Nova Scotia's restaurants operating at a loss or breaking even",
       "score": 0,
       "numComments": 0,
@@ -90,15 +90,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1txjalc/halifax_police_officers_will_have_body_cameras/",
       "flair": null,
       "createdUtc": 1780661859
-    },
-    {
-      "title": "Strip mall in Bedford still has this relic from the 90's posted",
-      "score": 0,
-      "numComments": 0,
-      "author": "Mantaur4HOF",
-      "url": "https://www.reddit.com/r/halifax/comments/1txsmin/strip_mall_in_bedford_still_has_this_relic_from/",
-      "flair": null,
-      "createdUtc": 1780682786
     },
     {
       "title": "Curbside Give Away Weekend",
@@ -155,6 +146,15 @@
       "createdUtc": 1780651743
     },
     {
+      "title": "XP Game Connect Atlantic has come to Halifax",
+      "score": 0,
+      "numComments": 0,
+      "author": "ronrimon",
+      "url": "https://www.reddit.com/r/halifax/comments/1txsdd1/xp_game_connect_atlantic_has_come_to_halifax/",
+      "flair": null,
+      "createdUtc": 1780682244
+    },
+    {
       "title": "Positive Vibes Friday",
       "score": 0,
       "numComments": 0,
@@ -162,6 +162,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1txginf/positive_vibes_friday/",
       "flair": null,
       "createdUtc": 1780653682
+    },
+    {
+      "title": "Developer walks away from fast-tracked Musquodoboit Harbour project",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1txth6f/developer_walks_away_from_fasttracked/",
+      "flair": null,
+      "createdUtc": 1780684646
     },
     {
       "title": "Whatever happened to \"Quiet in the Library\" ?",
@@ -182,24 +191,6 @@
       "createdUtc": 1780659859
     },
     {
-      "title": "Baby yoda helping with HRM trash collection",
-      "score": 0,
-      "numComments": 0,
-      "author": "Significant_Ad1918",
-      "url": "https://www.reddit.com/r/halifax/comments/1two51y/baby_yoda_helping_with_hrm_trash_collection/",
-      "flair": null,
-      "createdUtc": 1780580705
-    },
-    {
-      "title": "Little Free Book Library Locations",
-      "score": 0,
-      "numComments": 0,
-      "author": "Firm-Ability-9501",
-      "url": "https://www.reddit.com/r/halifax/comments/1txikwn/little_free_book_library_locations/",
-      "flair": null,
-      "createdUtc": 1780659936
-    },
-    {
       "title": "What are some good groups/clubs for meeting people in Halifax?",
       "score": 0,
       "numComments": 0,
@@ -209,22 +200,13 @@
       "createdUtc": 1780671263
     },
     {
-      "title": "Let's Talk About It: Emergency Alerts ⚠️",
+      "title": "Baby yoda helping with HRM trash collection",
       "score": 0,
       "numComments": 0,
-      "author": "maximumice",
-      "url": "https://www.reddit.com/r/halifax/comments/1txl6hk/lets_talk_about_it_emergency_alerts/",
+      "author": "Significant_Ad1918",
+      "url": "https://www.reddit.com/r/halifax/comments/1two51y/baby_yoda_helping_with_hrm_trash_collection/",
       "flair": null,
-      "createdUtc": 1780666543
-    },
-    {
-      "title": "Crane evacuation area/road closures to remain in effect until at least tomorrow",
-      "score": 0,
-      "numComments": 0,
-      "author": "No_Magazine9625",
-      "url": "https://www.reddit.com/r/halifax/comments/1tx4j4h/crane_evacuation_arearoad_closures_to_remain_in/",
-      "flair": null,
-      "createdUtc": 1780616794
+      "createdUtc": 1780580705
     },
     {
       "title": "Airport baggage drop",
@@ -236,22 +218,13 @@
       "createdUtc": 1780682134
     },
     {
-      "title": "Possible Crane Collapse on Dutch Village Road",
+      "title": "Little Free Book Library Locations",
       "score": 0,
       "numComments": 0,
-      "author": "Bean_Tiger",
-      "url": "https://www.reddit.com/r/halifax/comments/1twzc9p/possible_crane_collapse_on_dutch_village_road/",
+      "author": "Firm-Ability-9501",
+      "url": "https://www.reddit.com/r/halifax/comments/1txikwn/little_free_book_library_locations/",
       "flair": null,
-      "createdUtc": 1780604468
-    },
-    {
-      "title": "Halifax Rec Summer Swimming?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Lextastic",
-      "url": "https://www.reddit.com/r/halifax/comments/1txibvi/halifax_rec_summer_swimming/",
-      "flair": null,
-      "createdUtc": 1780659209
+      "createdUtc": 1780659936
     },
     {
       "title": "Buyer messed with bill of sale and now can't get the car registered. am I liable?",
@@ -263,13 +236,40 @@
       "createdUtc": 1780678111
     },
     {
-      "title": "Cafes with Outdoor Seating",
+      "title": "Let's Talk About It: Emergency Alerts ⚠️",
       "score": 0,
       "numComments": 0,
-      "author": "fantasticmrfox_thm",
-      "url": "https://www.reddit.com/r/halifax/comments/1txk5y5/cafes_with_outdoor_seating/",
+      "author": "maximumice",
+      "url": "https://www.reddit.com/r/halifax/comments/1txl6hk/lets_talk_about_it_emergency_alerts/",
       "flair": null,
-      "createdUtc": 1780664081
+      "createdUtc": 1780666543
+    },
+    {
+      "title": "FYI there's a new mobile clinic downtown",
+      "score": 0,
+      "numComments": 0,
+      "author": "funktasticdog",
+      "url": "https://www.reddit.com/r/halifax/comments/1txt15v/fyi_theres_a_new_mobile_clinic_downtown/",
+      "flair": null,
+      "createdUtc": 1780683665
+    },
+    {
+      "title": "Halifax makes gains amid economic strains, report shows",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1txp5r8/halifax_makes_gains_amid_economic_strains_report/",
+      "flair": null,
+      "createdUtc": 1780675369
+    },
+    {
+      "title": "Crane evacuation area/road closures to remain in effect until at least tomorrow",
+      "score": 0,
+      "numComments": 0,
+      "author": "No_Magazine9625",
+      "url": "https://www.reddit.com/r/halifax/comments/1tx4j4h/crane_evacuation_arearoad_closures_to_remain_in/",
+      "flair": null,
+      "createdUtc": 1780616794
     }
   ]
 }
