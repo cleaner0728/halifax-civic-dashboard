@@ -4,6 +4,12 @@
 // such cap, so we do everything here and write the row straight to
 // Supabase via the same connection string the Next app uses.
 //
+// The briefing is built as short per-theme segments rather than one long
+// block: Groq clusters the post titles into a handful of topics, each topic
+// gets its own spoken blurb, and every blurb is synthesized separately and
+// the MP3s are stitched together. Short TTS sessions are far more reliable on
+// the free Edge endpoint than one long ~3-minute synthesis, which gets dropped.
+//
 // Required workflow secrets:
 //   GROQ_API_KEY        same key Vercel uses for the news briefing
 //   SUPABASE_DB_URL     transaction-pooler URL (port 6543) — must match
@@ -28,7 +34,6 @@ import { MsEdgeTTS, OUTPUT_FORMAT } from 'msedge-tts';
 const GROQ_MODEL = 'llama-3.3-70b-versatile';
 const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
 const TTS_VOICE = 'en-US-AndrewMultilingualNeural';
-const TARGET_WORDS = 450;
 const RETENTION_HOURS = 24;
 
 const VALID_SLOTS = ['morning', 'evening', 'late_night'];
@@ -72,35 +77,35 @@ function slotGreeting(slot) {
   return 'a late-night recap of how the day played out on the subreddit';
 }
 
-async function summarizeWithGroq(posts, slot) {
+// Spoken opener, played first. Kept as a short fixed line (not LLM-generated) so
+// the briefing always starts the same friendly way regardless of the day's posts.
+function buildIntro(slot) {
+  const when = slot === 'morning' ? 'so far today' : 'today';
+  return `Alright, let's take a look at what everyone on the Halifax subreddit is talking about ${when}.`;
+}
+
+// Ask Groq to cluster the post titles into a handful of topics and write a short
+// spoken blurb for each. Returns [{ label, blurb }]. JSON mode guarantees a
+// parseable shape so we can synthesize each blurb as its own audio segment.
+async function summarizeThemes(posts, slot) {
   const key = process.env.GROQ_API_KEY;
   if (!key) throw new Error('GROQ_API_KEY not set');
 
   const lines = posts
     .slice(0, 30)
-    .map((p, i) => {
-      const flair = p.flair ? `[${p.flair}] ` : '';
-      return `${i + 1}. ${flair}${p.title}  (score ${p.score}, ${p.numComments} comments)`;
-    })
+    .map((p, i) => `${i + 1}. ${p.title}${p.author ? `  — by ${p.author}` : ''}`)
     .join('\n');
 
-  const prompt = `You are a long-time r/halifax lurker giving a friend ${slotGreeting(slot)}. Tell them, in the dry, self-aware tone you'd use scrolling the subreddit out loud, what's going on in Halifax today: what people are griping about, what's getting weird in the comments, what's actually interesting, what patterns keep popping up.
+  const prompt = `You are a long-time r/halifax lurker giving a friend ${slotGreeting(slot)}.
 
-Rules:
-- Capture the voice of the subreddit, not a press release. That means:
-  - dry wit, occasional gentle snark, the affectionate exasperation of someone who's seen the same complaints fifty times
-  - light self-aware humour ("of course there's another bridge thread", "someone has Opinions about Clearwater again")
-  - poke fun at recurring tropes, but never at the people posting — punch at situations, not users
-  - it's okay to land a wry observation; it's not okay to mock anyone's misfortune (lost pets, crime, accidents — handle straight)
-- Conversational and spoken-word — meant to be HEARD, not read. No lists, no markdown, no headings, no emoji, no hashtags, no "u/username" mentions.
-- Group related threads together — if four posts are about the same construction project, mention it once with that context.
-- Mention specific things when they stand out (place names, events, recurring complaints), but don't try to cover every post. Skim the high-signal stuff.
-- Aim for about ${TARGET_WORDS} words — long enough to feel substantive, short enough to fit in roughly three minutes of speech.
-- Don't open with "Here's a summary" or "Welcome" — just dive in naturally, like you're picking up a conversation mid-scroll.
-- Don't invent facts that aren't in the post titles. If something is unclear, say it vaguely ("someone's asking about…") rather than guessing.
-- Plain text only.
+Below are today's r/halifax post titles. Group them into 3 to 6 themes by topic — e.g. local news and incidents, housing and cost of living, traffic and transit, community and events, questions and advice, food and recommendations, and the funny or random stuff. Put related posts together. Skip the recurring AutoModerator megathreads (the monthly "things to do", the weekly gas post, standing resource lists) unless something genuinely notable is in them.
 
-Posts:
+For each theme, write a short spoken-word blurb in the dry, self-aware, affectionately-exasperated tone of someone who's scrolled this subreddit way too long — gentle snark at the recurring tropes, but never punching down at the people posting (handle lost pets, crime, and accidents straight). Start each blurb by naturally naming the theme out loud. It is meant to be HEARD, not read: plain conversational prose, no lists, no markdown, no headings, no emoji, no hashtags, no "u/username" mentions. Don't invent anything that isn't in the titles. Aim for 50 to 90 words per theme.
+
+Return ONLY a JSON object of exactly this shape:
+{ "themes": [ { "label": "<short topic name>", "blurb": "<the spoken summary>" } ] }
+
+Titles:
 ${lines}`;
 
   const res = await fetch(GROQ_ENDPOINT, {
@@ -110,7 +115,8 @@ ${lines}`;
       model: GROQ_MODEL,
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.8,
-      max_tokens: 900,
+      max_tokens: 1500,
+      response_format: { type: 'json_object' },
     }),
   });
   if (!res.ok) {
@@ -118,17 +124,29 @@ ${lines}`;
     throw new Error(`Groq HTTP ${res.status}: ${body.slice(0, 200)}`);
   }
   const data = await res.json();
-  const text = (data?.choices?.[0]?.message?.content ?? '').trim();
-  if (!text) throw new Error('Groq returned empty content');
-  return text;
+  const content = (data?.choices?.[0]?.message?.content ?? '').trim();
+  if (!content) throw new Error('Groq returned empty content');
+
+  let parsed;
+  try {
+    parsed = JSON.parse(content);
+  } catch {
+    throw new Error('Groq did not return valid JSON');
+  }
+  const themes = Array.isArray(parsed?.themes)
+    ? parsed.themes
+        .map((t) => ({ label: String(t?.label ?? '').trim(), blurb: String(t?.blurb ?? '').trim() }))
+        .filter((t) => t.blurb)
+    : [];
+  if (themes.length === 0) throw new Error('Groq returned no usable themes');
+  return themes;
 }
 
-// The Edge Read-Aloud endpoint is free and unofficial, so it intermittently
-// throttles or drops the websocket — especially from datacenter IPs like the
-// Actions runner — closing the stream cleanly with zero audio chunks. A single
-// drop shouldn't fail the whole job, so retry a few times with backoff, using a
-// fresh instance each attempt (a closed socket can't be reused).
-async function synthesizeSpeech(text, attempts = 3) {
+// Synthesize a single piece of text, retrying the free Edge endpoint a few times.
+// It intermittently throttles datacenter IPs and closes the stream with zero audio
+// chunks; a fresh instance per attempt (a closed socket can't be reused) plus backoff
+// rides out the transient drops.
+async function synthesizeSegment(text, attempts = 3) {
   let lastErr;
   for (let i = 1; i <= attempts; i++) {
     const tts = new MsEdgeTTS();
@@ -148,6 +166,29 @@ async function synthesizeSpeech(text, attempts = 3) {
     }
   }
   throw lastErr;
+}
+
+// Synthesize each segment separately and stitch the MP3s together. Splitting the
+// briefing into short per-theme chunks keeps every Edge TTS session brief, which the
+// free endpoint handles far more reliably than one long ~3-minute synthesis. CBR MP3
+// frames concatenate cleanly for playback. If a single segment still fails after its
+// retries we drop it (audio + matching text stay in sync) rather than losing the whole
+// briefing; we only fail outright if nothing synthesized at all.
+async function synthesizeBriefing(segments) {
+  const audioParts = [];
+  const textParts = [];
+  for (const raw of segments) {
+    const text = raw.trim();
+    if (!text) continue;
+    try {
+      audioParts.push(await synthesizeSegment(text));
+      textParts.push(text);
+    } catch (err) {
+      console.warn(`[reddit-roundup] dropping segment after retries: ${err.message} — "${text.slice(0, 40)}…"`);
+    }
+  }
+  if (audioParts.length === 0) throw new Error('Edge TTS returned no audio for any segment');
+  return { audio: Buffer.concat(audioParts), text: textParts.join('\n\n') };
 }
 
 async function main() {
@@ -188,13 +229,15 @@ async function main() {
     console.log(`[reddit-roundup] ${posts.length} posts read from public/reddit.json`);
 
     const tSummary = Date.now();
-    const summary = await summarizeWithGroq(posts, slot);
-    console.log(`[reddit-roundup] summary: ${summary.split(/\s+/).length} words in ${((Date.now() - tSummary) / 1000).toFixed(1)}s`);
+    const themes = await summarizeThemes(posts, slot);
+    console.log(`[reddit-roundup] ${themes.length} themes in ${((Date.now() - tSummary) / 1000).toFixed(1)}s: ${themes.map((t) => t.label).join(', ')}`);
 
+    // Intro first, then one segment per theme — each synthesized on its own.
+    const segments = [buildIntro(slot), ...themes.map((t) => t.blurb)];
     const tTts = Date.now();
-    const mp3 = await synthesizeSpeech(summary);
+    const { audio: mp3, text: summary } = await synthesizeBriefing(segments);
     const audio = mp3.toString('base64');
-    console.log(`[reddit-roundup] audio: ${mp3.length} bytes in ${((Date.now() - tTts) / 1000).toFixed(1)}s`);
+    console.log(`[reddit-roundup] audio: ${mp3.length} bytes from ${segments.length} segments in ${((Date.now() - tTts) / 1000).toFixed(1)}s`);
 
     await sql`
       INSERT INTO reddit_briefing (briefing_date, slot, summary, audio_b64, post_count)
