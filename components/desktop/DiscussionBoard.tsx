@@ -16,45 +16,40 @@ export default function DiscussionBoard({ data }: { data: DashboardData }) {
   const { redditPosts, redditFetchedAt, redditVoices } = data;
   return (
     <div className="space-y-8">
-      {/* Briefing player kept at reading width; the tile grids below go
-          edge-to-edge so they can fill ultrawide / 4K displays. */}
+      {/* Headers + briefing player stretch edge-to-edge to match the tile
+          grids; no width cap so the right side of 4K viewports stays in
+          play instead of stranding everything on the left. */}
       <section className="min-w-0">
-        <div className="max-w-3xl">
-          <Header
-            label="Discussion"
-            title="r/halifax"
-            sub={`Top ${redditPosts.length} hot${
-              redditFetchedAt ? ` · last change ${formatRelative(redditFetchedAt)}` : ""
-            }`}
-            icon={<IconMessages className="w-6 h-6 text-foreground/30 shrink-0" />}
-          />
-          {redditPosts.length > 0 && <RedditBriefingPlayer />}
-        </div>
+        <Header
+          label="Discussion"
+          title="r/halifax"
+          sub={`Top ${redditPosts.length} hot${
+            redditFetchedAt ? ` · last change ${formatRelative(redditFetchedAt)}` : ""
+          }`}
+          icon={<IconMessages className="w-6 h-6 text-foreground/30 shrink-0" />}
+        />
+        {redditPosts.length > 0 && <RedditBriefingPlayer />}
       </section>
 
       {redditVoices.length > 0 && (
         <section className="min-w-0">
-          <div className="max-w-3xl">
-            <Header
-              label="Voices"
-              title="What citizens are saying"
-              sub={`${redditVoices.length} top comments · one per thread`}
-              icon={<IconMessages className="w-6 h-6 text-foreground/30 shrink-0" />}
-            />
-          </div>
+          <Header
+            label="Voices"
+            title="What citizens are saying"
+            sub={`${redditVoices.length} top comments · one per thread`}
+            icon={<IconMessages className="w-6 h-6 text-foreground/30 shrink-0" />}
+          />
           <VoicesBlock voices={redditVoices} />
         </section>
       )}
 
       <section className="min-w-0">
-        <div className="max-w-3xl">
-          <Header
-            label="Threads"
-            title="All discussions"
-            sub={`${redditPosts.length} hot posts from r/halifax`}
-            icon={<IconMessages className="w-6 h-6 text-foreground/30 shrink-0" />}
-          />
-        </div>
+        <Header
+          label="Threads"
+          title="All discussions"
+          sub={`${redditPosts.length} hot posts from r/halifax`}
+          icon={<IconMessages className="w-6 h-6 text-foreground/30 shrink-0" />}
+        />
         <RedditBlockDesktop posts={redditPosts} />
       </section>
     </div>

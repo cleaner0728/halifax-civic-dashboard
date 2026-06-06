@@ -13,17 +13,16 @@ export default function PulseBoard({ data }: { data: DashboardData }) {
   const { news } = data;
   return (
     <div>
-      {/* Header + briefing player keep a comfortable reading width; the tile
-          grid below goes edge-to-edge so it can fill the viewport. */}
-      <div className="max-w-3xl">
-        <FeedHeader
-          label="News"
-          title="Latest Headlines"
-          sub={`${news.length} ${news.length === 1 ? "story" : "stories"} · today`}
-          icon={<IconNews className="w-6 h-6 text-foreground/30 shrink-0" />}
-        />
-        {news.length > 0 && <NewsBriefingPlayer />}
-      </div>
+      {/* Header + briefing player stretch edge-to-edge to match the tile
+          grid below; no width cap so 4K viewports don't strand them on
+          the left. */}
+      <FeedHeader
+        label="News"
+        title="Latest Headlines"
+        sub={`${news.length} ${news.length === 1 ? "story" : "stories"} · today`}
+        icon={<IconNews className="w-6 h-6 text-foreground/30 shrink-0" />}
+      />
+      {news.length > 0 && <NewsBriefingPlayer />}
       <NewsBlockDesktop items={news} />
     </div>
   );
