@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-06T22:16:14.651Z",
+  "fetchedAt": "2026-06-06T22:46:14.734Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - June 2026",
@@ -20,15 +20,6 @@
       "createdUtc": 1780308058
     },
     {
-      "title": "Very concerned about the future of of invasive species in our province",
-      "score": 0,
-      "numComments": 0,
-      "author": "Cookiewaffle95",
-      "url": "https://www.reddit.com/r/halifax/comments/1tylks0/very_concerned_about_the_future_of_of_invasive/",
-      "flair": null,
-      "createdUtc": 1780762797
-    },
-    {
       "title": "From Up on Cowie Hill [Kite Aerial Photography]",
       "score": 0,
       "numComments": 0,
@@ -36,6 +27,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tytjoz/from_up_on_cowie_hill_kite_aerial_photography/",
       "flair": null,
       "createdUtc": 1780781762
+    },
+    {
+      "title": "Very concerned about the future of of invasive species in our province",
+      "score": 0,
+      "numComments": 0,
+      "author": "Cookiewaffle95",
+      "url": "https://www.reddit.com/r/halifax/comments/1tylks0/very_concerned_about_the_future_of_of_invasive/",
+      "flair": null,
+      "createdUtc": 1780762797
     },
     {
       "title": "Concerned, yet intrigued - Robie @ Cunard",
@@ -56,6 +56,15 @@
       "createdUtc": 1780762103
     },
     {
+      "title": "The Interchange and The Fairway on Joe Howe",
+      "score": 0,
+      "numComments": 0,
+      "author": "azuretan",
+      "url": "https://www.reddit.com/r/halifax/comments/1tysc44/the_interchange_and_the_fairway_on_joe_howe/",
+      "flair": null,
+      "createdUtc": 1780778696
+    },
+    {
       "title": "Beer Lovers: Grabbed the last Innis & Gun beer last night at Bayers Lake NSLC",
       "score": 0,
       "numComments": 0,
@@ -72,15 +81,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tydpm9/family_lore_said_my_grandfathers_ww_ii_ship_was/",
       "flair": null,
       "createdUtc": 1780741901
-    },
-    {
-      "title": "The Interchange and The Fairway on Joe Howe",
-      "score": 0,
-      "numComments": 0,
-      "author": "azuretan",
-      "url": "https://www.reddit.com/r/halifax/comments/1tysc44/the_interchange_and_the_fairway_on_joe_howe/",
-      "flair": null,
-      "createdUtc": 1780778696
     },
     {
       "title": "What did your braces cost in Halifax?",
@@ -128,6 +128,15 @@
       "createdUtc": 1780742016
     },
     {
+      "title": "food trucks",
+      "score": 0,
+      "numComments": 0,
+      "author": "hylianmoo",
+      "url": "https://www.reddit.com/r/halifax/comments/1tyt337/food_trucks/",
+      "flair": null,
+      "createdUtc": 1780780583
+    },
+    {
       "title": "TIL about the \"Anjikuni Mystery\", a hoax started by The Halifax Herald",
       "score": 0,
       "numComments": 0,
@@ -146,6 +155,24 @@
       "createdUtc": 1780762500
     },
     {
+      "title": "Upper Big Tracadie grieves Terry Izzard, asks people to help the RCMP solve his murder",
+      "score": 0,
+      "numComments": 0,
+      "author": "Healthy-Opening-7363",
+      "url": "https://www.reddit.com/r/halifax/comments/1tyuswq/upper_big_tracadie_grieves_terry_izzard_asks/",
+      "flair": null,
+      "createdUtc": 1780785006
+    },
+    {
+      "title": "Confused about renewing expired learners situation.",
+      "score": 0,
+      "numComments": 0,
+      "author": "gh0ul3",
+      "url": "https://www.reddit.com/r/halifax/comments/1tytx4r/confused_about_renewing_expired_learners_situation/",
+      "flair": null,
+      "createdUtc": 1780782731
+    },
+    {
       "title": "Strip mall in Bedford still has this relic from the 90's posted",
       "score": 0,
       "numComments": 0,
@@ -153,33 +180,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1txsmin/strip_mall_in_bedford_still_has_this_relic_from/",
       "flair": null,
       "createdUtc": 1780682786
-    },
-    {
-      "title": "Book clubs in Halifax",
-      "score": 0,
-      "numComments": 0,
-      "author": "cravingdani",
-      "url": "https://www.reddit.com/r/halifax/comments/1tylok7/book_clubs_in_halifax/",
-      "flair": null,
-      "createdUtc": 1780763049
-    },
-    {
-      "title": "food trucks",
-      "score": 0,
-      "numComments": 0,
-      "author": "hylianmoo",
-      "url": "https://www.reddit.com/r/halifax/comments/1tyt337/food_trucks/",
-      "flair": null,
-      "createdUtc": 1780780583
-    },
-    {
-      "title": "New places in Halifax that have opened in the past year or so?",
-      "score": 0,
-      "numComments": 0,
-      "author": "maravina",
-      "url": "https://www.reddit.com/r/halifax/comments/1typ1sh/new_places_in_halifax_that_have_opened_in_the/",
-      "flair": null,
-      "createdUtc": 1780770836
     },
     {
       "title": "Caldwell Rd",
@@ -191,13 +191,22 @@
       "createdUtc": 1780759601
     },
     {
-      "title": "Banana split with hard ice cream?",
+      "title": "Book clubs in Halifax",
       "score": 0,
       "numComments": 0,
-      "author": "Zealousideal_Pin5350",
-      "url": "https://www.reddit.com/r/halifax/comments/1tyfpky/banana_split_with_hard_ice_cream/",
+      "author": "cravingdani",
+      "url": "https://www.reddit.com/r/halifax/comments/1tylok7/book_clubs_in_halifax/",
       "flair": null,
-      "createdUtc": 1780748123
+      "createdUtc": 1780763049
+    },
+    {
+      "title": "New places in Halifax that have opened in the past year or so?",
+      "score": 0,
+      "numComments": 0,
+      "author": "maravina",
+      "url": "https://www.reddit.com/r/halifax/comments/1typ1sh/new_places_in_halifax_that_have_opened_in_the/",
+      "flair": null,
+      "createdUtc": 1780770836
     },
     {
       "title": "Former Halifax employees: what's the tea on local businesses? ☕️",
@@ -209,13 +218,13 @@
       "createdUtc": 1780701557
     },
     {
-      "title": "Confused about renewing expired learners situation.",
+      "title": "Banana split with hard ice cream?",
       "score": 0,
       "numComments": 0,
-      "author": "gh0ul3",
-      "url": "https://www.reddit.com/r/halifax/comments/1tytx4r/confused_about_renewing_expired_learners_situation/",
+      "author": "Zealousideal_Pin5350",
+      "url": "https://www.reddit.com/r/halifax/comments/1tyfpky/banana_split_with_hard_ice_cream/",
       "flair": null,
-      "createdUtc": 1780782731
+      "createdUtc": 1780748123
     },
     {
       "title": "Doctor using AI to diagnose",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1ty8yqj/camera_lost_at_the_dome/",
       "flair": null,
       "createdUtc": 1780725338
-    },
-    {
-      "title": "Librarians warn more cuts and closures possible as funding pressures mount",
-      "score": 0,
-      "numComments": 0,
-      "author": "IStillListenToRadio",
-      "url": "https://www.reddit.com/r/halifax/comments/1txui3s/librarians_warn_more_cuts_and_closures_possible/",
-      "flair": null,
-      "createdUtc": 1780686864
     }
   ]
 }
