@@ -3,21 +3,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 
-// iOS Safari is finicky about `data:audio/mp4;base64,...` URLs — it often
-// refuses to start playback even when play() is called inside a user
-// gesture, because the MIME on a data URL is ambiguous for m4a content
-// (audio/mp4 can mean either an m4a audio track or a video container).
-// Converting to a Blob URL gives Safari a clean same-origin media source
-// with an explicit Blob.type, which it plays without complaint.
-function dataUrlToBlobUrl(dataUrl: string): string {
-  const match = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
-  if (!match) return dataUrl;
-  const [, mime, b64] = match;
-  const binary = atob(b64);
-  const arr = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
-  return URL.createObjectURL(new Blob([arr], { type: mime || "audio/mp4" }));
-}
+// item.audio is a URL to /api/reddit-briefing/clip/<postId> served by the
+// backend route — *not* a data: URL. iOS Safari refuses to play long
+// `data:audio/mp4;base64,...` payloads (the m4a-in-mp4 MIME is ambiguous
+// on Safari's data-URL fast path), so we hand it a plain HTTP stream
+// instead, which it consumes natively the same way Mobile Safari plays
+// any audio element with a remote src.
 
 type Item = {
   // Stable identity for the playlist position. For the new per-post source
@@ -136,24 +127,17 @@ export default function RedditBriefingPlayer() {
         setStatus("empty");
         return;
       }
-      // Convert every clip's data: URL into a Blob URL up front so iOS
-      // Safari has a same-origin media source to work with. Cheap — the
-      // base64 already lives in memory and atob is sub-millisecond.
-      const blobItems: Item[] = data.items.map((it) => ({
-        ...it,
-        audio: it.audio ? dataUrlToBlobUrl(it.audio) : it.audio,
-      }));
-      setItems(blobItems);
+      setItems(data.items);
       setStatus("ready");
       autoplay.current = true;
-      const first = blobItems.findIndex((i) => i.audio);
+      const first = data.items.findIndex((i) => i.audio);
       if (first < 0) return;
       // Set src + call play() directly on the element here, still in the same
       // async function as the click. iOS Safari preserves the user-activation
       // token across an awaited fetch but loses it across the additional
       // setState → effect hop, so we can't wait for React to bind src for us.
       const audioEl = audioRef.current;
-      const firstAudio = blobItems[first].audio;
+      const firstAudio = data.items[first].audio;
       if (audioEl && firstAudio) {
         audioEl.src = firstAudio;
         audioEl.load();
@@ -167,16 +151,6 @@ export default function RedditBriefingPlayer() {
       setStatus("error");
     }
   };
-
-  // Revoke blob URLs when the items list is replaced or the component
-  // unmounts so we don't leak the decoded audio for every visit.
-  useEffect(() => {
-    return () => {
-      items.forEach((it) => {
-        if (it.audio && it.audio.startsWith("blob:")) URL.revokeObjectURL(it.audio);
-      });
-    };
-  }, [items]);
 
   const togglePlay = () => {
     const a = audioRef.current;
