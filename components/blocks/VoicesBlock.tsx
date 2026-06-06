@@ -12,7 +12,7 @@ type Props = {
 export default function VoicesBlock({ voices }: Props) {
   if (voices.length === 0) return null;
   return (
-    <div className="grid gap-3 md:grid-cols-2">
+    <div className="grid gap-3 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
       {voices.map((v) => (
         <VoiceCard key={v.id} voice={v} />
       ))}

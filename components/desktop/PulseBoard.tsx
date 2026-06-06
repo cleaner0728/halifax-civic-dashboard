@@ -1,26 +1,30 @@
 "use client";
 
 import type { ReactNode } from "react";
-import NewsBlock from "@/components/blocks/NewsBlock";
+import NewsBlockDesktop from "@/components/blocks/NewsBlockDesktop";
 import NewsBriefingPlayer from "@/components/NewsBriefingPlayer";
 import { IconNews } from "@/components/icons";
 import type { DashboardData } from "./DesktopShell";
 
 // Desktop Pulse: news only. Reddit / Voices moved to the dedicated
 // Discussion tab. Mobile FeedScreen is unchanged — it still stacks
-// News above Reddit on the same screen.
+// News above Reddit on the same screen via the mobile NewsBlock.
 export default function PulseBoard({ data }: { data: DashboardData }) {
   const { news } = data;
   return (
-    <div className="max-w-3xl">
-      <FeedHeader
-        label="News"
-        title="Latest Headlines"
-        sub={`${news.length} ${news.length === 1 ? "story" : "stories"} · today`}
-        icon={<IconNews className="w-6 h-6 text-foreground/30 shrink-0" />}
-      />
-      {news.length > 0 && <NewsBriefingPlayer />}
-      <NewsBlock items={news} />
+    <div>
+      {/* Header + briefing player keep a comfortable reading width; the tile
+          grid below goes edge-to-edge so it can fill the viewport. */}
+      <div className="max-w-3xl">
+        <FeedHeader
+          label="News"
+          title="Latest Headlines"
+          sub={`${news.length} ${news.length === 1 ? "story" : "stories"} · today`}
+          icon={<IconNews className="w-6 h-6 text-foreground/30 shrink-0" />}
+        />
+        {news.length > 0 && <NewsBriefingPlayer />}
+      </div>
+      <NewsBlockDesktop items={news} />
     </div>
   );
 }

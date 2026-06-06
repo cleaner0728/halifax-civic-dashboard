@@ -127,17 +127,21 @@ export default function DesktopShell({ data }: { data: DashboardData }) {
         </div>
       </aside>
 
-      {/* Content — window-scrolled, capped so it doesn't sprawl on huge displays. */}
+      {/* Content — window-scrolled. Boards with bounded content (city, events,
+          stats) clamp their own width internally; news + discussion go
+          edge-to-edge so the tile grids can fill 4K and ultrawide displays. */}
       <div className="flex-1 min-w-0">
-        <div className="max-w-[1600px] mx-auto px-6 py-6">
+        <div className="px-6 py-6">
           {active === "city" ? (
-            <CityLiveBoard data={data} />
+            <div className="max-w-[1600px] mx-auto">
+              <CityLiveBoard data={data} />
+            </div>
           ) : active === "pulse" ? (
             <PulseBoard data={data} />
           ) : active === "discussion" ? (
             <DiscussionBoard data={data} />
           ) : (
-            <div className="desktop-pane">{renderScreen(active, data)}</div>
+            <div className="max-w-[1600px] mx-auto desktop-pane">{renderScreen(active, data)}</div>
           )}
         </div>
       </div>

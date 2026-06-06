@@ -31,6 +31,11 @@ function toDate(s: string | undefined): Date | null {
   return isNaN(d.getTime()) ? null : d;
 }
 
+// Keep the table bounded — drop rows older than the retention window.
+async function pruneOld() {
+  await sql`DELETE FROM article_summary WHERE pub_date < NOW() - make_interval(hours => ${RETENTION_HOURS})`;
+}
+
 export async function POST(req: NextRequest) {
   const secret = process.env.CRON_SECRET;
   if (secret) {
@@ -58,7 +63,7 @@ export async function POST(req: NextRequest) {
     .slice(0, MAX_NEW_PER_RUN);
 
   if (fresh.length === 0) {
-    await sql`DELETE FROM article_summary WHERE pub_date < NOW() - make_interval(hours => ${RETENTION_HOURS})`;
+    await pruneOld();
     console.log('[gen] no new articles');
     return Response.json({ ok: true, added: 0, reason: 'all_current' });
   }
@@ -95,8 +100,7 @@ export async function POST(req: NextRequest) {
     await Promise.all(enriched.slice(i, i + PROCESS_CONCURRENCY).map(processOne));
   }
 
-  // Prune old rows so the table doesn't grow unbounded.
-  await sql`DELETE FROM article_summary WHERE pub_date < NOW() - (${RETENTION_HOURS} || ' hours')::interval`;
+  await pruneOld();
 
   const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
   console.log(`[gen] done in ${elapsed}s — added ${added}`);

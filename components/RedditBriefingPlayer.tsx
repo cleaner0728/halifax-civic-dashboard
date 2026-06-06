@@ -42,50 +42,34 @@ export default function RedditBriefingPlayer() {
   const autoplay = useRef(false);
 
   // Advance into the next clip when `current` moves (clip ended → next).
+  // Play synchronously — no rAF — because iOS Safari already loses the
+  // user-activation token across most async hops; adding another deferred
+  // frame here makes it worse. The autoplay flag is set only after a click,
+  // so this can't fire without a prior gesture.
   useEffect(() => {
     if (current < 0) return;
-    if (autoplay.current) requestAnimationFrame(() => void audioRef.current?.play());
+    if (autoplay.current) void audioRef.current?.play();
   }, [current]);
 
   const playable = useMemo(() => items.filter((i) => i.audio), [items]);
 
-  // Per-clip durations preloaded from MP3 metadata; cheap since the data
-  // URLs already live in memory.
+  // Per-clip durations. Populated incrementally by the main <audio>'s
+  // loadedmetadata as each clip is actually loaded — the previous approach
+  // used a side-channel `new Audio()` preload, which doesn't fire on iOS
+  // Safari without a user gesture, leaving the progress bar invisible.
   const [durations, setDurations] = useState<Map<string, number>>(new Map());
   const [currentClipTime, setCurrentClipTime] = useState(0);
 
-  useEffect(() => {
-    if (playable.length === 0) return;
-    let cancelled = false;
-    const next = new Map<string, number>();
-    Promise.all(
-      playable.map(
-        (it) =>
-          new Promise<void>((resolve) => {
-            const a = new Audio();
-            a.preload = "metadata";
-            const finish = () => resolve();
-            a.addEventListener(
-              "loadedmetadata",
-              () => {
-                if (!cancelled && Number.isFinite(a.duration)) {
-                  next.set(it.slot, a.duration);
-                }
-                finish();
-              },
-              { once: true },
-            );
-            a.addEventListener("error", finish, { once: true });
-            a.src = it.audio!;
-          }),
-      ),
-    ).then(() => {
-      if (!cancelled) setDurations(next);
+  const recordDuration = (slot: string) => {
+    const a = audioRef.current;
+    if (!a || !Number.isFinite(a.duration)) return;
+    setDurations((prev) => {
+      if (prev.get(slot) === a.duration) return prev;
+      const next = new Map(prev);
+      next.set(slot, a.duration);
+      return next;
     });
-    return () => {
-      cancelled = true;
-    };
-  }, [playable]);
+  };
 
   const completedBefore = useMemo(() => {
     if (current < 0) return 0;
@@ -140,7 +124,21 @@ export default function RedditBriefingPlayer() {
       setStatus("ready");
       autoplay.current = true;
       const first = data.items.findIndex((i) => i.audio);
-      if (first >= 0) setCurrent(first);
+      if (first < 0) return;
+      // Set src + call play() directly on the element here, still in the same
+      // async function as the click. iOS Safari preserves the user-activation
+      // token across an awaited fetch but loses it across the additional
+      // setState → effect hop, so we can't wait for React to bind src for us.
+      const audioEl = audioRef.current;
+      const firstAudio = data.items[first].audio;
+      if (audioEl && firstAudio) {
+        audioEl.src = firstAudio;
+        audioEl.load();
+        void audioEl.play().catch((err) => {
+          console.warn("[reddit-briefing] play rejected:", err);
+        });
+      }
+      setCurrent(first);
     } catch (e) {
       console.error("[reddit-briefing] listen failed", e);
       setStatus("error");
@@ -273,6 +271,7 @@ export default function RedditBriefingPlayer() {
         onPause={() => setPlaying(false)}
         onEnded={onEnded}
         onLoadStart={() => setCurrentClipTime(0)}
+        onLoadedMetadata={() => curItem && recordDuration(curItem.slot)}
         onTimeUpdate={() => setCurrentClipTime(audioRef.current?.currentTime ?? 0)}
         preload="none"
         hidden

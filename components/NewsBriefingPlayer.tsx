@@ -27,53 +27,33 @@ export default function NewsBriefingPlayer() {
   const autoplay = useRef(false); // are we in "play through the list" mode?
 
   // When the current index changes (e.g. a clip ended → next), play it.
+  // Synchronous play — no rAF — to preserve iOS Safari's user-activation
+  // token. autoplay.current is only set after a click so this can't fire
+  // without a prior user gesture.
   useEffect(() => {
     if (current < 0) return;
-    if (autoplay.current) requestAnimationFrame(() => void audioRef.current?.play());
+    if (autoplay.current) void audioRef.current?.play();
   }, [current]);
 
   const playable = items.filter((i) => i.audio);
 
-  // Per-clip durations, learned via a lightweight metadata preload after items
-  // arrive. The base64 data URLs already live in memory, so this is effectively
-  // free — the browser only needs to read each MP3's header.
+  // Per-clip durations, learned incrementally from the main <audio>'s
+  // loadedmetadata as each clip plays. The previous side-channel `new Audio()`
+  // preload doesn't fire on iOS Safari without a user gesture, leaving the
+  // progress bar permanently hidden on iPhone.
   const [durations, setDurations] = useState<Map<string, number>>(new Map());
   const [currentClipTime, setCurrentClipTime] = useState(0);
 
-  // Pre-resolve durations for every playable clip in one shot.
-  useEffect(() => {
-    const list = items.filter((i) => i.audio);
-    if (list.length === 0) return;
-    let cancelled = false;
-    const next = new Map<string, number>();
-    Promise.all(
-      list.map(
-        (it) =>
-          new Promise<void>((resolve) => {
-            const a = new Audio();
-            a.preload = "metadata";
-            const finish = () => resolve();
-            a.addEventListener(
-              "loadedmetadata",
-              () => {
-                if (!cancelled && Number.isFinite(a.duration)) {
-                  next.set(it.url, a.duration);
-                }
-                finish();
-              },
-              { once: true },
-            );
-            a.addEventListener("error", finish, { once: true });
-            a.src = it.audio!;
-          }),
-      ),
-    ).then(() => {
-      if (!cancelled) setDurations(next);
+  const recordDuration = (url: string) => {
+    const a = audioRef.current;
+    if (!a || !Number.isFinite(a.duration)) return;
+    setDurations((prev) => {
+      if (prev.get(url) === a.duration) return prev;
+      const next = new Map(prev);
+      next.set(url, a.duration);
+      return next;
     });
-    return () => {
-      cancelled = true;
-    };
-  }, [items]);
+  };
 
   // Cumulative duration of every clip strictly BEFORE the currently-playing one.
   const completedBefore = useMemo(() => {
@@ -131,7 +111,20 @@ export default function NewsBriefingPlayer() {
       setStatus("ready");
       autoplay.current = true;
       const first = data.items.findIndex((i) => i.audio);
-      setCurrent(first); // effect plays it
+      if (first < 0) return;
+      // Prime the audio element synchronously here so iOS Safari sees the
+      // play() inside the same async chain as the click. Waiting for the
+      // setCurrent → effect → play() path loses user activation on iPhone.
+      const audioEl = audioRef.current;
+      const firstAudio = data.items[first].audio;
+      if (audioEl && firstAudio) {
+        audioEl.src = firstAudio;
+        audioEl.load();
+        void audioEl.play().catch((err) => {
+          console.warn("[briefing] play rejected:", err);
+        });
+      }
+      setCurrent(first);
     } catch (e) {
       console.error("[briefing] listen failed", e);
       setStatus("error");
@@ -344,6 +337,7 @@ export default function NewsBriefingPlayer() {
         // effect — the React 19 lint flags setState-in-effect, and the audio's
         // own loadstart is the right signal anyway (fires when src changes).
         onLoadStart={() => setCurrentClipTime(0)}
+        onLoadedMetadata={() => curItem && recordDuration(curItem.url)}
         onTimeUpdate={() => setCurrentClipTime(audioRef.current?.currentTime ?? 0)}
         preload="none"
         hidden
