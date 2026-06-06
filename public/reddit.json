@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-06T04:32:28.305Z",
+  "fetchedAt": "2026-06-06T05:16:13.852Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - June 2026",
@@ -110,6 +110,15 @@
       "createdUtc": 1780660785
     },
     {
+      "title": "Power outage in Sackville?",
+      "score": 0,
+      "numComments": 0,
+      "author": "dyingrefrigerator",
+      "url": "https://www.reddit.com/r/halifax/comments/1ty82oe/power_outage_in_sackville/",
+      "flair": null,
+      "createdUtc": 1780722503
+    },
+    {
       "title": "XP Game Connect Atlantic has come to Halifax",
       "score": 0,
       "numComments": 0,
@@ -137,15 +146,6 @@
       "createdUtc": 1780673355
     },
     {
-      "title": "Anyone have any good June Bug recipes?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Zado191",
-      "url": "https://www.reddit.com/r/halifax/comments/1ty4q12/anyone_have_any_good_june_bug_recipes/",
-      "flair": null,
-      "createdUtc": 1780712432
-    },
-    {
       "title": "FYI there's a new mobile clinic downtown",
       "score": 0,
       "numComments": 0,
@@ -171,6 +171,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1txf9q7/good_morning_halifax/",
       "flair": null,
       "createdUtc": 1780649437
+    },
+    {
+      "title": "Anyone have any good June Bug recipes?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Zado191",
+      "url": "https://www.reddit.com/r/halifax/comments/1ty4q12/anyone_have_any_good_june_bug_recipes/",
+      "flair": null,
+      "createdUtc": 1780712432
     },
     {
       "title": "Latest Update on The Crane on Dutch Village Road",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1txn91h/what_are_some_good_groupsclubs_for_meeting_people/",
       "flair": null,
       "createdUtc": 1780671263
-    },
-    {
-      "title": "Positive Vibes Friday",
-      "score": 0,
-      "numComments": 0,
-      "author": "AutoModerator",
-      "url": "https://www.reddit.com/r/halifax/comments/1txginf/positive_vibes_friday/",
-      "flair": null,
-      "createdUtc": 1780653682
     }
   ]
 }
