@@ -67,14 +67,20 @@ const NAV: { id: DesktopSection; label: string; Icon: React.FC<React.SVGProps<SV
 
 export default function DesktopShell({ data }: { data: DashboardData }) {
   const [active, setActive] = useState<DesktopSection>("city");
+  // Drawer collapsed by default so the dashboard takes the full viewport.
+  // Open on hamburger click or any 1-5 keypress; close on Escape, backdrop
+  // click, or after picking a section.
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // Bare 1–4 jumps between sections — conflict-free (unlike ⌘1–4, which the
-  // browser swallows for tab switching). Ignored while typing in a field.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       const el = document.activeElement as HTMLElement | null;
       if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
+      if (e.key === "Escape") {
+        setDrawerOpen(false);
+        return;
+      }
       const idx = Number(e.key) - 1;
       if (Number.isInteger(idx) && idx >= 0 && idx < NAV.length) {
         e.preventDefault();
@@ -88,14 +94,62 @@ export default function DesktopShell({ data }: { data: DashboardData }) {
 
   const go = useCallback((section: DesktopSection) => {
     setActive(section);
+    setDrawerOpen(false);
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, []);
 
   return (
-    <div className="flex min-h-dvh">
-      {/* Sidebar — sticky, full viewport height, scrolls with nothing. */}
-      <aside className="w-60 shrink-0 sticky top-0 h-dvh border-r border-border bg-card/70 backdrop-blur-md flex flex-col">
-        <div className="px-4 py-4">
+    <div className="min-h-dvh">
+      {/* Floating top-left hamburger. Always visible so the drawer is
+          reachable no matter where the user has scrolled. */}
+      <button
+        type="button"
+        onClick={() => setDrawerOpen((o) => !o)}
+        aria-label={drawerOpen ? "Close menu" : "Open menu"}
+        aria-expanded={drawerOpen}
+        className="fixed top-4 left-4 z-50 grid place-items-center w-10 h-10 rounded-xl border border-border bg-card/85 backdrop-blur-md text-foreground/80 hover:text-foreground hover:bg-card shadow-sm transition-colors"
+      >
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          {drawerOpen ? (
+            <>
+              <path d="M18 6L6 18" />
+              <path d="M6 6l12 12" />
+            </>
+          ) : (
+            <>
+              <path d="M3 12h18" />
+              <path d="M3 6h18" />
+              <path d="M3 18h18" />
+            </>
+          )}
+        </svg>
+      </button>
+
+      {/* Floating top-right settings gear — sibling to the hamburger so users
+          can change theme / language without opening the drawer. */}
+      <div className="fixed top-4 right-4 z-50">
+        <SettingsMenu menuPositionClass="top-full right-0 mt-2" />
+      </div>
+
+      {/* Backdrop — only present while the drawer is open. Click to close. */}
+      {drawerOpen && (
+        <button
+          type="button"
+          aria-label="Close menu"
+          onClick={() => setDrawerOpen(false)}
+          className="fixed inset-0 z-30 bg-black/30 backdrop-blur-[2px] cursor-default"
+        />
+      )}
+
+      {/* Drawer — overlays the content, doesn't push it. translate-x for the
+          slide so layout never reflows. */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 w-64 border-r border-border bg-card/95 backdrop-blur-md shadow-2xl flex flex-col transition-transform duration-200 ease-out ${
+          drawerOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+        aria-hidden={!drawerOpen}
+      >
+        <div className="px-4 pt-16 pb-4">
           <BrandTitle />
         </div>
         <nav className="flex-1 px-2 space-y-1" aria-label="Dashboard sections">
@@ -107,7 +161,8 @@ export default function DesktopShell({ data }: { data: DashboardData }) {
                 type="button"
                 onClick={() => go(id)}
                 aria-current={isActive ? "page" : undefined}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                tabIndex={drawerOpen ? 0 : -1}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                   isActive
                     ? "bg-blue-500/10 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 font-semibold"
                     : "text-foreground/60 hover:text-foreground hover:bg-foreground/5 font-medium"
@@ -120,31 +175,31 @@ export default function DesktopShell({ data }: { data: DashboardData }) {
             );
           })}
         </nav>
-        <div className="px-3 py-3 border-t border-border flex items-center justify-between">
-          <span className="text-[11px] text-foreground/35">Press 1–5</span>
-          {/* Gear sits at the bottom of the viewport, so open the menu upward. */}
-          <SettingsMenu menuPositionClass="bottom-full right-0 mb-2" />
+        <div className="px-4 py-3 border-t border-border text-[11px] text-foreground/40">
+          Press <kbd className="font-mono">1</kbd>–<kbd className="font-mono">5</kbd> to switch · <kbd className="font-mono">Esc</kbd> to close
         </div>
       </aside>
 
-      {/* Content — window-scrolled. Boards with bounded content (city, events,
-          stats) clamp their own width internally; news + discussion go
-          edge-to-edge so the tile grids can fill 4K and ultrawide displays. */}
-      <div className="flex-1 min-w-0">
-        <div className="px-6 py-6">
-          {active === "city" ? (
-            <div className="max-w-[1600px] mx-auto">
-              <CityLiveBoard data={data} />
-            </div>
-          ) : active === "pulse" ? (
-            <PulseBoard data={data} />
-          ) : active === "discussion" ? (
-            <DiscussionBoard data={data} />
-          ) : (
-            <div className="max-w-[1600px] mx-auto desktop-pane">{renderScreen(active, data)}</div>
-          )}
-        </div>
-      </div>
+      {/* Content — full-width. Each board manages its own internal width cap
+          (city / events / stats clamp to 1600px; pulse + discussion go
+          edge-to-edge so their tile grids can fill 4K). The top padding gives
+          the floating hamburger room to breathe. */}
+      <main className="px-6 pt-16 pb-6">
+        {active === "city" ? (
+          // City Live goes edge-to-edge so the 4-up webcam wall + tile grid
+          // fill ultrawide / 4K displays. Pulse and Discussion already do the
+          // same.
+          <CityLiveBoard data={data} />
+        ) : active === "pulse" ? (
+          <PulseBoard data={data} />
+        ) : active === "discussion" ? (
+          <DiscussionBoard data={data} />
+        ) : (
+          // Events + Stats keep a reading-width cap so calendar grids and
+          // chart blocks don't sprawl awkwardly on 4K.
+          <div className="max-w-[1600px] mx-auto desktop-pane">{renderScreen(active, data)}</div>
+        )}
+      </main>
     </div>
   );
 }

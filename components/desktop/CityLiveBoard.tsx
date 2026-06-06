@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import AlertsBlock from "@/components/blocks/AlertsBlock";
-import HalifaxWebcams from "@/components/HalifaxWebcams";
+import HalifaxWebcamWall from "@/components/HalifaxWebcamWall";
 import WeatherBlock from "@/components/blocks/WeatherBlock";
 import WindyMapBlock from "@/components/blocks/WindyMapBlock";
 import GettingAroundBlock from "@/components/blocks/GettingAroundBlock";
@@ -15,7 +15,6 @@ import WinterParkingBanBlock from "@/components/blocks/WinterParkingBanBlock";
 import CalendarEmbed from "@/components/CalendarEmbed";
 import { AccordionGroup } from "@/components/AccordionGroup";
 import {
-  IconCamera,
   IconCloudSun,
   IconWaves,
   IconFerry,
@@ -23,27 +22,39 @@ import {
   IconFlame,
   IconLandmark,
   IconCalendar,
+  IconTicket,
 } from "@/components/icons";
 import { HRM_CALENDAR_SRC } from "@/lib/data/hrm-calendar";
+import { formatRelative } from "@/lib/date";
+import type { HalifaxEvent } from "@/lib/fetchers/events";
 import type { DashboardData } from "./DesktopShell";
 
 const DISRUPTIONS_URL = "https://www.halifax.ca/transportation/halifax-transit/service-disruptions";
 
-// Desktop-only City Live: the same content blocks as the mobile screen, but
-// laid out as an always-expanded multi-column wall instead of a one-at-a-time
-// accordion. The mobile CityLiveScreen is left completely untouched — this
-// reuses the underlying blocks, not the screen.
+// Desktop City Live, redesigned as a dense, structured information wall.
+// Top row: four live webcams. Second row: weather, marine/wind, today's
+// waste, HRM calendar. Then alerts + news + events + incidents. Tiles tall
+// enough for primary content get a max-height + internal scroll so the row
+// rhythm stays consistent. Mobile CityLiveScreen is left untouched.
 export default function CityLiveBoard({ data }: { data: DashboardData }) {
   return (
     <div className="space-y-4">
-      <AlertsBlock alerts={data.alerts} />
+      {/* Row 1 — webcam wall. Four cameras live at once across the full
+          width of the board. */}
+      <HalifaxWebcamWall />
 
-      <div className="gap-4 columns-2 2xl:columns-3 [&>*]:mb-4 [&>*]:break-inside-avoid">
-        <SectionCard icon={<IconCamera className="w-5 h-5" />} title="Webcams" meta="Halifax">
-          <HalifaxWebcams />
-        </SectionCard>
-
-        <SectionCard icon={<IconCloudSun className="w-5 h-5" />} title="Weather & Marine" meta="Halifax">
+      {/* Row 2 — the four "always-on" reference panels the user wants
+          glanceable: weather, marine/wind context, today's waste, calendar.
+          `items-start` lets each tile size to its own content so a tall
+          panel (Weather) doesn't force empty whitespace in shorter siblings
+          (Waste, Calendar). */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start">
+        <SectionCard
+          icon={<IconCloudSun className="w-5 h-5" />}
+          title="Weather"
+          meta="Halifax"
+          maxHeight="640px"
+        >
           <WeatherBlock
             weather={data.weather}
             tideGraph={data.tideGraph}
@@ -52,23 +63,94 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
           />
         </SectionCard>
 
-        {/* Marine & wind: expanded (headless). The Windy iframe carries
-            loading="lazy", so its tiles still defer until scrolled near. */}
-        <SectionCard icon={<IconWaves className="w-5 h-5" />} title="Marine & Wind Map" meta="Halifax Harbour">
+        <SectionCard
+          icon={<IconWaves className="w-5 h-5" />}
+          title="Marine & Wind"
+          meta="Halifax Harbour"
+          maxHeight="640px"
+        >
           <WindyMapBlock headless buoy={data.buoy} marineForecast={data.marineForecast} />
         </SectionCard>
 
-        <SectionCard icon={<IconFerry className="w-5 h-5" />} title="Ferry" href={DISRUPTIONS_URL} linkLabel="halifax.ca">
-          <GettingAroundBlock
-            detours={[]}
-            ferryAlerts={data.ferryAlerts}
-            adjustments={null}
-            emptyMessage="No active ferry alerts."
-            emptySubMessage="Alderney and Woodside ferries running on regular schedule."
-          />
+        {/* Waste: the block ships with its own bordered header + collapsible
+            schedule. Give it a matching outer surface (without our own
+            SectionCard header) so there isn't a duplicate "Waste Collection"
+            title stacked on top of itself. */}
+        <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden px-4 py-3 [&>*]:!mt-0">
+          <AccordionGroup>
+            <WasteCollectionBlock />
+          </AccordionGroup>
+        </div>
+
+        <SectionCard
+          icon={<IconCalendar className="w-5 h-5" />}
+          title="HRM Calendar"
+          meta="community"
+          href="https://www.halifax.ca/home/events-calendar"
+          linkLabel="halifax.ca"
+          noPadding
+        >
+          <CalendarEmbed src={HRM_CALENDAR_SRC} />
+        </SectionCard>
+      </div>
+
+      {/* Row 3 — what's happening right now: alerts, HRM news, upcoming
+          events, active fire incidents. Same `items-start` treatment. */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start">
+        <SectionCard
+          icon={<IconFlame className="w-5 h-5" />}
+          title="Alerts"
+          maxHeight="540px"
+        >
+          {data.alerts.length > 0 ? (
+            <AlertsBlock alerts={data.alerts} />
+          ) : (
+            <EmptyState text="No active weather alerts." />
+          )}
         </SectionCard>
 
-        <SectionCard icon={<IconBus className="w-5 h-5" />} title="Transit" href={DISRUPTIONS_URL} linkLabel="halifax.ca">
+        <SectionCard
+          icon={<IconLandmark className="w-5 h-5" />}
+          title="HRM News"
+          meta={data.hrmDateLabel}
+          href="https://www.halifax.ca/home/news"
+          linkLabel="halifax.ca"
+          maxHeight="540px"
+        >
+          <HrmNewsBlock items={data.hrmNews} />
+        </SectionCard>
+
+        <SectionCard
+          icon={<IconTicket className="w-5 h-5" />}
+          title="Events"
+          meta={`${data.events.length} upcoming`}
+          maxHeight="540px"
+        >
+          <UpcomingEventsTile events={data.events} />
+        </SectionCard>
+
+        <SectionCard
+          icon={<IconFlame className="w-5 h-5" />}
+          title="Incidents"
+          meta="past 60 min"
+          href="https://www.halifax.ca/safety-security/fire-emergency/hrfe-incident-feed"
+          linkLabel="HRFE"
+          maxHeight="540px"
+        >
+          <HrfeBlock incidents={data.hrfeIncidents} />
+        </SectionCard>
+      </div>
+
+      {/* Row 4 — getting around + civic. Lower in the visual hierarchy than
+          the live info above. */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start">
+        <SectionCard
+          icon={<IconBus className="w-5 h-5" />}
+          title="Transit"
+          href={DISRUPTIONS_URL}
+          linkLabel="halifax.ca"
+          maxHeight="540px"
+        >
           <WinterParkingBanBlock ban={data.winterParkingBan} />
           <GettingAroundBlock
             detours={data.detours}
@@ -80,49 +162,35 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
         </SectionCard>
 
         <SectionCard
-          icon={<IconFlame className="w-5 h-5" />}
-          title="Active Incidents"
-          meta="past 60 min"
-          href="https://www.halifax.ca/safety-security/fire-emergency/hrfe-incident-feed"
-          linkLabel="HRFE feed"
+          icon={<IconFerry className="w-5 h-5" />}
+          title="Ferry"
+          href={DISRUPTIONS_URL}
+          linkLabel="halifax.ca"
+          maxHeight="540px"
         >
-          <HrfeBlock incidents={data.hrfeIncidents} />
+          <GettingAroundBlock
+            detours={[]}
+            ferryAlerts={data.ferryAlerts}
+            adjustments={null}
+            emptyMessage="No active ferry alerts."
+            emptySubMessage="Alderney and Woodside running regular schedule."
+          />
         </SectionCard>
 
         <SectionCard
           icon={<IconLandmark className="w-5 h-5" />}
-          title="HRM News"
-          meta={data.hrmDateLabel}
-          href="https://www.halifax.ca/home/news"
-          linkLabel="halifax.ca"
+          title="Have Your Say"
+          meta="civic"
+          maxHeight="540px"
         >
-          <HrmNewsBlock items={data.hrmNews} />
-        </SectionCard>
-
-        <SectionCard
-          icon={<IconCalendar className="w-5 h-5" />}
-          title="HRM Events"
-          meta="community calendar"
-          href="https://www.halifax.ca/home/events-calendar"
-          linkLabel="halifax.ca"
-        >
-          <CalendarEmbed src={HRM_CALENDAR_SRC} />
-        </SectionCard>
-
-        {/* WasteCollectionBlock renders its own collapsible section + needs an
-            AccordionGroup context. Wrap it in a fresh group and card surface. */}
-        <div className="rounded-2xl border border-border bg-card shadow-sm px-4 py-2 [&>*]:!mt-0">
-          <AccordionGroup>
-            <WasteCollectionBlock />
-          </AccordionGroup>
-        </div>
-
-        {/* CapitalBudgetBlock already renders its own bordered card. */}
-        <CapitalBudgetBlock />
-
-        <SectionCard icon={<IconLandmark className="w-5 h-5" />} title="Have Your Say" meta="get involved">
           <CivicEngagementBlock />
         </SectionCard>
+
+        {/* CapitalBudgetBlock owns its own bordered card; drop into the
+            grid cell directly so it lines up with siblings. */}
+        <div className="[&>*]:!mt-0">
+          <CapitalBudgetBlock />
+        </div>
       </div>
     </div>
   );
@@ -134,6 +202,8 @@ function SectionCard({
   meta,
   href,
   linkLabel,
+  maxHeight,
+  noPadding,
   children,
 }: {
   icon: ReactNode;
@@ -141,11 +211,13 @@ function SectionCard({
   meta?: string;
   href?: string;
   linkLabel?: string;
+  maxHeight?: string;
+  noPadding?: boolean;
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
-      <header className="flex items-center gap-2 px-4 pt-3.5 pb-2.5 border-b border-border/60">
+    <section className="flex flex-col rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+      <header className="flex items-center gap-2 px-4 pt-3.5 pb-2.5 border-b border-border/60 shrink-0">
         <span className="text-foreground/55 shrink-0">{icon}</span>
         <h2 className="text-base font-bold text-foreground truncate">{title}</h2>
         {meta && <span className="text-xs text-foreground/40 truncate">· {meta}</span>}
@@ -160,7 +232,55 @@ function SectionCard({
           </a>
         )}
       </header>
-      <div className="px-4 py-3.5">{children}</div>
+      <div
+        className={`${noPadding ? "" : "px-4 py-3.5"} overflow-y-auto flex-1`}
+        style={maxHeight ? { maxHeight } : undefined}
+      >
+        {children}
+      </div>
     </section>
+  );
+}
+
+function EmptyState({ text }: { text: string }) {
+  return (
+    <p className="text-sm text-foreground/45 text-center py-8 leading-relaxed">
+      {text}
+    </p>
+  );
+}
+
+// Compact "what's coming up" list for the City Live wall. Surfaces the next
+// few items from the events feed — the full searchable list lives on the
+// Events tab. We slice to keep the tile glanceable.
+function UpcomingEventsTile({ events }: { events: HalifaxEvent[] }) {
+  if (events.length === 0) {
+    return <EmptyState text="No upcoming events." />;
+  }
+  return (
+    <ul className="space-y-3">
+      {events.slice(0, 6).map((ev) => (
+        <li key={ev.url}>
+          <a
+            href={ev.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block"
+          >
+            <p className="text-[11px] uppercase tracking-wider font-semibold text-blue-600 dark:text-blue-400">
+              {ev.date_text || formatRelative(ev.start_at)}
+            </p>
+            <p className="text-sm font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors">
+              {ev.title}
+            </p>
+            {ev.venue_name && (
+              <p className="text-xs text-foreground/50 mt-0.5 truncate">
+                {ev.venue_name}
+              </p>
+            )}
+          </a>
+        </li>
+      ))}
+    </ul>
   );
 }
