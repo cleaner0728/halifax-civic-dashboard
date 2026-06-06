@@ -15,6 +15,10 @@ export type HalifaxEvent = {
   time_text: string | null;
   price_range: string | null;
   categories: string[];
+  image_url: string | null; // poster/cover image; rendered as a plain <img>
+                            // (bypasses Vercel's billed Image Optimization
+                            // pipeline — each viewer fetches the source CDN
+                            // directly).
   venue_name: string | null;
   venue_address: string | null;
   organizer_name: string | null;
@@ -31,6 +35,7 @@ async function _fetchEvents(): Promise<HalifaxEvent[]> {
       url, title, summary,
       start_at, end_at, date_text, time_text, price_range,
       categories,
+      image_url,
       venue_name, venue_address,
       organizer_name,
       website, tickets_url,

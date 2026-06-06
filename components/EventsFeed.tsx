@@ -108,6 +108,29 @@ function EventCard({ ev }: { ev: HalifaxEvent }) {
 
   return (
     <article className="bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+      {/* Hero image — only when the upstream event row has image_url. Plain
+          <img> on purpose: routing through next/image would bill Vercel
+          Image Optimization for every event view (we surface a *lot* of
+          events). Each visitor fetches the source CDN directly instead.
+          referrerPolicy keeps our domain out of the upstream's referer
+          logs; loading="lazy" defers below-the-fold images; decoding=
+          "async" keeps slow images from blocking layout; the onError
+          handler hides broken-image placeholders gracefully. */}
+      {ev.image_url && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={ev.image_url}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          referrerPolicy="no-referrer"
+          className="w-full h-40 object-cover bg-foreground/5"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).style.display = "none";
+          }}
+        />
+      )}
+
       <div className="p-4 space-y-2">
 
         {/* Date — always shown, top-left first position */}
