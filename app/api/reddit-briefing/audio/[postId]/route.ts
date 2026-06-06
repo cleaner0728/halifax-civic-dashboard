@@ -1,24 +1,27 @@
-// GET /api/reddit-briefing/clip/<postId>  → raw m4a bytes
+// GET /api/reddit-briefing/audio/<postId>  → raw MP3 bytes
 //
-// Streams a single Reddit pulse clip as a regular audio file. The main
-// /api/reddit-briefing endpoint used to inline every clip's audio as a
-// `data:audio/mp4;base64,…` URL in its JSON payload, which iOS Safari
-// refuses to play reliably. Serving the bytes as a normal HTTP response
-// is the path iOS handles natively — but only if we respect HTTP Range
-// semantics. iOS WebKit issues a probe `Range: bytes=0-1` request before
-// it'll even start playback; if the server claims `Accept-Ranges: bytes`
-// in the response but returns 200 OK + the full body instead of 206
-// Partial Content, iOS aborts and the audio never plays. This route
-// implements proper Range handling so iPhone Safari / Chrome / Firefox
-// (all WebKit on iOS) actually start streaming.
+// Streams a single Reddit pulse clip as a regular audio file. The path
+// was previously /clip/<postId> + audio/mp4 Content-Type — discovered
+// by direct curl probe that the bytes stored in
+// `reddit_post_summaries.tts_audio` are actually MP3 (sync word `ff f3`
+// + LAME encoder signature), not m4a/AAC as the column name suggested.
+// iOS WebKit was rejecting the audio because the Content-Type advertised
+// AAC-in-MP4 but the bytes were MP3 frames; the codec mismatch makes
+// WebKit's media engine fail before playback even starts. The path was
+// renamed from /clip/ to /audio/ to bust Vercel's CDN cache of the old
+// wrong-Content-Type responses (the route had `immutable` headers).
+//
+// HTTP Range is honored properly (206 Partial Content with Content-Range)
+// because iOS WebKit issues a probe `Range: bytes=0-1` before playback
+// and refuses to start if the server claims Accept-Ranges but doesn't
+// actually return 206 to a Range request.
 
 import type { NextRequest } from "next/server";
 import { sql } from "@/lib/db";
 
-// `mp4a.40.2` is the AAC-LC profile that Google Cloud TTS emits and
-// the only audio codec actually present in these m4a files. Naming it
-// explicitly removes any ambiguity from WebKit's codec detection.
-const CONTENT_TYPE = 'audio/mp4; codecs="mp4a.40.2"';
+// Plain MP3. The "tts_audio" column name is a misnomer — the upstream
+// Mac Mini pipeline writes MP3 here, not m4a/AAC.
+const CONTENT_TYPE = "audio/mpeg";
 const CACHE_CONTROL = "public, max-age=31536000, immutable";
 
 export async function GET(

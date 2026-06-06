@@ -5,12 +5,13 @@
 // reddit_post_summaries (Mac Mini's Gemini + Google TTS pipeline writes one
 // row per post with the m4a audio inline in `tts_audio` as base64).
 //
-// The audio field is a URL to /api/reddit-briefing/clip/<postId> — *not* an
-// inline data URL. iOS Safari refuses to play long `data:audio/mp4` URLs
-// reliably (the m4a-in-mp4 MIME is ambiguous on its data-URL fast path), so
-// the player consumes the clip via a regular HTTP stream which Safari
-// handles natively. As a side benefit the JSON payload is small and audio
-// is fetched lazily, one clip at a time.
+// The audio field is a URL to /api/reddit-briefing/audio/<postId> — *not* an
+// inline data URL. iOS Safari refuses to play long base64 audio data URLs
+// reliably, so the player consumes the clip via a regular HTTP stream which
+// Safari handles natively (the per-clip route also serves the correct
+// audio/mpeg Content-Type — turns out the bytes in tts_audio are MP3, not
+// m4a as the column name suggested). As a side benefit the JSON payload is
+// small and audio is fetched lazily, one clip at a time.
 
 import type { NextRequest } from 'next/server';
 import { fetchRedditPulse } from '@/lib/fetchers/reddit-pulse';
@@ -40,7 +41,7 @@ export async function GET(req: NextRequest) {
     communityReaction: it.communityReaction,
     ...(textOnly
       ? {}
-      : { audio: it.audioDataUrl ? `/api/reddit-briefing/clip/${it.postId}` : null }),
+      : { audio: it.audioDataUrl ? `/api/reddit-briefing/audio/${it.postId}` : null }),
   }));
 
   return Response.json({ items }, { headers: CACHE_HEADERS });
