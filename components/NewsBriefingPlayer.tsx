@@ -5,6 +5,19 @@ import { track } from "@vercel/analytics";
 import { formatRelative } from "@/lib/date";
 import BetaOnly from "@/components/BetaOnly";
 
+// Convert `data:audio/...` URLs into Blob URLs. iOS Safari occasionally
+// refuses to start playback on long base64 audio data URLs even inside a
+// user gesture; same-origin blob URLs sidestep that path entirely.
+function dataUrlToBlobUrl(dataUrl: string): string {
+  const match = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
+  if (!match) return dataUrl;
+  const [, mime, b64] = match;
+  const binary = atob(b64);
+  const arr = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
+  return URL.createObjectURL(new Blob([arr], { type: mime || "audio/mpeg" }));
+}
+
 type Item = {
   url: string;
   title: string;
@@ -105,18 +118,23 @@ export default function NewsBriefingPlayer() {
       if (!res.ok) throw new Error(String(res.status));
       const data = (await res.json()) as { items: Item[] };
       if (!data.items?.length) throw new Error("empty");
-      setItems(data.items);
+      // Convert data: URLs to Blob URLs (see helper at top of file).
+      const blobItems: Item[] = data.items.map((it) => ({
+        ...it,
+        audio: it.audio ? dataUrlToBlobUrl(it.audio) : it.audio,
+      }));
+      setItems(blobItems);
       // Don't open the summary list on Listen — playback shows only the
       // now-playing bar. The list is revealed only via the Read toggle.
       setStatus("ready");
       autoplay.current = true;
-      const first = data.items.findIndex((i) => i.audio);
+      const first = blobItems.findIndex((i) => i.audio);
       if (first < 0) return;
       // Prime the audio element synchronously here so iOS Safari sees the
       // play() inside the same async chain as the click. Waiting for the
       // setCurrent → effect → play() path loses user activation on iPhone.
       const audioEl = audioRef.current;
-      const firstAudio = data.items[first].audio;
+      const firstAudio = blobItems[first].audio;
       if (audioEl && firstAudio) {
         audioEl.src = firstAudio;
         audioEl.load();
@@ -138,6 +156,15 @@ export default function NewsBriefingPlayer() {
     if (current === first) void audioRef.current?.play();
     else setCurrent(first);
   };
+
+  // Revoke blob URLs when the items list changes or component unmounts.
+  useEffect(() => {
+    return () => {
+      items.forEach((it) => {
+        if (it.audio && it.audio.startsWith("blob:")) URL.revokeObjectURL(it.audio);
+      });
+    };
+  }, [items]);
 
   // ── Load text-only collection (no audio cost) ──
   const read = async () => {
