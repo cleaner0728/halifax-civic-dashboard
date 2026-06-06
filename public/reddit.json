@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-06T00:16:13.627Z",
+  "fetchedAt": "2026-06-06T00:46:12.564Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - June 2026",
@@ -29,15 +29,6 @@
       "createdUtc": 1780682786
     },
     {
-      "title": "Update: Missing child located safe",
-      "score": 0,
-      "numComments": 0,
-      "author": "sjmorris",
-      "url": "https://www.reddit.com/r/halifax/comments/1txl76n/update_missing_child_located_safe/",
-      "flair": null,
-      "createdUtc": 1780666588
-    },
-    {
       "title": "Doctor using AI to diagnose",
       "score": 0,
       "numComments": 0,
@@ -45,6 +36,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1txmmyf/doctor_using_ai_to_diagnose/",
       "flair": null,
       "createdUtc": 1780669881
+    },
+    {
+      "title": "Update: Missing child located safe",
+      "score": 0,
+      "numComments": 0,
+      "author": "sjmorris",
+      "url": "https://www.reddit.com/r/halifax/comments/1txl76n/update_missing_child_located_safe/",
+      "flair": null,
+      "createdUtc": 1780666588
     },
     {
       "title": "Halifax is the fourth most expensive city to rent in, according to new report - The Coast",
@@ -146,15 +146,6 @@
       "createdUtc": 1780684646
     },
     {
-      "title": "FYI there's a new mobile clinic downtown",
-      "score": 0,
-      "numComments": 0,
-      "author": "funktasticdog",
-      "url": "https://www.reddit.com/r/halifax/comments/1txt15v/fyi_theres_a_new_mobile_clinic_downtown/",
-      "flair": null,
-      "createdUtc": 1780683665
-    },
-    {
       "title": "Good Morning Halifax",
       "score": 0,
       "numComments": 0,
@@ -162,6 +153,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1txf9q7/good_morning_halifax/",
       "flair": null,
       "createdUtc": 1780649437
+    },
+    {
+      "title": "FYI there's a new mobile clinic downtown",
+      "score": 0,
+      "numComments": 0,
+      "author": "funktasticdog",
+      "url": "https://www.reddit.com/r/halifax/comments/1txt15v/fyi_theres_a_new_mobile_clinic_downtown/",
+      "flair": null,
+      "createdUtc": 1780683665
     },
     {
       "title": "Latest Update on The Crane on Dutch Village Road",
@@ -173,15 +173,6 @@
       "createdUtc": 1780656494
     },
     {
-      "title": "Workers and business owners call for transparency after Nova Scotia immigration priority shift",
-      "score": 0,
-      "numComments": 0,
-      "author": "insino93",
-      "url": "https://www.reddit.com/r/halifax/comments/1txs1lw/workers_and_business_owners_call_for_transparency/",
-      "flair": null,
-      "createdUtc": 1780681530
-    },
-    {
       "title": "Star light, star fight: Neighbours challenge Halifax-area stargazing development",
       "score": 0,
       "numComments": 0,
@@ -189,6 +180,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1txfy46/star_light_star_fight_neighbours_challenge/",
       "flair": null,
       "createdUtc": 1780651743
+    },
+    {
+      "title": "Workers and business owners call for transparency after Nova Scotia immigration priority shift",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1txs1lw/workers_and_business_owners_call_for_transparency/",
+      "flair": null,
+      "createdUtc": 1780681530
     },
     {
       "title": "Let's Talk About It: Emergency Alerts ⚠️",
@@ -216,6 +216,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1tx0uf7/nova_scotia_physician_recruitment_surges_with_33/",
       "flair": null,
       "createdUtc": 1780607812
+    },
+    {
+      "title": "Garage Door Opener Installation",
+      "score": 0,
+      "numComments": 0,
+      "author": "flailing_walrus",
+      "url": "https://www.reddit.com/r/halifax/comments/1ty26ax/garage_door_opener_installation/",
+      "flair": null,
+      "createdUtc": 1780705258
     },
     {
       "title": "Airport baggage drop",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1txqfxn/buyer_messed_with_bill_of_sale_and_now_cant_get/",
       "flair": null,
       "createdUtc": 1780678111
-    },
-    {
-      "title": "Whatever happened to \"Quiet in the Library\" ?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Wahrk_Gallows",
-      "url": "https://www.reddit.com/r/halifax/comments/1tx3ia4/whatever_happened_to_quiet_in_the_library/",
-      "flair": null,
-      "createdUtc": 1780614127
     }
   ]
 }
