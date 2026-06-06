@@ -3,25 +3,26 @@
 // Streams a single Reddit pulse clip as a regular audio file. The main
 // /api/reddit-briefing endpoint used to inline every clip's audio as a
 // `data:audio/mp4;base64,…` URL in its JSON payload, which iOS Safari
-// refuses to play reliably (the audio/mp4 MIME on a data URL is ambiguous
-// between an m4a audio track and an mp4 video container, and Safari's
-// data-URL fast path chokes on long base64 audio). Serving the bytes as a
-// normal HTTP response is the only path iOS handles natively for m4a.
+// refuses to play reliably. Serving the bytes as a normal HTTP response
+// is the path iOS handles natively — but only if we respect HTTP Range
+// semantics. iOS WebKit issues a probe `Range: bytes=0-1` request before
+// it'll even start playback; if the server claims `Accept-Ranges: bytes`
+// in the response but returns 200 OK + the full body instead of 206
+// Partial Content, iOS aborts and the audio never plays. This route
+// implements proper Range handling so iPhone Safari / Chrome / Firefox
+// (all WebKit on iOS) actually start streaming.
 
 import type { NextRequest } from "next/server";
 import { sql } from "@/lib/db";
 
-const AUDIO_HEADERS: Record<string, string> = {
-  "Content-Type": "audio/mp4",
-  // Audio for a given post_id never changes once the scraper writes it,
-  // so this is safe to mark immutable. The summary_date in the row keeps
-  // older posts addressable for as long as the pipeline retains them.
-  "Cache-Control": "public, max-age=31536000, immutable",
-  "Accept-Ranges": "bytes",
-};
+// `mp4a.40.2` is the AAC-LC profile that Google Cloud TTS emits and
+// the only audio codec actually present in these m4a files. Naming it
+// explicitly removes any ambiguity from WebKit's codec detection.
+const CONTENT_TYPE = 'audio/mp4; codecs="mp4a.40.2"';
+const CACHE_CONTROL = "public, max-age=31536000, immutable";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ postId: string }> },
 ) {
   const { postId } = await params;
@@ -55,10 +56,94 @@ export async function GET(
   }
 
   const buffer = Buffer.from(b64, "base64");
+  const total = buffer.length;
+
+  // ── Range request: respond 206 Partial Content with the requested
+  //    byte slice. iOS WebKit will refuse to play if we claim
+  //    Accept-Ranges but ignore the Range header. Format per RFC 7233:
+  //    `Range: bytes=START-END` (END may be missing → "to end of file").
+  const rangeHeader = req.headers.get("range");
+  if (rangeHeader) {
+    const match = /^bytes=(\d+)-(\d*)$/.exec(rangeHeader.trim());
+    if (match) {
+      const start = Number.parseInt(match[1], 10);
+      const end = match[2] ? Number.parseInt(match[2], 10) : total - 1;
+      if (
+        Number.isFinite(start) &&
+        Number.isFinite(end) &&
+        start >= 0 &&
+        end < total &&
+        start <= end
+      ) {
+        const sliced = buffer.subarray(start, end + 1);
+        return new Response(new Uint8Array(sliced), {
+          status: 206,
+          headers: {
+            "Content-Type": CONTENT_TYPE,
+            "Content-Length": String(sliced.length),
+            "Content-Range": `bytes ${start}-${end}/${total}`,
+            "Accept-Ranges": "bytes",
+            "Cache-Control": CACHE_CONTROL,
+          },
+        });
+      }
+      // Malformed/out-of-range — fall through to 416.
+      return new Response("range not satisfiable", {
+        status: 416,
+        headers: {
+          "Content-Range": `bytes */${total}`,
+          "Accept-Ranges": "bytes",
+        },
+      });
+    }
+  }
+
+  // No Range header — return the full body. Still advertise Range
+  // support so iOS knows to use it for subsequent fetches.
   return new Response(new Uint8Array(buffer), {
     headers: {
-      ...AUDIO_HEADERS,
-      "Content-Length": String(buffer.length),
+      "Content-Type": CONTENT_TYPE,
+      "Content-Length": String(total),
+      "Accept-Ranges": "bytes",
+      "Cache-Control": CACHE_CONTROL,
+    },
+  });
+}
+
+// Some streaming clients fire a HEAD before the GET to discover size +
+// Range support. Mirror the headers the GET would emit so HEAD answers
+// consistently and iOS doesn't get confused.
+export async function HEAD(
+  _req: NextRequest,
+  { params }: { params: Promise<{ postId: string }> },
+) {
+  const { postId } = await params;
+  if (!postId) return new Response(null, { status: 400 });
+
+  let rows: { length: number | null }[];
+  try {
+    // octet_length gives us the byte size without shipping the whole
+    // base64 across the connection.
+    rows = await sql<{ length: number | null }[]>`
+      SELECT (octet_length(decode(tts_audio, 'base64')))::int AS length
+      FROM reddit_post_summaries
+      WHERE post_id = ${postId} AND tts_audio IS NOT NULL
+      ORDER BY summary_date DESC, id DESC
+      LIMIT 1
+    `;
+  } catch {
+    return new Response(null, { status: 500 });
+  }
+
+  const length = rows[0]?.length;
+  if (!length) return new Response(null, { status: 404 });
+
+  return new Response(null, {
+    headers: {
+      "Content-Type": CONTENT_TYPE,
+      "Content-Length": String(length),
+      "Accept-Ranges": "bytes",
+      "Cache-Control": CACHE_CONTROL,
     },
   });
 }
