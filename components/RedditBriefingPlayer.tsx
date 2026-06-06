@@ -10,6 +10,16 @@ import { track } from "@vercel/analytics";
 // instead, which it consumes natively the same way Mobile Safari plays
 // any audio element with a remote src.
 
+// 1-frame silent MP3 used to "unlock" the audio element on iOS Safari.
+// Even with everything else right (URL src, user gesture, blob URLs,
+// etc.), iOS sometimes refuses the first play() on an element that has
+// never been played before. Playing a tiny silent clip synchronously
+// inside the user gesture flips the element into "user-activated" state
+// for the rest of the session — every subsequent play() works without
+// further gestures. MP3 is universal on iOS.
+const SILENT_MP3 =
+  "data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVV";
+
 type Item = {
   // Stable identity for the playlist position. For the new per-post source
   // this is the Reddit post_id; for legacy `reddit_briefing` rows it's the
@@ -110,6 +120,28 @@ export default function RedditBriefingPlayer() {
 
   const listen = async () => {
     track("reddit_briefing_play");
+
+    // iOS unlock — synchronously prime the audio element with a tiny
+    // silent MP3 inside the click handler. After this, the element is
+    // flagged as "user-activated" on iOS Safari and subsequent play()
+    // calls (after our await + setState) succeed without re-gesturing.
+    const primeEl = audioRef.current;
+    if (primeEl) {
+      try {
+        primeEl.src = SILENT_MP3;
+        primeEl.load();
+        const p = primeEl.play();
+        if (p && typeof p.then === "function") {
+          // Don't wait — we just need the .play() call to register in
+          // the gesture window. Errors here are expected if iOS still
+          // says no on the prime; we'll let the real play() report.
+          p.catch(() => {});
+        }
+      } catch {
+        // ignore prime failures — the real play() will report errors
+      }
+    }
+
     if (items.some((i) => i.audio)) {
       autoplay.current = true;
       const first = items.findIndex((i) => i.audio);
@@ -280,7 +312,17 @@ export default function RedditBriefingPlayer() {
         onLoadStart={() => setCurrentClipTime(0)}
         onLoadedMetadata={() => curItem && recordDuration(curItem.slot)}
         onTimeUpdate={() => setCurrentClipTime(audioRef.current?.currentTime ?? 0)}
-        preload="none"
+        onError={(e) => {
+          const a = e.currentTarget;
+          console.warn(
+            "[reddit-briefing] audio error",
+            a.error?.code,
+            a.error?.message,
+            "src=", a.src.slice(0, 80),
+          );
+        }}
+        preload="auto"
+        playsInline
         hidden
       />
     </div>
