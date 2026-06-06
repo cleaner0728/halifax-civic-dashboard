@@ -43,10 +43,15 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
           width of the board. */}
       <HalifaxWebcamWall />
 
-      {/* Row 2 — weather + marine/wind + waste + HRM calendar. Forced to a
-          fixed row height so all four tiles match exactly; any tile whose
-          content overflows scrolls internally. */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 [grid-auto-rows:640px]">
+      {/* Row 2 — weather + marine/wind + waste + HRM calendar. Row height
+          is 500px — close to Waste's natural content height so the inner
+          schedule card doesn't leave a big visible gap above its bottom
+          edge. The HRM Calendar URL has its `height=460` matched to the
+          iframe's actual rendered space (500 minus the SectionCard header)
+          so its internal layout doesn't trigger a second scrollbar. Weather
+          and Marine & Wind have always overflowed at any reasonable tile
+          height, so they keep their internal scroll. */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 [grid-auto-rows:500px]">
         <SectionCard
           icon={<IconCloudSun className="w-5 h-5" />}
           title="Weather"
@@ -68,13 +73,16 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
           <WindyMapBlock headless buoy={data.buoy} marineForecast={data.marineForecast} />
         </SectionCard>
 
-        {/* Waste: the block ships with its own bordered header + collapsible
-            schedule. Give it a matching outer surface (without our own
-            SectionCard header) so there isn't a duplicate "Waste Collection"
-            title. AccordionGroup starts with id="waste" open so the schedule
-            calendar shows by default on the desktop board. */}
         <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden flex flex-col">
-          <div className="px-4 py-3 overflow-y-auto flex-1 [&>*]:!mt-0">
+          <div
+            className="
+              px-4 py-3 overflow-y-auto flex-1 flex flex-col
+              [&>div]:!mt-0
+              [&>div]:flex [&>div]:flex-col [&>div]:flex-1
+              [&>div>div]:flex [&>div>div]:flex-col [&>div>div]:flex-1
+              [&>div>div>div]:flex-1
+            "
+          >
             <AccordionGroup defaultOpenId="waste">
               <WasteCollectionBlock />
             </AccordionGroup>

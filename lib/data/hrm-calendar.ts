@@ -4,7 +4,7 @@
 // desktop City Live board imports this one. If the feed list ever changes,
 // update both.
 export const HRM_CALENDAR_SRC =
-  'https://calendar.google.com/calendar/embed?showTitle=0&mode=AGENDA&height=600&wkst=1&bgcolor=%23FFFFFF' +
+  'https://calendar.google.com/calendar/embed?showTitle=0&mode=AGENDA&height=460&wkst=1&bgcolor=%23FFFFFF' +
   '&src=dd2f3gg1q7g2sodi34c479jqmk%40group.calendar.google.com&color=%232952A3' +
   '&src=ipkj749g67h89epofrv9p0u6d0%40group.calendar.google.com&color=%23691426' +
   '&src=p5ej79pes2tvh726nm9nq9hq18%40group.calendar.google.com&color=%23B1440E' +
