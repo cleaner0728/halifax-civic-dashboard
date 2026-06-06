@@ -9,8 +9,17 @@ type AccordionCtx = {
 
 const Ctx = createContext<AccordionCtx>({ openId: null, toggle: () => {} });
 
-export function AccordionGroup({ children }: { children: React.ReactNode }) {
-  const [openId, setOpenId] = useState<string | null>(null);
+export function AccordionGroup({
+  children,
+  defaultOpenId = null,
+}: {
+  children: React.ReactNode;
+  // Initial expanded section. Lets the desktop board start with the Waste
+  // Collection panel already open without affecting the mobile screen,
+  // which uses the same component and defaults to all-closed.
+  defaultOpenId?: string | null;
+}) {
+  const [openId, setOpenId] = useState<string | null>(defaultOpenId);
   const toggle = useCallback(
     (id: string) => setOpenId(prev => (prev === id ? null : id)),
     [],

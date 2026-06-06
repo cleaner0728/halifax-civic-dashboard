@@ -3,7 +3,16 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
-export default function CalendarEmbed({ src }: { src: string }) {
+export default function CalendarEmbed({
+  src,
+  fill = false,
+}: {
+  src: string;
+  // When true, stretch the iframe to fill the parent container (used by
+  // the desktop CityLiveBoard's equal-height grid cells). Default false
+  // preserves the original 480px fixed height that mobile screens depend on.
+  fill?: boolean;
+}) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -13,7 +22,9 @@ export default function CalendarEmbed({ src }: { src: string }) {
   return (
     <div
       data-no-tab-swipe
-      className="rounded-xl overflow-hidden border border-border shadow-sm p-2"
+      className={`rounded-xl overflow-hidden border border-border shadow-sm p-2 ${
+        fill ? "h-full flex" : ""
+      }`}
       // Keep a white bg so the iframe's own white background shows cleanly in
       // light mode; in dark mode the invert filter turns it dark anyway.
       style={{ backgroundColor: isDark ? "#111" : "#fff" }}
@@ -30,7 +41,8 @@ export default function CalendarEmbed({ src }: { src: string }) {
           transition: "filter 0.2s",
         }}
         width="100%"
-        height="480"
+        height={fill ? "100%" : "480"}
+        className={fill ? "flex-1" : undefined}
         title="HRM Events Calendar"
       />
     </div>

@@ -43,17 +43,14 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
           width of the board. */}
       <HalifaxWebcamWall />
 
-      {/* Row 2 — the four "always-on" reference panels the user wants
-          glanceable: weather, marine/wind context, today's waste, calendar.
-          `items-start` lets each tile size to its own content so a tall
-          panel (Weather) doesn't force empty whitespace in shorter siblings
-          (Waste, Calendar). */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start">
+      {/* Row 2 — weather + marine/wind + waste + HRM calendar. Forced to a
+          fixed row height so all four tiles match exactly; any tile whose
+          content overflows scrolls internally. */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 [grid-auto-rows:640px]">
         <SectionCard
           icon={<IconCloudSun className="w-5 h-5" />}
           title="Weather"
           meta="Halifax"
-          maxHeight="640px"
         >
           <WeatherBlock
             weather={data.weather}
@@ -67,7 +64,6 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
           icon={<IconWaves className="w-5 h-5" />}
           title="Marine & Wind"
           meta="Halifax Harbour"
-          maxHeight="640px"
         >
           <WindyMapBlock headless buoy={data.buoy} marineForecast={data.marineForecast} />
         </SectionCard>
@@ -75,11 +71,14 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
         {/* Waste: the block ships with its own bordered header + collapsible
             schedule. Give it a matching outer surface (without our own
             SectionCard header) so there isn't a duplicate "Waste Collection"
-            title stacked on top of itself. */}
-        <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden px-4 py-3 [&>*]:!mt-0">
-          <AccordionGroup>
-            <WasteCollectionBlock />
-          </AccordionGroup>
+            title. AccordionGroup starts with id="waste" open so the schedule
+            calendar shows by default on the desktop board. */}
+        <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden flex flex-col">
+          <div className="px-4 py-3 overflow-y-auto flex-1 [&>*]:!mt-0">
+            <AccordionGroup defaultOpenId="waste">
+              <WasteCollectionBlock />
+            </AccordionGroup>
+          </div>
         </div>
 
         <SectionCard
@@ -90,17 +89,17 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
           linkLabel="halifax.ca"
           noPadding
         >
-          <CalendarEmbed src={HRM_CALENDAR_SRC} />
+          <CalendarEmbed src={HRM_CALENDAR_SRC} fill />
         </SectionCard>
       </div>
 
-      {/* Row 3 — what's happening right now: alerts, HRM news, upcoming
-          events, active fire incidents. Same `items-start` treatment. */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start">
+      {/* Row 3 — alerts, HRM news, upcoming events, fire incidents. Same
+          fixed-row-height treatment as row 2; tile heights are uniform and
+          tile bodies scroll when they overflow. */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 [grid-auto-rows:520px]">
         <SectionCard
           icon={<IconFlame className="w-5 h-5" />}
           title="Alerts"
-          maxHeight="540px"
         >
           {data.alerts.length > 0 ? (
             <AlertsBlock alerts={data.alerts} />
@@ -115,7 +114,6 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
           meta={data.hrmDateLabel}
           href="https://www.halifax.ca/home/news"
           linkLabel="halifax.ca"
-          maxHeight="540px"
         >
           <HrmNewsBlock items={data.hrmNews} />
         </SectionCard>
@@ -124,7 +122,6 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
           icon={<IconTicket className="w-5 h-5" />}
           title="Events"
           meta={`${data.events.length} upcoming`}
-          maxHeight="540px"
         >
           <UpcomingEventsTile events={data.events} />
         </SectionCard>
@@ -135,21 +132,21 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
           meta="past 60 min"
           href="https://www.halifax.ca/safety-security/fire-emergency/hrfe-incident-feed"
           linkLabel="HRFE"
-          maxHeight="540px"
         >
           <HrfeBlock incidents={data.hrfeIncidents} />
         </SectionCard>
       </div>
 
-      {/* Row 4 — getting around + civic. Lower in the visual hierarchy than
-          the live info above. */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start">
+      {/* Row 4 — getting around + civic. Same equal-height treatment. The
+          Capital Budget card owns its own bordered shell, so wrap it in a
+          flex column matching the surrounding SectionCards so it stretches
+          and scrolls consistently with its row-mates. */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 [grid-auto-rows:520px]">
         <SectionCard
           icon={<IconBus className="w-5 h-5" />}
           title="Transit"
           href={DISRUPTIONS_URL}
           linkLabel="halifax.ca"
-          maxHeight="540px"
         >
           <WinterParkingBanBlock ban={data.winterParkingBan} />
           <GettingAroundBlock
@@ -166,7 +163,6 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
           title="Ferry"
           href={DISRUPTIONS_URL}
           linkLabel="halifax.ca"
-          maxHeight="540px"
         >
           <GettingAroundBlock
             detours={[]}
@@ -181,14 +177,13 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
           icon={<IconLandmark className="w-5 h-5" />}
           title="Have Your Say"
           meta="civic"
-          maxHeight="540px"
         >
           <CivicEngagementBlock />
         </SectionCard>
 
-        {/* CapitalBudgetBlock owns its own bordered card; drop into the
-            grid cell directly so it lines up with siblings. */}
-        <div className="[&>*]:!mt-0">
+        {/* CapitalBudgetBlock owns its own bordered card; wrap so it
+            stretches + scrolls inside the row's fixed height. */}
+        <div className="overflow-y-auto [&>*]:!mt-0 [&>*]:h-full">
           <CapitalBudgetBlock />
         </div>
       </div>
