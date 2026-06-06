@@ -5,9 +5,10 @@ import BrandTitle from "@/components/BrandTitle";
 import SettingsMenu from "@/components/SettingsMenu";
 import CityLiveBoard from "./CityLiveBoard";
 import PulseBoard from "./PulseBoard";
+import DiscussionBoard from "./DiscussionBoard";
 import EventsCalendarScreen from "@/components/screens/EventsCalendarScreen";
 import StatsScreen from "@/components/screens/StatsScreen";
-import { IconCity, IconPulse, IconTicket, IconChart } from "@/components/icons";
+import { IconCity, IconPulse, IconTicket, IconChart, IconMessages } from "@/components/icons";
 import type { WeatherData } from "@/lib/fetchers/weather";
 import type { TideGraphData } from "@/lib/fetchers/tides";
 import type { AirQuality } from "@/lib/fetchers/air-quality";
@@ -18,6 +19,7 @@ import type { TransitDetour, FerryAlert, TransitAdjustment } from "@/lib/fetcher
 import type { BuoyObservation } from "@/lib/fetchers/buoy";
 import type { MarineForecast } from "@/lib/fetchers/marine-forecast";
 import type { RedditPost } from "@/lib/fetchers/reddit";
+import type { RedditVoice } from "@/lib/fetchers/reddit-voices";
 import type { NewsItem } from "@/lib/fetchers/news";
 import type { HalifaxEvent } from "@/lib/fetchers/events";
 import type { GasPriceData } from "@/lib/fetchers/gas";
@@ -46,17 +48,19 @@ export type DashboardData = {
   news: NewsItem[];
   redditPosts: RedditPost[];
   redditFetchedAt: string | null;
+  redditVoices: RedditVoice[];
   events: HalifaxEvent[];
   gasPrices: GasPriceData;
   groceryPrices: GroceryPriceData;
   renderedAt: number;
 };
 
-export type DesktopSection = "city" | "pulse" | "events" | "stats";
+export type DesktopSection = "city" | "pulse" | "discussion" | "events" | "stats";
 
 const NAV: { id: DesktopSection; label: string; Icon: React.FC<React.SVGProps<SVGSVGElement>> }[] = [
   { id: "city", label: "City Live", Icon: IconCity },
   { id: "pulse", label: "Pulse", Icon: IconPulse },
+  { id: "discussion", label: "Discussion", Icon: IconMessages },
   { id: "events", label: "Events", Icon: IconTicket },
   { id: "stats", label: "Stats", Icon: IconChart },
 ];
@@ -117,7 +121,7 @@ export default function DesktopShell({ data }: { data: DashboardData }) {
           })}
         </nav>
         <div className="px-3 py-3 border-t border-border flex items-center justify-between">
-          <span className="text-[11px] text-foreground/35">Press 1–4</span>
+          <span className="text-[11px] text-foreground/35">Press 1–5</span>
           {/* Gear sits at the bottom of the viewport, so open the menu upward. */}
           <SettingsMenu menuPositionClass="bottom-full right-0 mb-2" />
         </div>
@@ -130,6 +134,8 @@ export default function DesktopShell({ data }: { data: DashboardData }) {
             <CityLiveBoard data={data} />
           ) : active === "pulse" ? (
             <PulseBoard data={data} />
+          ) : active === "discussion" ? (
+            <DiscussionBoard data={data} />
           ) : (
             <div className="desktop-pane">{renderScreen(active, data)}</div>
           )}

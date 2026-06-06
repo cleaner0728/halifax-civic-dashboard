@@ -3,21 +3,35 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 
-type Slot = "morning" | "evening" | "late_night";
 type Item = {
-  slot: Slot;
+  // Stable identity for the playlist position. For the new per-post source
+  // this is the Reddit post_id; for legacy `reddit_briefing` rows it's the
+  // slot string ("morning"/"evening"/"late_night").
+  slot: string;
+  // Per-item display label. Set for the new per-post source (= post title).
+  // Falls back to the legacy slot label below when null.
+  label?: string | null;
   summary: string;
   postCount: number;
   createdAt: string;
   audio?: string | null;
+  // Optional per-post metadata surfaced in the player meta row.
+  flair?: string | null;
+  score?: number | null;
+  numComments?: number | null;
 };
 type Status = "idle" | "loading" | "ready" | "empty" | "error";
 
-const SLOT_LABEL: Record<Slot, string> = {
+const LEGACY_SLOT_LABEL: Record<string, string> = {
   morning: "Midday pulse",
   evening: "Evening pulse",
   late_night: "Late-night pulse",
 };
+
+function itemLabel(item: Item): string {
+  if (item.label) return item.label;
+  return LEGACY_SLOT_LABEL[item.slot] ?? "Today's pulse";
+}
 
 export default function RedditBriefingPlayer() {
   const [status, setStatus] = useState<Status>("idle");
@@ -208,11 +222,22 @@ export default function RedditBriefingPlayer() {
               )}
             </button>
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] text-foreground/40">
-                {SLOT_LABEL[curItem.slot]} · {curItem.postCount} posts ·{" "}
-                {playable.findIndex((p) => p.slot === curItem.slot) + 1} of {playable.length}
+              <p className="text-[11px] text-foreground/40 truncate">
+                <span className="font-semibold text-orange-600 dark:text-orange-400">
+                  {playable.findIndex((p) => p.slot === curItem.slot) + 1} of {playable.length}
+                </span>
+                {curItem.flair ? <> · {curItem.flair}</> : null}
+                {typeof curItem.score === "number" ? <> · ▲{curItem.score}</> : null}
+                {typeof curItem.numComments === "number" && curItem.numComments > 0
+                  ? <> · {curItem.numComments} comments</>
+                  : null}
               </p>
-              <p className="text-sm text-foreground/80 leading-snug line-clamp-2">{curItem.summary}</p>
+              <p className="text-sm font-semibold text-foreground leading-snug line-clamp-1">
+                {itemLabel(curItem)}
+              </p>
+              <p className="text-xs text-foreground/60 leading-snug line-clamp-2 mt-0.5">
+                {curItem.summary}
+              </p>
             </div>
           </div>
 

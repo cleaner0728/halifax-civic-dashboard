@@ -24,6 +24,7 @@ import { fetchTides, computeTideGraph } from '@/lib/fetchers/tides';
 import { fetchBuoy } from '@/lib/fetchers/buoy';
 import { fetchMarineForecast } from '@/lib/fetchers/marine-forecast';
 import { fetchRedditPosts } from '@/lib/fetchers/reddit';
+import { fetchRedditVoices } from '@/lib/fetchers/reddit-voices';
 import { fetchGasPrices } from '@/lib/fetchers/gas';
 import { fetchGroceryPrices } from '@/lib/fetchers/grocery';
 import { fetchEvents } from '@/lib/fetchers/events';
@@ -54,6 +55,7 @@ export default async function Home() {
     transitAdjustments,
     tides,
     redditData,
+    redditVoices,
     gasPrices,
     airQuality,
     burnStatus,
@@ -72,7 +74,8 @@ export default async function Home() {
     safe(fetchFerryAlerts(), [], 'ferry-alerts'),
     safe(fetchTransitAdjustments(), null, 'transit-adjustments'),
     safe(fetchTides(), [], 'tides'),
-    safe(fetchRedditPosts(), { posts: [], fetchedAt: null }, 'reddit'),
+    safe(fetchRedditPosts(), { posts: [], fetchedAt: null, source: 'rss' as const }, 'reddit'),
+    safe(fetchRedditVoices(), [], 'reddit-voices'),
     safe(fetchGasPrices(), { history: [] }, 'gas-prices'),
     safe(fetchAirQuality(), null, 'air-quality'),
     safe(fetchBurnStatus(), null, 'burn-status'),
@@ -115,6 +118,7 @@ export default async function Home() {
     news: news.items,
     redditPosts: redditData.posts,
     redditFetchedAt: redditData.fetchedAt,
+    redditVoices,
     events,
     gasPrices,
     groceryPrices,

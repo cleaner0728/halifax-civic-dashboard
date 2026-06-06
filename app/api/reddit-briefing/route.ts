@@ -1,18 +1,21 @@
-// GET /api/reddit-briefing           → { items: [{slot,summary,createdAt,postCount,audio}] }
+// GET /api/reddit-briefing           → { items: [{slot,label,summary,postCount,createdAt,audio,...}] }
 // GET /api/reddit-briefing?mode=text → same, but without the audio field
 //
-// Returns today's Reddit rollups (max 2 — morning + evening), ordered
-// chronologically so the player plays morning first. Written by the
-// /api/reddit-briefing/generate endpoint on a twice-daily cron.
+// Returns today's Reddit pulse as a playlist. Primary source is the per-post
+// rows in reddit_post_summaries (Mac Mini's Gemini + Google TTS pipeline
+// writes one row per post with the m4a audio inline in `tts_audio` as
+// base64). Falls back to the legacy reddit_briefing table when the new
+// source is empty — keeps the player working on a fresh install.
 
 import type { NextRequest } from 'next/server';
 import { sql } from '@/lib/db';
+import { fetchRedditPulse } from '@/lib/fetchers/reddit-pulse';
 
 const CACHE_HEADERS = {
   'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
 };
 
-type Row = {
+type LegacyRow = {
   briefing_date: string;
   slot: 'morning' | 'evening' | 'late_night';
   summary: string;
@@ -21,7 +24,6 @@ type Row = {
   created_at: string;
 };
 
-// Halifax local date string (YYYY-MM-DD) for the SELECT filter.
 function halifaxToday(): string {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'America/Halifax',
@@ -35,22 +37,39 @@ function halifaxToday(): string {
 
 export async function GET(req: NextRequest) {
   const textOnly = req.nextUrl.searchParams.get('mode') === 'text';
-  const today = halifaxToday();
 
-  // The table is created out-of-band in Supabase; in a fresh environment it
-  // may not exist yet. Treat "missing table" (Postgres SQLSTATE 42P01) as
-  // an empty result so the player can render its "no pulse yet" state
-  // rather than blowing up the page. Other errors still propagate.
-  let rows: Row[];
+  // 1. Primary path — per-post playlist from reddit_post_summaries.
+  const pulse = await fetchRedditPulse();
+  if (pulse && pulse.items.length > 0) {
+    const items = pulse.items.map((it) => ({
+      slot: it.postId, // unique identity per playlist position
+      label: it.title,
+      summary: it.summary,
+      postCount: it.numComments ?? 0, // "X comments" in the player ticker
+      createdAt: it.generatedAt,
+      // Extras the player optionally surfaces.
+      postId: it.postId,
+      flair: it.flair,
+      score: it.score,
+      numComments: it.numComments,
+      communityReaction: it.communityReaction,
+      ...(textOnly ? {} : { audio: it.audioDataUrl }),
+    }));
+    return Response.json({ items }, { headers: CACHE_HEADERS });
+  }
+
+  // 2. Fallback — legacy reddit_briefing rows (single-row-per-slot summaries).
+  const today = halifaxToday();
+  let rows: LegacyRow[];
   try {
     rows = textOnly
-      ? await sql<Row[]>`
+      ? await sql<LegacyRow[]>`
           SELECT briefing_date, slot, summary, NULL::text AS audio_b64, post_count, created_at
           FROM reddit_briefing
           WHERE briefing_date = ${today}
           ORDER BY CASE slot WHEN 'morning' THEN 0 WHEN 'evening' THEN 1 ELSE 2 END
         `
-      : await sql<Row[]>`
+      : await sql<LegacyRow[]>`
           SELECT briefing_date, slot, summary, audio_b64, post_count, created_at
           FROM reddit_briefing
           WHERE briefing_date = ${today}
@@ -59,7 +78,7 @@ export async function GET(req: NextRequest) {
   } catch (e: unknown) {
     const code = (e as { code?: string } | null)?.code;
     if (code === '42P01') {
-      console.warn('[reddit-briefing] table missing — returning empty');
+      console.warn('[reddit-briefing] legacy table missing — returning empty');
       return Response.json({ items: [] }, { headers: CACHE_HEADERS });
     }
     throw e;
