@@ -102,6 +102,16 @@ main {
 .skiptranslate {
   display: none !important;
 }
+/* The loading spinner Google injects during translation. It parks fixed at the
+   top-left and re-appears on every re-translation — and this app re-translates
+   on every DOM mutation, so it spins almost constantly (pure visual noise over
+   the brand title). The first selector is the modern widget's (obfuscated but
+   long-stable) spinner class; .goog-te-spinner-pos covers the legacy variant.
+   Hiding it doesn't affect translation — it's only a progress indicator. */
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+.goog-te-spinner-pos {
+  display: none !important;
+}
 body {
   top: 0 !important;
 }
