@@ -120,6 +120,7 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
           icon={<IconLandmark className="w-5 h-5" />}
           title="HRM News"
           meta={data.hrmDateLabel}
+          hasUpdate={data.hrmNewsHasUpdate}
           href="https://www.halifax.ca/home/news"
           linkLabel="halifax.ca"
         >
@@ -138,6 +139,7 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
           icon={<IconFlame className="w-5 h-5" />}
           title="Incidents"
           meta="past 60 min"
+          hasUpdate={data.incidentsHasUpdate}
           href="https://www.halifax.ca/safety-security/fire-emergency/hrfe-incident-feed"
           linkLabel="HRFE"
         >
@@ -153,6 +155,7 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
         <SectionCard
           icon={<IconBus className="w-5 h-5" />}
           title="Transit"
+          hasUpdate={data.transitHasUpdate}
           href={DISRUPTIONS_URL}
           linkLabel="halifax.ca"
         >
@@ -169,6 +172,7 @@ export default function CityLiveBoard({ data }: { data: DashboardData }) {
         <SectionCard
           icon={<IconFerry className="w-5 h-5" />}
           title="Ferry"
+          hasUpdate={data.ferryHasUpdate}
           href={DISRUPTIONS_URL}
           linkLabel="halifax.ca"
         >
@@ -205,6 +209,7 @@ function SectionCard({
   meta,
   href,
   linkLabel,
+  hasUpdate,
   maxHeight,
   noPadding,
   children,
@@ -214,6 +219,7 @@ function SectionCard({
   meta?: string;
   href?: string;
   linkLabel?: string;
+  hasUpdate?: boolean;
   maxHeight?: string;
   noPadding?: boolean;
   children: ReactNode;
@@ -224,6 +230,12 @@ function SectionCard({
         <span className="text-foreground/55 shrink-0">{icon}</span>
         <h2 className="text-base font-bold text-foreground truncate">{title}</h2>
         {meta && <span className="text-xs text-foreground/40 truncate">· {meta}</span>}
+        {hasUpdate && (
+          <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-sky-500/15 text-sky-600 dark:text-sky-400 text-[11px] font-semibold px-2 py-0.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" aria-hidden />
+            New
+          </span>
+        )}
         {href && (
           <a
             href={href}

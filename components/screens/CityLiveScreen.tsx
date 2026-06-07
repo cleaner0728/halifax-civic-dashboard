@@ -77,6 +77,10 @@ type Props = {
   hrfeIncidents: HrmItem[];
   hrmNews: HrmItem[];
   hrmDateLabel: string;
+  ferryHasUpdate?: boolean;
+  transitHasUpdate?: boolean;
+  incidentsHasUpdate?: boolean;
+  hrmNewsHasUpdate?: boolean;
   buoy: BuoyObservation | null;
   marineForecast: MarineForecast | null;
   winterParkingBan: WinterParkingBan | null;
@@ -94,6 +98,10 @@ export default function CityLiveScreen({
   hrfeIncidents,
   hrmNews,
   hrmDateLabel,
+  ferryHasUpdate,
+  transitHasUpdate,
+  incidentsHasUpdate,
+  hrmNewsHasUpdate,
   buoy,
   marineForecast,
   winterParkingBan,
@@ -137,6 +145,7 @@ export default function CityLiveScreen({
             id="ferry"
             icon={<IconFerry className="w-5 h-5" />}
             title="Ferry"
+            hasUpdate={ferryHasUpdate}
             href="https://www.halifax.ca/transportation/halifax-transit/service-disruptions"
             linkLabel="halifax.ca"
           >
@@ -153,6 +162,7 @@ export default function CityLiveScreen({
             id="transit"
             icon={<IconBus className="w-5 h-5" />}
             title="Transit"
+            hasUpdate={transitHasUpdate}
             href="https://www.halifax.ca/transportation/halifax-transit/service-disruptions"
             linkLabel="halifax.ca"
           >
@@ -190,6 +200,7 @@ export default function CityLiveScreen({
             icon={<IconFlame className="w-5 h-5" />}
             title="Active Incidents"
             meta="past 60 min"
+            hasUpdate={incidentsHasUpdate}
             href="https://www.halifax.ca/safety-security/fire-emergency/hrfe-incident-feed"
             linkLabel="HRFE feed"
           >
@@ -201,6 +212,7 @@ export default function CityLiveScreen({
             icon={<IconLandmark className="w-5 h-5" />}
             title="HRM News"
             meta={hrmDateLabel}
+            hasUpdate={hrmNewsHasUpdate}
             href="https://www.halifax.ca/home/news"
             linkLabel="halifax.ca"
           >

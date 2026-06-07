@@ -42,6 +42,10 @@ export type DashboardData = {
   hrfeIncidents: HrmItem[];
   hrmNews: HrmItem[];
   hrmDateLabel: string;
+  ferryHasUpdate?: boolean;
+  transitHasUpdate?: boolean;
+  incidentsHasUpdate?: boolean;
+  hrmNewsHasUpdate?: boolean;
   buoy: BuoyObservation | null;
   marineForecast: MarineForecast | null;
   winterParkingBan: WinterParkingBan | null;

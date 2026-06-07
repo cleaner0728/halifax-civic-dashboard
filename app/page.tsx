@@ -14,12 +14,12 @@ import { fetchAirQuality } from '@/lib/fetchers/air-quality';
 import { fetchBurnStatus } from '@/lib/fetchers/burn-status';
 import { fetchAlerts } from '@/lib/fetchers/alerts';
 import { fetchNews } from '@/lib/fetchers/news';
-import { fetchHrmNews, fetchHrfeIncidents } from '@/lib/fetchers/hrm';
 import {
-  fetchTransitDetours,
-  fetchFerryAlerts,
-  fetchTransitAdjustments,
-} from '@/lib/fetchers/transit';
+  resolveFerry,
+  resolveTransit,
+  resolveIncidents,
+  resolveHrmNews,
+} from '@/lib/fetchers/civic-feed';
 import { fetchTides, computeTideGraph } from '@/lib/fetchers/tides';
 import { fetchBuoy } from '@/lib/fetchers/buoy';
 import { fetchMarineForecast } from '@/lib/fetchers/marine-forecast';
@@ -48,11 +48,10 @@ export default async function Home() {
   const [
     weather,
     news,
-    hrmResult,
-    hrfeIncidents,
-    transitDetours,
-    ferryAlerts,
-    transitAdjustments,
+    hrm,
+    incidents,
+    transit,
+    ferry,
     tides,
     redditData,
     redditVoices,
@@ -68,11 +67,10 @@ export default async function Home() {
   ] = await Promise.all([
     safe(fetchWeather(), null, 'weather'),
     safe(fetchNews(), { items: [] }, 'news'),
-    safe(fetchHrmNews(), { items: [], dateLabel: 'Error loading' }, 'hrm-news'),
-    safe(fetchHrfeIncidents(), [], 'hrfe'),
-    safe(fetchTransitDetours(), [], 'transit-detours'),
-    safe(fetchFerryAlerts(), [], 'ferry-alerts'),
-    safe(fetchTransitAdjustments(), null, 'transit-adjustments'),
+    safe(resolveHrmNews(), { items: [], dateLabel: 'Error loading', hasUpdateToday: false }, 'hrm-news'),
+    safe(resolveIncidents(), { incidents: [], hasUpdateToday: false }, 'incidents'),
+    safe(resolveTransit(), { detours: [], adjustments: null, hasUpdateToday: false }, 'transit'),
+    safe(resolveFerry(), { alerts: [], hasUpdateToday: false }, 'ferry'),
     safe(fetchTides(), [], 'tides'),
     safe(fetchRedditPosts(), { posts: [], fetchedAt: null, source: 'rss' as const }, 'reddit'),
     safe(fetchRedditVoices(), [], 'reddit-voices'),
@@ -106,12 +104,16 @@ export default async function Home() {
     airQuality,
     burnStatus,
     alerts,
-    detours: transitDetours,
-    ferryAlerts,
-    adjustments: transitAdjustments,
-    hrfeIncidents,
-    hrmNews: hrmResult.items,
-    hrmDateLabel: hrmResult.dateLabel,
+    detours: transit.detours,
+    ferryAlerts: ferry.alerts,
+    adjustments: transit.adjustments,
+    hrfeIncidents: incidents.incidents,
+    hrmNews: hrm.items,
+    hrmDateLabel: hrm.dateLabel,
+    ferryHasUpdate: ferry.hasUpdateToday,
+    transitHasUpdate: transit.hasUpdateToday,
+    incidentsHasUpdate: incidents.hasUpdateToday,
+    hrmNewsHasUpdate: hrm.hasUpdateToday,
     buoy,
     marineForecast,
     winterParkingBan,
@@ -152,12 +154,16 @@ export default async function Home() {
               airQuality={airQuality}
               burnStatus={burnStatus}
               alerts={alerts}
-              detours={transitDetours}
-              ferryAlerts={ferryAlerts}
-              adjustments={transitAdjustments}
-              hrfeIncidents={hrfeIncidents}
-              hrmNews={hrmResult.items}
-              hrmDateLabel={hrmResult.dateLabel}
+              detours={transit.detours}
+              ferryAlerts={ferry.alerts}
+              adjustments={transit.adjustments}
+              hrfeIncidents={incidents.incidents}
+              hrmNews={hrm.items}
+              hrmDateLabel={hrm.dateLabel}
+              ferryHasUpdate={ferry.hasUpdateToday}
+              transitHasUpdate={transit.hasUpdateToday}
+              incidentsHasUpdate={incidents.hasUpdateToday}
+              hrmNewsHasUpdate={hrm.hasUpdateToday}
               buoy={buoy}
               marineForecast={marineForecast}
               winterParkingBan={winterParkingBan}

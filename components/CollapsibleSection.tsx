@@ -10,6 +10,9 @@ type Props = {
   meta?: string;
   href?: string;
   linkLabel?: string;
+  /** Show a subtle "New" hint in the collapsed header — set when the feed has
+   *  content first seen today. Hidden once the section is opened. */
+  hasUpdate?: boolean;
   children: React.ReactNode;
 };
 
@@ -20,6 +23,7 @@ export default function CollapsibleSection({
   meta,
   href,
   linkLabel,
+  hasUpdate,
   children,
 }: Props) {
   const { openId, toggle } = useAccordion();
@@ -50,6 +54,12 @@ export default function CollapsibleSection({
           <h2 className="text-lg font-bold text-foreground truncate">{title}</h2>
           {meta && (
             <span className="text-xs text-foreground/40 truncate">· {meta}</span>
+          )}
+          {hasUpdate && !isOpen && (
+            <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-sky-500/15 text-sky-600 dark:text-sky-400 text-[11px] font-semibold px-2 py-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" aria-hidden />
+              New
+            </span>
           )}
         </div>
         <svg
