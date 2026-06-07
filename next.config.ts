@@ -1,25 +1,13 @@
 import type { NextConfig } from "next";
 
+// No `images` config — this app does not use next/image anywhere. Every
+// `<img>` in the UI is a plain HTML element that fetches its source CDN
+// directly, so Vercel Image Optimization is never billed. If anyone later
+// adds an `<Image>` import from next/image, the lint rule
+// `@next/next/no-img-element` flips meaning (which means CI will surface
+// it) and this comment explains why we don't want that.
 const nextConfig: NextConfig = {
   devIndicators: false,
-  images: {
-    // News images come from a handful of trusted RSS sources. Listing hosts
-    // explicitly so a future feed swap doesn't silently start optimizing
-    // arbitrary URLs.
-    remotePatterns: [
-      { protocol: "https", hostname: "**.cbc.ca" },
-      { protocol: "https", hostname: "globalnews.ca" },
-      { protocol: "https", hostname: "**.wp.com" },
-      { protocol: "https", hostname: "**.halifaxexaminer.ca" },
-      { protocol: "https", hostname: "i.redd.it" },
-      { protocol: "https", hostname: "cdn.halifax.ca" },
-      { protocol: "https", hostname: "images.novascotiawebcams.com" },
-      // Halifax Harbour Bridges traffic cams. Proxied through next/image to
-      // avoid Chrome's ORB silently dropping the cross-origin response (the
-      // same problem the Emera Oval cam hit on cdn.halifax.ca).
-      { protocol: "https", hostname: "halifaxharbourbridges.ca" },
-    ],
-  },
 };
 
 export default nextConfig;

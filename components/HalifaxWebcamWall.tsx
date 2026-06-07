@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { usePolledImage } from "./usePolledImage";
 
@@ -71,15 +70,16 @@ function ImageCam({
 }) {
   const t = usePolledImage(refreshMs);
   if (t === 0) return null;
+  // Plain <img>, not next/image — see HalifaxWebcams for the rationale
+  // (cache-busted `?time=…` polls would each bill a Vercel Image
+  // Optimization transformation).
+  // eslint-disable-next-line @next/next/no-img-element
   return (
-    <Image
+    <img
       key={camId}
       src={imageUrl(t)}
       alt="live webcam"
-      fill
-      sizes="(min-width: 1920px) 25vw, (min-width: 1280px) 25vw, 50vw"
-      className="object-cover"
-      unoptimized
+      className="absolute inset-0 w-full h-full object-cover"
     />
   );
 }

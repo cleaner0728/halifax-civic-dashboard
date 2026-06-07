@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 import { usePolledImage } from "./usePolledImage";
@@ -51,52 +50,52 @@ const CAMS: Cam[] = [
     imageUrl: hhbUrl("macdonald-halifax-bound"),
     refreshMs: 10_000,
     source: "https://www.novascotiawebcams.com/webcams/macdonald-bridge-halifax-bound",
-    name: "MacDonald (Halifax)",
+    name: "MacDonald (Halifax)",
   },
   {
     kind: "image",
     imageUrl: hhbUrl("macdonald-dartmouth-bound"),
     refreshMs: 10_000,
     source: "https://www.novascotiawebcams.com/webcams/macdonald-bridge-dartmouth-bound",
-    name: "MacDonald (Dartmouth)",
+    name: "MacDonald (Dartmouth)",
   },
   {
     kind: "image",
     imageUrl: hhbUrl("mackay-halifax-bound"),
     refreshMs: 10_000,
     source: "https://www.novascotiawebcams.com/webcams/mackay-bridge-halifax-bound",
-    name: "MacKay (Halifax)",
+    name: "MacKay (Halifax)",
   },
   {
     kind: "image",
     imageUrl: hhbUrl("mackay-dartmouth-bound"),
     refreshMs: 10_000,
     source: "https://www.novascotiawebcams.com/webcams/mackay-bridge-dartmouth-bound",
-    name: "MacKay (Dartmouth)",
+    name: "MacKay (Dartmouth)",
   },
   {
     kind: "video",
     streamUrl: "https://streaming-1.novascotiawebcams.com/live/kingswharf/playlist.m3u8",
     source: "https://www.novascotiawebcams.com/webcams/halifax-waterfront",
-    name: "Halifax Waterfront",
+    name: "Halifax Waterfront",
   },
   {
     kind: "video",
     streamUrl: "https://streaming-1.novascotiawebcams.com/live/argylestreet/playlist.m3u8",
     source: "https://www.novascotiawebcams.com/webcams/argyle-street",
-    name: "Argyle Street",
+    name: "Argyle Street",
   },
   {
     kind: "video",
     streamUrl: "https://streaming-1.novascotiawebcams.com/live/westin/playlist.m3u8",
     source: "https://www.novascotiawebcams.com/webcams/pier-21",
-    name: "Pier 21",
+    name: "Pier 21",
   },
   {
     kind: "video",
     streamUrl: "https://streaming-1.novascotiawebcams.com/live/armdale2/playlist.m3u8",
     source: "https://www.novascotiawebcams.com/webcams/armdale-roundabout-2",
-    name: "Armdale Roundabout",
+    name: "Armdale Roundabout",
   },
   // Emera Oval moved to the end so traffic / transit cams (which most
   // users hit first) own the leading pills. Oval is a recreational
@@ -107,7 +106,7 @@ const CAMS: Cam[] = [
     refreshMs: 10_000,
     source:
       "https://www.halifax.ca/parks-recreation/programs-activities/outdoor-recreation/emera-oval",
-    name: "Emera Oval",
+    name: "Emera Oval",
   },
 ];
 
@@ -129,22 +128,18 @@ function ImageCam({
   const t = usePolledImage(refreshMs);
 
   if (t === 0) return null;
+  // Plain <img>, not next/image. Every cache-busted `?time=…` poll would
+  // otherwise count as a billable Vercel Image Optimization transformation
+  // (~360/hour per active viewer); Chrome's ORB doesn't block image
+  // responses regardless of CORS, so the upstream Content-Type: image/*
+  // renders directly without any proxying.
+  // eslint-disable-next-line @next/next/no-img-element
   return (
-    <Image
+    <img
       key={camId}
       src={imageUrl(t)}
       alt="live webcam"
-      fill
-      sizes="(min-width: 1024px) 64rem, 100vw"
-      className="object-cover"
-      // Always bypass Vercel's image optimizer. Verified halifaxharbourbridges.ca
-      // returns Content-Type: image/* — Chrome's ORB never blocks images,
-      // regardless of CORS, so going through next/image to "stay
-      // same-origin" was solving a non-problem. The actual cost was real:
-      // every cache-busted `?time=…` poll was a billable Image
-      // Optimization transformation on Vercel, burning ~360 per hour per
-      // active viewer.
-      unoptimized
+      className="absolute inset-0 w-full h-full object-cover"
     />
   );
 }

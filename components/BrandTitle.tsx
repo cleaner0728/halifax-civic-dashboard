@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 const LONG_PRESS_MS = 600;
@@ -67,14 +66,18 @@ export default function BrandTitle() {
         className="flex items-center gap-2 text-base font-bold tracking-tight cursor-pointer select-none [-webkit-touch-callout:none] min-w-0"
         title="Double-click to return to the top"
       >
-        <Image
+        {/* Plain <img> on purpose — we deliberately do not use next/image
+            anywhere in this app so Vercel Image Optimization never bills
+            us per (src, width, quality, format) tuple. The logo is a
+            local PNG; the browser caches it after the first hit. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src="/logo.png"
           alt=""
           width={32}
           height={32}
           className="shrink-0"
-          priority
-          unoptimized
+          fetchPriority="high"
         />
         <span className="truncate">Made in Halifax</span>
       </h1>
