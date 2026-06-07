@@ -12,14 +12,22 @@
 
 import { MsEdgeTTS, OUTPUT_FORMAT } from 'msedge-tts';
 
-const VOICE = 'en-US-AndrewMultilingualNeural';
+const DEFAULT_VOICE = 'en-US-AndrewMultilingualNeural';
 
-export async function synthesizeSpeech(text: string): Promise<Buffer | null> {
+// Mandarin news-anchor voice — informative tone closest to the English Andrew.
+// Used for the pre-generated Chinese briefing. One spoken Mandarin track serves
+// both Simplified (zh-CN) and Traditional (zh-TW) UI selections.
+export const ZH_VOICE = 'zh-CN-YunyangNeural';
+
+export async function synthesizeSpeech(
+  text: string,
+  voice: string = DEFAULT_VOICE,
+): Promise<Buffer | null> {
   if (!text.trim()) return null;
 
   const tts = new MsEdgeTTS();
   try {
-    await tts.setMetadata(VOICE, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
+    await tts.setMetadata(voice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
     const { audioStream } = tts.toStream(text);
     const chunks: Buffer[] = [];
     for await (const chunk of audioStream) {

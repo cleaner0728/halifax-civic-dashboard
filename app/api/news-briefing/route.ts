@@ -9,7 +9,7 @@
 
 import type { NextRequest } from 'next/server';
 import { sql } from '@/lib/db';
-import { synthesizeSpeech } from '@/lib/ai/tts';
+import { synthesizeSpeech, ZH_VOICE } from '@/lib/ai/tts';
 
 const CACHE_HEADERS = {
   'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
@@ -37,17 +37,21 @@ function introText(latest: Date): string {
   return `Welcome to your Halifax briefing. These stories were last updated on ${fmtUpdated(latest)}.`;
 }
 
-// Per-instance TTS cache. The spoken intro only changes when a new article
-// arrives (latest pub_date moves), so a warm Lambda re-uses the same MP3
-// across requests instead of re-synthesizing every time.
-let cachedIntroAudio: { key: string; audioB64: string | null } | null = null;
+// Chinese intro is static (no timestamp) so it caches forever and stays simple.
+const INTRO_ZH = '欢迎收听您的哈利法克斯简报。';
 
-async function getIntroAudio(latest: Date): Promise<string | null> {
-  const key = latest.toISOString();
-  if (cachedIntroAudio?.key === key) return cachedIntroAudio.audioB64;
-  const mp3 = await synthesizeSpeech(introText(latest));
+// Per-instance TTS cache, keyed so a warm Lambda re-uses the MP3. The English
+// key includes the latest pub_date (the spoken text says "updated as of …");
+// the Chinese key is just 'zh' since its text never changes.
+const introCache = new Map<string, string | null>();
+
+async function getIntroAudio(latest: Date, zh: boolean): Promise<string | null> {
+  const key = zh ? 'zh' : `en:${latest.toISOString()}`;
+  const cached = introCache.get(key);
+  if (cached !== undefined) return cached;
+  const mp3 = await synthesizeSpeech(zh ? INTRO_ZH : introText(latest), zh ? ZH_VOICE : undefined);
   const audioB64 = mp3 ? mp3.toString('base64') : null;
-  cachedIntroAudio = { key, audioB64 };
+  introCache.set(key, audioB64);
   return audioB64;
 }
 
@@ -66,16 +70,23 @@ type Row = {
 
 export async function GET(req: NextRequest) {
   const textOnly = req.nextUrl.searchParams.get('mode') === 'text';
+  // lang=zh → serve the pre-generated Chinese summary + audio, falling back to
+  // English per-row (COALESCE) for any article whose Chinese isn't ready yet.
+  // Anything other than 'zh' keeps the original English behavior byte-for-byte.
+  const zh = req.nextUrl.searchParams.get('lang') === 'zh';
+
+  const summaryCol = zh ? sql`COALESCE(summary_zh, summary)` : sql`summary`;
+  const audioCol = zh ? sql`COALESCE(audio_zh_b64, audio_b64)` : sql`audio_b64`;
 
   const rows = textOnly
     ? await sql<Row[]>`
-        SELECT url, title, source, summary, pub_date
+        SELECT url, title, source, ${summaryCol} AS summary, pub_date
         FROM article_summary
         WHERE COALESCE(pub_date, created_at) >= date_trunc('day', NOW() AT TIME ZONE 'America/Halifax') AT TIME ZONE 'America/Halifax'
         ORDER BY COALESCE(pub_date, created_at) DESC
       `
     : await sql<Row[]>`
-        SELECT url, title, source, summary, pub_date, audio_b64
+        SELECT url, title, source, ${summaryCol} AS summary, pub_date, ${audioCol} AS audio_b64
         FROM article_summary
         WHERE COALESCE(pub_date, created_at) >= date_trunc('day', NOW() AT TIME ZONE 'America/Halifax') AT TIME ZONE 'America/Halifax'
         ORDER BY COALESCE(pub_date, created_at) DESC
@@ -103,8 +114,8 @@ export async function GET(req: NextRequest) {
     if (!latest || t > latest) latest = t;
   }
   if (latest) {
-    const summary = introText(latest);
-    const audioB64 = textOnly ? null : await getIntroAudio(latest);
+    const summary = zh ? INTRO_ZH : introText(latest);
+    const audioB64 = textOnly ? null : await getIntroAudio(latest, zh);
     items.unshift({
       url: INTRO_URL,
       title: 'Welcome to your Halifax briefing',

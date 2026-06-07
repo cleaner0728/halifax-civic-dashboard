@@ -28,6 +28,16 @@ type Item = {
 };
 type Status = "idle" | "loading" | "ready" | "error";
 
+// Which briefing language to play, decided from Google Translate's `googtrans`
+// cookie (set by the language menu). Chinese (Simplified or Traditional) →
+// the pre-generated Chinese audio; everything else → English (the default).
+function currentBriefingLang(): "en" | "zh" {
+  if (typeof document === "undefined") return "en";
+  const m = document.cookie.match(/googtrans=\/[^/]+\/([^;]+)/);
+  const code = m ? decodeURIComponent(m[1]) : null;
+  return code === "zh-CN" || code === "zh-TW" ? "zh" : "en";
+}
+
 export default function NewsBriefingPlayer() {
   const [status, setStatus] = useState<Status>("idle");
   const [items, setItems] = useState<Item[]>([]);
@@ -38,6 +48,7 @@ export default function NewsBriefingPlayer() {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const autoplay = useRef(false); // are we in "play through the list" mode?
+  const loadedLang = useRef<"en" | "zh">("en"); // language of the loaded playlist
 
   // When the current index changes (e.g. a clip ended → next), play it.
   // Synchronous play — no rAF — to preserve iOS Safari's user-activation
@@ -107,14 +118,15 @@ export default function NewsBriefingPlayer() {
   // ── Load audio collection + start playing from the top ──
   const listen = async () => {
     track("news_briefing_play");
-    if (items.some((i) => i.audio)) {
-      // already loaded with audio — just (re)start
+    const lang = currentBriefingLang();
+    if (items.some((i) => i.audio) && loadedLang.current === lang) {
+      // already loaded in this language — just (re)start
       startPlaylist();
       return;
     }
     setStatus("loading");
     try {
-      const res = await fetch("/api/news-briefing");
+      const res = await fetch(lang === "zh" ? "/api/news-briefing?lang=zh" : "/api/news-briefing");
       if (!res.ok) throw new Error(String(res.status));
       const data = (await res.json()) as { items: Item[] };
       if (!data.items?.length) throw new Error("empty");
@@ -123,6 +135,7 @@ export default function NewsBriefingPlayer() {
         ...it,
         audio: it.audio ? dataUrlToBlobUrl(it.audio) : it.audio,
       }));
+      loadedLang.current = lang;
       setItems(blobItems);
       // Don't open the summary list on Listen — playback shows only the
       // now-playing bar. The list is revealed only via the Read toggle.

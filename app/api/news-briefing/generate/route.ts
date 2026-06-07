@@ -14,7 +14,8 @@ import type { NextRequest } from 'next/server';
 import { fetchNews } from '@/lib/fetchers/news';
 import { enrichWithArticleText } from '@/lib/ai/fetch-article';
 import { summarizeArticle } from '@/lib/ai/summarize';
-import { synthesizeSpeech } from '@/lib/ai/tts';
+import { synthesizeSpeech, ZH_VOICE } from '@/lib/ai/tts';
+import { translateToChinese } from '@/lib/ai/translate';
 import { sql } from '@/lib/db';
 
 export const maxDuration = 60;
@@ -24,6 +25,54 @@ export const maxDuration = 60;
 const MAX_NEW_PER_RUN = 8;
 const PROCESS_CONCURRENCY = 4;
 const RETENTION_HOURS = 48;
+
+// Pre-generate Chinese (translation + TTS) for existing English-only rows, a
+// few per run. New articles get Chinese inline (below); this only backfills
+// rows that predate the Chinese columns. Kept small so it shares the 60s
+// budget with the English path.
+const MAX_ZH_BACKFILL_PER_RUN = 6;
+
+// Best-effort Chinese summary + audio for one English summary. Any failure
+// returns nulls — it must never block or break the English path. Translation
+// and TTS are independent: a translation with failed audio still caches the
+// text so the next run can retry just the audio.
+async function makeChinese(
+  enSummary: string,
+): Promise<{ zhText: string | null; zhAudio: string | null }> {
+  const zhText = await translateToChinese(enSummary);
+  if (!zhText) return { zhText: null, zhAudio: null };
+  const mp3 = await synthesizeSpeech(zhText, ZH_VOICE);
+  return { zhText, zhAudio: mp3 ? mp3.toString('base64') : null };
+}
+
+// Fill Chinese for older rows missing either the text or the audio so a
+// transient failure self-heals on a later run. Runs on every invocation —
+// including the common "no new articles" path — so the backlog drains over
+// time. Returns how many rows were updated.
+async function backfillChinese(): Promise<number> {
+  const pending = await sql<{ url: string; summary: string }[]>`
+    SELECT url, summary FROM article_summary
+    WHERE summary IS NOT NULL
+      AND (summary_zh IS NULL OR audio_zh_b64 IS NULL)
+    ORDER BY COALESCE(pub_date, created_at) DESC
+    LIMIT ${MAX_ZH_BACKFILL_PER_RUN}
+  `;
+  let n = 0;
+  const one = async (row: { url: string; summary: string }) => {
+    const { zhText, zhAudio } = await makeChinese(row.summary);
+    if (!zhText) return;
+    await sql`
+      UPDATE article_summary
+      SET summary_zh = ${zhText}, audio_zh_b64 = ${zhAudio}
+      WHERE url = ${row.url}
+    `;
+    n++;
+  };
+  for (let i = 0; i < pending.length; i += PROCESS_CONCURRENCY) {
+    await Promise.all(pending.slice(i, i + PROCESS_CONCURRENCY).map(one));
+  }
+  return n;
+}
 
 function toDate(s: string | undefined): Date | null {
   if (!s) return null;
@@ -63,9 +112,11 @@ export async function POST(req: NextRequest) {
     .slice(0, MAX_NEW_PER_RUN);
 
   if (fresh.length === 0) {
+    // No new English articles — but still drain the Chinese backlog.
+    const zhBackfilled = await backfillChinese();
     await pruneOld();
-    console.log('[gen] no new articles');
-    return Response.json({ ok: true, added: 0, reason: 'all_current' });
+    console.log(`[gen] no new articles — zh backfilled ${zhBackfilled}`);
+    return Response.json({ ok: true, added: 0, zhBackfilled, reason: 'all_current' });
   }
 
   console.log(`[gen] ${fresh.length} new article(s) to process`);
@@ -86,23 +137,28 @@ export async function POST(req: NextRequest) {
     if (!summary) return;
     const mp3 = await synthesizeSpeech(summary);
     const audio = mp3 ? mp3.toString('base64') : null;
+    // Chinese is best-effort and additive — never gates the English insert.
+    const { zhText, zhAudio } = await makeChinese(summary);
     await sql`
-      INSERT INTO article_summary (url, title, source, summary, audio_b64, pub_date)
+      INSERT INTO article_summary (url, title, source, summary, audio_b64, summary_zh, audio_zh_b64, pub_date)
       VALUES (${item.link!}, ${item.title ?? ''}, ${item.source ?? null},
-              ${summary}, ${audio}, ${toDate(item.pubDate)})
+              ${summary}, ${audio}, ${zhText}, ${zhAudio}, ${toDate(item.pubDate)})
       ON CONFLICT (url) DO NOTHING
     `;
     added++;
-    console.log(`[gen] + ${(item.title ?? '').slice(0, 60)}`);
+    console.log(`[gen] + ${(item.title ?? '').slice(0, 60)}${zhText ? ' (zh ✓)' : ''}`);
   };
 
   for (let i = 0; i < enriched.length; i += PROCESS_CONCURRENCY) {
     await Promise.all(enriched.slice(i, i + PROCESS_CONCURRENCY).map(processOne));
   }
 
+  // Drain a few older rows still missing Chinese (shares the 60s budget).
+  const zhBackfilled = await backfillChinese();
+
   await pruneOld();
 
   const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
-  console.log(`[gen] done in ${elapsed}s — added ${added}`);
-  return Response.json({ ok: true, added, elapsedSec: parseFloat(elapsed) });
+  console.log(`[gen] done in ${elapsed}s — added ${added}, zh backfilled ${zhBackfilled}`);
+  return Response.json({ ok: true, added, zhBackfilled, elapsedSec: parseFloat(elapsed) });
 }
