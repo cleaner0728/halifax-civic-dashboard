@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
+import PlaybackSpeedButton from "@/components/PlaybackSpeedButton";
 
 // item.audio is a URL to /api/reddit-briefing/clip/<postId> served by the
 // backend route — *not* a data: URL. iOS Safari refuses to play long
@@ -276,6 +277,7 @@ export default function RedditBriefingPlayer() {
                 {curItem.summary}
               </p>
             </div>
+            <PlaybackSpeedButton audioRef={audioRef} />
           </div>
 
           {totalDuration > 0 && (

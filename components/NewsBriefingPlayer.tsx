@@ -4,6 +4,7 @@ import { useRef, useState, useEffect, useMemo } from "react";
 import { track } from "@vercel/analytics";
 import { formatRelative } from "@/lib/date";
 import BetaOnly from "@/components/BetaOnly";
+import PlaybackSpeedButton from "@/components/PlaybackSpeedButton";
 
 // Convert `data:audio/...` URLs into Blob URLs. iOS Safari occasionally
 // refuses to start playback on long base64 audio data URLs even inside a
@@ -296,6 +297,7 @@ export default function NewsBriefingPlayer() {
               </p>
               <p className="text-sm font-medium text-foreground truncate">{curItem.title}</p>
             </div>
+            <PlaybackSpeedButton audioRef={audioRef} />
           </div>
 
           {/* Total-playlist progress — spans the entire briefing, not just the
