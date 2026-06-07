@@ -29,6 +29,21 @@ export default function RedditBlockDesktop({ posts }: Props) {
   );
 }
 
+// Pick the best image we can render directly without Vercel Image
+// Optimization. For native image posts (post_hint === "image") the post's
+// `url` itself is a direct image on Reddit's CDN (i.redd.it) or imgur —
+// highest quality available. For link posts we fall back to Reddit's
+// 140px preview thumbnail; small but signed (changing the width
+// parameter invalidates the signature so we can't request a larger one
+// without parsing the preview JSON). Self posts and posts whose
+// thumbnail is one of Reddit's placeholder strings ("self", "default",
+// "nsfw", "spoiler") get no hero.
+function heroImageUrl(post: RedditPost): string | null {
+  if (post.postHint === 'image' && post.url) return post.url;
+  if (post.thumbnail && post.thumbnail.startsWith('http')) return post.thumbnail;
+  return null;
+}
+
 function PostCard({ post }: { post: RedditPost }) {
   const ratio =
     typeof post.upvoteRatio === 'number' ? Math.round(post.upvoteRatio * 100) : null;
@@ -37,6 +52,7 @@ function PostCard({ post }: { post: RedditPost }) {
       ? post.selftext.replace(/\s+/g, ' ').slice(0, 240).trim()
       : null;
   const showDomain = post.domain && !post.domain.startsWith('self.');
+  const hero = heroImageUrl(post);
 
   return (
     <a
@@ -45,80 +61,94 @@ function PostCard({ post }: { post: RedditPost }) {
       rel="noopener noreferrer"
       className="aspect-square block bg-card rounded-xl border border-border hover:border-orange-400/40 shadow-sm hover:shadow-md transition-all overflow-hidden"
     >
-      <div className="flex flex-col h-full p-4">
-        {/* Top row: flair pills + badges */}
-        <div className="flex flex-wrap items-center gap-1.5 mb-2 shrink-0">
-          {post.flair && <FlairPill post={post} />}
-          {ratio !== null && ratio < 95 && (
-            <span
-              className={`inline-flex items-center gap-1 text-[11px] font-medium rounded px-1.5 py-0.5 ${
-                ratio >= 80
-                  ? 'text-amber-700 dark:text-amber-300 bg-amber-500/10'
-                  : 'text-rose-700 dark:text-rose-300 bg-rose-500/10'
-              }`}
-              title={`${ratio}% upvoted — contested`}
-            >
-              {ratio}%
-            </span>
-          )}
-          {post.overEighteen && <Badge tone="rose">NSFW</Badge>}
-          {post.spoiler && <Badge tone="slate">Spoiler</Badge>}
-          {post.distinguished === 'moderator' && <Badge tone="emerald">MOD</Badge>}
-          {post.distinguished === 'admin' && <Badge tone="rose">ADMIN</Badge>}
-          {(post.totalAwardsReceived ?? 0) > 0 && (
-            <Badge tone="amber">★ {post.totalAwardsReceived}</Badge>
-          )}
-        </div>
+      <div className="flex flex-col h-full">
+        {/* Hero strip — plain <img> on purpose so each visitor fetches the
+            source CDN directly. Routing through next/image would bill
+            Vercel Image Optimization per (src, width, quality, format)
+            tuple, and Reddit's CDN already serves WebP/JPEG efficiently.
+            referrerPolicy keeps our domain out of upstream referer logs;
+            onError hides broken-image placeholders gracefully. */}
+        {hero && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={hero}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            referrerPolicy="no-referrer"
+            className="w-full h-32 object-cover bg-foreground/5 shrink-0"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = 'none';
+            }}
+          />
+        )}
 
-        {/* Thumbnail + title row. Thumbnail floats to the right of the title
-            block so the visual cue is present without dominating the tile. */}
-        <div className="flex gap-3 shrink-0">
-          <p className="text-base font-semibold text-foreground leading-snug line-clamp-3 flex-1 min-w-0">
+        <div className="flex flex-col flex-1 min-h-0 p-4">
+          {/* Top row: flair pills + badges */}
+          <div className="flex flex-wrap items-center gap-1.5 mb-2 shrink-0">
+            {post.flair && <FlairPill post={post} />}
+            {ratio !== null && ratio < 95 && (
+              <span
+                className={`inline-flex items-center gap-1 text-[11px] font-medium rounded px-1.5 py-0.5 ${
+                  ratio >= 80
+                    ? 'text-amber-700 dark:text-amber-300 bg-amber-500/10'
+                    : 'text-rose-700 dark:text-rose-300 bg-rose-500/10'
+                }`}
+                title={`${ratio}% upvoted — contested`}
+              >
+                {ratio}%
+              </span>
+            )}
+            {post.overEighteen && <Badge tone="rose">NSFW</Badge>}
+            {post.spoiler && <Badge tone="slate">Spoiler</Badge>}
+            {post.distinguished === 'moderator' && <Badge tone="emerald">MOD</Badge>}
+            {post.distinguished === 'admin' && <Badge tone="rose">ADMIN</Badge>}
+            {(post.totalAwardsReceived ?? 0) > 0 && (
+              <Badge tone="amber">★ {post.totalAwardsReceived}</Badge>
+            )}
+          </div>
+
+          {/* Title — full width now that the hero replaces the inline
+              thumbnail. */}
+          <p className="text-base font-semibold text-foreground leading-snug line-clamp-3 shrink-0">
             {post.title}
           </p>
-          {post.thumbnail && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={post.thumbnail}
-              alt=""
-              width={64}
-              height={64}
-              loading="lazy"
-              className="w-16 h-16 rounded-lg object-cover bg-foreground/5 shrink-0"
-            />
-          )}
-        </div>
 
-        {/* Body — fills remaining vertical room; clipped with line-clamp so
-            tiles stay square no matter how long the selftext is. */}
-        <div className="flex-1 min-h-0 mt-2">
-          {selfPreview && (
-            <p className="text-sm text-foreground/60 line-clamp-4 leading-relaxed">
-              {selfPreview}
-            </p>
-          )}
-        </div>
+          {/* Body — fills remaining vertical room; clipped with line-clamp so
+              tiles stay square no matter how long the selftext is. */}
+          <div className="flex-1 min-h-0 mt-2">
+            {selfPreview && (
+              <p
+                className={`text-sm text-foreground/60 leading-relaxed ${
+                  hero ? 'line-clamp-2' : 'line-clamp-4'
+                }`}
+              >
+                {selfPreview}
+              </p>
+            )}
+          </div>
 
-        {/* Meta footer */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-xs text-foreground/45 shrink-0">
-          <span className="inline-flex items-center gap-1 font-semibold text-orange-500">
-            ▲ {post.score}
-          </span>
-          {post.numComments > 0 && (
-            <span className="inline-flex items-center gap-1">
-              <IconMessages className="w-3.5 h-3.5" />
-              {post.numComments}
+          {/* Meta footer */}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-xs text-foreground/45 shrink-0">
+            <span className="inline-flex items-center gap-1 font-semibold text-orange-500">
+              ▲ {post.score}
             </span>
-          )}
-          <span className="inline-flex items-center gap-1 min-w-0">
-            <span className="truncate">u/{post.author}</span>
-          </span>
-          {showDomain && (
-            <span className="text-foreground/35 truncate max-w-[140px]">
-              {post.domain}
+            {post.numComments > 0 && (
+              <span className="inline-flex items-center gap-1">
+                <IconMessages className="w-3.5 h-3.5" />
+                {post.numComments}
+              </span>
+            )}
+            <span className="inline-flex items-center gap-1 min-w-0">
+              <span className="truncate">u/{post.author}</span>
             </span>
-          )}
-          <span className="ml-auto">{formatRelative(post.createdUtc * 1000)}</span>
+            {showDomain && (
+              <span className="text-foreground/35 truncate max-w-[140px]">
+                {post.domain}
+              </span>
+            )}
+            <span className="ml-auto">{formatRelative(post.createdUtc * 1000)}</span>
+          </div>
         </div>
       </div>
     </a>
