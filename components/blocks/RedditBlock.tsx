@@ -1,6 +1,7 @@
 import { formatRelative } from '@/lib/date';
 import type { RedditPost } from '@/lib/fetchers/reddit';
 import { IconMessages } from '@/components/icons';
+import RedditThumb from './RedditThumb';
 
 type Props = {
   posts: RedditPost[];
@@ -65,17 +66,9 @@ export default function RedditBlock({ posts }: Props) {
                     next/image; mobile users pay for their own image
                     bytes, Vercel Image Optimization stays untouched. */}
                 {thumb && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <RedditThumb
                     src={thumb}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    referrerPolicy="no-referrer"
                     className="w-16 h-16 rounded-lg object-cover bg-foreground/5 shrink-0"
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).style.display = 'none';
-                    }}
                   />
                 )}
               </div>
