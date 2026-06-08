@@ -2,7 +2,7 @@ import NewsBlock from '@/components/blocks/NewsBlock';
 import RedditBlock from '@/components/blocks/RedditBlock';
 import NewsBriefingPlayer from '@/components/NewsBriefingPlayer';
 import RedditBriefingPlayer from '@/components/RedditBriefingPlayer';
-import { IconNews, IconMessages } from '@/components/icons';
+import FeedTabs from '@/components/FeedTabs';
 import { formatRelative } from '@/lib/date';
 import type { NewsItem } from '@/lib/fetchers/news';
 import type { RedditPost } from '@/lib/fetchers/reddit';
@@ -14,40 +14,35 @@ type Props = {
 };
 
 export default function FeedScreen({ news, redditPosts, redditFetchedAt }: Props) {
+  // News / Reddit are now switched via the segmented toggle (FeedTabs) instead
+  // of being stacked. Each section keeps a compact meta line, its briefing
+  // player, and its list. The blocks stay server components — they're rendered
+  // here and handed to the client FeedTabs as already-rendered nodes.
+  const newsSection = (
+    <>
+      <p className="text-sm text-foreground/50 px-1 mb-3">
+        {news.length} {news.length === 1 ? 'story' : 'stories'} · today
+      </p>
+      {news.length > 0 && <NewsBriefingPlayer />}
+      <NewsBlock items={news} />
+    </>
+  );
+
+  const redditSection = (
+    <>
+      <p className="text-sm text-foreground/50 px-1 mb-3">
+        Top {redditPosts.length} hot
+        {redditFetchedAt ? ` · last change ${formatRelative(redditFetchedAt)}` : ''}
+      </p>
+      {redditPosts.length > 0 && <RedditBriefingPlayer />}
+      <RedditBlock posts={redditPosts} />
+    </>
+  );
+
   return (
     <div className="pt-14 md:pt-24 pb-24 min-h-dvh">
       <div className="max-w-3xl mx-auto px-2 mt-2">
-        {/* News first, then Reddit underneath — per design spec. Both render
-            full-width single-column even on desktop because long-form text
-            is most readable at one column. */}
-        <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-5 py-4 mb-4">
-          <div className="min-w-0">
-            <p className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-widest">News</p>
-            <h2 className="text-xl font-semibold tracking-tight text-foreground mt-0.5">Latest Headlines</h2>
-            <p className="text-sm text-foreground/50 mt-0.5">
-              {news.length} {news.length === 1 ? 'story' : 'stories'} · today
-            </p>
-          </div>
-          <IconNews className="w-6 h-6 text-foreground/30 shrink-0" />
-        </div>
-        {news.length > 0 && <NewsBriefingPlayer />}
-        <NewsBlock items={news} />
-
-        <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-5 py-4 mt-10 mb-4">
-          <div className="min-w-0">
-            <p className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-widest">Reddit</p>
-            <h2 className="text-xl font-semibold tracking-tight text-foreground mt-0.5">r/halifax</h2>
-            <p className="text-sm text-foreground/50 mt-0.5">
-              Top {redditPosts.length} hot
-              {redditFetchedAt
-                ? ` · last change ${formatRelative(redditFetchedAt)}`
-                : ''}
-            </p>
-          </div>
-          <IconMessages className="w-6 h-6 text-foreground/30 shrink-0" />
-        </div>
-        {redditPosts.length > 0 && <RedditBriefingPlayer />}
-        <RedditBlock posts={redditPosts} />
+        <FeedTabs news={newsSection} reddit={redditSection} />
       </div>
     </div>
   );
