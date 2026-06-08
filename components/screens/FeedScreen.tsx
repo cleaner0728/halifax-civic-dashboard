@@ -41,7 +41,10 @@ export default function FeedScreen({ news, redditPosts, redditFetchedAt }: Props
 
   return (
     <div className="pt-14 md:pt-24 pb-24 min-h-dvh">
-      <div className="max-w-3xl mx-auto px-2 mt-2">
+      {/* Full-width (no max-w cap) so the tabs + card fill the viewport up to
+          the 1280px desktop breakpoint; px-3 keeps a little edge breathing room.
+          Tabs and card share this width, so they stay equal. */}
+      <div className="px-3 mt-2">
         <FeedTabs news={newsSection} reddit={redditSection} />
       </div>
     </div>
