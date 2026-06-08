@@ -403,19 +403,61 @@ async function waitForStableResponse(page) {
   return prev;
 }
 
-function parseGeminiJson(raw) {
+// Extract the first top-level {...} object and clean up the common ways Gemini
+// breaks JSON. The scan is *string-aware* (tracks whether we're inside a quoted
+// string, honouring backslash escapes), which matters for two reasons:
+//   1) braces that appear inside a summary string no longer throw off the depth
+//      count → no more spurious "Unbalanced braces".
+//   2) raw control chars (a real newline/tab the model dropped into a string)
+//      are escaped instead of left to blow up JSON.parse with "Bad control
+//      character" / "Expected ',' or '}'".
+// Trailing commas before } or ] are stripped at the end.
+function extractCleanJson(raw) {
   const text = raw.replace(/```(?:json)?/gi, '').trim();
   const start = text.indexOf('{');
   if (start === -1) throw new Error('No JSON object found in Gemini response');
+
   let depth = 0;
+  let inStr = false;
+  let escaped = false;
+  let out = '';
   for (let i = start; i < text.length; i++) {
-    if (text[i] === '{') depth++;
-    else if (text[i] === '}') {
-      depth--;
-      if (depth === 0) return JSON.parse(text.slice(start, i + 1));
+    const ch = text[i];
+    if (inStr) {
+      if (escaped) { out += ch; escaped = false; continue; }
+      if (ch === '\\') { out += ch; escaped = true; continue; }
+      if (ch === '"') { out += ch; inStr = false; continue; }
+      const code = text.charCodeAt(i);
+      if (code < 0x20) {
+        // raw control char inside a string literal → escape (or drop)
+        out += ch === '\n' ? '\\n' : ch === '\t' ? '\\t' : ch === '\r' ? '\\r' : ' ';
+        continue;
+      }
+      out += ch;
+      continue;
     }
+    // outside a string
+    if (ch === '"') { out += ch; inStr = true; continue; }
+    if (ch === '{') { depth++; out += ch; continue; }
+    if (ch === '}') {
+      depth--; out += ch;
+      if (depth === 0) return out.replace(/,(\s*[}\]])/g, '$1');
+      continue;
+    }
+    out += ch;
   }
   throw new Error('Unbalanced braces in Gemini response');
+}
+
+function parseGeminiJson(raw) {
+  const cleaned = extractCleanJson(raw);
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    // Last-ditch: collapse any remaining stray control chars everywhere and
+    // retry once, so a single odd byte doesn't sink the whole run.
+    return JSON.parse(cleaned.replace(/[\u0000-\u001F]/g, ''));
+  }
 }
 
 // Gemini is inconsistent about the wrapper key (posts / summaries / …). Pull
