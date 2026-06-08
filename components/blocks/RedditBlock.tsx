@@ -52,14 +52,14 @@ export default function RedditBlock({ posts }: Props) {
                     </span>
                   )}
                   <p className="text-base font-semibold text-foreground leading-snug">{post.title}</p>
-                  <div className="flex items-center gap-3 mt-1.5 text-xs text-foreground/40">
+                  <div className="flex items-center justify-between gap-3 mt-1.5 text-xs text-foreground/40">
                     {post.numComments > 0 && (
-                      <span className="inline-flex items-center gap-1">
+                      <span className="inline-flex items-center gap-1 shrink-0">
                         <IconMessages className="w-3.5 h-3.5" />{post.numComments}
                       </span>
                     )}
-                    <span>u/{post.author}</span>
-                    <span>{formatRelative(post.createdUtc * 1000)}</span>
+                    <span className="truncate">u/{post.author}</span>
+                    <span className="shrink-0">{formatRelative(post.createdUtc * 1000)}</span>
                   </div>
                 </div>
                 {/* Thumbnail — plain <img>, direct from Reddit's CDN. No
