@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.karlfi.reddit-hourly</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/karl_li/halifax-civic-dashboard/scripts/run-reddit-hourly.sh</string>
+  </array>
+
+  <!-- Every hour at :00 (Halifax local time) -->
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict>
+      <key>Minute</key><integer>0</integer>
+    </dict>
+  </array>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>/Users/karl_li/halifax-civic-dashboard/logs/reddit-hourly.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/karl_li/halifax-civic-dashboard/logs/reddit-hourly-error.log</string>
+</dict>
+</plist>
