@@ -2,6 +2,13 @@
 // scraper writes rows every ~30 min; we treat data as fresh if the newest
 // last_fetched_at is within MAX_AGE_HOURS. Stickied / mod-pinned posts are
 // filtered out at the SQL layer — they aren't civic discussion content.
+//
+// Ordering mirrors Reddit's own "hot" ranking so the feed matches what users
+// see on Reddit, rather than raw score: hot = log10(|score|) + sign(score) ·
+// (created_utc − REDDIT_EPOCH) / 45000. Age dominates (every ~12.5h ≈ +1,
+// worth a 10× score bump), so a high-score-but-old post sinks below fresher
+// ones. REDDIT_EPOCH (2005-12-08) is constant, so it only shifts all scores
+// equally and doesn't affect the relative order.
 
 import { sql } from '@/lib/db';
 import type { RedditPost } from './reddit';
@@ -58,7 +65,11 @@ export async function fetchRedditPostsFromDb(): Promise<{
       WHERE COALESCE(stickied, false) = false
         AND COALESCE(pinned, false) = false
         AND last_fetched_at > now() - (${MAX_AGE_HOURS}::text || ' hours')::interval
-      ORDER BY score DESC NULLS LAST, created_utc DESC
+      ORDER BY
+        log(greatest(abs(score), 1))
+          + sign(score) * (created_utc - 1134028003) / 45000.0
+          DESC NULLS LAST,
+        created_utc DESC
       LIMIT ${LIMIT}
     `;
   } catch (e: unknown) {
