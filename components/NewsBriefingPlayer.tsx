@@ -5,6 +5,7 @@ import { track } from "@vercel/analytics";
 import { formatRelative } from "@/lib/date";
 import BetaOnly from "@/components/BetaOnly";
 import PlaybackSpeedButton from "@/components/PlaybackSpeedButton";
+import { currentBriefingLang } from "@/lib/briefing-lang";
 
 // Convert `data:audio/...` URLs into Blob URLs. iOS Safari occasionally
 // refuses to start playback on long base64 audio data URLs even inside a
@@ -28,16 +29,6 @@ type Item = {
   audio?: string | null;
 };
 type Status = "idle" | "loading" | "ready" | "error";
-
-// Which briefing language to play, decided from Google Translate's `googtrans`
-// cookie (set by the language menu). Chinese (Simplified or Traditional) →
-// the pre-generated Chinese audio; everything else → English (the default).
-function currentBriefingLang(): "en" | "zh" {
-  if (typeof document === "undefined") return "en";
-  const m = document.cookie.match(/googtrans=\/[^/]+\/([^;]+)/);
-  const code = m ? decodeURIComponent(m[1]) : null;
-  return code === "zh-CN" || code === "zh-TW" ? "zh" : "en";
-}
 
 export default function NewsBriefingPlayer() {
   const [status, setStatus] = useState<Status>("idle");

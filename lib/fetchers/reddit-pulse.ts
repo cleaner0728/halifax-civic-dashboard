@@ -18,9 +18,14 @@ export type RedditPulseItem = {
   selectionReason: string | null; // top_score | top_comments
   rank: number | null;
   wordCount: number | null;
-  audioDataUrl: string | null; // data:audio/mp4;base64,…  (null when not generated yet)
+  // Whether a clip exists for the requested language. The actual bytes are
+  // streamed lazily by /api/reddit-briefing/audio/<postId>, so we only need a
+  // presence flag here — not the (multi-hundred-KB) base64 payload.
+  hasAudio: boolean;
   generatedAt: string;
 };
+
+export type PulseLang = "en" | "zh";
 
 export type RedditPulse = {
   summaryDate: string; // YYYY-MM-DD
@@ -39,20 +44,26 @@ type Row = {
   selection_reason: string | null;
   rank: number | null;
   summary_text: string;
+  summary_text_zh: string | null;
   word_count: number | null;
   community_reaction: string | null;
-  tts_audio: string | null;
+  has_en_audio: boolean;
+  has_zh_audio: boolean;
 };
 
-export async function fetchRedditPulse(): Promise<RedditPulse | null> {
+export async function fetchRedditPulse(lang: PulseLang = "en"): Promise<RedditPulse | null> {
   let rows: Row[];
   try {
     // Pick the most recent summary_date that has rows, then every row for
-    // that day ordered by rank (higher rank = more relevant first).
+    // that day ordered by rank (higher rank = more relevant first). We select
+    // audio *presence* (booleans), never the base64 itself — the per-clip
+    // route streams the bytes on demand.
     rows = await sql<Row[]>`
       SELECT id, generated_at, summary_date, post_id, title, flair,
              score, num_comments, selection_reason, rank,
-             summary_text, word_count, community_reaction, tts_audio
+             summary_text, summary_text_zh, word_count, community_reaction,
+             (tts_audio IS NOT NULL) AS has_en_audio,
+             (tts_audio_zh IS NOT NULL) AS has_zh_audio
       FROM reddit_post_summaries
       WHERE summary_date = (
         SELECT MAX(summary_date) FROM reddit_post_summaries
@@ -78,12 +89,13 @@ export async function fetchRedditPulse(): Promise<RedditPulse | null> {
     flair: r.flair,
     score: r.score,
     numComments: r.num_comments,
-    summary: r.summary_text,
+    // Chinese summary falls back to English per-row when not yet generated.
+    summary: lang === "zh" ? (r.summary_text_zh ?? r.summary_text) : r.summary_text,
     communityReaction: r.community_reaction,
     selectionReason: r.selection_reason,
     rank: r.rank,
     wordCount: r.word_count,
-    audioDataUrl: r.tts_audio ? `data:audio/mp4;base64,${r.tts_audio}` : null,
+    hasAudio: lang === "zh" ? r.has_zh_audio : r.has_en_audio,
     generatedAt: r.generated_at,
   }));
 

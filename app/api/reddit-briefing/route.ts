@@ -22,12 +22,16 @@ const CACHE_HEADERS = {
 
 export async function GET(req: NextRequest) {
   const textOnly = req.nextUrl.searchParams.get('mode') === 'text';
+  // lang=zh → Chinese summary + the Chinese clip (served by the per-clip route
+  // with the same ?lang=zh). Anything else is the unchanged English behavior.
+  const lang = req.nextUrl.searchParams.get('lang') === 'zh' ? 'zh' : 'en';
 
-  const pulse = await fetchRedditPulse();
+  const pulse = await fetchRedditPulse(lang);
   if (!pulse || pulse.items.length === 0) {
     return Response.json({ items: [] }, { headers: CACHE_HEADERS });
   }
 
+  const audioSuffix = lang === 'zh' ? '?lang=zh' : '';
   const items = pulse.items.map((it) => ({
     slot: it.postId, // unique identity per playlist position
     label: it.title,
@@ -41,7 +45,7 @@ export async function GET(req: NextRequest) {
     communityReaction: it.communityReaction,
     ...(textOnly
       ? {}
-      : { audio: it.audioDataUrl ? `/api/reddit-briefing/audio/${it.postId}` : null }),
+      : { audio: it.hasAudio ? `/api/reddit-briefing/audio/${it.postId}${audioSuffix}` : null }),
   }));
 
   return Response.json({ items }, { headers: CACHE_HEADERS });

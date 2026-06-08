@@ -33,10 +33,14 @@ export async function GET(
     return new Response("missing postId", { status: 400 });
   }
 
-  let rows: { tts_audio: string | null }[];
+  // lang=zh → the Chinese clip, falling back to English when it isn't there.
+  const zh = req.nextUrl.searchParams.get("lang") === "zh";
+  const audioCol = zh ? sql`COALESCE(tts_audio_zh, tts_audio)` : sql`tts_audio`;
+
+  let rows: { audio: string | null }[];
   try {
-    rows = await sql<{ tts_audio: string | null }[]>`
-      SELECT tts_audio
+    rows = await sql<{ audio: string | null }[]>`
+      SELECT ${audioCol} AS audio
       FROM reddit_post_summaries
       WHERE post_id = ${postId}
       ORDER BY summary_date DESC, id DESC
@@ -53,7 +57,7 @@ export async function GET(
     return new Response("internal error", { status: 500 });
   }
 
-  const b64 = rows[0]?.tts_audio;
+  const b64 = rows[0]?.audio;
   if (!b64) {
     return new Response("not found", { status: 404 });
   }
@@ -117,20 +121,23 @@ export async function GET(
 // Range support. Mirror the headers the GET would emit so HEAD answers
 // consistently and iOS doesn't get confused.
 export async function HEAD(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ postId: string }> },
 ) {
   const { postId } = await params;
   if (!postId) return new Response(null, { status: 400 });
+
+  const zh = req.nextUrl.searchParams.get("lang") === "zh";
+  const audioCol = zh ? sql`COALESCE(tts_audio_zh, tts_audio)` : sql`tts_audio`;
 
   let rows: { length: number | null }[];
   try {
     // octet_length gives us the byte size without shipping the whole
     // base64 across the connection.
     rows = await sql<{ length: number | null }[]>`
-      SELECT (octet_length(decode(tts_audio, 'base64')))::int AS length
+      SELECT (octet_length(decode(${audioCol}, 'base64')))::int AS length
       FROM reddit_post_summaries
-      WHERE post_id = ${postId} AND tts_audio IS NOT NULL
+      WHERE post_id = ${postId} AND ${audioCol} IS NOT NULL
       ORDER BY summary_date DESC, id DESC
       LIMIT 1
     `;

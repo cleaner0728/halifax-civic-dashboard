@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 import PlaybackSpeedButton from "@/components/PlaybackSpeedButton";
+import { currentBriefingLang } from "@/lib/briefing-lang";
 
 // item.audio is a URL to /api/reddit-briefing/clip/<postId> served by the
 // backend route — *not* a data: URL. iOS Safari refuses to play long
@@ -58,6 +59,7 @@ export default function RedditBriefingPlayer() {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const autoplay = useRef(false);
+  const loadedLang = useRef<"en" | "zh">("en"); // language of the loaded playlist
 
   // Advance into the next clip when `current` moves (clip ended → next).
   // Play synchronously — no rAF — because iOS Safari already loses the
@@ -121,6 +123,7 @@ export default function RedditBriefingPlayer() {
 
   const listen = async () => {
     track("reddit_briefing_play");
+    const lang = currentBriefingLang();
 
     // iOS unlock — synchronously prime the audio element with a tiny
     // silent MP3 inside the click handler. After this, the element is
@@ -143,7 +146,7 @@ export default function RedditBriefingPlayer() {
       }
     }
 
-    if (items.some((i) => i.audio)) {
+    if (items.some((i) => i.audio) && loadedLang.current === lang) {
       autoplay.current = true;
       const first = items.findIndex((i) => i.audio);
       if (first < 0) return;
@@ -153,13 +156,14 @@ export default function RedditBriefingPlayer() {
     }
     setStatus("loading");
     try {
-      const res = await fetch("/api/reddit-briefing");
+      const res = await fetch(lang === "zh" ? "/api/reddit-briefing?lang=zh" : "/api/reddit-briefing");
       if (!res.ok) throw new Error(String(res.status));
       const data = (await res.json()) as { items: Item[] };
       if (!data.items?.length) {
         setStatus("empty");
         return;
       }
+      loadedLang.current = lang;
       setItems(data.items);
       setStatus("ready");
       autoplay.current = true;
