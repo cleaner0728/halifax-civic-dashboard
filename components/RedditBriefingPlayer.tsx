@@ -259,7 +259,12 @@ export default function RedditBriefingPlayer() {
                 </svg>
               )}
             </button>
-            <div className="min-w-0 flex-1">
+            {/* key={curItem.slot} remounts this block on clip change so Google
+                Translate re-translates fresh nodes. Without it, the GT <font>
+                wrappers + the app's DOM guards freeze the counter/label/summary
+                on the first clip's translated value in translated mode (English
+                is unaffected). See NewsBriefingPlayer for the full rationale. */}
+            <div key={curItem.slot} className="min-w-0 flex-1">
               <p className="text-[11px] text-foreground/40 truncate">
                 <span className="font-semibold text-orange-600 dark:text-orange-400">
                   {playable.findIndex((p) => p.slot === curItem.slot) + 1} of {playable.length}

@@ -291,7 +291,15 @@ export default function NewsBriefingPlayer() {
                 <svg className="w-4 h-4 translate-x-px" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
               )}
             </button>
-            <div className="min-w-0 flex-1">
+            {/* key={curItem.url} forces React to REMOUNT this block when the
+                clip changes instead of updating text in place. Google Translate
+                wraps these text nodes in <font> tags and the app's DOM guards
+                no-op the in-place mutations React would use to update them — so
+                without a remount the counter + title freeze on the first clip's
+                translated value (English is unaffected; only translated mode
+                breaks). Remounting hands GT fresh nodes to re-translate, keeping
+                the readout in sync with playback. */}
+            <div key={curItem.url} className="min-w-0 flex-1">
               <p className="text-[11px] text-foreground/40">
                 Now playing · {playable.findIndex((p) => p.url === curItem.url) + 1} of {playable.length}
               </p>
