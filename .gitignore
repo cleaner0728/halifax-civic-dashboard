@@ -33,6 +33,10 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# Mac Mini server secrets (sourced by the hourly job; never commit)
+.briefing.env
+.gemini-session.json
+
 # vercel
 .vercel
 
