@@ -62,7 +62,7 @@ export default function FeedTabs({
       {/* Panel: uniform 4px accent border all round; the top edge is the bold
           sill the tabs sit on. Both sections stay mounted; inactive is
           display:none so <audio> keeps playing across a tab switch. */}
-      <div className={`rounded-b-2xl border-4 ${panelBorder} bg-card p-3`}>
+      <div className={`rounded-b-2xl border-4 ${panelBorder} bg-card px-1 py-3`}>
         <div className={tab === "news" ? "" : "hidden"}>{news}</div>
         <div className={tab === "reddit" ? "" : "hidden"}>{reddit}</div>
       </div>
