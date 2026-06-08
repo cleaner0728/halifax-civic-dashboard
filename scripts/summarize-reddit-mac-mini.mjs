@@ -426,7 +426,22 @@ function extractCleanJson(raw) {
     if (inStr) {
       if (escaped) { out += ch; escaped = false; continue; }
       if (ch === '\\') { out += ch; escaped = true; continue; }
-      if (ch === '"') { out += ch; inStr = false; continue; }
+      if (ch === '"') {
+        // Closing quote vs an unescaped quote the model dropped inside the
+        // value. A real closing quote is followed (after optional whitespace)
+        // by a structural char — , : } ] — or EOF. Otherwise it's inner
+        // content, so escape it and stay inside the string.
+        let j = i + 1;
+        while (j < text.length && /\s/.test(text[j])) j++;
+        const nx = text[j];
+        if (j >= text.length || nx === ',' || nx === ':' || nx === '}' || nx === ']') {
+          out += '"';
+          inStr = false;
+        } else {
+          out += '\\"';
+        }
+        continue;
+      }
       const code = text.charCodeAt(i);
       if (code < 0x20) {
         // raw control char inside a string literal → escape (or drop)
