@@ -178,13 +178,16 @@ function renderPostsBlock(posts, commentsMap) {
 // English summarization pass.
 function buildPrompt(posts, commentsMap) {
   const postsText = renderPostsBlock(posts, commentsMap);
-  return `CRITICAL OUTPUT RULE: Your entire reply must be ONE single JSON object and nothing else. Do NOT write any introduction, heading, or sentence such as "Here are the summaries". Do NOT use markdown or code fences. The very first character of your reply must be { and the very last must be }.
+  const idList = posts.map(p => `"${p.id}"`).join(', ');
+  return `IGNORE everything above this line. This is a brand-new, standalone task — do NOT continue, reuse, or be influenced by any earlier conversation in this chat, whatever its topic was. If anything above is about another subject, disregard it entirely.
+
+CRITICAL OUTPUT RULE: Your entire reply must be ONE single JSON object and nothing else. Do NOT write any introduction, heading, or sentence such as "Here are the summaries". Do NOT use markdown or code fences. The very first character of your reply must be { and the very last must be }.
 
 IMPORTANT: Do NOT use Google Search or any external tools. All data is provided below. Do not search the internet.
 
 You are summarizing discussions on r/halifax (Halifax, Nova Scotia) for a daily audio briefing.
 
-There are exactly ${posts.length} posts below (POST 1 through POST ${posts.length}). You MUST summarize ALL ${posts.length} of them — do not skip any, and do not assume any were already done in a previous conversation. Your "posts" array must contain exactly ${posts.length} elements.
+There are exactly ${posts.length} posts below (POST 1 through POST ${posts.length}). You MUST summarize ALL ${posts.length} of them — do not skip any. Your "posts" array must contain exactly ${posts.length} elements, and every "post_id" MUST be one of these exact IDs: [${idList}]. Use ONLY these IDs — never a sequential number (1, 2, 3…), never a placeholder, never an ID from any earlier conversation.
 
 For EACH post below, write a thorough summary covering:
 1. What the post is about (context, key facts)
@@ -213,13 +216,16 @@ Return ONLY a valid JSON object with EXACTLY this shape and these key names — 
 // of the English run). Same JSON shape; main maps summary → summary_text_zh.
 function buildPromptZh(posts, commentsMap) {
   const postsText = renderPostsBlock(posts, commentsMap);
-  return `关键输出规则：你的整条回复必须是一个 JSON 对象，除此之外不要有任何内容。不要写开场白、标题或“以下是总结”之类的句子。不要用 markdown 或代码块。回复的第一个字符必须是 {，最后一个字符必须是 }。
+  const idList = posts.map(p => `"${p.id}"`).join(', ');
+  return `忽略本行以上的一切内容。这是一个全新的、独立的任务——不要延续、复用本对话里之前的任何内容，也不要被它影响，无论它是什么主题。如果上面有任何关于别的话题的内容，请完全无视。
+
+关键输出规则：你的整条回复必须是一个 JSON 对象，除此之外不要有任何内容。不要写开场白、标题或“以下是总结”之类的句子。不要用 markdown 或代码块。回复的第一个字符必须是 {，最后一个字符必须是 }。
 
 重要：不要使用 Google 搜索或任何外部工具。所有数据都在下面给出，不要联网。
 
 你正在为一个每日音频简报总结 r/halifax（加拿大新斯科舍省哈利法克斯）的讨论。
 
-下面一共有 ${posts.length} 个帖子（POST 1 到 POST ${posts.length}）。你必须用简体中文总结全部 ${posts.length} 个，一个都不能漏，也不要以为之前的对话里已经做过其中任何一个。你的 "posts" 数组必须正好包含 ${posts.length} 个元素。
+下面一共有 ${posts.length} 个帖子（POST 1 到 POST ${posts.length}）。你必须用简体中文总结全部 ${posts.length} 个，一个都不能漏。你的 "posts" 数组必须正好包含 ${posts.length} 个元素，并且每个 "post_id" 必须是下面这些确切 ID 之一：[${idList}]。只能用这些 ID——绝不能用序号（1、2、3…）、占位符，或之前对话里的任何 ID。
 
 对每个帖子，写一段详尽的中文总结，覆盖：
 1. 帖子讲的是什么（背景、关键事实）
@@ -348,6 +354,49 @@ async function queryGemini(prompt) {
   } finally {
     await browser.close();
   }
+}
+
+const GEMINI_MAX_ATTEMPTS = 3;
+
+// Query Gemini, parse, and verify the answer actually summarizes the posts we
+// sent. Each Gemini call launches a fresh browser, but the *contamination*
+// we're guarding against is server-side: gemini.google.com restores the
+// account's previous conversation, so a failed "new chat" reset can leak an
+// unrelated old answer (wrong topic, or placeholder/sequential ids). The only
+// reliable check is the OUTPUT: the returned post_ids must match the real ids
+// we asked about. On a bad batch we retry (a fresh browser + fresh-chat reset);
+// after GEMINI_MAX_ATTEMPTS we give up so the caller can skip rather than
+// write garbage.
+async function queryGeminiValidated(prompt, expectedIds, label) {
+  const expected = new Set(expectedIds);
+  const need = Math.ceil(expectedIds.length / 2); // a majority must match
+  for (let attempt = 1; attempt <= GEMINI_MAX_ATTEMPTS; attempt++) {
+    const raw = await queryGemini(prompt);
+    try {
+      const { writeFile } = await import('node:fs/promises');
+      await writeFile(`/tmp/gemini-${label}.txt`, raw);
+    } catch { /* debug dump best-effort */ }
+
+    let parsed;
+    try {
+      parsed = extractPosts(parseGeminiJson(raw));
+    } catch (e) {
+      console.error(`[summarize] ${label} attempt ${attempt}/${GEMINI_MAX_ATTEMPTS}: JSON parse failed: ${e.message}`);
+      console.error(`[summarize] ${label} raw (first 300): ${raw.slice(0, 300)}`);
+      continue;
+    }
+
+    const matched = parsed.filter(p => expected.has(p.post_id ?? p.id)).length;
+    if (parsed.length > 0 && matched >= need) {
+      if (matched < parsed.length) {
+        console.log(`[summarize] ${label} attempt ${attempt}: ${matched}/${parsed.length} returned ids matched (ok)`);
+      }
+      return parsed;
+    }
+    console.error(`[summarize] ${label} attempt ${attempt}/${GEMINI_MAX_ATTEMPTS}: only ${matched}/${expectedIds.length} expected ids matched — stale/wrong response, retrying`);
+  }
+  console.error(`[summarize] ${label}: all ${GEMINI_MAX_ATTEMPTS} attempts failed id validation — giving up this pass`);
+  return null;
 }
 
 async function sendMessage(page, inputSelectors, text) {
@@ -557,40 +606,27 @@ async function main() {
 
     // Two fully independent Gemini passes (each its own browser session and
     // conversation) — English summaries, then a separate all-Chinese summary.
+    // Each pass validates that the returned post_ids match the posts we sent,
+    // retrying on a stale/wrong batch (see queryGeminiValidated).
     console.log('[summarize] === English pass ===');
-    const englishRaw = await queryGemini(enPrompt);
+    const englishPosts = await queryGeminiValidated(enPrompt, postIds, 'en');
+    if (!englishPosts || englishPosts.length === 0) {
+      console.error('[summarize] English pass produced no valid summaries — aborting without writing');
+      process.exit(1);
+    }
+
     console.log('[summarize] === Chinese pass ===');
-    const chineseRaw = await queryGemini(zhPrompt);
-
-    try {
-      const { writeFile } = await import('node:fs/promises');
-      await writeFile('/tmp/gemini-en.txt', englishRaw);
-      await writeFile('/tmp/gemini-zh.txt', chineseRaw);
-    } catch { /* debug dump best-effort */ }
-
-    let englishPosts;
-    try {
-      englishPosts = extractPosts(parseGeminiJson(englishRaw));
-    } catch (e) {
-      console.error('[summarize] English JSON parse failed:', e.message);
-      console.error('[summarize] raw response (first 500):', englishRaw.slice(0, 500));
-      process.exit(1);
-    }
-    if (englishPosts.length === 0) {
-      console.error('[summarize] no posts array found in English response:', englishRaw.slice(0, 500));
-      process.exit(1);
-    }
-
-    // Chinese is best-effort — if it fails to parse we still save the English.
+    const chinesePosts = await queryGeminiValidated(zhPrompt, postIds, 'zh');
+    // Chinese is best-effort — if it never validates we still save the English.
     const zhMap = {};
-    try {
-      for (const z of extractPosts(parseGeminiJson(chineseRaw))) {
+    if (chinesePosts) {
+      for (const z of chinesePosts) {
         const zpid = z.post_id ?? z.id;
         if (zpid) zhMap[zpid] = z;
       }
       console.log(`[summarize] parsed Chinese for ${Object.keys(zhMap).length} posts`);
-    } catch (e) {
-      console.error('[summarize] Chinese JSON parse failed (saving English only):', e.message);
+    } else {
+      console.error('[summarize] Chinese pass failed validation — saving English only');
     }
 
     const today = new Date().toISOString().slice(0, 10);
