@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-09T13:46:15.602Z",
+  "fetchedAt": "2026-06-09T14:16:15.684Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - June 2026",
@@ -47,6 +47,24 @@
       "createdUtc": 1780970762
     },
     {
+      "title": "1979 Halifax",
+      "score": 0,
+      "numComments": 0,
+      "author": "HalifaxReTales",
+      "url": "https://www.reddit.com/r/halifax/comments/1u15zdx/1979_halifax/",
+      "flair": null,
+      "createdUtc": 1781013976
+    },
+    {
+      "title": "May 2026 Rent Report ( National average down 4.7% - Halifax down 1.4% - NS up 3.3%)",
+      "score": 0,
+      "numComments": 0,
+      "author": "Gratedmonk3y",
+      "url": "https://www.reddit.com/r/halifax/comments/1u151pv/may_2026_rent_report_national_average_down_47/",
+      "flair": null,
+      "createdUtc": 1781011786
+    },
+    {
       "title": "TD Bank holds customer responsible for $15K loss, won’t say how account hacking ruled out",
       "score": 0,
       "numComments": 0,
@@ -65,15 +83,6 @@
       "createdUtc": 1780968438
     },
     {
-      "title": "May 2026 Rent Report ( National average down 4.7% - Halifax down 1.4% - NS up 3.3%)",
-      "score": 0,
-      "numComments": 0,
-      "author": "Gratedmonk3y",
-      "url": "https://www.reddit.com/r/halifax/comments/1u151pv/may_2026_rent_report_national_average_down_47/",
-      "flair": null,
-      "createdUtc": 1781011786
-    },
-    {
       "title": "Leather workers in the city…",
       "score": 0,
       "numComments": 0,
@@ -83,15 +92,6 @@
       "createdUtc": 1781009101
     },
     {
-      "title": "Mooseheads enter win-now mode with big trade at hometown QMJHL draft",
-      "score": 0,
-      "numComments": 0,
-      "author": "insino93",
-      "url": "https://www.reddit.com/r/halifax/comments/1u11msd/mooseheads_enter_winnow_mode_with_big_trade_at/",
-      "flair": null,
-      "createdUtc": 1781002546
-    },
-    {
       "title": "Are there payment-plan type options for seniors who want to get a mobility scooter?",
       "score": 0,
       "numComments": 0,
@@ -99,6 +99,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1u14kep/are_there_paymentplan_type_options_for_seniors/",
       "flair": null,
       "createdUtc": 1781010640
+    },
+    {
+      "title": "Mooseheads enter win-now mode with big trade at hometown QMJHL draft",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1u11msd/mooseheads_enter_winnow_mode_with_big_trade_at/",
+      "flair": null,
+      "createdUtc": 1781002546
     },
     {
       "title": "Cole Harbour man accused of killing his wife dies before trial",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1u0p9xc/vinyl_community/",
       "flair": null,
       "createdUtc": 1780963556
-    },
-    {
-      "title": "Parking during the winter parking ban",
-      "score": 0,
-      "numComments": 0,
-      "author": "VaxenSeeker",
-      "url": "https://www.reddit.com/r/halifax/comments/1u0mfpd/parking_during_the_winter_parking_ban/",
-      "flair": null,
-      "createdUtc": 1780956488
     }
   ]
 }
