@@ -187,18 +187,22 @@ IMPORTANT: Do NOT use Google Search or any external tools. All data is provided 
 
 You are summarizing discussions on r/halifax (Halifax, Nova Scotia) for a daily audio briefing.
 
-There are exactly ${posts.length} posts below (POST 1 through POST ${posts.length}). You MUST summarize ALL ${posts.length} of them — do not skip any. Your "posts" array must contain exactly ${posts.length} elements, and every "post_id" MUST be one of these exact IDs: [${idList}]. Use ONLY these IDs — never a sequential number (1, 2, 3…), never a placeholder, never an ID from any earlier conversation.
+There are ${posts.length} posts below (POST 1 through POST ${posts.length}). Summarize each post that actually appears below: your "posts" array's element count must equal the number of posts shown, and every "post_id" MUST be one of these exact IDs: [${idList}]. Use ONLY these IDs — never a sequential number (1, 2, 3…), never a placeholder, never an ID from any earlier conversation. Never invent extra posts or filler entries to reach a count; if a post has little content, still give a short but genuine summary from its title rather than fabricating or explaining missing data.
 
-For EACH post below, write a thorough summary covering:
+For EACH post below, write a summary covering:
 1. What the post is about (context, key facts)
 2. The main arguments, opinions, and debates in the comments
 3. Any notable agreements, disagreements, or surprising community reactions
+
+NO BODY TEXT: If a post has no body (it is only a link or an image), summarize it from its title, flair and comments alone. NEVER write phrases like "no body text", "no detailed content", or "content is insufficient", and never describe the data as missing — just discuss the subject of the title directly.
+
+NO META-TALK: NEVER mention this task, these instructions, the input data, the word limit, or the number of posts inside any summary or community_reaction value. Those fields must contain only listener-facing content about the post itself.
 
 OPENING: Start each summary by naming what the post is actually about — weave its specific subject (from the title) into the very first sentence so a listener has context immediately. Do NOT open with a generic phrase like "This post", "This thread", or "The post".
 
 CLOSING: End with a light, witty one-liner that captures the mood of the discussion. Do NOT flatly label the sentiment with words like "positive", "negative", "supportive", or "critical" — instead let a touch of humour imply whether the vibe is upbeat or sour.
 
-Each summary MUST be between 200 and 300 words. Do not write short summaries — the reader needs enough detail to understand the full discussion without reading the original thread. If a post has many comments, prioritize the most upvoted and most debated ones.
+Make each summary as thorough as the material allows, but at most 300 words. If a post has little content, write a shorter summary — never pad with empty phrases or repetition just to reach a length. If a post has many comments, prioritize the most upvoted and most debated ones.
 
 ${postsText}
 
@@ -207,7 +211,7 @@ Return ONLY a valid JSON object with EXACTLY this shape and these key names — 
   "posts": [
     {
       "post_id": "<copy the exact ID: value for this post>",
-      "summary": "thorough 200-300 word English summary: open by naming the post's subject (no 'This post'), close with a witty mood one-liner (no plain positive/negative labels)",
+      "summary": "English summary (at most 300 words; shorter is fine if the post has little content): open by naming the post's subject (no 'This post'), close with a witty mood one-liner (no plain positive/negative labels)",
       "community_reaction": "a short, witty one-liner hinting at the mood — do NOT use plain labels like positive / negative / supportive / critical"
     }
   ]
@@ -228,18 +232,22 @@ function buildPromptZh(posts, commentsMap) {
 
 你正在为一个每日音频简报总结 r/halifax（加拿大新斯科舍省哈利法克斯）的讨论。
 
-下面一共有 ${posts.length} 个帖子（POST 1 到 POST ${posts.length}）。你必须用简体中文总结全部 ${posts.length} 个，一个都不能漏。你的 "posts" 数组必须正好包含 ${posts.length} 个元素，并且每个 "post_id" 必须是下面这些确切 ID 之一：[${idList}]。只能用这些 ID——绝不能用序号（1、2、3…）、占位符，或之前对话里的任何 ID。
+下面有 ${posts.length} 个帖子（POST 1 到 POST ${posts.length}）。请用简体中文总结下面实际出现的每一个帖子：你的 "posts" 数组元素数必须等于下面实际出现的帖子数，每个 "post_id" 必须是下面这些确切 ID 之一：[${idList}]。只能用这些 ID——绝不能用序号（1、2、3…）、占位符，或之前对话里的任何 ID。绝不要为了凑数而编造帖子或填占位内容；若某帖内容确实很少，也要基于标题给出一段简短但真实的总结，而不是编造或解释内容缺失。
 
-对每个帖子，写一段详尽的中文总结，覆盖：
+对每个帖子，写一段中文总结，覆盖：
 1. 帖子讲的是什么（背景、关键事实）
 2. 评论区的主要观点、论点和争论
 3. 任何值得注意的共识、分歧或令人意外的社区反应
+
+无正文处理：如果某个帖子没有正文（只是链接或图片），就仅根据标题、flair 和评论来总结；绝对不要写出“暂无正文”“没有详细内容”“内容不足”之类的话，也不要描述数据缺失，直接围绕标题主题展开。
+
+禁止元话题：绝对不要在任何 summary 或 community_reaction 字段里提及本任务、提示词、输入数据、字数要求或帖子数量；这些字段只能包含面向听众的、关于帖子本身的内容。
 
 开头：每段总结开头要点明这个帖子具体在讲什么——把帖子标题里的具体主题自然地融进第一句，让听众一上来就有上下文。不要用“这个帖子”“这条帖子”“该帖”之类笼统的话开场。
 
 结尾：用一句轻松、俏皮的话收尾，传达讨论的氛围。不要直接用“积极/正面/负面/消极/支持/批评”这类词去下判断——而是用一点幽默，让玩笑本身去暗示氛围是偏暖还是偏冷。
 
-每段总结必须在 200 到 300 字之间，要足够详细，让读者不看原帖也能了解完整讨论。评论多的帖子，优先讲点赞最高、争论最多的。
+每段总结尽量详尽，但最多 300 字；如果帖子内容较少，就写短一点，严禁为了凑字数而填充空话或重复。评论多的帖子，优先讲点赞最高、争论最多的。
 
 ${postsText}
 
@@ -248,7 +256,7 @@ ${postsText}
   "posts": [
     {
       "post_id": "<复制该帖 ID: 后面的确切值>",
-      "summary": "200-300字的详尽简体中文总结：开头点明帖子主题（不要用‘这个帖子’开场），结尾用一句俏皮话点出氛围（不要直接说积极/负面）",
+      "summary": "简体中文总结（最多300字，内容少就写短一点）：开头点明帖子主题（不要用‘这个帖子’开场），结尾用一句俏皮话点出氛围（不要直接说积极/负面）",
       "community_reaction": "一句简短俏皮、暗示氛围的话——不要直接用‘积极/负面/支持/批评’这类词"
     }
   ]
