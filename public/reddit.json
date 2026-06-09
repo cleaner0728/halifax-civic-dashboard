@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-09T08:56:55.711Z",
+  "fetchedAt": "2026-06-09T09:16:14.893Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - June 2026",
@@ -38,15 +38,6 @@
       "createdUtc": 1780968438
     },
     {
-      "title": "Cole Harbour man accused of killing his wife dies before trial",
-      "score": 0,
-      "numComments": 0,
-      "author": "SAJewers",
-      "url": "https://www.reddit.com/r/halifax/comments/1u0psva/cole_harbour_man_accused_of_killing_his_wife_dies/",
-      "flair": null,
-      "createdUtc": 1780964985
-    },
-    {
       "title": "Halifax Marriotts",
       "score": 0,
       "numComments": 0,
@@ -54,6 +45,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1u0rwi4/halifax_marriotts/",
       "flair": null,
       "createdUtc": 1780970762
+    },
+    {
+      "title": "Cole Harbour man accused of killing his wife dies before trial",
+      "score": 0,
+      "numComments": 0,
+      "author": "SAJewers",
+      "url": "https://www.reddit.com/r/halifax/comments/1u0psva/cole_harbour_man_accused_of_killing_his_wife_dies/",
+      "flair": null,
+      "createdUtc": 1780964985
     },
     {
       "title": "MacKay Bridge closure with free ferry transit this weekend",
@@ -173,15 +173,6 @@
       "createdUtc": 1780930114
     },
     {
-      "title": "Nobody going to talk about what happened at night?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Witty_Zaru",
-      "url": "https://www.reddit.com/r/halifax/comments/1u0zdv7/nobody_going_to_talk_about_what_happened_at_night/",
-      "flair": null,
-      "createdUtc": 1780994778
-    },
-    {
       "title": "How to get rid of an erroneous phone directory listing?",
       "score": 0,
       "numComments": 0,
@@ -270,6 +261,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1u0mfpd/parking_during_the_winter_parking_ban/",
       "flair": null,
       "createdUtc": 1780956488
+    },
+    {
+      "title": "Nobody going to talk about what happened at night?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Witty_Zaru",
+      "url": "https://www.reddit.com/r/halifax/comments/1u0zdv7/nobody_going_to_talk_about_what_happened_at_night/",
+      "flair": null,
+      "createdUtc": 1780994778
     }
   ]
 }
