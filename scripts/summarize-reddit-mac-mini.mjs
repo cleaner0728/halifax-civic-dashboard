@@ -2,8 +2,8 @@
 // stores per-post summaries (≤300 words) + generates TTS audio via macOS `say`.
 //
 // Post selection:
-//   - Top 3 by comment count  (most discussed)
-//   - Top 3 by score          (high score, potentially low comments)
+//   - Top 5 by comment count  (most discussed)
+//   - Top 5 by score          (high score, potentially low comments)
 //   Both pools deduped, then ordered to match Reddit's own "hot" ranking:
 //   stickied posts first, then by hot score = log10(|score|) + score_sign·(created_utc − reddit_epoch)/45000.
 //   (Reddit's hot is dominated by age: every ~12.5h of age ≈ +1, worth a 10× score bump.)
@@ -29,7 +29,7 @@ const TTS_VOICE_EN = 'en-US-AriaNeural';
 const TTS_VOICE_ZH = 'zh-CN-XiaoxiaoNeural';
 
 const SUB = 'halifax';
-const TOP_N = 3;
+const TOP_N = 5;
 const MAX_COMMENTS_PER_POST = 25;
 const MAX_REPLIES_PER_COMMENT = 3;
 
