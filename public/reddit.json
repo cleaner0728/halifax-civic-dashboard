@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-09T08:46:13.692Z",
+  "fetchedAt": "2026-06-09T08:56:55.711Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - June 2026",
@@ -173,6 +173,15 @@
       "createdUtc": 1780930114
     },
     {
+      "title": "Nobody going to talk about what happened at night?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Witty_Zaru",
+      "url": "https://www.reddit.com/r/halifax/comments/1u0zdv7/nobody_going_to_talk_about_what_happened_at_night/",
+      "flair": null,
+      "createdUtc": 1780994778
+    },
+    {
       "title": "How to get rid of an erroneous phone directory listing?",
       "score": 0,
       "numComments": 0,
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1u0mfpd/parking_during_the_winter_parking_ban/",
       "flair": null,
       "createdUtc": 1780956488
-    },
-    {
-      "title": "Power Outage in Sackville",
-      "score": 0,
-      "numComments": 0,
-      "author": "Crazy-Pride-8700",
-      "url": "https://www.reddit.com/r/halifax/comments/1u0ah7g/power_outage_in_sackville/",
-      "flair": null,
-      "createdUtc": 1780930935
     }
   ]
 }
