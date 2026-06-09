@@ -193,7 +193,10 @@ For EACH post below, write a thorough summary covering:
 1. What the post is about (context, key facts)
 2. The main arguments, opinions, and debates in the comments
 3. Any notable agreements, disagreements, or surprising community reactions
-4. The overall sentiment
+
+OPENING: Start each summary by naming what the post is actually about — weave its specific subject (from the title) into the very first sentence so a listener has context immediately. Do NOT open with a generic phrase like "This post", "This thread", or "The post".
+
+CLOSING: End with a light, witty one-liner that captures the mood of the discussion. Do NOT flatly label the sentiment with words like "positive", "negative", "supportive", or "critical" — instead let a touch of humour imply whether the vibe is upbeat or sour.
 
 Each summary MUST be between 200 and 300 words. Do not write short summaries — the reader needs enough detail to understand the full discussion without reading the original thread. If a post has many comments, prioritize the most upvoted and most debated ones.
 
@@ -204,8 +207,8 @@ Return ONLY a valid JSON object with EXACTLY this shape and these key names — 
   "posts": [
     {
       "post_id": "<copy the exact ID: value for this post>",
-      "summary": "thorough 200-300 word English summary covering post content AND community discussion",
-      "community_reaction": "one short phrase: e.g. broadly supportive / divided / concerned / humorous / skeptical"
+      "summary": "thorough 200-300 word English summary: open by naming the post's subject (no 'This post'), close with a witty mood one-liner (no plain positive/negative labels)",
+      "community_reaction": "a short, witty one-liner hinting at the mood — do NOT use plain labels like positive / negative / supportive / critical"
     }
   ]
 }`;
@@ -231,7 +234,10 @@ function buildPromptZh(posts, commentsMap) {
 1. 帖子讲的是什么（背景、关键事实）
 2. 评论区的主要观点、论点和争论
 3. 任何值得注意的共识、分歧或令人意外的社区反应
-4. 整体情绪
+
+开头：每段总结开头要点明这个帖子具体在讲什么——把帖子标题里的具体主题自然地融进第一句，让听众一上来就有上下文。不要用“这个帖子”“这条帖子”“该帖”之类笼统的话开场。
+
+结尾：用一句轻松、俏皮的话收尾，传达讨论的氛围。不要直接用“积极/正面/负面/消极/支持/批评”这类词去下判断——而是用一点幽默，让玩笑本身去暗示氛围是偏暖还是偏冷。
 
 每段总结必须在 200 到 300 字之间，要足够详细，让读者不看原帖也能了解完整讨论。评论多的帖子，优先讲点赞最高、争论最多的。
 
@@ -242,8 +248,8 @@ ${postsText}
   "posts": [
     {
       "post_id": "<复制该帖 ID: 后面的确切值>",
-      "summary": "200-300字的详尽简体中文总结，覆盖帖子内容和评论区讨论",
-      "community_reaction": "一个简短的中文短语，如：普遍支持 / 意见分歧 / 担忧 / 调侃 / 质疑"
+      "summary": "200-300字的详尽简体中文总结：开头点明帖子主题（不要用‘这个帖子’开场），结尾用一句俏皮话点出氛围（不要直接说积极/负面）",
+      "community_reaction": "一句简短俏皮、暗示氛围的话——不要直接用‘积极/负面/支持/批评’这类词"
     }
   ]
 }`;
