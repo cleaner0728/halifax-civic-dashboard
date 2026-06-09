@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-06-09T09:46:18.123Z",
+  "fetchedAt": "2026-06-09T10:16:15.099Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - June 2026",
@@ -65,6 +65,15 @@
       "createdUtc": 1780943510
     },
     {
+      "title": "TD Bank holds customer responsible for $15K loss, won’t say how account hacking ruled out",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1u0x486/td_bank_holds_customer_responsible_for_15k_loss/",
+      "flair": null,
+      "createdUtc": 1780986724
+    },
+    {
       "title": "What am I meant to do with these?",
       "score": 0,
       "numComments": 0,
@@ -81,15 +90,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1u0k7m3/japanese_knotweed_disposal/",
       "flair": null,
       "createdUtc": 1780951419
-    },
-    {
-      "title": "TD Bank holds customer responsible for $15K loss, won’t say how account hacking ruled out",
-      "score": 0,
-      "numComments": 0,
-      "author": "insino93",
-      "url": "https://www.reddit.com/r/halifax/comments/1u0x486/td_bank_holds_customer_responsible_for_15k_loss/",
-      "flair": null,
-      "createdUtc": 1780986724
     },
     {
       "title": "Tentative agreement reached in 8-week Nova Scotia long-term care strike, says union",
@@ -137,6 +137,24 @@
       "createdUtc": 1780884982
     },
     {
+      "title": "Maritime Bus dropoff location at Halifax airport?",
+      "score": 0,
+      "numComments": 0,
+      "author": "SkintagsMcGee",
+      "url": "https://www.reddit.com/r/halifax/comments/1u0r8bi/maritime_bus_dropoff_location_at_halifax_airport/",
+      "flair": null,
+      "createdUtc": 1780968898
+    },
+    {
+      "title": "Mountain Bike Service",
+      "score": 0,
+      "numComments": 0,
+      "author": "rymar87",
+      "url": "https://www.reddit.com/r/halifax/comments/1u0txi1/mountain_bike_service/",
+      "flair": null,
+      "createdUtc": 1780976543
+    },
+    {
       "title": "Looking to join a D&D group as a 40 year old beginner",
       "score": 0,
       "numComments": 0,
@@ -153,15 +171,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1u0netk/tartan_tails_spca/",
       "flair": null,
       "createdUtc": 1780958861
-    },
-    {
-      "title": "Maritime Bus dropoff location at Halifax airport?",
-      "score": 0,
-      "numComments": 0,
-      "author": "SkintagsMcGee",
-      "url": "https://www.reddit.com/r/halifax/comments/1u0r8bi/maritime_bus_dropoff_location_at_halifax_airport/",
-      "flair": null,
-      "createdUtc": 1780968898
     },
     {
       "title": "Power outage in north end",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1u0r54s/where_can_i_get_the_blood_work_done_i_dont_see/",
       "flair": null,
       "createdUtc": 1780968649
-    },
-    {
-      "title": "Power Outage in Sackville",
-      "score": 0,
-      "numComments": 0,
-      "author": "Crazy-Pride-8700",
-      "url": "https://www.reddit.com/r/halifax/comments/1u0ah7g/power_outage_in_sackville/",
-      "flair": null,
-      "createdUtc": 1780930935
     }
   ]
 }
