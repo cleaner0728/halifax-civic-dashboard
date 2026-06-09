@@ -2,7 +2,12 @@ name: Fetch Reddit r/halifax
 
 on:
   schedule:
-    - cron: '*/30 * * * *'   # every 30 minutes
+    # Once a day. This file (public/reddit.json) is only a *fallback* — the
+    # live feed is served from the Supabase reddit_posts table written by the
+    # Mac Mini scraper (see lib/fetchers/reddit.ts). Refreshing every 30 min
+    # just floods the repo with commits, so we keep the safety-net snapshot
+    # roughly daily instead.
+    - cron: '0 15 * * *'   # daily at 15:00 UTC (12:00 ADT)
   workflow_dispatch:            # allow manual runs from Actions tab
 
 permissions:

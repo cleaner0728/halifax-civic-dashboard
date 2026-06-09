@@ -15,7 +15,7 @@ Aggregates real-time local information into a single swipeable view (7 tabs):
 |---|---|
 | **City Live** | Weather + 5-day forecast, air quality, tides, burn status, active alerts, live webcams (Halifax Harbour Bridges, Emera Oval area) |
 | **News** | Local news from CBC Nova Scotia and Halifax Examiner (past 24h) |
-| **Reddit** | Top hot posts from r/halifax (refreshed every ~15 min via scheduled job) |
+| **Reddit** | Top hot posts from r/halifax (refreshed through the day) |
 | **Transit** | Halifax Transit active detours, ferry alerts, route adjustments |
 | **HRM** | Municipal announcements from Halifax Regional Municipality |
 | **HRFE** | Halifax Regional Fire & Emergency live incident feed (past 6h) |
@@ -74,7 +74,7 @@ flowchart LR
 
     subgraph CI["GitHub Actions cron"]
       direction TB
-      WR["fetch-reddit<br/>every 30 min"]
+      WR["fetch-reddit<br/>daily (fallback)"]
       WB["generate-briefing<br/>every 30 min"]
       WG["fetch-gas<br/>weekly Sat"]
       WT["fetch-gtfs<br/>weekly Mon"]
@@ -176,15 +176,15 @@ subsection below):
 
 | Workflow | Schedule (UTC) | What it does | Output |
 |---|---|---|---|
-| [fetch-reddit](.github/workflows/fetch-reddit.yml) | `*/30 * * * *` (every 30 min) | [scripts/fetch-reddit.mjs](scripts/fetch-reddit.mjs) — 8 fallback strategies (JSON/HTML/RSS × 3 UAs) because Reddit hard-blocks data-center IPs | commits `public/reddit.json` |
+| [fetch-reddit](.github/workflows/fetch-reddit.yml) | `0 15 * * *` (daily) | [scripts/fetch-reddit.mjs](scripts/fetch-reddit.mjs) — 8 fallback strategies (JSON/HTML/RSS × 3 UAs) because Reddit hard-blocks data-center IPs | commits `public/reddit.json` (fallback snapshot — the live feed is DB-backed, see [reddit.ts](lib/fetchers/reddit.ts)) |
 | [generate-briefing](.github/workflows/generate-briefing.yml) | `*/30 * * * *` (every 30 min) | `curl POST /api/news-briefing/generate` → fetch article body → Groq summarize → Edge TTS → write Supabase row | rows in `article_summary` |
 | [fetch-gas-prices](.github/workflows/fetch-gas-prices.yml) | `0 19 * * 6` (Sat 15:00 ADT) | [scripts/fetch-gas-prices.mjs](scripts/fetch-gas-prices.mjs) — scrape NSERBT Zone 1 weekly prices, append to history | commits `public/gas-prices.json` |
 | [fetch-gtfs](.github/workflows/fetch-gtfs.yml) | `0 6 * * 1` (Mon 06:00 UTC) | [scripts/fetch-gtfs.mjs](scripts/fetch-gtfs.mjs) — download HRM GTFS zip; emit stops/routes/trips + polyline-encoded shapes | commits `public/transit/*.json` |
 | [backfill-gas-prices](.github/workflows/backfill-gas-prices.yml) | manual only | [scripts/backfill-gas-prices.mjs](scripts/backfill-gas-prices.mjs) — `pdftotext` historical NSERBT PDFs for seed data | commits `public/gas-prices.json` |
 
-Both 30-min crons fire on the same wall-clock minute; concurrency groups are
-separate, no collision. None of the crons trigger a Vercel deployment — they
-only hit existing functions or push commits.
+The crons' concurrency groups are separate, so overlapping runs never collide.
+None of the crons trigger a Vercel deployment — they only hit existing
+functions or push commits.
 
 #### All upstream sources
 
@@ -211,7 +211,7 @@ only hit existing functions or push commits.
 
 | Source | Refresh | File |
 |---|---|---|
-| r/halifax hot posts | every 30 min | `public/reddit.json` |
+| r/halifax hot posts | daily (fallback; live feed is DB-backed) | `public/reddit.json` |
 | NSERBT Zone 1 gas prices | Saturdays | `public/gas-prices.json` |
 | Halifax Transit GTFS static (stops/routes/trips/shapes) | Mondays | `public/transit/*.json` |
 
