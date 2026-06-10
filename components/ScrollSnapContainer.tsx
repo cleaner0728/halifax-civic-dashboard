@@ -139,7 +139,7 @@ export default function ScrollSnapContainer({ children, tabs: tabsProp, topBar }
   // Double-click any blank surface (title, card background, page void) →
   // jump to the very top. With only one tab in the DOM at a time, "top" is
   // unambiguous: window.scrollTo(0). The dashboard-title `[data-scroll-top]`
-  // element additionally returns the user to the FIRST tab (City Live)
+  // element additionally returns the user to the FIRST tab (Pulse)
   // since that's the conventional "home" affordance.
   const scrollToTop = useCallback(() => {
     if (activeIndexRef.current !== 0) {

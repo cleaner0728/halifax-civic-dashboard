@@ -62,15 +62,15 @@ export type DashboardData = {
 export type DesktopSection = "city" | "pulse" | "discussion" | "events" | "stats";
 
 const NAV: { id: DesktopSection; label: string; Icon: React.FC<React.SVGProps<SVGSVGElement>> }[] = [
-  { id: "city", label: "City Live", Icon: IconCity },
   { id: "pulse", label: "Pulse", Icon: IconPulse },
+  { id: "city", label: "City Live", Icon: IconCity },
   { id: "discussion", label: "Discussion", Icon: IconMessages },
   { id: "events", label: "Events", Icon: IconTicket },
   { id: "stats", label: "Stats", Icon: IconChart },
 ];
 
 export default function DesktopShell({ data }: { data: DashboardData }) {
-  const [active, setActive] = useState<DesktopSection>("city");
+  const [active, setActive] = useState<DesktopSection>("pulse");
   // Drawer collapsed by default so the dashboard takes the full viewport.
   // Open on hamburger click or any 1-5 keypress; close on Escape, backdrop
   // click, or after picking a section.

@@ -32,8 +32,8 @@ import { fetchWinterParkingBan } from '@/lib/fetchers/winter-parking';
 import { safe } from '@/lib/safe';
 
 const TABS: TabSpec[] = [
-  { label: 'City Live', icon: 'city' },
   { label: 'Pulse', icon: 'pulse' },
+  { label: 'City Live', icon: 'city' },
   { label: 'Events', icon: 'events' },
   { label: 'Stats', icon: 'stats' },
 ];
@@ -148,6 +148,11 @@ export default async function Home() {
               </div>
             }
           >
+            <FeedScreen
+              news={news.items}
+              redditPosts={redditData.posts}
+              redditFetchedAt={redditData.fetchedAt}
+            />
             <CityLiveScreen
               weather={weather}
               tideGraph={tideGraph}
@@ -167,11 +172,6 @@ export default async function Home() {
               buoy={buoy}
               marineForecast={marineForecast}
               winterParkingBan={winterParkingBan}
-            />
-            <FeedScreen
-              news={news.items}
-              redditPosts={redditData.posts}
-              redditFetchedAt={redditData.fetchedAt}
             />
             <EventsCalendarScreen renderedAt={renderedAt} events={events} />
             <StatsScreen gasPrices={gasPrices} groceryPrices={groceryPrices} />

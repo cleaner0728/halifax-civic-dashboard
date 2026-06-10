@@ -9,9 +9,13 @@ import { IconNews, IconMessages } from "@/components/icons";
 // accent border (4px all round) so tab + border read as one folder. Only one
 // feed shows at a time, but BOTH stay mounted (inactive is display:none) so a
 // playing briefing survives a switch. The choice persists in localStorage.
+//
+// Reddit leads: it's the LEFT tab and the default, so a user landing on Pulse
+// sees r/halifax first. (Storage key bumped to v2 so the old News-default
+// preference doesn't override the new Reddit default for returning users.)
 
 type Tab = "news" | "reddit";
-const STORAGE_KEY = "hfx-feed-tab-v1";
+const STORAGE_KEY = "hfx-feed-tab-v2";
 
 export default function FeedTabs({
   news,
@@ -20,7 +24,7 @@ export default function FeedTabs({
   news: ReactNode;
   reddit: ReactNode;
 }) {
-  const [tab, setTab] = useState<Tab>("news");
+  const [tab, setTab] = useState<Tab>("reddit");
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -44,18 +48,18 @@ export default function FeedTabs({
     <div>
       <div role="tablist" aria-label="Feed source" className="flex gap-2">
         <FolderTab
-          active={tab === "news"}
-          onClick={() => choose("news")}
-          accent="blue"
-          icon={<IconNews className="w-4 h-4" />}
-          label="News"
-        />
-        <FolderTab
           active={tab === "reddit"}
           onClick={() => choose("reddit")}
           accent="orange"
           icon={<IconMessages className="w-4 h-4" />}
           label="Reddit"
+        />
+        <FolderTab
+          active={tab === "news"}
+          onClick={() => choose("news")}
+          accent="blue"
+          icon={<IconNews className="w-4 h-4" />}
+          label="News"
         />
       </div>
 
@@ -63,8 +67,8 @@ export default function FeedTabs({
           sill the tabs sit on. Both sections stay mounted; inactive is
           display:none so <audio> keeps playing across a tab switch. */}
       <div className={`rounded-b-2xl border-4 ${panelBorder} bg-card px-1 py-3`}>
-        <div className={tab === "news" ? "" : "hidden"}>{news}</div>
         <div className={tab === "reddit" ? "" : "hidden"}>{reddit}</div>
+        <div className={tab === "news" ? "" : "hidden"}>{news}</div>
       </div>
     </div>
   );
