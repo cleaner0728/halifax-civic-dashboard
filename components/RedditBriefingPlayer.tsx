@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 import PlaybackSpeedButton from "@/components/PlaybackSpeedButton";
 import { currentBriefingLang } from "@/lib/briefing-lang";
+import { formatRelative } from "@/lib/date";
 
 // item.audio is a URL to /api/reddit-briefing/clip/<postId> served by the
 // backend route — *not* a data: URL. iOS Safari refuses to play long
@@ -72,6 +73,31 @@ export default function RedditBriefingPlayer() {
   }, [current]);
 
   const playable = useMemo(() => items.filter((i) => i.audio), [items]);
+
+  // Prefetch the playlist on mount — metadata only. This is the cheap JSON
+  // (titles + summaries + per-clip audio URLs), NOT the audio itself; no clip
+  // is downloaded until the user presses play. Two payoffs: the idle hero can
+  // show real teaser headlines + a thread count before any click, and the first
+  // Play is instant because listen()'s "already loaded" fast path takes over.
+  const prefetched = useRef(false);
+  useEffect(() => {
+    if (prefetched.current) return;
+    prefetched.current = true;
+    const lang = currentBriefingLang();
+    fetch(lang === "zh" ? "/api/reddit-briefing?lang=zh" : "/api/reddit-briefing")
+      .then((res) => (res.ok ? (res.json() as Promise<{ items: Item[] }>) : null))
+      .then((data) => {
+        if (!data?.items?.length) return;
+        // Don't clobber a playlist a fast click may have already loaded.
+        setItems((prev) => (prev.length ? prev : data.items));
+        setStatus((s) => (s === "idle" ? "ready" : s));
+        loadedLang.current = lang;
+      })
+      .catch(() => {
+        // Silent: the hero falls back to its generic copy, and the click
+        // handler retries the fetch and surfaces any real error then.
+      });
+  }, []);
 
   // Per-clip durations. Populated incrementally by the main <audio>'s
   // loadedmetadata as each clip is actually loaded — the previous approach
@@ -150,8 +176,24 @@ export default function RedditBriefingPlayer() {
       autoplay.current = true;
       const first = items.findIndex((i) => i.audio);
       if (first < 0) return;
-      if (current === first) void audioRef.current?.play();
-      else setCurrent(first);
+      const audioEl = audioRef.current;
+      const firstAudio = items[first].audio;
+      if (current === first) {
+        void audioEl?.play();
+      } else if (audioEl && firstAudio) {
+        // Same reason as the fetch path below: iOS Safari loses the
+        // user-activation token across the setState → effect hop, so bind src
+        // and play() synchronously here (the prefetch path means this can be
+        // the very first click) rather than waiting for React to bind it.
+        audioEl.src = firstAudio;
+        audioEl.load();
+        void audioEl.play().catch((err) => {
+          console.warn("[reddit-briefing] play rejected:", err);
+        });
+        setCurrent(first);
+      } else {
+        setCurrent(first);
+      }
       return;
     }
     setStatus("loading");
@@ -214,25 +256,74 @@ export default function RedditBriefingPlayer() {
 
   const loading = status === "loading";
   const curItem = current >= 0 ? items[current] : null;
+  // Idle-hero teaser: the first few thread titles we'll actually read out, plus
+  // when the briefing was generated. Both come from the mount prefetch, so the
+  // user sees what's inside before deciding to press play.
+  const teaser = playable.slice(0, 3).map(itemLabel);
+  const freshLabel = items[0]?.createdAt ? formatRelative(items[0].createdAt) : null;
 
   return (
     <div className="mb-4 space-y-2">
       {current < 0 && (
+        // The whole card is the play target — a big, alive hero so listening
+        // reads as the headline action, not a footnote above the post grid.
         <button
           onClick={listen}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2 rounded-xl border border-orange-500/30 bg-orange-500/5 hover:bg-orange-500/10 px-4 py-2.5 text-sm font-semibold text-orange-600 dark:text-orange-400 transition-colors disabled:opacity-60"
+          aria-label="Play today's r/halifax audio briefing"
+          className="group w-full text-left rounded-2xl border border-orange-500/40 bg-gradient-to-br from-orange-500/[0.12] to-orange-500/[0.03] hover:from-orange-500/20 hover:to-orange-500/[0.06] px-5 py-4 transition-colors disabled:opacity-60"
         >
-          {loading ? (
-            <span className="w-4 h-4 rounded-full border-2 border-orange-500/30 border-t-orange-500 animate-spin" />
-          ) : (
-            <span className="grid place-items-center w-6 h-6 rounded-full bg-orange-500 text-white shrink-0">
-              <svg className="w-3 h-3 translate-x-px" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8 5v14l11-7z" />
-              </svg>
+          <div className="flex items-center gap-4">
+            {/* Big, high-contrast play button — the static visual anchor of
+                the card. */}
+            <span className="grid place-items-center w-14 h-14 rounded-full bg-orange-500 group-hover:bg-orange-600 text-white shadow-lg shadow-orange-500/30 transition-colors shrink-0">
+              {loading ? (
+                <span className="w-5 h-5 rounded-full border-2 border-white/40 border-t-white animate-spin" />
+              ) : (
+                <svg className="w-6 h-6 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              )}
             </span>
-          )}
-          Listen to today&apos;s Reddit pulse
+
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-orange-600 dark:text-orange-400">
+                  Audio briefing
+                </p>
+                {freshLabel && (
+                  <span className="text-[11px] text-foreground/40 truncate">· Updated {freshLabel}</span>
+                )}
+              </div>
+              <p className="text-base font-bold text-foreground leading-snug mt-0.5">
+                Hear what Halifax is talking about
+              </p>
+
+              {teaser.length > 0 ? (
+                <ul className="mt-1.5 space-y-0.5">
+                  {teaser.map((t, i) => (
+                    <li key={i} className="text-xs text-foreground/60 leading-snug truncate">
+                      <span className="text-orange-500/70 mr-1.5" aria-hidden>•</span>
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-xs text-foreground/60 mt-1 leading-snug">
+                  Today&apos;s hot threads from r/halifax, summarized into one listen.
+                </p>
+              )}
+
+              <span className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-orange-600 dark:text-orange-400 group-hover:gap-2 transition-all">
+                {loading
+                  ? "Loading…"
+                  : playable.length > 0
+                    ? `Press play · ${playable.length} threads`
+                    : "Press play"}
+                {!loading && <span aria-hidden>→</span>}
+              </span>
+            </div>
+          </div>
         </button>
       )}
 
