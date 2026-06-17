@@ -12,7 +12,6 @@
 
 import type { NextRequest } from 'next/server';
 import { fetchNews } from '@/lib/fetchers/news';
-import { enrichWithArticleText } from '@/lib/ai/fetch-article';
 import { summarizeArticle } from '@/lib/ai/summarize';
 import { synthesizeSpeech, ZH_VOICE } from '@/lib/ai/tts';
 import { translateToChinese } from '@/lib/ai/translate';
@@ -121,18 +120,9 @@ export async function POST(req: NextRequest) {
 
   console.log(`[gen] ${fresh.length} new article(s) to process`);
 
-  // Fetch full text for the fresh articles (3-tier scraper, parallel internally).
-  const enriched = await enrichWithArticleText(fresh, {
-    maxArticles: fresh.length,
-    timeoutMs: 15_000,
-    maxParagraphs: 25,
-    maxChars: 3_500,
-    concurrency: 8,
-  });
-
-  // Summarize + synthesize + insert, in small parallel batches.
+  // Rephrase + synthesize + insert, in small parallel batches.
   let added = 0;
-  const processOne = async (item: (typeof enriched)[number]) => {
+  const processOne = async (item: (typeof fresh)[number]) => {
     const summary = await summarizeArticle(item);
     if (!summary) return;
     const mp3 = await synthesizeSpeech(summary);
@@ -149,8 +139,8 @@ export async function POST(req: NextRequest) {
     console.log(`[gen] + ${(item.title ?? '').slice(0, 60)}${zhText ? ' (zh ✓)' : ''}`);
   };
 
-  for (let i = 0; i < enriched.length; i += PROCESS_CONCURRENCY) {
-    await Promise.all(enriched.slice(i, i + PROCESS_CONCURRENCY).map(processOne));
+  for (let i = 0; i < fresh.length; i += PROCESS_CONCURRENCY) {
+    await Promise.all(fresh.slice(i, i + PROCESS_CONCURRENCY).map(processOne));
   }
 
   // Drain a few older rows still missing Chinese (shares the 60s budget).
