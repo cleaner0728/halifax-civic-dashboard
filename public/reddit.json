@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-07-04T15:30:12.981Z",
+  "fetchedAt": "2026-07-04T15:54:49.485Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — July 2026",
@@ -29,15 +29,6 @@
       "createdUtc": 1783162313
     },
     {
-      "title": "Heat, humidity and sweltering temperature blanket the Maritimes",
-      "score": 0,
-      "numComments": 0,
-      "author": "IStillListenToRadio",
-      "url": "https://www.reddit.com/r/halifax/comments/1un7c2x/heat_humidity_and_sweltering_temperature_blanket/",
-      "flair": null,
-      "createdUtc": 1783166616
-    },
-    {
       "title": "Kitchen staff, are you ok?",
       "score": 0,
       "numComments": 0,
@@ -45,6 +36,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1unasgt/kitchen_staff_are_you_ok/",
       "flair": null,
       "createdUtc": 1783176087
+    },
+    {
+      "title": "Heat, humidity and sweltering temperature blanket the Maritimes",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1un7c2x/heat_humidity_and_sweltering_temperature_blanket/",
+      "flair": null,
+      "createdUtc": 1783166616
     },
     {
       "title": "Some clarity on the power outage. Lakeside industrial park",
@@ -218,6 +218,15 @@
       "createdUtc": 1783114309
     },
     {
+      "title": "Is there anywhere in HRM where I can play Star Wars Unlimited on weekends?",
+      "score": 0,
+      "numComments": 0,
+      "author": "GooseWithTheWellies",
+      "url": "https://www.reddit.com/r/halifax/comments/1umv5su/is_there_anywhere_in_hrm_where_i_can_play_star/",
+      "flair": null,
+      "createdUtc": 1783126437
+    },
+    {
       "title": "Power outage",
       "score": 0,
       "numComments": 0,
@@ -227,13 +236,13 @@
       "createdUtc": 1783119893
     },
     {
-      "title": "Is there anywhere in HRM where I can play Star Wars Unlimited on weekends?",
+      "title": "Backpacking/Camping recommendations",
       "score": 0,
       "numComments": 0,
-      "author": "GooseWithTheWellies",
-      "url": "https://www.reddit.com/r/halifax/comments/1umv5su/is_there_anywhere_in_hrm_where_i_can_play_star/",
+      "author": "Cruiser_Pandora",
+      "url": "https://www.reddit.com/r/halifax/comments/1uncad2/backpackingcamping_recommendations/",
       "flair": null,
-      "createdUtc": 1783126437
+      "createdUtc": 1783179809
     },
     {
       "title": "FYI: Stillwell on Kempt hosts underground dance nights (Techno/EDM/etc) and I think a lot of ppl don't know about it.",
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1umfvjj/best_idioms_for_hot_weather/",
       "flair": null,
       "createdUtc": 1783088668
-    },
-    {
-      "title": "Looking for emergency mole removal/biopsy in HRM",
-      "score": 0,
-      "numComments": 0,
-      "author": "maddigabriels",
-      "url": "https://www.reddit.com/r/halifax/comments/1umrpxu/looking_for_emergency_mole_removalbiopsy_in_hrm/",
-      "flair": null,
-      "createdUtc": 1783116764
     }
   ]
 }
