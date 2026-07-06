@@ -1,6 +1,15 @@
 {
-  "fetchedAt": "2026-07-05T16:00:44.854Z",
+  "fetchedAt": "2026-07-06T15:30:13.380Z",
   "posts": [
+    {
+      "title": "Free Food/Laundry/Shower Resources in HRM - July 2026",
+      "score": 0,
+      "numComments": 0,
+      "author": "maximumice",
+      "url": "https://www.reddit.com/r/halifax/comments/1uov15y/free_foodlaundryshower_resources_in_hrm_july_2026/",
+      "flair": null,
+      "createdUtc": 1783338510
+    },
     {
       "title": "Things To Do In HRM This Month — July 2026",
       "score": 0,
@@ -11,13 +20,58 @@
       "createdUtc": 1782900046
     },
     {
-      "title": "Free Food/Laundry/Shower Resources in HRM - June 2026",
+      "title": "Gateway sale items turned into $5 meal prep lunches",
       "score": 0,
       "numComments": 0,
-      "author": "maximumice",
-      "url": "https://www.reddit.com/r/halifax/comments/1twvwry/free_foodlaundryshower_resources_in_hrm_june_2026/",
+      "author": "Gateway_Mealprep",
+      "url": "https://www.reddit.com/r/halifax/comments/1uoxkt9/gateway_sale_items_turned_into_5_meal_prep_lunches/",
       "flair": null,
-      "createdUtc": 1780597130
+      "createdUtc": 1783344982
+    },
+    {
+      "title": "MacDonald Bridge lane drop still in effect as of Monday at 6am. Probably avoid during rush hour if possible",
+      "score": 0,
+      "numComments": 0,
+      "author": "Dartmouththedude",
+      "url": "https://www.reddit.com/r/halifax/comments/1uos09m/macdonald_bridge_lane_drop_still_in_effect_as_of/",
+      "flair": null,
+      "createdUtc": 1783328747
+    },
+    {
+      "title": "Canada’s first and largest all-Black military unit marks 110th anniversary",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1uot8c4/canadas_first_and_largest_allblack_military_unit/",
+      "flair": null,
+      "createdUtc": 1783332953
+    },
+    {
+      "title": "Japanese Beetles",
+      "score": 0,
+      "numComments": 0,
+      "author": "punchbuggyblue",
+      "url": "https://www.reddit.com/r/halifax/comments/1uoye1e/japanese_beetles/",
+      "flair": null,
+      "createdUtc": 1783346828
+    },
+    {
+      "title": "Colorful creations: Halifax Mural Festival brightens up the city",
+      "score": 0,
+      "numComments": 0,
+      "author": "Injustice_For_All_",
+      "url": "https://www.reddit.com/r/halifax/comments/1uoxxk2/colorful_creations_halifax_mural_festival/",
+      "flair": null,
+      "createdUtc": 1783345809
+    },
+    {
+      "title": "Grumblemania Monday",
+      "score": 0,
+      "numComments": 0,
+      "author": "AutoModerator",
+      "url": "https://www.reddit.com/r/halifax/comments/1uosye6/grumblemania_monday/",
+      "flair": null,
+      "createdUtc": 1783332065
     },
     {
       "title": "Five Years Ago I asked For Advice On Moving To Halifax- An Update",
@@ -29,6 +83,60 @@
       "createdUtc": 1783263118
     },
     {
+      "title": "Police search for information after shots fired in Williamswood",
+      "score": 0,
+      "numComments": 0,
+      "author": "Injustice_For_All_",
+      "url": "https://www.reddit.com/r/halifax/comments/1uot06n/police_search_for_information_after_shots_fired/",
+      "flair": null,
+      "createdUtc": 1783332220
+    },
+    {
+      "title": "Chill Halifax summer",
+      "score": 0,
+      "numComments": 0,
+      "author": "JunwenHu",
+      "url": "https://www.reddit.com/r/halifax/comments/1uokvod/chill_halifax_summer/",
+      "flair": null,
+      "createdUtc": 1783305306
+    },
+    {
+      "title": "Nova Scotia to rebrand as \"Newer Brunswick\"",
+      "score": 0,
+      "numComments": 0,
+      "author": "Injustice_For_All_",
+      "url": "https://www.reddit.com/r/halifax/comments/1uogb76/nova_scotia_to_rebrand_as_newer_brunswick/",
+      "flair": null,
+      "createdUtc": 1783292564
+    },
+    {
+      "title": "In Search of Interior Painter ASAP",
+      "score": 0,
+      "numComments": 0,
+      "author": "BlueRock_Capital",
+      "url": "https://www.reddit.com/r/halifax/comments/1uowbt9/in_search_of_interior_painter_asap/",
+      "flair": null,
+      "createdUtc": 1783341946
+    },
+    {
+      "title": "I hate ticks",
+      "score": 0,
+      "numComments": 0,
+      "author": "alibythesea",
+      "url": "https://www.reddit.com/r/halifax/comments/1uo77fg/i_hate_ticks/",
+      "flair": null,
+      "createdUtc": 1783270528
+    },
+    {
+      "title": "Living in upper Tantallon rn. Anyone know where I can buy damaged electronics?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Marlyjade",
+      "url": "https://www.reddit.com/r/halifax/comments/1up0dmd/living_in_upper_tantallon_rn_anyone_know_where_i/",
+      "flair": null,
+      "createdUtc": 1783351210
+    },
+    {
       "title": "Chocolate Lake",
       "score": 0,
       "numComments": 0,
@@ -36,6 +144,33 @@
       "url": "https://www.reddit.com/r/halifax/comments/1uo3wpu/chocolate_lake/",
       "flair": null,
       "createdUtc": 1783262518
+    },
+    {
+      "title": "Hey Logan I found your walkie talkie!",
+      "score": 0,
+      "numComments": 0,
+      "author": "NickScissons",
+      "url": "https://www.reddit.com/r/halifax/comments/1uo97rl/hey_logan_i_found_your_walkie_talkie/",
+      "flair": null,
+      "createdUtc": 1783275253
+    },
+    {
+      "title": "Summer brings a slower pace for N.S. political parties, but challenges lurk",
+      "score": 0,
+      "numComments": 0,
+      "author": "Injustice_For_All_",
+      "url": "https://www.reddit.com/r/halifax/comments/1uot0je/summer_brings_a_slower_pace_for_ns_political/",
+      "flair": null,
+      "createdUtc": 1783332251
+    },
+    {
+      "title": "Maritimes communities break heat records, some standing for more than a century",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1uo8ia9/maritimes_communities_break_heat_records_some/",
+      "flair": null,
+      "createdUtc": 1783273606
     },
     {
       "title": "Three donairs tried",
@@ -47,6 +182,42 @@
       "createdUtc": 1783257327
     },
     {
+      "title": "Private Derms?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Inner-Term-9413",
+      "url": "https://www.reddit.com/r/halifax/comments/1uovmh7/private_derms/",
+      "flair": null,
+      "createdUtc": 1783340094
+    },
+    {
+      "title": "Province to Power Public Housing With Clean Energy",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1up0n2s/province_to_power_public_housing_with_clean_energy/",
+      "flair": null,
+      "createdUtc": 1783351767
+    },
+    {
+      "title": "Carney to choose Germany and Norway to build Canada's submarines",
+      "score": 0,
+      "numComments": 0,
+      "author": "DeathOneSix",
+      "url": "https://www.reddit.com/r/halifax/comments/1up0lfp/carney_to_choose_germany_and_norway_to_build/",
+      "flair": null,
+      "createdUtc": 1783351671
+    },
+    {
+      "title": "The sale of old homes on Young Avenue in Halifax",
+      "score": 0,
+      "numComments": 0,
+      "author": "tinyant",
+      "url": "https://www.reddit.com/r/halifax/comments/1uoyzc2/the_sale_of_old_homes_on_young_avenue_in_halifax/",
+      "flair": null,
+      "createdUtc": 1783348180
+    },
+    {
       "title": "Ribfest PSA",
       "score": 0,
       "numComments": 0,
@@ -56,49 +227,31 @@
       "createdUtc": 1783257595
     },
     {
-      "title": "PSA: Report buses without A/C during the heat",
+      "title": "Learning French with Alliance Francaise",
       "score": 0,
       "numComments": 0,
-      "author": "toneyriver12",
-      "url": "https://www.reddit.com/r/halifax/comments/1unnul4/psa_report_buses_without_ac_during_the_heat/",
+      "author": "jcade614",
+      "url": "https://www.reddit.com/r/halifax/comments/1uoeimk/learning_french_with_alliance_francaise/",
       "flair": null,
-      "createdUtc": 1783209783
+      "createdUtc": 1783288073
     },
     {
-      "title": "Sex offender with high risk of reoffending being released from prison",
+      "title": "Looking for restaurant and cocktail recommendations",
       "score": 0,
       "numComments": 0,
-      "author": "risen2011",
-      "url": "https://www.reddit.com/r/halifax/comments/1unubfl/sex_offender_with_high_risk_of_reoffending_being/",
+      "author": "lrregu1ar",
+      "url": "https://www.reddit.com/r/halifax/comments/1uohhgo/looking_for_restaurant_and_cocktail/",
       "flair": null,
-      "createdUtc": 1783231221
+      "createdUtc": 1783295648
     },
     {
-      "title": "Spotted on a bus just now…",
+      "title": "Found Headphones",
       "score": 0,
       "numComments": 0,
-      "author": "QueenOfPeace87",
-      "url": "https://www.reddit.com/r/halifax/comments/1unl5zo/spotted_on_a_bus_just_now/",
+      "author": "Mindless-Comfort-332",
+      "url": "https://www.reddit.com/r/halifax/comments/1uoakpb/found_headphones/",
       "flair": null,
-      "createdUtc": 1783202203
-    },
-    {
-      "title": "Resources for housing (DV)",
-      "score": 0,
-      "numComments": 0,
-      "author": "CurrentDeep7665",
-      "url": "https://www.reddit.com/r/halifax/comments/1uo2ips/resources_for_housing_dv/",
-      "flair": null,
-      "createdUtc": 1783258889
-    },
-    {
-      "title": "What's the story behind the Rita McNeil basketball court?",
-      "score": 0,
-      "numComments": 0,
-      "author": "TheBigTwo-MK",
-      "url": "https://www.reddit.com/r/halifax/comments/1uo4ti7/whats_the_story_behind_the_rita_mcneil_basketball/",
-      "flair": null,
-      "createdUtc": 1783264773
+      "createdUtc": 1783278438
     },
     {
       "title": "Pubs, distilleries, and breweries",
@@ -110,166 +263,13 @@
       "createdUtc": 1783263726
     },
     {
-      "title": "In need of a bagpiper",
+      "title": "June bugs",
       "score": 0,
       "numComments": 0,
-      "author": "H3nnyyyy",
-      "url": "https://www.reddit.com/r/halifax/comments/1unidvo/in_need_of_a_bagpiper/",
+      "author": "andrew497",
+      "url": "https://www.reddit.com/r/halifax/comments/1uoi1be/june_bugs/",
       "flair": null,
-      "createdUtc": 1783194806
-    },
-    {
-      "title": "Think you’re having a bad day?",
-      "score": 0,
-      "numComments": 0,
-      "author": "itsme1981",
-      "url": "https://www.reddit.com/r/halifax/comments/1unfrxz/think_youre_having_a_bad_day/",
-      "flair": null,
-      "createdUtc": 1783188339
-    },
-    {
-      "title": "Haligonians this weekend",
-      "score": 0,
-      "numComments": 0,
-      "author": "risen2011",
-      "url": "https://www.reddit.com/r/halifax/comments/1uneyag/haligonians_this_weekend/",
-      "flair": null,
-      "createdUtc": 1783186336
-    },
-    {
-      "title": "Recommendations for earlobe repair?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Nice-Ad-8369",
-      "url": "https://www.reddit.com/r/halifax/comments/1uo3idf/recommendations_for_earlobe_repair/",
-      "flair": null,
-      "createdUtc": 1783261494
-    },
-    {
-      "title": "Bear Spray Used at Canadian Tire Dartmouth Crossing",
-      "score": 0,
-      "numComments": 0,
-      "author": "NebuliciouslyMe",
-      "url": "https://www.reddit.com/r/halifax/comments/1unosco/bear_spray_used_at_canadian_tire_dartmouth/",
-      "flair": null,
-      "createdUtc": 1783212645
-    },
-    {
-      "title": "Stolen bike",
-      "score": 0,
-      "numComments": 0,
-      "author": "Electronic-Charge852",
-      "url": "https://www.reddit.com/r/halifax/comments/1unpfga/stolen_bike/",
-      "flair": null,
-      "createdUtc": 1783214725
-    },
-    {
-      "title": "Kitchen staff, are you ok?",
-      "score": 0,
-      "numComments": 0,
-      "author": "ImpeccableCilantro",
-      "url": "https://www.reddit.com/r/halifax/comments/1unasgt/kitchen_staff_are_you_ok/",
-      "flair": null,
-      "createdUtc": 1783176087
-    },
-    {
-      "title": "Bars/pubs to go solo and chat with people? (Dartmouth preference)",
-      "score": 0,
-      "numComments": 0,
-      "author": "0ddCondition",
-      "url": "https://www.reddit.com/r/halifax/comments/1uno3eu/barspubs_to_go_solo_and_chat_with_people/",
-      "flair": null,
-      "createdUtc": 1783210516
-    },
-    {
-      "title": "Lost item",
-      "score": 0,
-      "numComments": 0,
-      "author": "Every1_calmdown",
-      "url": "https://www.reddit.com/r/halifax/comments/1uo4khy/lost_item/",
-      "flair": null,
-      "createdUtc": 1783264164
-    },
-    {
-      "title": "Why the heck are there no cooling centres open?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Pure-Assumption9037",
-      "url": "https://www.reddit.com/r/halifax/comments/1un60jc/why_the_heck_are_there_no_cooling_centres_open/",
-      "flair": null,
-      "createdUtc": 1783162313
-    },
-    {
-      "title": "In search of old magazines + newspapers",
-      "score": 0,
-      "numComments": 0,
-      "author": "Tictac444",
-      "url": "https://www.reddit.com/r/halifax/comments/1uo3k74/in_search_of_old_magazines_newspapers/",
-      "flair": null,
-      "createdUtc": 1783261625
-    },
-    {
-      "title": "PSA: Mumford Walmarts Coolers are Broken",
-      "score": 0,
-      "numComments": 0,
-      "author": "Available_Refuse1232",
-      "url": "https://www.reddit.com/r/halifax/comments/1unh3i0/psa_mumford_walmarts_coolers_are_broken/",
-      "flair": null,
-      "createdUtc": 1783191597
-    },
-    {
-      "title": "We have the best firefighters",
-      "score": 0,
-      "numComments": 0,
-      "author": "AmbitiousObligation0",
-      "url": "https://www.reddit.com/r/halifax/comments/1ung47i/we_have_the_best_firefighters/",
-      "flair": null,
-      "createdUtc": 1783189153
-    },
-    {
-      "title": "**STOLEN E-BIKE**",
-      "score": 0,
-      "numComments": 0,
-      "author": "Agitated_Lunch7118",
-      "url": "https://www.reddit.com/r/halifax/comments/1unhot8/stolen_ebike/",
-      "flair": null,
-      "createdUtc": 1783193057
-    },
-    {
-      "title": "What’s going on today?",
-      "score": 0,
-      "numComments": 0,
-      "author": "jjms_902",
-      "url": "https://www.reddit.com/r/halifax/comments/1uo5fxv/whats_going_on_today/",
-      "flair": null,
-      "createdUtc": 1783266301
-    },
-    {
-      "title": "World Cup 2026: CAN vs. MAR",
-      "score": 0,
-      "numComments": 0,
-      "author": "scoreboard-app",
-      "url": "https://www.reddit.com/r/halifax/comments/1une4f6/world_cup_2026_can_vs_mar/",
-      "flair": null,
-      "createdUtc": 1783184356
-    },
-    {
-      "title": "Football Leagues/Kick About",
-      "score": 0,
-      "numComments": 0,
-      "author": "HotBeach2134",
-      "url": "https://www.reddit.com/r/halifax/comments/1uo4b2y/football_leagueskick_about/",
-      "flair": null,
-      "createdUtc": 1783263537
-    },
-    {
-      "title": "Impark/Spot Hero issues",
-      "score": 0,
-      "numComments": 0,
-      "author": "Dry_Temperature7373",
-      "url": "https://www.reddit.com/r/halifax/comments/1unpfho/imparkspot_hero_issues/",
-      "flair": null,
-      "createdUtc": 1783214730
+      "createdUtc": 1783297089
     }
   ]
 }
