@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-08-19T15:21:18.121Z",
+  "fetchedAt": "2026-08-19T15:30:15.239Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - August 2026",
@@ -47,15 +47,6 @@
       "createdUtc": 1787140649
     },
     {
-      "title": "Halifax in miniature",
-      "score": 0,
-      "numComments": 0,
-      "author": "NCC-1707",
-      "url": "https://www.reddit.com/r/halifax/comments/1vs1aal/halifax_in_miniature/",
-      "flair": null,
-      "createdUtc": 1787085500
-    },
-    {
       "title": "Federal charges laid following August 9 bomb threat at US consulate in downtown Halifax",
       "score": 0,
       "numComments": 0,
@@ -63,6 +54,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1vsoink/federal_charges_laid_following_august_9_bomb/",
       "flair": null,
       "createdUtc": 1787150783
+    },
+    {
+      "title": "Halifax in miniature",
+      "score": 0,
+      "numComments": 0,
+      "author": "NCC-1707",
+      "url": "https://www.reddit.com/r/halifax/comments/1vs1aal/halifax_in_miniature/",
+      "flair": null,
+      "createdUtc": 1787085500
     },
     {
       "title": "Man says he was targeted in a racist tirade in downtown Halifax",
@@ -245,6 +245,15 @@
       "createdUtc": 1787146780
     },
     {
+      "title": "Proposed Halifax seniors’ housing in historic Black community rejected after local opposition",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1vs5t0w/proposed_halifax_seniors_housing_in_historic/",
+      "flair": null,
+      "createdUtc": 1787096296
+    },
+    {
       "title": "N.S. energy minister apologizes for lyrics ‘hurtful to women’ but doesn’t plan to resign",
       "score": 0,
       "numComments": 0,
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1vsm6xc/where_is_east_coast_amusementsfair_setting_up/",
       "flair": null,
       "createdUtc": 1787145486
-    },
-    {
-      "title": "Hoping for help. Wife's truck dropped 2 tool boxes this morning",
-      "score": 0,
-      "numComments": 0,
-      "author": "HopingforAssistance",
-      "url": "https://www.reddit.com/r/halifax/comments/1vrpp3g/hoping_for_help_wifes_truck_dropped_2_tool_boxes/",
-      "flair": null,
-      "createdUtc": 1787060879
     }
   ]
 }
