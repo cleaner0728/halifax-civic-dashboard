@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-08-22T15:11:07.114Z",
+  "fetchedAt": "2026-08-22T15:30:15.593Z",
   "posts": [
     {
       "title": "2026 Members Choice Award",
@@ -38,15 +38,6 @@
       "createdUtc": 1787400170
     },
     {
-      "title": "African immigrants finding home in Dartmouth — and bringing jollof rice with them",
-      "score": 0,
-      "numComments": 0,
-      "author": "SouthDartmouthPost",
-      "url": "https://www.reddit.com/r/halifax/comments/1vvde8m/african_immigrants_finding_home_in_dartmouth_and/",
-      "flair": null,
-      "createdUtc": 1787407653
-    },
-    {
       "title": "Lost parakeet",
       "score": 0,
       "numComments": 0,
@@ -54,6 +45,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1vv826z/lost_parakeet/",
       "flair": null,
       "createdUtc": 1787391941
+    },
+    {
+      "title": "African immigrants finding home in Dartmouth — and bringing jollof rice with them",
+      "score": 0,
+      "numComments": 0,
+      "author": "SouthDartmouthPost",
+      "url": "https://www.reddit.com/r/halifax/comments/1vvde8m/african_immigrants_finding_home_in_dartmouth_and/",
+      "flair": null,
+      "createdUtc": 1787407653
     },
     {
       "title": "Car in the median on the Circ by Main st",
@@ -92,15 +92,6 @@
       "createdUtc": 1787405446
     },
     {
-      "title": "Royal Canadian Navy member faces April 2027 trial in Dartmouth on charges of molesting child",
-      "score": 0,
-      "numComments": 0,
-      "author": "insino93",
-      "url": "https://www.reddit.com/r/halifax/comments/1vvakzc/royal_canadian_navy_member_faces_april_2027_trial/",
-      "flair": null,
-      "createdUtc": 1787400053
-    },
-    {
       "title": "Crime spree ends in list of charges for two Dartmouth residents",
       "score": 0,
       "numComments": 0,
@@ -110,13 +101,13 @@
       "createdUtc": 1787399989
     },
     {
-      "title": "The Indestructible Sir Richard of Terfry",
+      "title": "Royal Canadian Navy member faces April 2027 trial in Dartmouth on charges of molesting child",
       "score": 0,
       "numComments": 0,
-      "author": "sutl116",
-      "url": "https://www.reddit.com/r/halifax/comments/1vv8dua/the_indestructible_sir_richard_of_terfry/",
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1vvakzc/royal_canadian_navy_member_faces_april_2027_trial/",
       "flair": null,
-      "createdUtc": 1787393051
+      "createdUtc": 1787400053
     },
     {
       "title": "Teen convicted of C.P. Allen High School stabbings granted conditional discharge | CBC News",
@@ -126,6 +117,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1vv7050/teen_convicted_of_cp_allen_high_school_stabbings/",
       "flair": null,
       "createdUtc": 1787388206
+    },
+    {
+      "title": "The Indestructible Sir Richard of Terfry",
+      "score": 0,
+      "numComments": 0,
+      "author": "sutl116",
+      "url": "https://www.reddit.com/r/halifax/comments/1vv8dua/the_indestructible_sir_richard_of_terfry/",
+      "flair": null,
+      "createdUtc": 1787393051
     },
     {
       "title": "I thought it might be tricky pulling an accordion buss through the intersection. I was incorrect",
@@ -164,6 +164,15 @@
       "createdUtc": 1787352163
     },
     {
+      "title": "Looking for a shop to do flex pipe replacement",
+      "score": 0,
+      "numComments": 0,
+      "author": "CocoBabaVT",
+      "url": "https://www.reddit.com/r/halifax/comments/1vvel4l/looking_for_a_shop_to_do_flex_pipe_replacement/",
+      "flair": null,
+      "createdUtc": 1787410635
+    },
+    {
       "title": "Beaverton Breakdown: Every Canadian premier's demands in return for agreeing to restock American alcohol",
       "score": 0,
       "numComments": 0,
@@ -200,15 +209,6 @@
       "createdUtc": 1787321254
     },
     {
-      "title": "Looking for a shop to do flex pipe replacement",
-      "score": 0,
-      "numComments": 0,
-      "author": "CocoBabaVT",
-      "url": "https://www.reddit.com/r/halifax/comments/1vvel4l/looking_for_a_shop_to_do_flex_pipe_replacement/",
-      "flair": null,
-      "createdUtc": 1787410635
-    },
-    {
       "title": "Johny's Snack Bar Almond St",
       "score": 0,
       "numComments": 0,
@@ -236,6 +236,15 @@
       "createdUtc": 1787331196
     },
     {
+      "title": "Condos in Clayton Park",
+      "score": 0,
+      "numComments": 0,
+      "author": "Dry_Excitement_4636",
+      "url": "https://www.reddit.com/r/halifax/comments/1vvbtnk/condos_in_clayton_park/",
+      "flair": null,
+      "createdUtc": 1787403608
+    },
+    {
       "title": "Bagpipe lessons?",
       "score": 0,
       "numComments": 0,
@@ -261,15 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1vuxs56/dad_groups/",
       "flair": null,
       "createdUtc": 1787359299
-    },
-    {
-      "title": "Fundraiser for Annapolis Valley Libraries - with Rachel Reid",
-      "score": 0,
-      "numComments": 0,
-      "author": "Candid_Magazine_7862",
-      "url": "https://www.reddit.com/r/halifax/comments/1vuj9ak/fundraiser_for_annapolis_valley_libraries_with/",
-      "flair": null,
-      "createdUtc": 1787325492
     }
   ]
 }
