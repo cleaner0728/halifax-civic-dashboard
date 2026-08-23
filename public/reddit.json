@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-08-23T15:12:39.314Z",
+  "fetchedAt": "2026-08-23T15:30:15.076Z",
   "posts": [
     {
       "title": "2026 Members Choice Award",
@@ -47,15 +47,6 @@
       "createdUtc": 1787488090
     },
     {
-      "title": "Maritime provinces voice solidarity in response to new U.S. tariffs",
-      "score": 0,
-      "numComments": 0,
-      "author": "IStillListenToRadio",
-      "url": "https://www.reddit.com/r/halifax/comments/1vvnouu/maritime_provinces_voice_solidarity_in_response/",
-      "flair": null,
-      "createdUtc": 1787432112
-    },
-    {
       "title": "Trees are dropping their leaves earlier this year. Here’s why.",
       "score": 0,
       "numComments": 0,
@@ -65,13 +56,22 @@
       "createdUtc": 1787483582
     },
     {
-      "title": "Halifax ReTales | FreshCo arrives",
+      "title": "Maritime provinces voice solidarity in response to new U.S. tariffs",
       "score": 0,
       "numComments": 0,
-      "author": "CMikeHunt",
-      "url": "https://www.reddit.com/r/halifax/comments/1vw5we6/halifax_retales_freshco_arrives/",
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1vvnouu/maritime_provinces_voice_solidarity_in_response/",
       "flair": null,
-      "createdUtc": 1787488060
+      "createdUtc": 1787432112
+    },
+    {
+      "title": "Halifax needs a large, publicly accessible greenhouse",
+      "score": 0,
+      "numComments": 0,
+      "author": "reader__girl",
+      "url": "https://www.reddit.com/r/halifax/comments/1vw9tmd/halifax_needs_a_large_publicly_accessible/",
+      "flair": null,
+      "createdUtc": 1787498114
     },
     {
       "title": "\"We captured a single day in Nova Scotia in 1993\"",
@@ -81,6 +81,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1vvulyj/we_captured_a_single_day_in_nova_scotia_in_1993/",
       "flair": null,
       "createdUtc": 1787450887
+    },
+    {
+      "title": "Halifax ReTales | FreshCo arrives",
+      "score": 0,
+      "numComments": 0,
+      "author": "CMikeHunt",
+      "url": "https://www.reddit.com/r/halifax/comments/1vw5we6/halifax_retales_freshco_arrives/",
+      "flair": null,
+      "createdUtc": 1787488060
     },
     {
       "title": "Can someone tell me who took this photo?",
@@ -218,6 +227,15 @@
       "createdUtc": 1787425093
     },
     {
+      "title": "Please help me find the right church fit!",
+      "score": 0,
+      "numComments": 0,
+      "author": "RNByDayChefByNight",
+      "url": "https://www.reddit.com/r/halifax/comments/1vw9yw2/please_help_me_find_the_right_church_fit/",
+      "flair": null,
+      "createdUtc": 1787498456
+    },
+    {
       "title": "Vehicle Permit Fuel Type?",
       "score": 0,
       "numComments": 0,
@@ -252,24 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1vvm1ti/soaking_rain_headed_toward_the_maritimes/",
       "flair": null,
       "createdUtc": 1787428181
-    },
-    {
-      "title": "African immigrants finding home in Dartmouth — and bringing jollof rice with them",
-      "score": 0,
-      "numComments": 0,
-      "author": "SouthDartmouthPost",
-      "url": "https://www.reddit.com/r/halifax/comments/1vvde8m/african_immigrants_finding_home_in_dartmouth_and/",
-      "flair": null,
-      "createdUtc": 1787407653
-    },
-    {
-      "title": "Confirmed Woodlawn Blood Collection Closing",
-      "score": 0,
-      "numComments": 0,
-      "author": "WhosHerFace",
-      "url": "https://www.reddit.com/r/halifax/comments/1vvhckq/confirmed_woodlawn_blood_collection_closing/",
-      "flair": null,
-      "createdUtc": 1787417245
     }
   ]
 }
