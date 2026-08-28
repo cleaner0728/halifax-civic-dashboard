@@ -1,14 +1,14 @@
 {
-  "fetchedAt": "2026-08-27T15:30:15.020Z",
+  "fetchedAt": "2026-08-28T00:09:29.242Z",
   "posts": [
     {
-      "title": "2026 Members Choice Award",
+      "title": "🏆2026 Members Choice Award Winner 🏆",
       "score": 0,
       "numComments": 0,
       "author": "maximumice",
-      "url": "https://www.reddit.com/r/halifax/comments/1vup4f0/2026_members_choice_award/",
+      "url": "https://www.reddit.com/r/halifax/comments/1w02x5k/2026_members_choice_award_winner/",
       "flair": null,
-      "createdUtc": 1787338321
+      "createdUtc": 1787856951
     },
     {
       "title": "🏆 Introducing the r/halifax Hall of Fame 🏆",
@@ -20,6 +20,15 @@
       "createdUtc": 1787315883
     },
     {
+      "title": "Shawn Party #2!",
+      "score": 0,
+      "numComments": 0,
+      "author": "Societarian",
+      "url": "https://www.reddit.com/r/halifax/comments/1w054z1/shawn_party_2/",
+      "flair": null,
+      "createdUtc": 1787861727
+    },
+    {
       "title": "Empty bottle of cider for sale at Value Village....",
       "score": 0,
       "numComments": 0,
@@ -27,60 +36,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1vzupi9/empty_bottle_of_cider_for_sale_at_value_village/",
       "flair": null,
       "createdUtc": 1787838999
-    },
-    {
-      "title": "Halifax summer ‘26",
-      "score": 0,
-      "numComments": 0,
-      "author": "Cyanide_Kuppi",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzuf5w/halifax_summer_26/",
-      "flair": null,
-      "createdUtc": 1787838337
-    },
-    {
-      "title": "California is no longer the largest cannabis market in the world (and Nova Scotia ranks highest in Canada)",
-      "score": 0,
-      "numComments": 0,
-      "author": "thelo",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzvmb4/california_is_no_longer_the_largest_cannabis/",
-      "flair": null,
-      "createdUtc": 1787841079
-    },
-    {
-      "title": "Harbour sunrise",
-      "score": 0,
-      "numComments": 0,
-      "author": "Slickrick696",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzpa7r/harbour_sunrise/",
-      "flair": null,
-      "createdUtc": 1787823521
-    },
-    {
-      "title": "Oasis listed as a current health closure",
-      "score": 0,
-      "numComments": 0,
-      "author": "HalifaxReTales",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzph6z/oasis_listed_as_a_current_health_closure/",
-      "flair": null,
-      "createdUtc": 1787824226
-    },
-    {
-      "title": "Halifax on track to close designated encampments by November 2027",
-      "score": 0,
-      "numComments": 0,
-      "author": "Injustice_For_All_",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzq3m4/halifax_on_track_to_close_designated_encampments/",
-      "flair": null,
-      "createdUtc": 1787826329
-    },
-    {
-      "title": "Charges won’t be laid after N.S. boy fatally attacked by dogs",
-      "score": 0,
-      "numComments": 0,
-      "author": "CroSpurs",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzujza/charges_wont_be_laid_after_ns_boy_fatally/",
-      "flair": null,
-      "createdUtc": 1787838656
     },
     {
       "title": "I have a public exhibition of my work at the roundabout @ Barrington and Nora Bernard.",
@@ -92,13 +47,148 @@
       "createdUtc": 1787842992
     },
     {
-      "title": "A father follows his son through Nova Scotia's revolving door of severe mental illness, homelessness and addiction",
+      "title": "California is no longer the largest cannabis market in the world (and Nova Scotia ranks highest in Canada)",
       "score": 0,
       "numComments": 0,
-      "author": "Healthy-Opening-7363",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzs2h7/a_father_follows_his_son_through_nova_scotias/",
+      "author": "thelo",
+      "url": "https://www.reddit.com/r/halifax/comments/1vzvmb4/california_is_no_longer_the_largest_cannabis/",
       "flair": null,
-      "createdUtc": 1787832322
+      "createdUtc": 1787841079
+    },
+    {
+      "title": "Lil visitor at the airport",
+      "score": 0,
+      "numComments": 0,
+      "author": "EdgarAlanPfoetchen",
+      "url": "https://www.reddit.com/r/halifax/comments/1w06c21/lil_visitor_at_the_airport/",
+      "flair": null,
+      "createdUtc": 1787864357
+    },
+    {
+      "title": "Halifax summer ‘26",
+      "score": 0,
+      "numComments": 0,
+      "author": "Cyanide_Kuppi",
+      "url": "https://www.reddit.com/r/halifax/comments/1vzuf5w/halifax_summer_26/",
+      "flair": null,
+      "createdUtc": 1787838337
+    },
+    {
+      "title": "Halifax Mooseheads Aqua mouse",
+      "score": 0,
+      "numComments": 0,
+      "author": "doggoswoofwoof",
+      "url": "https://www.reddit.com/r/halifax/comments/1w03y1a/halifax_mooseheads_aqua_mouse/",
+      "flair": null,
+      "createdUtc": 1787859190
+    },
+    {
+      "title": "Weekly Gas Post ⛽⛽",
+      "score": 0,
+      "numComments": 0,
+      "author": "Buckit",
+      "url": "https://www.reddit.com/r/halifax/comments/1w00y85/weekly_gas_post/",
+      "flair": null,
+      "createdUtc": 1787852750
+    },
+    {
+      "title": "Nova Scotia School Lunch Program Expands to all Students Provincewide",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1w049w9/nova_scotia_school_lunch_program_expands_to_all/",
+      "flair": null,
+      "createdUtc": 1787859889
+    },
+    {
+      "title": "N.S. government changes income assistance rules to exclude people living in tents - Halifax",
+      "score": 0,
+      "numComments": 0,
+      "author": "EastCrew98",
+      "url": "https://www.reddit.com/r/halifax/comments/1vzye9q/ns_government_changes_income_assistance_rules_to/",
+      "flair": null,
+      "createdUtc": 1787847151
+    },
+    {
+      "title": "Ridership drops on Halifax Transit, bucking the trend of large increases",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1w05czd/ridership_drops_on_halifax_transit_bucking_the/",
+      "flair": null,
+      "createdUtc": 1787862197
+    },
+    {
+      "title": "Charges won’t be laid after N.S. boy fatally attacked by dogs",
+      "score": 0,
+      "numComments": 0,
+      "author": "CroSpurs",
+      "url": "https://www.reddit.com/r/halifax/comments/1vzujza/charges_wont_be_laid_after_ns_boy_fatally/",
+      "flair": null,
+      "createdUtc": 1787838656
+    },
+    {
+      "title": "Harbour sunrise",
+      "score": 0,
+      "numComments": 0,
+      "author": "Slickrick696",
+      "url": "https://www.reddit.com/r/halifax/comments/1vzpa7r/harbour_sunrise/",
+      "flair": null,
+      "createdUtc": 1787823521
+    },
+    {
+      "title": "PSA: Dear Folk-Metal lovers...",
+      "score": 0,
+      "numComments": 0,
+      "author": "Horrorllama",
+      "url": "https://www.reddit.com/r/halifax/comments/1w02fm1/psa_dear_folkmetal_lovers/",
+      "flair": null,
+      "createdUtc": 1787855897
+    },
+    {
+      "title": "Oasis listed as a current health closure",
+      "score": 0,
+      "numComments": 0,
+      "author": "HalifaxReTales",
+      "url": "https://www.reddit.com/r/halifax/comments/1vzph6z/oasis_listed_as_a_current_health_closure/",
+      "flair": null,
+      "createdUtc": 1787824226
+    },
+    {
+      "title": "Charges laid following investigation into alleged illegal landfill outside Halifax",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1w09rh8/charges_laid_following_investigation_into_alleged/",
+      "flair": null,
+      "createdUtc": 1787872454
+    },
+    {
+      "title": "Update from the grocery delivery thing",
+      "score": 0,
+      "numComments": 0,
+      "author": "RoosterSure3505",
+      "url": "https://www.reddit.com/r/halifax/comments/1vzzwn6/update_from_the_grocery_delivery_thing/",
+      "flair": null,
+      "createdUtc": 1787850512
+    },
+    {
+      "title": "Halifax on track to close designated encampments by November 2027",
+      "score": 0,
+      "numComments": 0,
+      "author": "Injustice_For_All_",
+      "url": "https://www.reddit.com/r/halifax/comments/1vzq3m4/halifax_on_track_to_close_designated_encampments/",
+      "flair": null,
+      "createdUtc": 1787826329
+    },
+    {
+      "title": "Deep Partial Lunar Eclipse tonight!",
+      "score": 0,
+      "numComments": 0,
+      "author": "Ornery-Link-1481",
+      "url": "https://www.reddit.com/r/halifax/comments/1w01i9i/deep_partial_lunar_eclipse_tonight/",
+      "flair": null,
+      "createdUtc": 1787853917
     },
     {
       "title": "Luminate Co. Wellness Market coming to Dartmouth",
@@ -119,6 +209,42 @@
       "createdUtc": 1787840797
     },
     {
+      "title": "‘This has to be solved’: Halifax university student unions call for better student housing",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1vzyeeg/this_has_to_be_solved_halifax_university_student/",
+      "flair": null,
+      "createdUtc": 1787847160
+    },
+    {
+      "title": "A father follows his son through Nova Scotia's revolving door of severe mental illness, homelessness and addiction",
+      "score": 0,
+      "numComments": 0,
+      "author": "Healthy-Opening-7363",
+      "url": "https://www.reddit.com/r/halifax/comments/1vzs2h7/a_father_follows_his_son_through_nova_scotias/",
+      "flair": null,
+      "createdUtc": 1787832322
+    },
+    {
+      "title": "Lost wedding ring",
+      "score": 0,
+      "numComments": 0,
+      "author": "H3nnyyyy",
+      "url": "https://www.reddit.com/r/halifax/comments/1w0aoox/lost_wedding_ring/",
+      "flair": null,
+      "createdUtc": 1787874871
+    },
+    {
+      "title": "Council Update from Dartmouth Centre: Pickle Ball, 6th Ferry, Housing Strategy",
+      "score": 0,
+      "numComments": 0,
+      "author": "Sam_Austin_D5",
+      "url": "https://www.reddit.com/r/halifax/comments/1vzye1q/council_update_from_dartmouth_centre_pickle_ball/",
+      "flair": null,
+      "createdUtc": 1787847137
+    },
+    {
       "title": "Halifax parents frustrated by uncertainty over student bus pass program rollout for new school year",
       "score": 0,
       "numComments": 0,
@@ -128,148 +254,22 @@
       "createdUtc": 1787826952
     },
     {
-      "title": "Cat on Gottingen",
-      "score": 0,
-      "numComments": 0,
-      "author": "T3N4P613310",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzm4mt/cat_on_gottingen/",
-      "flair": null,
-      "createdUtc": 1787812277
-    },
-    {
-      "title": "Canada Post Question",
-      "score": 0,
-      "numComments": 0,
-      "author": "Sunnydata",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzvjv1/canada_post_question/",
-      "flair": null,
-      "createdUtc": 1787840918
-    },
-    {
-      "title": "After lengthy wait, victims of priest abuse in N.S. to finally receive payouts",
-      "score": 0,
-      "numComments": 0,
-      "author": "Injustice_For_All_",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzq2v7/after_lengthy_wait_victims_of_priest_abuse_in_ns/",
-      "flair": null,
-      "createdUtc": 1787826259
-    },
-    {
-      "title": "The Hobbit Found on Herring Cove Road",
-      "score": 0,
-      "numComments": 0,
-      "author": "SchrodingersFat",
-      "url": "https://www.reddit.com/r/halifax/comments/1vyyefa/the_hobbit_found_on_herring_cove_road/",
-      "flair": null,
-      "createdUtc": 1787753888
-    },
-    {
-      "title": "N.S. alcohol producers seek regulation changes",
-      "score": 0,
-      "numComments": 0,
-      "author": "Injustice_For_All_",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzq306/ns_alcohol_producers_seek_regulation_changes/",
-      "flair": null,
-      "createdUtc": 1787826272
-    },
-    {
-      "title": "Human rights lawyer blasts government decision to change income assistance regulations",
-      "score": 0,
-      "numComments": 0,
-      "author": "SAJewers",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzea88/human_rights_lawyer_blasts_government_decision_to/",
-      "flair": null,
-      "createdUtc": 1787789239
-    },
-    {
-      "title": "wacky waving inflatable arm flailing tube man?",
-      "score": 0,
-      "numComments": 0,
-      "author": "gremlinella-",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzwx4q/wacky_waving_inflatable_arm_flailing_tube_man/",
-      "flair": null,
-      "createdUtc": 1787843935
-    },
-    {
-      "title": "Dry Garlic Ribs in Halifax?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Lucifigus",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzwwsy/dry_garlic_ribs_in_halifax/",
-      "flair": null,
-      "createdUtc": 1787843914
-    },
-    {
-      "title": "As of today, the province has quietly overturned the “tents count as accommodation for enhanced income assistance” case",
-      "score": 0,
-      "numComments": 0,
-      "author": "Sphagnidae",
-      "url": "https://www.reddit.com/r/halifax/comments/1vz44q5/as_of_today_the_province_has_quietly_overturned/",
-      "flair": null,
-      "createdUtc": 1787766279
-    },
-    {
-      "title": "Halifax looks into buying new ferry to help with aging fleet | CBC News",
-      "score": 0,
-      "numComments": 0,
-      "author": "Independent-Body-178",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzf4mh/halifax_looks_into_buying_new_ferry_to_help_with/",
-      "flair": null,
-      "createdUtc": 1787791468
-    },
-    {
-      "title": "RCMP investigating two indecent exposure incidents in Cole Harbour",
+      "title": "Halifax remains a top interest among renters, but is that a positive sign?",
       "score": 0,
       "numComments": 0,
       "author": "insino93",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzb2nm/rcmp_investigating_two_indecent_exposure/",
+      "url": "https://www.reddit.com/r/halifax/comments/1w07sv9/halifax_remains_a_top_interest_among_renters_but/",
       "flair": null,
-      "createdUtc": 1787781272
+      "createdUtc": 1787867716
     },
     {
-      "title": "Purple Cow Upload Speeds",
+      "title": "With Tim Curry's passing, anyone know of any Rocky Horror showings being put on in town?",
       "score": 0,
       "numComments": 0,
-      "author": "TheLittleBobRol",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzrfyt/purple_cow_upload_speeds/",
+      "author": "b_oot",
+      "url": "https://www.reddit.com/r/halifax/comments/1vzxvse/with_tim_currys_passing_anyone_know_of_any_rocky/",
       "flair": null,
-      "createdUtc": 1787830569
-    },
-    {
-      "title": "Vehicle hits adult, child in Halifax then leaves the area, police say",
-      "score": 0,
-      "numComments": 0,
-      "author": "Schmidtvegas",
-      "url": "https://www.reddit.com/r/halifax/comments/1vyzs7t/vehicle_hits_adult_child_in_halifax_then_leaves/",
-      "flair": null,
-      "createdUtc": 1787756994
-    },
-    {
-      "title": "Opinion: Downtown Halifax concerts need to start earlier",
-      "score": 0,
-      "numComments": 0,
-      "author": "Ihan-rii",
-      "url": "https://www.reddit.com/r/halifax/comments/1vyvq56/opinion_downtown_halifax_concerts_need_to_start/",
-      "flair": null,
-      "createdUtc": 1787747415
-    },
-    {
-      "title": "Searching for Korean food experts!",
-      "score": 0,
-      "numComments": 0,
-      "author": "TrueOrganization9363",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzl6bp/searching_for_korean_food_experts/",
-      "flair": null,
-      "createdUtc": 1787809040
-    },
-    {
-      "title": "Vandals strike community park in Lower Sackville, N.S.",
-      "score": 0,
-      "numComments": 0,
-      "author": "insino93",
-      "url": "https://www.reddit.com/r/halifax/comments/1vzcbb3/vandals_strike_community_park_in_lower_sackville/",
-      "flair": null,
-      "createdUtc": 1787784241
+      "createdUtc": 1787846060
     }
   ]
 }
