@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-09-01T15:30:14.484Z",
+  "fetchedAt": "2026-09-01T18:03:24.562Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — September 2026",
@@ -11,6 +11,15 @@
       "createdUtc": 1788256885
     },
     {
+      "title": "Police arrest graffiti artist",
+      "score": 0,
+      "numComments": 0,
+      "author": "cipher_sec",
+      "url": "https://www.reddit.com/r/halifax/comments/1w4hydv/police_arrest_graffiti_artist/",
+      "flair": null,
+      "createdUtc": 1788282089
+    },
+    {
       "title": "Can't seem to find an affordable Studio Apartment",
       "score": 0,
       "numComments": 0,
@@ -18,15 +27,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1w48pq6/cant_seem_to_find_an_affordable_studio_apartment/",
       "flair": null,
       "createdUtc": 1788260724
-    },
-    {
-      "title": "Accident on the Circ",
-      "score": 0,
-      "numComments": 0,
-      "author": "RainbowNarwhal13",
-      "url": "https://www.reddit.com/r/halifax/comments/1w47knr/accident_on_the_circ/",
-      "flair": null,
-      "createdUtc": 1788257206
     },
     {
       "title": "Disney Cruise Line Sails to Atlantic Canada Next Fall",
@@ -38,13 +38,13 @@
       "createdUtc": 1788273863
     },
     {
-      "title": "Your city is awesome!",
+      "title": "Fisherman's Market at Richmond Yards (Almon/Young) is now open.",
       "score": 0,
       "numComments": 0,
-      "author": "Ambitious_Bridge_265",
-      "url": "https://www.reddit.com/r/halifax/comments/1w3v837/your_city_is_awesome/",
+      "author": "KitTrailer",
+      "url": "https://www.reddit.com/r/halifax/comments/1w4gbk4/fishermans_market_at_richmond_yards_almonyoung_is/",
       "flair": null,
-      "createdUtc": 1788219861
+      "createdUtc": 1788278737
     },
     {
       "title": "End of rent cap",
@@ -54,6 +54,33 @@
       "url": "https://www.reddit.com/r/halifax/comments/1w4cbsz/end_of_rent_cap/",
       "flair": null,
       "createdUtc": 1788270043
+    },
+    {
+      "title": "Seniors Care Grant",
+      "score": 0,
+      "numComments": 0,
+      "author": "cravingdani",
+      "url": "https://www.reddit.com/r/halifax/comments/1w4g97u/seniors_care_grant/",
+      "flair": null,
+      "createdUtc": 1788278603
+    },
+    {
+      "title": "Accident on the Circ",
+      "score": 0,
+      "numComments": 0,
+      "author": "RainbowNarwhal13",
+      "url": "https://www.reddit.com/r/halifax/comments/1w47knr/accident_on_the_circ/",
+      "flair": null,
+      "createdUtc": 1788257206
+    },
+    {
+      "title": "Your city is awesome!",
+      "score": 0,
+      "numComments": 0,
+      "author": "Ambitious_Bridge_265",
+      "url": "https://www.reddit.com/r/halifax/comments/1w3v837/your_city_is_awesome/",
+      "flair": null,
+      "createdUtc": 1788219861
     },
     {
       "title": "Committee releases final report into 2020 Nova Scotia mass shooting",
@@ -74,6 +101,15 @@
       "createdUtc": 1788270907
     },
     {
+      "title": "Diesel price change tonight at midnight",
+      "score": 0,
+      "numComments": 0,
+      "author": "HarbourHooper",
+      "url": "https://www.reddit.com/r/halifax/comments/1w4it9r/diesel_price_change_tonight_at_midnight/",
+      "flair": null,
+      "createdUtc": 1788283854
+    },
+    {
       "title": "Seeking carpool opportunities",
       "score": 0,
       "numComments": 0,
@@ -83,6 +119,24 @@
       "createdUtc": 1788254688
     },
     {
+      "title": "Inclusive N.S. hockey league helping players of all skill levels hit the ice",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1w4jec8/inclusive_ns_hockey_league_helping_players_of_all/",
+      "flair": null,
+      "createdUtc": 1788285047
+    },
+    {
+      "title": "Handymen in Dartmouth",
+      "score": 0,
+      "numComments": 0,
+      "author": "c__eee__",
+      "url": "https://www.reddit.com/r/halifax/comments/1w4j48n/handymen_in_dartmouth/",
+      "flair": null,
+      "createdUtc": 1788284482
+    },
+    {
       "title": "Nova Scotia is finally getting photo radar — or is it?",
       "score": 0,
       "numComments": 0,
@@ -90,6 +144,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1w4dasy/nova_scotia_is_finally_getting_photo_radar_or_is/",
       "flair": null,
       "createdUtc": 1788272236
+    },
+    {
+      "title": "Best Pineapple in City",
+      "score": 0,
+      "numComments": 0,
+      "author": "Unlucky-Log-5247",
+      "url": "https://www.reddit.com/r/halifax/comments/1w4dczv/best_pineapple_in_city/",
+      "flair": null,
+      "createdUtc": 1788272373
     },
     {
       "title": "New provincial plans aim to boost literacy rates in N.S. schools",
@@ -110,22 +173,13 @@
       "createdUtc": 1788198952
     },
     {
-      "title": "Best Pineapple in City",
+      "title": "Walk-In Clinic - Evenings?",
       "score": 0,
       "numComments": 0,
-      "author": "Unlucky-Log-5247",
-      "url": "https://www.reddit.com/r/halifax/comments/1w4dczv/best_pineapple_in_city/",
+      "author": "Candid-Scallion-7444",
+      "url": "https://www.reddit.com/r/halifax/comments/1w4b3w4/walkin_clinic_evenings/",
       "flair": null,
-      "createdUtc": 1788272373
-    },
-    {
-      "title": "Looking to speak with restaurant owners",
-      "score": 0,
-      "numComments": 0,
-      "author": "YogurtImportant8266",
-      "url": "https://www.reddit.com/r/halifax/comments/1w4f0l6/looking_to_speak_with_restaurant_owners/",
-      "flair": null,
-      "createdUtc": 1788275968
+      "createdUtc": 1788267152
     },
     {
       "title": "Man arrested for indecent act in McDonald’s drive-thru",
@@ -137,6 +191,24 @@
       "createdUtc": 1788204911
     },
     {
+      "title": "Where in Halifax can I find an apartment with underground parking?",
+      "score": 0,
+      "numComments": 0,
+      "author": "PARROT_LOOKING",
+      "url": "https://www.reddit.com/r/halifax/comments/1w4d6v6/where_in_halifax_can_i_find_an_apartment_with/",
+      "flair": null,
+      "createdUtc": 1788272000
+    },
+    {
+      "title": "Former accounts manager sentenced for defrauding Halifax airport hotel of more than $28,000",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1w4jclw/former_accounts_manager_sentenced_for_defrauding/",
+      "flair": null,
+      "createdUtc": 1788284952
+    },
+    {
       "title": "Dartmouth’s Kellen Tynes throws out ceremonial first pitch at Blue Jays game: 'It was a crazy experience'",
       "score": 0,
       "numComments": 0,
@@ -144,15 +216,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1w3r5wg/dartmouths_kellen_tynes_throws_out_ceremonial/",
       "flair": null,
       "createdUtc": 1788210708
-    },
-    {
-      "title": "Walk-In Clinic - Evenings?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Candid-Scallion-7444",
-      "url": "https://www.reddit.com/r/halifax/comments/1w4b3w4/walkin_clinic_evenings/",
-      "flair": null,
-      "createdUtc": 1788267152
     },
     {
       "title": "Halifax police increasing patrols in Larry Uteck area amid racing concerns: councillor",
@@ -173,24 +236,6 @@
       "createdUtc": 1788219822
     },
     {
-      "title": "Looking for a cleaner",
-      "score": 0,
-      "numComments": 0,
-      "author": "Lunette_Noir",
-      "url": "https://www.reddit.com/r/halifax/comments/1w3y4gf/looking_for_a_cleaner/",
-      "flair": null,
-      "createdUtc": 1788227344
-    },
-    {
-      "title": "Where in Halifax can I find an apartment with underground parking?",
-      "score": 0,
-      "numComments": 0,
-      "author": "PARROT_LOOKING",
-      "url": "https://www.reddit.com/r/halifax/comments/1w4d6v6/where_in_halifax_can_i_find_an_apartment_with/",
-      "flair": null,
-      "createdUtc": 1788272000
-    },
-    {
       "title": "More gifts for the mining industry: Houston government doles out $2 million for airborne survey",
       "score": 0,
       "numComments": 0,
@@ -209,6 +254,15 @@
       "createdUtc": 1788200809
     },
     {
+      "title": "Looking for a cleaner",
+      "score": 0,
+      "numComments": 0,
+      "author": "Lunette_Noir",
+      "url": "https://www.reddit.com/r/halifax/comments/1w3y4gf/looking_for_a_cleaner/",
+      "flair": null,
+      "createdUtc": 1788227344
+    },
+    {
       "title": "Advocacy groups protest Alberta healthcare legislation across the country",
       "score": 0,
       "numComments": 0,
@@ -216,60 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1w3nhz8/advocacy_groups_protest_alberta_healthcare/",
       "flair": null,
       "createdUtc": 1788203155
-    },
-    {
-      "title": "Where can i buy spirits from other countries, locally?",
-      "score": 0,
-      "numComments": 0,
-      "author": "GreatCress3481",
-      "url": "https://www.reddit.com/r/halifax/comments/1w4blcu/where_can_i_buy_spirits_from_other_countries/",
-      "flair": null,
-      "createdUtc": 1788268308
-    },
-    {
-      "title": "Big markup on N.S. mead for N.B. Renaissance fair highlights trade barriers",
-      "score": 0,
-      "numComments": 0,
-      "author": "No_Magazine9625",
-      "url": "https://www.reddit.com/r/halifax/comments/1w3e8ls/big_markup_on_ns_mead_for_nb_renaissance_fair/",
-      "flair": null,
-      "createdUtc": 1788183830
-    },
-    {
-      "title": "Pilates Classes or Dance Classes for Women and Beginners (Hali/Dartmouth)?",
-      "score": 0,
-      "numComments": 0,
-      "author": "Cruxcio",
-      "url": "https://www.reddit.com/r/halifax/comments/1w3r3yv/pilates_classes_or_dance_classes_for_women_and/",
-      "flair": null,
-      "createdUtc": 1788210589
-    },
-    {
-      "title": "Police board commissioner wants detailed monthly stats reports from Halifax cops",
-      "score": 0,
-      "numComments": 0,
-      "author": "ph0enix1211",
-      "url": "https://www.reddit.com/r/halifax/comments/1w3d2jg/police_board_commissioner_wants_detailed_monthly/",
-      "flair": null,
-      "createdUtc": 1788181093
-    },
-    {
-      "title": "Gym suggestions in HRM for single woman looking to build community",
-      "score": 0,
-      "numComments": 0,
-      "author": "Stellarey",
-      "url": "https://www.reddit.com/r/halifax/comments/1w3tfqf/gym_suggestions_in_hrm_for_single_woman_looking/",
-      "flair": null,
-      "createdUtc": 1788215654
-    },
-    {
-      "title": "Bus passes",
-      "score": 0,
-      "numComments": 0,
-      "author": "Fantastic_Age_4440",
-      "url": "https://www.reddit.com/r/halifax/comments/1w3retk/bus_passes/",
-      "flair": null,
-      "createdUtc": 1788211233
     }
   ]
 }
