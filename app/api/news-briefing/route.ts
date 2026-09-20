@@ -1,8 +1,8 @@
 // GET /api/news-briefing           → { items: [{url,title,source,summary,pubDate,audio}] }
 // GET /api/news-briefing?mode=text → same, but without the audio field
 //
-// Returns the collection of per-article summaries from the last 8 hours
-// (same window as the Feed), newest first. Each article is summarized once by
+// Returns the collection of per-article summaries from a rolling window
+// (NEWS_WINDOW_HOURS, same window as the Feed), newest first. Each article is summarized once by
 // the generate endpoint and stored in article_summary; this route is a pure,
 // fast read from Supabase. Audio is included only in the full (non-text) mode
 // since the base64 clips are large.
@@ -10,6 +10,7 @@
 import type { NextRequest } from 'next/server';
 import { sql } from '@/lib/db';
 import { synthesizeSpeech, ZH_VOICE } from '@/lib/ai/tts';
+import { NEWS_WINDOW_HOURS } from '@/lib/fetchers/news';
 
 const CACHE_HEADERS = {
   'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
@@ -55,9 +56,9 @@ async function getIntroAudio(latest: Date, zh: boolean): Promise<string | null> 
   return audioB64;
 }
 
-// The collection is scoped to today's Halifax calendar day (matches fetchNews):
-// it accumulates through the day and resets at local midnight. The SQL below
-// uses date_trunc on NOW() AT TIME ZONE 'America/Halifax' to get local midnight.
+// The collection is scoped to a rolling NEWS_WINDOW_HOURS window (matches
+// fetchNews) so a once-a-morning reader still sees last evening's stories
+// rather than only what published since local midnight.
 
 type Row = {
   url: string;
@@ -82,13 +83,13 @@ export async function GET(req: NextRequest) {
     ? await sql<Row[]>`
         SELECT url, title, source, ${summaryCol} AS summary, pub_date
         FROM article_summary
-        WHERE COALESCE(pub_date, created_at) >= date_trunc('day', NOW() AT TIME ZONE 'America/Halifax') AT TIME ZONE 'America/Halifax'
+        WHERE COALESCE(pub_date, created_at) >= NOW() - make_interval(hours => ${NEWS_WINDOW_HOURS})
         ORDER BY COALESCE(pub_date, created_at) DESC
       `
     : await sql<Row[]>`
         SELECT url, title, source, ${summaryCol} AS summary, pub_date, ${audioCol} AS audio_b64
         FROM article_summary
-        WHERE COALESCE(pub_date, created_at) >= date_trunc('day', NOW() AT TIME ZONE 'America/Halifax') AT TIME ZONE 'America/Halifax'
+        WHERE COALESCE(pub_date, created_at) >= NOW() - make_interval(hours => ${NEWS_WINDOW_HOURS})
         ORDER BY COALESCE(pub_date, created_at) DESC
       `;
 

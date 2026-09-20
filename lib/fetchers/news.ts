@@ -1,21 +1,15 @@
-// Multi-source Nova Scotia news feeds. Scoped to today's Halifax calendar day
-// (00:00–23:59:59 local), sorted newest-first.
+// Multi-source Nova Scotia news feeds. Scoped to a rolling window (see
+// NEWS_WINDOW_HOURS), sorted newest-first.
 
 import Parser from 'rss-parser';
 
-const HALIFAX_TZ = 'America/Halifax';
-
-// Midnight (00:00) today in the Halifax timezone, returned as a UTC instant.
-// News resets at local midnight: few stories in the morning, accumulating
-// through the day. Handles AST/ADT via a live offset calculation.
-function startOfTodayHalifax(): Date {
-  const now = new Date();
-  const ymd = now.toLocaleDateString('en-CA', { timeZone: HALIFAX_TZ }); // YYYY-MM-DD
-  const offsetMs =
-    new Date(now.toLocaleString('en-US', { timeZone: 'UTC' })).getTime() -
-    new Date(now.toLocaleString('en-US', { timeZone: HALIFAX_TZ })).getTime();
-  return new Date(new Date(`${ymd}T00:00:00Z`).getTime() + offsetMs);
-}
+// How far back news stays visible. Rolling — not calendar-day — so a reader who
+// checks once each morning still sees last evening's stories instead of only
+// what published since local midnight. Keep in sync with the same window in
+// app/api/news-briefing/route.ts (it imports this constant), and keep it below
+// RETENTION_HOURS in app/api/news-briefing/generate/route.ts so the pruner
+// never drops a row that's still in-window.
+export const NEWS_WINDOW_HOURS = 36;
 
 export type NewsItem = {
   title?: string;
@@ -43,7 +37,7 @@ export async function fetchNews(): Promise<{ items: NewsItem[] }> {
     { url: 'https://www.thecoast.ca/feed/', name: 'The Coast' },
   ];
 
-  const cutoff = startOfTodayHalifax();
+  const cutoff = new Date(Date.now() - NEWS_WINDOW_HOURS * 60 * 60 * 1000);
 
   const SOURCE_TIMEOUT_MS = 8_000;
 
