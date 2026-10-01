@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-01T15:30:17.501Z",
+  "fetchedAt": "2026-10-01T19:58:22.552Z",
   "posts": [
     {
       "title": "Things To Do In HRM This Month — October 2026",
@@ -9,15 +9,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1wuvfmj/things_to_do_in_hrm_this_month_october_2026/",
       "flair": null,
       "createdUtc": 1790848885
-    },
-    {
-      "title": "Thinking of Rehtaeh Parsons",
-      "score": 0,
-      "numComments": 0,
-      "author": "theRealJudyGreer",
-      "url": "https://www.reddit.com/r/halifax/comments/1wuvk2f/thinking_of_rehtaeh_parsons/",
-      "flair": null,
-      "createdUtc": 1790849309
     },
     {
       "title": "Netflix worked, Crave didn't: the strangest internet puzzle our team has ever solved",
@@ -38,6 +29,15 @@
       "createdUtc": 1790863628
     },
     {
+      "title": "Thinking of Rehtaeh Parsons",
+      "score": 0,
+      "numComments": 0,
+      "author": "theRealJudyGreer",
+      "url": "https://www.reddit.com/r/halifax/comments/1wuvk2f/thinking_of_rehtaeh_parsons/",
+      "flair": null,
+      "createdUtc": 1790849309
+    },
+    {
       "title": "Sexual assault trial begins for 'Trailer Park Boys' actor Mike Smith",
       "score": 0,
       "numComments": 0,
@@ -56,13 +56,22 @@
       "createdUtc": 1790865020
     },
     {
-      "title": "Road rage this morning",
+      "title": "Avoid Joseph Howe towards the rotary",
       "score": 0,
       "numComments": 0,
-      "author": "Nacho0ooo0o",
-      "url": "https://www.reddit.com/r/halifax/comments/1wuvndg/road_rage_this_morning/",
+      "author": "richardsinal1",
+      "url": "https://www.reddit.com/r/halifax/comments/1wv1zy6/avoid_joseph_howe_towards_the_rotary/",
       "flair": null,
-      "createdUtc": 1790849643
+      "createdUtc": 1790867443
+    },
+    {
+      "title": "Weekly Gas Post ⛽⛽",
+      "score": 0,
+      "numComments": 0,
+      "author": "Buckit",
+      "url": "https://www.reddit.com/r/halifax/comments/1wv5bfg/weekly_gas_post/",
+      "flair": null,
+      "createdUtc": 1790874992
     },
     {
       "title": "Who the fuck thought it would be a good idea to close the two left turn lanes on Connaught to the 102 for construction",
@@ -74,49 +83,13 @@
       "createdUtc": 1790863164
     },
     {
-      "title": "Happy Official Spooky Season!!",
+      "title": "Road rage this morning",
       "score": 0,
       "numComments": 0,
-      "author": "SoporificSnorlax",
-      "url": "https://www.reddit.com/r/halifax/comments/1wuv7kl/happy_official_spooky_season/",
+      "author": "Nacho0ooo0o",
+      "url": "https://www.reddit.com/r/halifax/comments/1wuvndg/road_rage_this_morning/",
       "flair": null,
-      "createdUtc": 1790848052
-    },
-    {
-      "title": "Avoid Joseph Howe towards the rotary",
-      "score": 0,
-      "numComments": 0,
-      "author": "richardsinal1",
-      "url": "https://www.reddit.com/r/halifax/comments/1wv1zy6/avoid_joseph_howe_towards_the_rotary/",
-      "flair": null,
-      "createdUtc": 1790867443
-    },
-    {
-      "title": "CBC Investigates: Why children in government care face a higher risk of sexual exploitation",
-      "score": 0,
-      "numComments": 0,
-      "author": "IStillListenToRadio",
-      "url": "https://www.reddit.com/r/halifax/comments/1wuy6to/cbc_investigates_why_children_in_government_care/",
-      "flair": null,
-      "createdUtc": 1790857868
-    },
-    {
-      "title": "Mushrooms in the Woods, part 2",
-      "score": 0,
-      "numComments": 0,
-      "author": "cdnmoon",
-      "url": "https://www.reddit.com/r/halifax/comments/1wukgo0/mushrooms_in_the_woods_part_2/",
-      "flair": null,
-      "createdUtc": 1790811907
-    },
-    {
-      "title": "Cat Adoption",
-      "score": 0,
-      "numComments": 0,
-      "author": "AutumnLaughter",
-      "url": "https://www.reddit.com/r/halifax/comments/1wuyxsa/cat_adoption/",
-      "flair": null,
-      "createdUtc": 1790859948
+      "createdUtc": 1790849643
     },
     {
       "title": "What the hell is this?",
@@ -128,13 +101,40 @@
       "createdUtc": 1790860680
     },
     {
-      "title": "What do you do in a situation like this? The 107",
+      "title": "Cat Adoption",
       "score": 0,
       "numComments": 0,
-      "author": "Elred_Olakas",
-      "url": "https://www.reddit.com/r/halifax/comments/1wuip3p/what_do_you_do_in_a_situation_like_this_the_107/",
+      "author": "AutumnLaughter",
+      "url": "https://www.reddit.com/r/halifax/comments/1wuyxsa/cat_adoption/",
       "flair": null,
-      "createdUtc": 1790807055
+      "createdUtc": 1790859948
+    },
+    {
+      "title": "Happy Official Spooky Season!!",
+      "score": 0,
+      "numComments": 0,
+      "author": "SoporificSnorlax",
+      "url": "https://www.reddit.com/r/halifax/comments/1wuv7kl/happy_official_spooky_season/",
+      "flair": null,
+      "createdUtc": 1790848052
+    },
+    {
+      "title": "CBC Investigates: Why children in government care face a higher risk of sexual exploitation",
+      "score": 0,
+      "numComments": 0,
+      "author": "IStillListenToRadio",
+      "url": "https://www.reddit.com/r/halifax/comments/1wuy6to/cbc_investigates_why_children_in_government_care/",
+      "flair": null,
+      "createdUtc": 1790857868
+    },
+    {
+      "title": "Best Spots for Karaoke in Halifax",
+      "score": 0,
+      "numComments": 0,
+      "author": "ProfessionalLate4162",
+      "url": "https://www.reddit.com/r/halifax/comments/1wv8dtg/best_spots_for_karaoke_in_halifax/",
+      "flair": null,
+      "createdUtc": 1790881897
     },
     {
       "title": "What does success look like with a Vision Zero approach?",
@@ -146,6 +146,24 @@
       "createdUtc": 1790863322
     },
     {
+      "title": "Mushrooms in the Woods, part 2",
+      "score": 0,
+      "numComments": 0,
+      "author": "cdnmoon",
+      "url": "https://www.reddit.com/r/halifax/comments/1wukgo0/mushrooms_in_the_woods_part_2/",
+      "flair": null,
+      "createdUtc": 1790811907
+    },
+    {
+      "title": "Looking for pet boarding (Gerbil)",
+      "score": 0,
+      "numComments": 0,
+      "author": "Lower-Brief2802",
+      "url": "https://www.reddit.com/r/halifax/comments/1wv224z/looking_for_pet_boarding_gerbil/",
+      "flair": null,
+      "createdUtc": 1790867586
+    },
+    {
       "title": "Famous American schooner leaving Lunenburg for Maine after $1 sale",
       "score": 0,
       "numComments": 0,
@@ -153,6 +171,51 @@
       "url": "https://www.reddit.com/r/halifax/comments/1wuxfwf/famous_american_schooner_leaving_lunenburg_for/",
       "flair": null,
       "createdUtc": 1790855661
+    },
+    {
+      "title": "Anyone has experience with Surplus furniture and mattress warehouse?",
+      "score": 0,
+      "numComments": 0,
+      "author": "BiscottiMinimum9708",
+      "url": "https://www.reddit.com/r/halifax/comments/1wv391q/anyone_has_experience_with_surplus_furniture_and/",
+      "flair": null,
+      "createdUtc": 1790870346
+    },
+    {
+      "title": "New Painted Lane in Spring Garden",
+      "score": 0,
+      "numComments": 0,
+      "author": "KitTrailer",
+      "url": "https://www.reddit.com/r/halifax/comments/1wv1aqt/new_painted_lane_in_spring_garden/",
+      "flair": null,
+      "createdUtc": 1790865839
+    },
+    {
+      "title": "What do you do in a situation like this? The 107",
+      "score": 0,
+      "numComments": 0,
+      "author": "Elred_Olakas",
+      "url": "https://www.reddit.com/r/halifax/comments/1wuip3p/what_do_you_do_in_a_situation_like_this_the_107/",
+      "flair": null,
+      "createdUtc": 1790807055
+    },
+    {
+      "title": "OCD specialists",
+      "score": 0,
+      "numComments": 0,
+      "author": "Still-Salamander9438",
+      "url": "https://www.reddit.com/r/halifax/comments/1wv9hr2/ocd_specialists/",
+      "flair": null,
+      "createdUtc": 1790884426
+    },
+    {
+      "title": "Coyote spotted in densely populated Bedford neighbourhood: Should people be worried?",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1wv7oag/coyote_spotted_in_densely_populated_bedford/",
+      "flair": null,
+      "createdUtc": 1790880319
     },
     {
       "title": "'A trip down memory lane': N.S. man reunited with wallet lost 51 years ago",
@@ -173,13 +236,13 @@
       "createdUtc": 1790796276
     },
     {
-      "title": "Looking for pet boarding (Gerbil)",
+      "title": "The registry had them waiting. These Nova Scotians found a family doctor another way",
       "score": 0,
       "numComments": 0,
-      "author": "Lower-Brief2802",
-      "url": "https://www.reddit.com/r/halifax/comments/1wv224z/looking_for_pet_boarding_gerbil/",
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1wuvq70/the_registry_had_them_waiting_these_nova_scotians/",
       "flair": null,
-      "createdUtc": 1790867586
+      "createdUtc": 1790849936
     },
     {
       "title": "City parking permits",
@@ -191,6 +254,15 @@
       "createdUtc": 1790849680
     },
     {
+      "title": "Sump pump install",
+      "score": 0,
+      "numComments": 0,
+      "author": "purplemonkeyuser",
+      "url": "https://www.reddit.com/r/halifax/comments/1wv3u0u/sump_pump_install/",
+      "flair": null,
+      "createdUtc": 1790871633
+    },
+    {
       "title": "Halifax gets nearly $2M in federal funding to prevent gun, gang violence",
       "score": 0,
       "numComments": 0,
@@ -198,78 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1wuo01r/halifax_gets_nearly_2m_in_federal_funding_to/",
       "flair": null,
       "createdUtc": 1790822203
-    },
-    {
-      "title": "Fewer than half of Nova Scotia Grade 3 and Grade 6 students meet writing standards: Audit",
-      "score": 0,
-      "numComments": 0,
-      "author": "Street_Anon",
-      "url": "https://www.reddit.com/r/halifax/comments/1wu3cdy/fewer_than_half_of_nova_scotia_grade_3_and_grade/",
-      "flair": null,
-      "createdUtc": 1790770515
-    },
-    {
-      "title": "The registry had them waiting. These Nova Scotians found a family doctor another way",
-      "score": 0,
-      "numComments": 0,
-      "author": "insino93",
-      "url": "https://www.reddit.com/r/halifax/comments/1wuvq70/the_registry_had_them_waiting_these_nova_scotians/",
-      "flair": null,
-      "createdUtc": 1790849936
-    },
-    {
-      "title": "What the Dalhousie looked like in 1931",
-      "score": 0,
-      "numComments": 0,
-      "author": "Maximum-Artist448",
-      "url": "https://www.reddit.com/r/halifax/comments/1wu9139/what_the_dalhousie_looked_like_in_1931/",
-      "flair": null,
-      "createdUtc": 1790784631
-    },
-    {
-      "title": "Halifax c. 1762 by Dominic Serres",
-      "score": 0,
-      "numComments": 0,
-      "author": "Loud_Industry_2044",
-      "url": "https://www.reddit.com/r/halifax/comments/1wu62v1/halifax_c_1762_by_dominic_serres/",
-      "flair": null,
-      "createdUtc": 1790777691
-    },
-    {
-      "title": "Nova Scotia Capped Assessment Program Impacts - Laura White, Councillor for District 7",
-      "score": 0,
-      "numComments": 0,
-      "author": "ph0enix1211",
-      "url": "https://www.reddit.com/r/halifax/comments/1wuc613/nova_scotia_capped_assessment_program_impacts/",
-      "flair": null,
-      "createdUtc": 1790791616
-    },
-    {
-      "title": "Gateway Meat Market delivery is back for week 8 :)",
-      "score": 0,
-      "numComments": 0,
-      "author": "RoosterSure3505",
-      "url": "https://www.reddit.com/r/halifax/comments/1wuhg62/gateway_meat_market_delivery_is_back_for_week_8/",
-      "flair": null,
-      "createdUtc": 1790803901
-    },
-    {
-      "title": "Get swole: N.S. teen moves protein gummy bear business into production facility",
-      "score": 0,
-      "numComments": 0,
-      "author": "Bean_Tiger",
-      "url": "https://www.reddit.com/r/halifax/comments/1wu25ck/get_swole_ns_teen_moves_protein_gummy_bear/",
-      "flair": null,
-      "createdUtc": 1790766774
-    },
-    {
-      "title": "baby goats",
-      "score": 0,
-      "numComments": 0,
-      "author": "sloppysequiturs",
-      "url": "https://www.reddit.com/r/halifax/comments/1wum3jz/baby_goats/",
-      "flair": null,
-      "createdUtc": 1790816547
     }
   ]
 }
