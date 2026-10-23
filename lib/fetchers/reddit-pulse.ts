@@ -1,10 +1,17 @@
 // Per-post Reddit pulse playlist. Reads reddit_post_summaries (one row per
-// post, written by the Mac Mini's Gemini + Google TTS pipeline) and returns
-// an ordered playlist. Audio lives inline in the row as base64-encoded M4A
+// post, written by a Gemini + Google TTS pipeline that is not running at the
+// moment) and returns an ordered playlist, or null when the newest batch is
+// too old to pass as current. Audio lives inline in the row as base64-encoded M4A
 // (column `tts_audio`); we wrap it in a data URL so the player consumes the
 // same shape as the legacy news/Reddit briefings.
 
 import { sql } from '@/lib/db';
+
+// The playlist is served only while it is recent. The pipeline writes one batch
+// per day, so 48h tolerates a missed run while still letting the player fall
+// back to its "empty" state rather than narrating a days-old thread as today's
+// discussion.
+const MAX_AGE_HOURS = 48;
 
 export type RedditPulseItem = {
   id: number;
@@ -68,6 +75,7 @@ export async function fetchRedditPulse(lang: PulseLang = "en"): Promise<RedditPu
       WHERE summary_date = (
         SELECT MAX(summary_date) FROM reddit_post_summaries
       )
+        AND generated_at > now() - (${MAX_AGE_HOURS}::text || ' hours')::interval
       ORDER BY rank DESC NULLS LAST, id ASC
     `;
   } catch (e: unknown) {

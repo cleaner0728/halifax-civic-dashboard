@@ -24,6 +24,14 @@ const MIN_SCORE = 10;
 const MIN_BODY_LEN = 30;
 const LIMIT = 6;
 
+// Quotes are shown only while something is actually scraping r/halifax. Looser
+// than the 4h the main feed allows (reddit-db.ts) — top comments are worth
+// keeping through a short outage — but tight enough that the block disappears
+// instead of presenting a frozen snapshot as current opinion. Staleness is read
+// off reddit_posts.last_fetched_at, on the assumption that whatever writes the
+// comments writes the posts in the same pass.
+const MAX_SCRAPE_AGE_HOURS = 24;
+
 type Row = {
   id: string;
   body: string;
@@ -60,6 +68,7 @@ export async function fetchRedditVoices(): Promise<RedditVoice[]> {
       WHERE top.rn = 1
         AND COALESCE(p.stickied, false) = false
         AND COALESCE(p.pinned, false) = false
+        AND p.last_fetched_at > now() - (${MAX_SCRAPE_AGE_HOURS}::text || ' hours')::interval
       ORDER BY top.post_id, top.score DESC
       LIMIT 200
     `;

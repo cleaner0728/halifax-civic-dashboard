@@ -19,8 +19,8 @@
 import type { NextRequest } from "next/server";
 import { sql } from "@/lib/db";
 
-// Plain MP3. The "tts_audio" column name is a misnomer — the upstream
-// Mac Mini pipeline writes MP3 here, not m4a/AAC.
+// Plain MP3. The "tts_audio" column name is a misnomer — the upstream TTS
+// pipeline wrote MP3 here, not m4a/AAC.
 const CONTENT_TYPE = "audio/mpeg";
 const CACHE_CONTROL = "public, max-age=31536000, immutable";
 

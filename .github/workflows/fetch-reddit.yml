@@ -2,11 +2,13 @@ name: Fetch Reddit r/halifax
 
 on:
   schedule:
-    # Once a day. This file (public/reddit.json) is only a *fallback* — the
-    # live feed is served from the Supabase reddit_posts table written by the
-    # Mac Mini scraper (see lib/fetchers/reddit.ts). Refreshing every 30 min
-    # just floods the repo with commits, so we keep the safety-net snapshot
-    # roughly daily instead.
+    # Once a day. This file (public/reddit.json) is the feed's only live
+    # source: the Supabase reddit_posts table it used to merely back up has no
+    # writer any more (see lib/fetchers/reddit.ts). Refreshing more often just
+    # floods the repo with commits, so the cadence stays daily — which does
+    # mean the Reddit block is up to a day stale until a real scraper exists
+    # again. Note also that from a data-center IP only the RSS strategies
+    # below survive, so every post here has score/comment counts of 0.
     - cron: '0 15 * * *'   # daily at 15:00 UTC (12:00 ADT)
   workflow_dispatch:            # allow manual runs from Actions tab
 

@@ -1,7 +1,9 @@
-// Pulls r/halifax posts from the Supabase reddit_posts table. The Mac Mini
-// scraper writes rows every ~30 min; we treat data as fresh if the newest
-// last_fetched_at is within MAX_AGE_HOURS. Stickied / mod-pinned posts are
-// filtered out at the SQL layer — they aren't civic discussion content.
+// Pulls r/halifax posts from the Supabase reddit_posts table. Nothing writes
+// that table any more, so this path is dormant and the feed falls back to the
+// committed snapshot (see reddit.ts); it stays here for whenever a scraper
+// fills the table again. Rows count as fresh while the newest last_fetched_at
+// is within MAX_AGE_HOURS. Stickied / mod-pinned posts are filtered out at the
+// SQL layer — they aren't civic discussion content.
 //
 // Ordering mirrors Reddit's own "hot" ranking so the feed matches what users
 // see on Reddit, rather than raw score: hot = log10(|score|) + sign(score) ·

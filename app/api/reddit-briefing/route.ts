@@ -1,9 +1,11 @@
 // GET /api/reddit-briefing           → { items: [{slot,label,summary,postCount,createdAt,audio,...}] }
 // GET /api/reddit-briefing?mode=text → same, but without the audio field
 //
-// Returns today's Reddit pulse as a playlist. Source is the per-post rows in
-// reddit_post_summaries (Mac Mini's Gemini + Google TTS pipeline writes one
-// row per post with the m4a audio inline in `tts_audio` as base64).
+// Returns the current Reddit pulse as a playlist. Source is the per-post rows
+// in reddit_post_summaries, written by a Gemini + Google TTS pipeline that has
+// no host at the moment — one row per post with the audio inline in
+// `tts_audio` as base64. The fetcher drops batches past its freshness window,
+// so this serves an empty playlist rather than a stale one.
 //
 // The audio field is a URL to /api/reddit-briefing/audio/<postId> — *not* an
 // inline data URL. iOS Safari refuses to play long base64 audio data URLs
