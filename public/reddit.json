@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-23T18:47:53.945Z",
+  "fetchedAt": "2026-10-24T15:30:13.768Z",
   "posts": [
     {
       "title": "Free Food/Laundry/Shower Resources in HRM - Oct. 2026",
@@ -20,22 +20,40 @@
       "createdUtc": 1790848885
     },
     {
-      "title": "Bruce MacKinnon: Nova Scotia megaproject guardrails may need a boost",
+      "title": "Halifax Water breach raises questions about ethical hacking",
       "score": 0,
       "numComments": 0,
-      "author": "LowkeyPostingTea",
-      "url": "https://www.reddit.com/r/halifax/comments/1xdb3fg/bruce_mackinnon_nova_scotia_megaproject/",
+      "author": "Bean_Tiger",
+      "url": "https://www.reddit.com/r/halifax/comments/1xe3zdg/halifax_water_breach_raises_questions_about/",
       "flair": null,
-      "createdUtc": 1792753843
+      "createdUtc": 1792833186
     },
     {
-      "title": "Maybe nobody cares, but there's a hurricane nearby...",
+      "title": "15.1.1 - Alternatives for 2028-29 and 2029-30 AAA Bicycle Network Capital Projects.pdf",
       "score": 0,
       "numComments": 0,
-      "author": "KitTrailer",
-      "url": "https://www.reddit.com/r/halifax/comments/1xdc953/maybe_nobody_cares_but_theres_a_hurricane_nearby/",
+      "author": "ph0enix1211",
+      "url": "https://www.reddit.com/r/halifax/comments/1xe9dhe/1511_alternatives_for_202829_and_202930_aaa/",
       "flair": null,
-      "createdUtc": 1792757365
+      "createdUtc": 1792850314
+    },
+    {
+      "title": "Award-winning children’s author returns home to Preston, N.S., after international book fair",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1xe7ku2/awardwinning_childrens_author_returns_home_to/",
+      "flair": null,
+      "createdUtc": 1792845488
+    },
+    {
+      "title": "A love letter to Nova Scotians: Thank you for saying 'no' to EverWind's AI data centre",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1xdsv93/a_love_letter_to_nova_scotians_thank_you_for/",
+      "flair": null,
+      "createdUtc": 1792796738
     },
     {
       "title": "Halifax Central Library [Nikon F2 / Nikkor 28mm F2.8 AI-S / Kodak Portra 400]",
@@ -47,6 +65,114 @@
       "createdUtc": 1792779734
     },
     {
+      "title": "E-motorcycle rules",
+      "score": 0,
+      "numComments": 0,
+      "author": "mirror21502",
+      "url": "https://www.reddit.com/r/halifax/comments/1xe4gm1/emotorcycle_rules/",
+      "flair": null,
+      "createdUtc": 1792834998
+    },
+    {
+      "title": "found injured cat on dunbrack!!!",
+      "score": 0,
+      "numComments": 0,
+      "author": "hsnoba",
+      "url": "https://www.reddit.com/r/halifax/comments/1xdwdb8/found_injured_cat_on_dunbrack/",
+      "flair": null,
+      "createdUtc": 1792806966
+    },
+    {
+      "title": "She was diagnosed with ulcerative colitis as a teen. Now she dreams of becoming a doctor",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1xe62vm/she_was_diagnosed_with_ulcerative_colitis_as_a/",
+      "flair": null,
+      "createdUtc": 1792840766
+    },
+    {
+      "title": "Man accused of racist tirade at Halifax Costco store faces more charges from arrest on Eastern Shore",
+      "score": 0,
+      "numComments": 0,
+      "author": "CMikeHunt",
+      "url": "https://www.reddit.com/r/halifax/comments/1xdpuau/man_accused_of_racist_tirade_at_halifax_costco/",
+      "flair": null,
+      "createdUtc": 1792788996
+    },
+    {
+      "title": "Bruce MacKinnon: Nova Scotia megaproject guardrails may need a boost",
+      "score": 0,
+      "numComments": 0,
+      "author": "LowkeyPostingTea",
+      "url": "https://www.reddit.com/r/halifax/comments/1xdb3fg/bruce_mackinnon_nova_scotia_megaproject/",
+      "flair": null,
+      "createdUtc": 1792753843
+    },
+    {
+      "title": "Bridge on Tower Road is open!",
+      "score": 0,
+      "numComments": 0,
+      "author": "TheMillionthMan",
+      "url": "https://www.reddit.com/r/halifax/comments/1xdn7ju/bridge_on_tower_road_is_open/",
+      "flair": null,
+      "createdUtc": 1792782830
+    },
+    {
+      "title": "Maybe nobody cares, but there's a hurricane nearby...",
+      "score": 0,
+      "numComments": 0,
+      "author": "KitTrailer",
+      "url": "https://www.reddit.com/r/halifax/comments/1xdc953/maybe_nobody_cares_but_theres_a_hurricane_nearby/",
+      "flair": null,
+      "createdUtc": 1792757365
+    },
+    {
+      "title": "N.S. baker scammed by someone claiming to be a popular Halifax festival",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1xds1ft/ns_baker_scammed_by_someone_claiming_to_be_a/",
+      "flair": null,
+      "createdUtc": 1792794486
+    },
+    {
+      "title": "Avoid Bayers Lake",
+      "score": 0,
+      "numComments": 0,
+      "author": "a-cozy-raccoon",
+      "url": "https://www.reddit.com/r/halifax/comments/1xdnddv/avoid_bayers_lake/",
+      "flair": null,
+      "createdUtc": 1792783186
+    },
+    {
+      "title": "How is crowbar lake trail?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Haunting-Impress3648",
+      "url": "https://www.reddit.com/r/halifax/comments/1xe9tud/how_is_crowbar_lake_trail/",
+      "flair": null,
+      "createdUtc": 1792851429
+    },
+    {
+      "title": "Man handed 10-year sentence for 2024 Dartmouth drive-by shooting",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1xdsc50/man_handed_10year_sentence_for_2024_dartmouth/",
+      "flair": null,
+      "createdUtc": 1792795287
+    },
+    {
+      "title": "Does anyone know where I can acquire discarded // abandoned (never used) tombstones?",
+      "score": 0,
+      "numComments": 0,
+      "author": "dommingdarcy",
+      "url": "https://www.reddit.com/r/halifax/comments/1xe9gd4/does_anyone_know_where_i_can_acquire_discarded/",
+      "flair": null,
+      "createdUtc": 1792850498
+    },
+    {
       "title": "N.S. woman says duct-cleaning company used AI-generated photos to fake work - Halifax",
       "score": 0,
       "numComments": 0,
@@ -56,13 +182,22 @@
       "createdUtc": 1792765551
     },
     {
-      "title": "Vandals deface Islamic Heritage Month sign in Halifax",
+      "title": "Motorcycle Insurance Question",
       "score": 0,
       "numComments": 0,
-      "author": "insino93",
-      "url": "https://www.reddit.com/r/halifax/comments/1xda1zz/vandals_deface_islamic_heritage_month_sign_in/",
+      "author": "xWalshx517",
+      "url": "https://www.reddit.com/r/halifax/comments/1xe9829/motorcycle_insurance_question/",
       "flair": null,
-      "createdUtc": 1792750320
+      "createdUtc": 1792849925
+    },
+    {
+      "title": "Interesting development in Moose Country",
+      "score": 0,
+      "numComments": 0,
+      "author": "alibythesea",
+      "url": "https://www.reddit.com/r/halifax/comments/1xdtdt5/interesting_development_in_moose_country/",
+      "flair": null,
+      "createdUtc": 1792798162
     },
     {
       "title": "If your pumpkins were stolen in the Windsor Almond Street area..",
@@ -74,6 +209,24 @@
       "createdUtc": 1792765381
     },
     {
+      "title": "recs and resources for absolute beginner sports for adult?",
+      "score": 0,
+      "numComments": 0,
+      "author": "Coskoshawp",
+      "url": "https://www.reddit.com/r/halifax/comments/1xdt0f2/recs_and_resources_for_absolute_beginner_sports/",
+      "flair": null,
+      "createdUtc": 1792797129
+    },
+    {
+      "title": "Vandals deface Islamic Heritage Month sign in Halifax",
+      "score": 0,
+      "numComments": 0,
+      "author": "insino93",
+      "url": "https://www.reddit.com/r/halifax/comments/1xda1zz/vandals_deface_islamic_heritage_month_sign_in/",
+      "flair": null,
+      "createdUtc": 1792750320
+    },
+    {
       "title": "Anyone up for a match?",
       "score": 0,
       "numComments": 0,
@@ -83,15 +236,6 @@
       "createdUtc": 1792766826
     },
     {
-      "title": "Five-year ‘public review’ of N.S. environmental law will take place behind closed doors",
-      "score": 0,
-      "numComments": 0,
-      "author": "Bean_Tiger",
-      "url": "https://www.reddit.com/r/halifax/comments/1xda3ka/fiveyear_public_review_of_ns_environmental_law/",
-      "flair": null,
-      "createdUtc": 1792750467
-    },
-    {
       "title": "What I wouldn't do for a shot of this right now",
       "score": 0,
       "numComments": 0,
@@ -99,6 +243,15 @@
       "url": "https://www.reddit.com/r/halifax/comments/1xd1bu2/what_i_wouldnt_do_for_a_shot_of_this_right_now/",
       "flair": null,
       "createdUtc": 1792720643
+    },
+    {
+      "title": "Five-year ‘public review’ of N.S. environmental law will take place behind closed doors",
+      "score": 0,
+      "numComments": 0,
+      "author": "Bean_Tiger",
+      "url": "https://www.reddit.com/r/halifax/comments/1xda3ka/fiveyear_public_review_of_ns_environmental_law/",
+      "flair": null,
+      "createdUtc": 1792750467
     },
     {
       "title": "Ottawa ‘not responsible’ for regulating AI data centre power use: minister",
@@ -117,159 +270,6 @@
       "url": "https://www.reddit.com/r/halifax/comments/1xdd4v5/loblaw_customers_hit_in_data_breach_company/",
       "flair": null,
       "createdUtc": 1792759818
-    },
-    {
-      "title": "Struggling to buy your first home? Why some Nova Scotians are choosing multi-generational living",
-      "score": 0,
-      "numComments": 0,
-      "author": "OptimalWhole8926",
-      "url": "https://www.reddit.com/r/halifax/comments/1xdc5hn/struggling_to_buy_your_first_home_why_some_nova/",
-      "flair": null,
-      "createdUtc": 1792757068
-    },
-    {
-      "title": "Investments, Dedicated Crews Strengthened 2026 Wildfire Response",
-      "score": 0,
-      "numComments": 0,
-      "author": "IStillListenToRadio",
-      "url": "https://www.reddit.com/r/halifax/comments/1xdhklb/investments_dedicated_crews_strengthened_2026/",
-      "flair": null,
-      "createdUtc": 1792770195
-    },
-    {
-      "title": "What to expect from respiratory illness season in the Maritimes",
-      "score": 0,
-      "numComments": 0,
-      "author": "IStillListenToRadio",
-      "url": "https://www.reddit.com/r/halifax/comments/1xdf5k5/what_to_expect_from_respiratory_illness_season_in/",
-      "flair": null,
-      "createdUtc": 1792764668
-    },
-    {
-      "title": "Positive Vibes Friday",
-      "score": 0,
-      "numComments": 0,
-      "author": "AutoModerator",
-      "url": "https://www.reddit.com/r/halifax/comments/1xd9vew/positive_vibes_friday/",
-      "flair": null,
-      "createdUtc": 1792749685
-    },
-    {
-      "title": "Recent increase in car break ins?",
-      "score": 0,
-      "numComments": 0,
-      "author": "BudgetArugula9245",
-      "url": "https://www.reddit.com/r/halifax/comments/1xdb5jq/recent_increase_in_car_break_ins/",
-      "flair": null,
-      "createdUtc": 1792754024
-    },
-    {
-      "title": "N.S. premier says the time will come for written agreements for data centre",
-      "score": 0,
-      "numComments": 0,
-      "author": "IStillListenToRadio",
-      "url": "https://www.reddit.com/r/halifax/comments/1xd1bf1/ns_premier_says_the_time_will_come_for_written/",
-      "flair": null,
-      "createdUtc": 1792720605
-    },
-    {
-      "title": "(Sacrificial) Sod availability",
-      "score": 0,
-      "numComments": 0,
-      "author": "SpotEnvironmental560",
-      "url": "https://www.reddit.com/r/halifax/comments/1xdk9cz/sacrificial_sod_availability/",
-      "flair": null,
-      "createdUtc": 1792776168
-    },
-    {
-      "title": "Porch Pirates",
-      "score": 0,
-      "numComments": 0,
-      "author": "kei_ii",
-      "url": "https://www.reddit.com/r/halifax/comments/1xd0q3h/porch_pirates/",
-      "flair": null,
-      "createdUtc": 1792718838
-    },
-    {
-      "title": "Good luck fellow commuters 🫡",
-      "score": 0,
-      "numComments": 0,
-      "author": "MamaJa2016",
-      "url": "https://www.reddit.com/r/halifax/comments/1xcg3ar/good_luck_fellow_commuters/",
-      "flair": null,
-      "createdUtc": 1792668843
-    },
-    {
-      "title": "Restaurant Closure Updates",
-      "score": 0,
-      "numComments": 0,
-      "author": "senseitalks",
-      "url": "https://www.reddit.com/r/halifax/comments/1xctxgi/restaurant_closure_updates/",
-      "flair": null,
-      "createdUtc": 1792701052
-    },
-    {
-      "title": "Large police and fire department presence in bayers lake by REgroup building",
-      "score": 0,
-      "numComments": 0,
-      "author": "SyntheticEgg",
-      "url": "https://www.reddit.com/r/halifax/comments/1xdc2j8/large_police_and_fire_department_presence_in/",
-      "flair": null,
-      "createdUtc": 1792756847
-    },
-    {
-      "title": "‘A terrifying project,’ but there will be no environmental assessment for EverWind’s hyperscale data centre",
-      "score": 0,
-      "numComments": 0,
-      "author": "LowkeyPostingTea",
-      "url": "https://www.reddit.com/r/halifax/comments/1xcjfbi/a_terrifying_project_but_there_will_be_no/",
-      "flair": null,
-      "createdUtc": 1792677712
-    },
-    {
-      "title": "Weekly Gas Post ⛽⛽",
-      "score": 0,
-      "numComments": 0,
-      "author": "Buckit",
-      "url": "https://www.reddit.com/r/halifax/comments/1xcp4gp/weekly_gas_post/",
-      "flair": null,
-      "createdUtc": 1792690420
-    },
-    {
-      "title": "Crepe hair in Halifax for a costume?",
-      "score": 0,
-      "numComments": 0,
-      "author": "coast-to-coast88",
-      "url": "https://www.reddit.com/r/halifax/comments/1xdhpbz/crepe_hair_in_halifax_for_a_costume/",
-      "flair": null,
-      "createdUtc": 1792770500
-    },
-    {
-      "title": "Firm behind planned Anthropic data centre in Nova Scotia denies owing fees to N.L. | CBC News",
-      "score": 0,
-      "numComments": 0,
-      "author": "LowkeyPostingTea",
-      "url": "https://www.reddit.com/r/halifax/comments/1xcjspd/firm_behind_planned_anthropic_data_centre_in_nova/",
-      "flair": null,
-      "createdUtc": 1792678563
-    },
-    {
-      "title": "Free weekly flyer of local grocery deals in Halifax and Dartmouth",
-      "score": 0,
-      "numComments": 0,
-      "author": "RoosterSure3505",
-      "url": "https://www.reddit.com/r/halifax/comments/1xcvtim/free_weekly_flyer_of_local_grocery_deals_in/",
-      "flair": null,
-      "createdUtc": 1792705580
-    },
-    {
-      "title": "Any Halloween 3 fans in here?A new short from local filmmaker Jason Eisener came out today!",
-      "score": 0,
-      "numComments": 0,
-      "author": "subtlereference39",
-      "url": "https://www.reddit.com/r/halifax/comments/1xcwyr0/any_halloween_3_fans_in_herea_new_short_from/",
-      "flair": null,
-      "createdUtc": 1792708491
     }
   ]
 }
